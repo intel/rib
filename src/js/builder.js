@@ -166,6 +166,7 @@ $(function() {
             $toolbarPanel.find('#reloadDesign').click(triggerDesignViewRefresh);
             $toolbarPanel.find('#loadDesign').click(triggerImportFileSelection);
             $toolbarPanel.find('#exportDesign').mousedown(triggerSerialize);
+            $toolbarPanel.find('#exportHTML').mousedown(triggerExportHTML);
             $toolbarPanel.find('#newpage').click(addNewPage);
             $toolbarPanel.find('#removepage').click(deleteCurrentPage);
 
@@ -276,6 +277,12 @@ $(function() {
 
     triggerSerialize = function () {
         serializeADMToJSON();
+    },
+
+    triggerExportHTML = function () {
+        fsUtils.write("index.html", "<html>" + ($designContentDocument[0].body.outerHTML) + "</html>", function(fileEntry){
+            exportFile(fileEntry.toURL(), "index");
+        }, _onError);
     },
 
     importFileChangedCallback = function (e) {
