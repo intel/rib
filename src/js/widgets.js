@@ -416,9 +416,26 @@ var BWidgetRegistry = {
                 type: "string",
                 autoGenerate: "slider"
             },
-            text: {
+            type: {
                 type: "string",
-                defaultValue: "Slider"
+                options: [ "yes", "no" ],
+                defaultValue: "yes"
+            },
+            type_label: {
+                type: "string",
+                defaultValue: "with-label"
+            },
+            conditional: {
+               type: "string",
+               defaultValue: "Slider"
+            },
+            conditional_label: {
+                type: "string",
+                defaultValue: "label"
+            },
+            conditional_for: {
+                type: "string",
+                defaultValue: "yes"
             },
             value: {
                 type: "integer",
@@ -433,7 +450,7 @@ var BWidgetRegistry = {
                 defaultValue: 100
             }
         },
-        template: '<div data-role="fieldcontain"> <label for="%ID%-range">%TEXT%</label> <input type="range" name="%ID%-range" id="%ID%-range" value="%VALUE%" min="%MIN%" max="%MAX%" /> </div>',
+        template: { 'yes':'<div data-role="fieldcontain"> <label for="%ID%-range">%CONDITIONAL%</label> <input type="range" name="%ID%-range" id="%ID%-range" value="%VALUE%" min="%MIN%" max="%MAX%" /> </div>', 'no':'<div data-role="fieldcontain"><input type="range" name="%ID%-range" id="%ID%-range" value="%VALUE%" min="%MIN%" max="%MAX%" /> </div>'},
     },
 
     /**

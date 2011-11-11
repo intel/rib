@@ -43,6 +43,8 @@ function propertyValueChanged(event) {
     }
     console.log(updated + " changed to " + value);
     node.setProperty(updated, value);
+    event.node = node;
+    showProperties(event);
 }
 
 function showProperties(event) {
@@ -61,9 +63,9 @@ function showProperties(event) {
         }
 
         console.log("User selected ADMNode_" + node._uid);
-        labelId = 'type-label';
+        labelId = 'widget-type-label';
         labelVal = 'Type';
-        valueId = 'type-value';
+        valueId = 'widget-type-value';
         valueVal = node.getType();
 
         $('#property_content').empty()
@@ -77,8 +79,22 @@ function showProperties(event) {
         var props = node.getProperties();
         var options = node.getPropertyOptions();
         for (var p in props) {
+            if (p == "type_label" || p == "conditional_label" || p == "conditional_for") {
+                continue;
+            }
+            else if (p == "type") {
+                labelVal = node.getProperty("type_label");
+            }
+            else if (p == "conditional") {
+                if(node.getProperty("conditional_for") != node.getProperty("type")) {
+                    continue;
+                }
+                labelVal = node.getProperty("conditional_label");
+            }
+            else {
+                labelVal = p.replace(/_/g,'-');
+            }
             labelId = p+'-label';
-            labelVal = p.replace(/_/g,'-');
             valueId = p+'-value';
             valueVal = props[p];
             if(options[p]) {
