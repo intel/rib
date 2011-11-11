@@ -26,8 +26,6 @@ P1 - When you drag a new item from the palette, it should be displayed in the
      canvas as you drag around. Worst case, maybe insert one and pick it up
      and use it as the draggable?
 
-P1 - Implement breadcrumb trail for selection at the top of the view
-
 P2 - Make tools/panels movable to "dock" positions
 
 P2 - Add visual page picker (not a separate dialog).

@@ -308,6 +308,11 @@ $(function() {
             // ----------------------- //
             initPageZone();
 
+            // --------------------- //
+            // Initialize Breadcrumb //
+            // --------------------- //
+            initBreadcrumb();
+
             // ----------------------- //
             // Theme picker menu setup //
             // ----------------------- //
@@ -1106,6 +1111,110 @@ $(function() {
                 return;
             }
             ADM.setActivePage(pageNode);
+        });
+    },
+
+    initBreadcrumb = function () {
+        $('<div id="breadcrumb"></div>')
+            .addClass('ui-widget')
+            .appendTo('#toolbar-panel');
+        ADM.bind("selectionChanged", updateBreadcrumb);
+        updateBreadcrumb(null);
+    },
+
+    updateBreadcrumb = function (e) {
+        var crumbs = [],
+            current = null,
+            target = null,
+            pageSelected = false;
+
+        if (e === null || e.node === null) {
+            current = ADM.getSelected();
+            if (current === null || current === undefined) {
+                current = ADM.getActivePage();
+                if (current === null || current === undefined) {
+                    return; // Nothing to show!
+                }
+            }
+        } else {
+            current = e.node;
+        }
+        target = current;
+
+        if (current.instanceOf('Page', false)) {
+            pageSelected = true;
+        }
+
+        while (current !== null && current !== undefined) {
+            if (current.isSelectable() ||
+                current.instanceOf('Page', false)) {
+                crumbs.push(current);
+            }
+            current = current.getParent();
+        }
+
+        crumbs = crumbs.reverse();
+
+        if (target.getChildrenCount() > 0) {
+            current = target.getChildren()[0];
+            // Special case, when deciding which child tree to show,
+            // prefer non-empty Content nodes and subtrees
+            if (target.instanceOf('Page', false)) {
+                target.foreach( function (node) {
+                    if (node.instanceOf('Content', false) &&
+                        node.getChildrenCount() > 0) {
+                        current = node;
+                    }
+                });
+            }
+            while (current !== null && current !== undefined) {
+                if (current.isSelectable()) {
+                    crumbs.push(current);
+                }
+                current = current.getChildren()[0];
+            }
+        }
+
+        $('#breadcrumb').empty();
+        crumbs.forEach( function (entry, index, array) {
+            var button = $('<button></button>'),
+                state = 'ui-state-default',
+                chain = null;
+
+            if (entry.isSelected() ||
+                (entry.instanceOf('Page', false) && pageSelected)) {
+                state = 'ui-state-active';
+            }
+
+            button.text(entry.getType())
+                  .data('adm-node', entry)
+                  .removeClass('button')
+                  .addClass('ui-widget-header ' + state)
+                  .appendTo('#breadcrumb')
+                  .click( function () {
+                      var node = $(this).data('adm-node');
+                      console.log(node.getType()+' clicked');
+                      if (node && node.isSelected()) {
+                          return; // Already selected, nothing to do
+                      }
+                      while (node && !ADM.setSelected(node.getUid())) {
+                          node = node.getParent();
+                      }
+                      if (node === null) {
+                          ADM.setSelected(null);
+                      }
+                  });
+
+            if (index !== array.length-1) {
+                if (!chain) {
+                    chain = $('<div></div>');
+                    chain.addClass('breadcrumb-separator')
+                         .addClass('ui-icon ui-icon-arrow-1-e')
+                         .appendTo('#breadcrumb');
+                } else {
+                    chain.clone().appendTo('#breadcrumb');
+                }
+            }
         });
     },
 

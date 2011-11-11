@@ -226,3 +226,49 @@ hr.menu-separator {
     padding: 0px;
     resize: none;
 }
+
+/*
+  Page Picker
+*/
+#page_content {
+    display: inline;
+}
+#page_content > select {
+    line-height: 22px;
+}
+#page_content > select {
+    line-height: 22px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+/*
+  Breadcrumb
+*/
+#breadcrumb {
+    display: inline-block;
+    float: right;
+    line-height: 22px;
+}
+.breadcrumb-separator.ui-icon {
+    display: inline-block;
+    margin-left: -2px;
+    margin-right: -2px;
+}
+.breadcrumb-separator {
+    border: none;
+}
+#breadcrumb button.ui-state-default {
+    margin-left: 0px;
+    margin-right: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
+    background: none;
+    border: none;
+}
+#breadcrumb button.ui-state-active {
+    margin-left: 0px;
+    margin-right: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
+}
