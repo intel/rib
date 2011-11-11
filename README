@@ -1,0 +1,71 @@
+Prerequisites:
+==============
+1) Ubuntu (or other Linux) host OS
+
+2) Chromium browser
+
+   The GUI Builder supports running only in Chromium at this time. Firefox
+   no longer fully functions for this.
+
+   To install Chromium on an Ubunut 11.04 system:
+
+   $ sudo apt-get install chromium-browser
+
+Running:
+========
+To run the GUI Builder application, you have two options:
+
+1) Start your Chromium browser with the "--allow-file-access-from-files"
+   option and point it to file://<builder.git dir>/index.html
+
+For example:
+$ chromium-browser --allow-file-access-from-files file:///index.html
+
+2) Point a locally running webserver to the directory you've cloned the
+   builder project to (may be just a symlink, depending on your web server
+   options)
+
+For example, something like:
+$ sudo apt-get install thttpd
+$ sudo ln -s <path-to-git-tree>/builder /var/www/builder
+$ chromium-browser http://localhost/builder
+
+You may need to configure thttpd to start up.
+
+Legal Stuff:
+============
+Copyright (C) 2011, Intel Corporation.
+
+Unless otherwise noted below, all code is Licensed under the Apache Public
+License version 2.0 (LICENSE-APLv2.txt).  For a complete list of files and
+their source, license and copyright, look in the "FILES" file.
+
+The following files were copied into this project from upstream and are
+necessary for the runtime use of this application:
+
+File:					License:	Copyright Holder:
+-----					--------	-----------------
+lib/jquery-1.6.2.js			MIT & GPLv2	The jQuery Project
+lib/jquery-1.6.2.min.js			MIT & GPLv2	The jQuery Project
+lib/jquery-ui-1.8.16.custom.js		MIT & GPLv2	The jQuery Project
+lib/jquery-ui-1.8.16.custom.min.js	MIT & GPLv2	The jQuery Project
+lib/jquery.mobile-1.0b3.js		MIT & GPLv2	The jQuery Project
+lib/jquery.mobile-1.0b3.min.js		MIT & GPLv2	The jQuery Project
+src/css/jquery.mobile-1.0b3.css		MIT & GPLv2	The jQuery Project
+src/css/jquery.mobile-1.0b3.min.css	MIT & GPLv2	The jQuery Project
+lib/json2.js				Public Domain	N/A
+lib/jquery.lame.js			FreeBSD		Ryan Ray[1]
+
+The following files were copied into this project from upstream and are
+only included as development tools (build, debugging, reporting).  They
+are not to be included in any releases or packages for this project:
+
+File:					License:	Copyright Holder:
+-----					--------	-----------------
+build/jslint.js				BSD-like	Douglas Crockford[2,3]
+					(w/ conditions)
+
+Notes:
+[1] ryan@trainwrecked.net
+[2] douglas@crockford.com
+[3] Portions of the file (jslint.js) are copyright Intel Corporation, 2011.

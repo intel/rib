@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<!--
+ * gui-builder - A simple WYSIWYG HTML5 app creator
+ * Copyright (c) 2011, Intel Corporation.
+ *
+ * This program is licensed under the terms and conditions of the
+ * Apache License, version 2.0.  The full text of the Apache License is at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+-->
+<html>
+
+<head>
+  <title>BWidget API Test Page</title>
+  <script type="text/javascript" src="../src/js/adm.js"></script>
+  <script type="text/javascript" src="../src/js/widgets.js"></script>
+  <script type="text/javascript" src="bwidget-api-test.js"></script>
+
+  <style>
+    span.pass { color: green }
+    span.fuzz { color: orange }
+    span.fail { color: red }
+    p.results { color: blue }
+  </style>
+</head>
+
+<body>
+
+<h1>BWidget API Test Page</h1>
+
+Tests:
+<button onclick="testWidgets()">Test BWidget API</button>
+
+<hr>
+<div id="results">
+</div>
+<div id="output">
+</div>
+
+</body>
+
+</html>

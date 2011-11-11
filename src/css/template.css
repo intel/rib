@@ -1,0 +1,53 @@
+/*
+ * gui-builder - A simple WYSIWYG HTML5 app creator
+ * Copyright (c) 2011, Intel Corporation.
+ *
+ * This program is licensed under the terms and conditions of the
+ * Apache License, version 2.0.  The full text of the Apache License is at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ */
+/*************************/
+/* Class specific tweaks */
+/*************************/
+.compact {
+    border: none;
+    margin: 0px;
+    padding: 0px;
+}
+.adm-node {
+    position: relative;
+}
+.nrc-sortable-container:not([data-role=footer]):not([data-role=header]) {
+    outline: black dashed 1px;
+}
+.nrc-sortable-container:not([data-role=footer]):not([data-role=header]).nrc-empty {
+    padding: 1.5em;
+}
+.nrc-hint-text {
+    opacity: 0.5;
+    text-align: center;
+}
+
+/********************************************/
+/* Necessary to override some jQM css rules */
+/********************************************/
+.adm-node.ui-selected,
+.nrc-sortable-container.ui-selected:not([data-role=footer]):not([data-role=header]),
+.nrc-sortable-container.ui-selected:not([data-role=footer]):not([data-role=header]).nrc-empty {
+    outline: red dashed 2px;
+    outline-offset: -2px;
+    z-index: 9999;
+}
+.ui-selectable-helper {
+    position: absolute;
+    z-index: 1111;
+    border:1px dotted black;
+}
+
+.nrc-dragging {
+    display: inline-block;
+    border: 1px solid #cccccc;
+    background-color: none;
+    background-image: none;
+    color: #2e7db2; }

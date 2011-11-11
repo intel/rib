@@ -1,0 +1,36 @@
+{
+	"uid": "1",
+	"type": "Design",
+	"children": [{	
+		"uid": "2",
+		"type": "Page",
+		"zone": "default",
+		"children": [
+		{
+			"uid": "3",
+			"type": "Header",	
+		        "zone": "top",
+			"children": []
+		},
+		{
+			"uid": "4",
+			"type": "Content",	
+		        "zone": "content",
+			"children": [
+			{
+				"uid": "6",
+				"type": "Button",
+				"zone": "default",
+				"children": []	
+			}]
+		},
+		{
+			"uid": "5",
+			"type": "Footer",	
+		        "zone": "bottom",
+			"children": []
+		}
+		] 
+				
+	}]
+}

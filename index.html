@@ -1,0 +1,81 @@
+<!DOCTYPE HTML>
+<!-- 
+PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+-->
+<!--
+ * gui-builder - A simple WYSIWYG HTML5 app creator
+ * Copyright (c) 2011, Intel Corporation.
+ *
+ * This program is licensed under the terms and conditions of the
+ * Apache License, version 2.0.  The full text of the Apache License is at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+-->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<meta http-equiv="cache-control" content="no-cache">
+<meta http-equiv="Origin" content="*">
+<title>NRC Gui Builder</title>
+<link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/base/jquery-ui.css" />
+<link rel="stylesheet" type="text/css" href="src/css/builder.css" />
+</head>
+<body class="fullsize">
+  <div id="screen" class="vbox fullsize">
+    <div id="toolbar-panel" class="flex0 bar">
+      <ul id="main-menu" class="hmenu">
+        <li>
+          <a id="file-sub-menu">File</a>
+          <ul class="sub-menu">
+            <li><a id="loadDesign">Import</a></li>
+            <li><a id="exportToLocal">Export</a>
+              <ul id="exportFiles" class="sub-menu">
+                <li><a id="exportDesign">Design(JSON)</a>
+                <li><a id="exportHTML">Code(HTML)</a></li>
+                <li><a id="exportProj">Project(nrc)</a></li>
+              </ul>
+            </li>
+            <li><a id="quit">Quit</a></li>
+          </ul>
+        </li>
+        <li>
+          <a id="view-sub-menu">View</a>
+          <ul class="sub-menu">
+            <li><a id="showADMTree">ADM Tree</a></li>
+            <li><a id="reloadDesign">Reload Design View</a></li>
+            <li><a id="preview">Preview</a></li>
+            <li><a id="theme">Theme</a></li>
+            <li><a id="newpage">Add Page</a></li>
+            <li><a id="removepage">Delete Current Page</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <div id="workspace-panel" class="flex1 hbox">
+      <div id="controls-panel" class="flex0 vbox">
+        <div id="palette-panel" class="flex1"></div>
+        <div id="properties-panel" class="flex0"></div>
+      </div>
+      <div id="controls-handle" class="flex0"><div id="handle-grip"></div></div>
+      <div id="content-panel" class="flex1 vbox">
+        <iframe id="design-view" class="flex1 vbox"></iframe>
+      </div>
+    </div>
+    <div id="status-panel" class="flex0 bar">
+      <p><b>TBD: </b>Status bar implementation goes here</p>
+    </div>
+  </div>
+  <input type="file" id="importFile" style="visibility:hidden" />
+<script type="text/javascript" src="lib/jquery-1.6.2.min.js"></script>
+<script type="text/javascript" src="lib/jquery-ui-1.8.16.custom.min.js"></script>
+<script type="text/javascript" src="lib/jquery.lame.js"></script>
+<script type="text/javascript" src="lib/json2.js"></script>
+<script type="text/javascript" src="src/js/widgets.js"></script>
+<script type="text/javascript" src="src/js/adm.js"></script>
+<script type="text/javascript" src="src/js/palette.js"></script>
+<script type="text/javascript" src="src/js/properties.js"></script>
+<script type="text/javascript" src="src/js/fs.js"></script>
+<script type="text/javascript" src="src/js/serialize.js"></script>
+<script type="text/javascript" src="src/js/builder.js"></script>
+</body>
+</html>

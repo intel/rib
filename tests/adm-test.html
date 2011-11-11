@@ -1,0 +1,87 @@
+<!DOCTYPE HTML>
+<!--
+ * gui-builder - A simple WYSIWYG HTML5 app creator
+ * Copyright (c) 2011, Intel Corporation.
+ *
+ * This program is licensed under the terms and conditions of the
+ * Apache License, version 2.0.  The full text of the Apache License is at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+-->
+<html>
+<head>
+  <title>ADM Test Page</title>
+  <script type="text/javascript" src="../src/js/adm.js"></script>
+  <script type="text/javascript" src="../src/js/widgets.js"></script>
+  <script type="text/javascript" src="test-utils.js"></script>
+  <script type="text/javascript" src="adm-test.js"></script>
+</head>
+
+<body onload="renderDesignTree()">
+<h1>ADM Test Page</h1>
+
+Tests:
+<button onclick="testADM()">Test ADM</button>
+<button onclick="setPageLanding()">Set Page ID to "landing"</button>
+<button onclick="setPageDialog()">Set Page ID to "dialog"</button>
+<button onclick="getTemplate()">Get Template</button>
+<button onclick="bindUpdateHandler()">Bind Event Handler</button>
+<button onclick="unbindUpdateHandler()">Unbind Event Handler</button>
+
+<br> <br>
+Widgets:
+<button onclick="addPage()">Add Page</button>
+<button onclick="addNode('Header')">Add Header</button>
+<button onclick="removeFromZone('top', 0)">Remove Header</button>
+<button onclick="addNode('Footer')">Add Footer</button>
+<button onclick="removeFromZone('bottom', 0)">Remove Footer</button>
+<button onclick="addNode('Content')">Add Content</button>
+<button onclick="addNode('Button')">Add Button</button>
+<button onclick="addNode('TextInput')">Add Text Entry</button>
+<button onclick="addNode('Slider')">Add Slider</button>
+
+<hr>
+ID: <input type="text" id="findid"/>
+<button onclick="findById()">Find ID</button>
+and
+<button onclick="setActivePage()">Set Active Page</button>
+<button onclick="insertButtonBefore()">Insert Button Before</button>
+<button onclick="insertButtonAfter()">Insert Button After</button>
+, or
+<button onclick="removeById()">Remove by ID</button>
+, or
+<button onclick="selectById()">Select by ID</button>
+<br>
+<button onclick="moveNode()">Move Node</button>
+ID: <input type="text" id="movefrom"/>
+To Parent ID: <input type="text" id="moveto"/>
+Zone: <input type="text" id="movezone"/>
+Index: <input type="text" id="moveindex"/>
+
+<br>
+<button id="btn_ids" onclick="toggleShowIDs()">Show IDs</button>
+<button id="btn_zones" onclick="toggleShowZones()">Show Zones</button>
+<button id="btn_props" onclick="toggleShowProperties()">Show Properties</button>
+<button id="btn_selectables" onclick="toggleShowSelectables()">Show Selectables</button>
+<button id="btn_moveables" onclick="toggleShowMoveables()">Show Moveables</button>
+<button id="btn_containers" onclick="toggleShowContainers()">Show Containers</button>
+
+<br> <br>
+Design Tree:
+<pre id="tree">
+</pre>
+
+<hr>
+On highlighted node:<br>
+<button onclick="getProperties()">Get Properties</button>
+<button onclick="getDefaultProperties()">Get Default Properties</button>
+Key: <input type="text" id="propkey"/>
+<button onclick="getProperty()">Get Property</button>
+Value: <input type="text" id="propval"/>
+<button onclick="setProperty()">Set Property</button>
+<pre id="props">
+</div>
+
+</body>
+
+</html>

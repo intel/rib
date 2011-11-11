@@ -1,0 +1,179 @@
+/*
+ * gui-builder - A simple WYSIWYG HTML5 app creator
+ * Copyright (c) 2011, Intel Corporation.
+ *
+ * This program is licensed under the terms and conditions of the
+ * Apache License, version 2.0.  The full text of the Apache License is at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ */
+/***************************/
+/* Element specific tweaks */
+/***************************/
+html {
+    margin: 0px;
+    padding: 0px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+body {
+    margin: 0px;
+    padding: 1em;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+h1 {
+    text-align: center;
+    text-shadow: 3px 3px 3px gray;
+    font-family: sans-serif;
+}
+h2 {
+    padding: 0em;
+    text-shadow: 3px 3px 3px gray;
+    margin-bottom: 0px;
+    font-family: sans-serif;
+}
+
+/*************************/
+/* Class specific tweaks */
+/*************************/
+.TOC {
+    padding: 1em;
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    right: 0;
+    border: 1px solid black;
+    background-color: white;
+    font-family: sans-serif;
+    text-align: center;
+}
+.TOC li {
+    font-family: sans-serif;
+    text-align: left;
+    margin-left: -1em;
+}
+.section {
+    border: 1px solid black;
+    background-color: none;
+    margin-left: 0px;
+    padding: 0px;
+    position: relative;
+}
+.section .title {
+    border-bottom: 1px solid black;
+    background-color: darkgray;
+    font: normal bold 1em sans-serif;
+    padding: 0.5em;
+    display: block;
+    text-transform: capitalize;
+}
+.section ul {
+    margin: 0px;
+    padding: 0px;
+    border-top: 1px solid maroon;
+    position: relative;
+}
+.section li {
+    display: block;
+    padding-left: 0px;
+    position: relative;
+}
+.section li > .instance {
+    background-color: lightgray;
+    border: 1px solid lightgray;
+    font-family: monospace;
+    padding-left: 0.5em;
+    display: block;
+    position: relative;
+}
+.section li > .evidence {
+    display: none;
+    visibility: hidden;
+}
+.section li:hover > .instance {
+    box-shadow: 3px 3px 3px gray;
+    background-color: darkgray;
+    border: 1px solid white;
+    font: bold 1em monospace;
+    z-index: 1000;
+}
+.section li:hover > .evidence {
+    box-shadow: 3px 3px 3px gray;
+    background-color: darkgray;
+    border: 1px solid white;
+    border-top: none;
+    padding: 1em;
+    font: normal 1em monospace;
+    word-wrap: break-word;
+    position: absolute;
+    margin-top: -1px;
+    margin-right: 0px;
+    top: auto;
+    right: 0px;
+    width: 85%;
+    height: auto;
+    display: inline;
+    visibility: visible;
+    z-index: 1001;
+}
+.section li:hover > .evidence:empty {
+    display: none;
+    visibility: hidden;
+}
+.evidence {
+    border: 1px dashed darkgray;
+    margin: 0.5em;
+    margin-left: 2em;
+    padding: 1em;
+    font: normal 1em monospace;
+    display: block;
+}
+.evidence .title {
+    border: none;
+    background: none;
+    font: normal smaller sans-serif;
+    padding: 0.5em;
+    display: inline;
+    text-transform: capitalize;
+}
+.evidence .instance {
+    border: none;
+    background: none;
+    font: normal smaller monospace;
+    padding: 0.5em;
+    display: inline;
+}
+.detail {
+    padding: 0px;
+    margin: 0px;
+    display: table-row;
+}
+.detail > .title {
+    padding: 0px;
+    margin: 0px;
+    display: table-cell;
+    font-family: monospace;
+    font-weight: bold;
+    text-transform: capitalize;
+}
+.detail > .instance {
+    padding: 0px;
+    padding-bottom: 0.5em;
+    padding-left: 1em;
+    margin: 0px;
+    font: normal monospace;
+    display: table-cell;
+}
+
+/**********************/
+/* ID specific tweaks */
+/**********************/
+#errors > .title {
+    background-color: firebrick;
+}
+#implieds > .title, #unused > .title {
+    background-color: gold;
+}

@@ -1,0 +1,1305 @@
+/*
+ * gui-builder - A simple WYSIWYG HTML5 app creator
+ * Copyright (c) 2011, Intel Corporation.
+ *
+ * This program is licensed under the terms and conditions of the
+ * Apache License, version 2.0.  The full text of the Apache License is at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ */
+"use strict";
+
+var ADMEvent = {
+    _lastEventId: 0
+};
+
+/**
+ * Base class for objects that support sending ADM events.
+ *
+ * @class
+ */
+var ADMEventSource = {
+    _admEvents: {},
+    _suppressEvents: 0,
+
+    /**
+     * Adds named event to list of known event types for this object,
+     * initialized with no event listeners.
+     *
+     * @param {String} name The name of the event.
+     */
+    addEventType: function (name) {
+        this._admEvents[name] = [];
+    },
+
+    /**
+     * Binds the given handler function to be called whenever the named event
+     * occurs on this object.
+     *
+     * @param {String} name The name of the event.
+     * @param {Function} handler Handler function to be called on this event.
+     *                           The function should expect event and data
+     *                           arguments.
+     * @param {Any} data Any data or object to be passed to the handler.
+     * @see ADMEventSource.unbind
+     */
+    bind: function (name, handler, data) {
+        if (typeof name !== "string") {
+            console.log("Error: called bind with a non-string event name");
+            return;
+        }
+        var eventType = this._admEvents[name];
+        if (eventType === undefined) {
+            console.log("Error: bind did not find event type " + name);
+            return;
+        }
+        eventType.push({ handler: handler, data: data });
+    },
+
+    /**
+     * Removes the specified handler from being called on named event occurs,
+     * or if handler is undefined, removes all handlers for the named event.
+     *
+     * @param {String} name The name of the event.
+     * @param {Function} handler Handler function previously passed to bind().
+     * @return {Number} The number of event handlers that were removed.
+     * @see ADMEventSource.bind
+     */
+    unbind: function (name, handler) {
+        var removed = 0, listeners, i;
+        if (typeof name !== "string") {
+            console.log("Error: called unbind with a non-string event name");
+            return removed;
+        }
+        listeners = this._admEvents[name];
+        if (listeners) {
+            for (i = listeners.length - 1; i >= 0; i--) {
+                if (handler === undefined || listeners[i].handler === handler) {
+                    listeners.splice(i, 1);
+                    removed++;
+                }
+            }
+        }
+        return removed;
+    },
+
+    /**
+     * Fires named event from this object, with extra properties set in data.
+     *
+     * @param {String} name The name of the event.
+     * @param {Object} data Object with properties to include in the event.
+     * @see ADMEventSource.bind
+     * @see ADMEventSource.unbind
+     */
+    fireEvent: function (name, data) {
+        var listeners, event, i, length;
+        if (this._suppressEvents > 0) {
+            return;
+        }
+
+        listeners = this._admEvents[name];
+        if (listeners === undefined) {
+            console.log("Error: fireEvent did not find event type " + name);
+            return;
+        }
+
+        event = {
+            id: ++ADMEvent._lastEventId,
+            name: name
+        };
+        for (i in data) {
+            if (data.hasOwnProperty(i)) {
+                event[i] = data[i];
+            }
+        }
+
+        length = listeners.length;
+        for (i = 0; i < length; i++) {
+            listeners[i].handler(event, listeners[i].data);
+        }
+    },
+
+    /**
+     * Suppresses events from this event source. Each call with a true argument
+     * must be matched with a call with a false argument before events will
+     * be sent again.
+     *
+     * @param {Boolean} flag True to suppress events, false to stop suppressing
+     *                       events.
+     */
+    suppressEvents: function (flag) {
+        if (flag) {
+            this._suppressEvents++;
+        } else {
+            if (this._suppressEvents > 0) {
+                this._suppressEvents--;
+            }
+        }
+    }
+};
+
+/**
+ * Global object to access the ADM.
+ *
+ * @class
+ * @extends ADMEventSource
+ */
+var ADM = {
+    _design: null,
+    _activePage: null,
+    _selection: null,
+
+    init: function () {
+        // copy event functions from ADMEventSource
+        var i;
+        for (i in ADMEventSource) {
+            /*jslint forin: true */
+            this[i] = ADMEventSource[i];
+        }
+    }
+};
+ADM.init();
+
+/**
+ * Event sent by the ADM object when the design it is managing is
+ * replaced, such as after loading a design from a file.
+ *
+ * @name ADM#designReset
+ * @event
+ * @param {Object} event Object including standard "id" and "name"
+ *                       properties, as well as a
+ *                         "design" property set to the new design
+ *                                  ADMNode, or null.
+ * @param {Any} data The data you supplied to the bind() call.
+ * @see ADMEventSource.bind
+ * @see ADMEventSource.unbind
+ */
+ADM.addEventType("designReset");
+
+/**
+ * Event sent by the ADM object when the active page changes. When the
+ * design is reset, the active page is set to null automatically.
+ *
+ * @name ADM#activePageChanged
+ * @event
+ * @param {Object} event Object including standard "id" and "name"
+ *                       properties, as well as a
+ *                         "page" property set to the new page ADMNode,
+ *                                or null.
+ * @param {Any} data The data you supplied to the bind() call.
+ * @see ADMEventSource.bind
+ * @see ADMEventSource.unbind
+ */
+ADM.addEventType("activePageChanged");
+
+/**
+ * Event sent by the ADM object when the selected widget changes. When
+ * the active page changes, the selected widget is set to null
+ * automatically.
+ *
+ * @name ADM#selectionChanged
+ * @event
+ * @param {Object} event Object including standard "id" and "name"
+ *                       properties, as well as a
+ *                         "node" property set to the new selected
+ *                                ADMNode, or null if none, and a
+ *                         "uid"  property set to the UID of that node,
+ *                                or null.
+ * @param {Any} data The data you supplied to the bind() call.
+ * @see ADMEventSource.bind
+ * @see ADMEventSource.unbind
+ */
+ADM.addEventType("selectionChanged");
+
+/**
+ * Gets the singleton design root.
+ *
+ * @return {ADMDesign} The root design object.
+ */
+ADM.getDesignRoot = function () {
+    if (!ADM._design) {
+        ADM.setDesignRoot(new ADMNode("Design"));
+    }
+    return ADM._design;
+};
+
+/**
+ * Sets the singleton design root. Sends a "designReset" event if
+ * design changed.
+ *
+ * @param {ADMDesign} design The root design object.
+ * @return {Boolean} True if the design root was actually changed.
+ */
+ADM.setDesignRoot = function (design) {
+    var children;
+    if (!(design instanceof ADMNode) || design.getType() !== "Design") {
+        console.log("Warning: tried to set invalid design root");
+        return false;
+    }
+
+    if (ADM._design !== design) {
+        ADM._design = design;
+        ADM.setActivePage(null);  // this will also setSelected(null)
+
+        // ensure a design always has a page
+        children = ADM._design.getChildren();
+        if (children.length === 0) {
+            ADM._design.addChild(new ADMNode("Page"));
+        }
+
+        ADM.fireEvent("designReset", { design: design });
+        return true;
+    }
+    return false;
+};
+
+/**
+ * Gets the active page in the design.
+ *
+ * @return {ADMPage} The active page, or null if none.
+ */
+ADM.getActivePage = function () {
+    return ADM._activePage;
+};
+
+/**
+ * Sets the active page in the design. Sends an "activePageChanged" event
+ * if the page changed.
+ *
+ * @param {ADMPage} page The active page, or null if none.
+ * @return {Boolean} True if the active page was set successfully.
+ */
+ADM.setActivePage = function (page) {
+    if (page !== null && (!(page instanceof ADMNode) ||
+                          page.getType() !== "Page")) {
+        console.log("Warning: tried to set an invalid active page");
+        return false;
+    }
+
+    if (ADM._activePage !== page) {
+        ADM._activePage = page;
+        ADM.setSelected(null);
+        ADM.fireEvent("activePageChanged", { page: page });
+        return true;
+    }
+    return false;
+};
+
+/**
+ * Gets the primary selected widget UID.
+ *
+ * @return {Number} The UID of the selected widget, or null if none.
+ */
+ADM.getSelected = function () {
+    return ADM._selection;
+};
+
+/**
+ * Sets the primary selected widget by UID. Sends a "selectionChanged"
+ * event if the selection actually changes.
+ *
+ * @param {Number} The UID of the selected widget, or null if none.
+ * @return {Boolean} True if the selection was set successfully.
+ */
+ADM.setSelected = function (uid) {
+    var node = null;
+    if (uid !== null) {
+        uid = Number(uid);
+        node = ADM.getDesignRoot().findNodeByUid(uid);
+        if (!node) {
+            console.log("Warning: new selected widget not found");
+            return;
+        }
+    }
+
+    if (node && !node.isSelectable()) {
+        return false;
+    }
+
+    if (ADM._selection !== uid) {
+        ADM._selection = uid;
+        ADM.fireEvent("selectionChanged", { node: node, uid: uid });
+        return true;
+    }
+    return false;
+};
+
+/**
+ * Add a child of the given type to parent
+ *
+ * @param {Number} parentUid The UID of the parent object in the tree.
+ * @param {String} childType The widget type string for the child to add.
+ * @return {ADMNode} The child object, on success; null, on failure.
+ */
+ADM.addChild = function (parentUid, childType) {
+    var design, parent, child;
+    design = ADM.getDesignRoot();
+    parent = design.findNodeByUid(parentUid);
+    if (!parent) {
+        console.log("Warning: invalid parent uid while adding child: " +
+                    parentUid);
+        return null;
+    }
+
+    child = ADM.createNode(childType);
+    if (!child) {
+        console.log("Warning: could not create ADM object for type " +
+                    childType);
+        return null;
+    }
+
+    if (parent.addChild(child)) {
+        return child;
+    }
+    return null;
+};
+
+/**
+ * Not intended as a public API.
+ * @private
+ */
+ADM.insertChildRelative = function (siblingUid, childType, offset) {
+    var design, sibling, child;
+    design = ADM.getDesignRoot();
+    sibling = design.findNodeByUid(siblingUid);
+    if (!sibling) {
+        console.log("Warning: invalid sibling id while inserted child: " +
+                    siblingUid);
+        return null;
+    }
+
+    child = ADM.createNode(childType);
+    if (!child) {
+        console.log("Warning: could not create ADM object for type " +
+                    childType);
+        return null;
+    }
+
+    if (sibling.insertChildRelative(child, offset)) {
+        return child;
+    }
+    return null;
+};
+
+/**
+ * Inserts new widget of childType immediately before the widget with
+ * siblingUid, if found.
+ *
+ * @param {Number} siblingUid The UID of the existing sibling.
+ * @param {String} childType The widget type of the new widget to create.
+ * @return {ADMNode} The new child, or null on failure.
+ */
+ADM.insertChildBefore = function (siblingUid, childType) {
+    return ADM.insertChildRelative(siblingUid, childType, 0);
+};
+
+/**
+ * Inserts new widget of childType immediately after the widget with
+ * siblingUid, if found.
+ *
+ * @param {Number} siblingUid The UID of the existing sibling.
+ * @param {String} childType The widget type of the new widget to create.
+ * @return {ADMNode} The new child, or null on failure.
+ */
+ADM.insertChildAfter = function (siblingUid, childType) {
+    return ADM.insertChildRelative(siblingUid, childType, 1);
+};
+
+/**
+ * Removes the child with the given UID from the design.
+ *
+ * @param {Number} uid The unique ID of the child to remove.
+ * @return {ADMNode} The removed child, or null it or its parent is not found.
+ */
+ADM.removeChild = function (uid) {
+    var design, child, parent;
+    design = ADM.getDesignRoot();
+    child = design.findNodeByUid(uid);
+    if (!child) {
+        console.log("Warning: invalid uid while removing child: " + uid);
+        return null;
+    }
+
+    parent = child.getParent();
+    if (!parent) {
+        console.log("Warning: invalid parent while removing child: " + uid);
+        return null;
+    }
+
+    return parent.removeChild(child);
+};
+
+/**
+ * Creates an ADM node with the given widget type.
+ *
+ * @param {String} widgetType The widget type from the widget registry.
+ * @return {ADMNode} The node, or null if the widget type was invalid.
+ */
+ADM.createNode = function (widgetType) {
+    var node = new ADMNode(widgetType);
+    if (node.isValid()) {
+        return node;
+    }
+    return null;
+};
+
+/**
+ * Creates an ADMNode instance, the object the ADM tree consists of.
+ *
+ * @class
+ * @extends ADMEventSource
+ * @constructor
+ * @this {ADMNode}
+ * @param {String} widgetType The name of the widget type being created.
+ */
+function ADMNode(widgetType) {
+    var currentType = widgetType, widget, zones, length, i;
+
+    this._valid = false;
+    this._inheritance = [];
+
+    while (currentType) {
+        widget = BWidgetRegistry[currentType];
+        if (typeof widget === "object") {
+            this._inheritance.push(currentType);
+            currentType = widget.parent;
+        } else {
+            console.log("Error: invalid type hierarchy creating ADM node");
+            return;
+        }
+    }
+
+    this._uid = ++ADMNode.prototype._lastUid;
+
+    this._root = null;
+    this._parent = null;
+    this._zone = null;
+    this._properties = {};
+
+    this._zones = {};
+    zones = BWidget.getZones(widgetType);
+    length = zones.length;
+    for (i = 0; i < length; i++) {
+        this._zones[zones[i]] = [];
+    }
+
+    this._valid = true;
+
+    /**
+     * Sent by an ADMNode when a direct child is added or inserted within it.
+     *
+     * @name ADMNode#childAdded
+     * @event
+     * @param {Object} event Object including standard "id" and "name"
+     *                       properties, as well as a
+     *                         "parent" property set to the parent ADMNode, a
+     *                         "child"  property set to the new child ADMNode, a
+     *                         "zone"   property set to the string name of the
+     *                                  zone the child is in, and an
+     *                         "index"  property set to the integer index of the
+     *                                  child's position within that zone.
+     * @param {Any} data The data you supplied to the bind() call.
+     * @see ADMEventSource.bind
+     * @see ADMEventSource.unbind
+     */
+    this.addEventType("childAdded");
+
+    /**
+     * Sent by an ADMNode when a direct child is removed from it.
+     *
+     * @name ADMNode#childRemoved
+     * @event
+     * @param {Object} event Object including standard "id" and "name"
+     *                       properties, as well as a
+     *                         "parent" property set to the parent ADMNode, a
+     *                         "child"  property set to the removed child
+     *                                  ADMNode, a
+     *                         "zone"   property set to the string name of the
+     *                                  zone the child was in, and an
+     *                         "index"  property set to the integer index of
+     *                                  the child's former position within that
+     *                                  zone.
+     * @param {Any} data The data you supplied to the bind() call.
+     * @see ADMEventSource.bind
+     * @see ADMEventSource.unbind
+     */
+    this.addEventType("childRemoved");
+
+    /**
+     * Sent by an ADMNode when a property changes.
+     *
+     * @name ADMNode#propertyChanged
+     * @event
+     * @param {Object} event Object including standard "id" and "name"
+     *                       properties, as well as a
+     *                         "node"     property set to the affected
+     *                                    ADMNode, a
+     *                         "property" property set to name of the affected
+     *                                    property, and a
+     *                         "value"    property set to the new value of that
+     *                                    property.
+     * @param {Any} data The data you supplied to the bind() call.
+     * @see ADMEventSource.bind
+     * @see ADMEventSource.unbind
+     */
+    this.addEventType("propertyChanged");
+
+    if (this.instanceOf("Design")) {
+        this._root = this;
+
+        /**
+         * Sent by an ADMNode of type "Design" whenever anything changes in its
+         * tree of nodes; for example, when a child is added or removed, or a
+         * property changes.
+         *
+         * @name ADMNode#modelUpdated
+         * @event
+         * @param {Object} event Object including standard "id" and "name"
+         *                       properties, as well as a
+         *                         "node" property set to the root of the
+         *                                affected subtree (for example, the
+         *                                parent node when a child is added or
+         *                                removed, or the node on which a
+         *                                property changes).
+         * @param {Any} data The data you supplied to the bind() call.
+         * @see ADMEventSource.bind
+         * @see ADMEventSource.unbind
+         */
+        this.addEventType("modelUpdated");
+    }
+}
+
+ADMNode.prototype = ADMEventSource;
+
+// private static members
+ADMNode.prototype._lastUid = 0;
+
+// Public API
+
+/**
+ * Tests whether this node is valid.
+ *
+ * @return {Boolean} True if the node is valid.
+ */
+ADMNode.prototype.isValid = function () {
+    return this._valid;
+};
+
+/**
+ * Gets the type string.
+ * 
+ * @return {String} The leaf type string for this object.
+ */
+ADMNode.prototype.getType = function () {
+    return this._inheritance[0];
+};
+
+/**
+ * Gets the full type string.
+ *
+ * @return {String} The full type of this object with inheritance trail.
+ */
+ADMNode.prototype.getFullType = function () {
+    return this._inheritance.join(":");
+};
+
+/**
+ * Checks whether this node is or inherits from the given type.
+ *
+ * @param {String} Widget type.
+ * @param {Boolean} True if the node is or inherits from the given type.
+ */
+ADMNode.prototype.instanceOf = function (widgetType) {
+    var length, i;
+    length = this._inheritance.length;
+    for (i = 0; i < length; i++) {
+        if (this._inheritance[i] === widgetType) {
+            return true;
+        }
+    }
+    return false;
+};
+
+/**
+ * Gets the object's unique ID. This ID is valid for the run-time session,
+ * but not persisted.
+ *
+ * @return {Number} The unique ADM ID of this object instance.
+ */
+ADMNode.prototype.getUid = function () {
+    return this._uid;
+};
+
+/**
+ * Gets the parent object of this object in the design tree, if any.
+ *
+ * @return {ADMNode} The parent object, or null if unparented.
+ */
+ADMNode.prototype.getParent = function () {
+    return this._parent;
+};
+
+/**
+ * Gets the zone in the parent object that this object belongs to, if any.
+ *
+ * @return {String} The zone name, or null if none.
+ */
+ADMNode.prototype.getZone = function () {
+    return this._zone;
+};
+
+/**
+ * Gets the zone index at which this node is contained in its parent zone.
+ *
+ * @return {Number} The zone index, or -1 on error.
+ */
+ADMNode.prototype.getZoneIndex = function () {
+    var zone, length, i;
+    if (!this._parent) {
+        console.log("Error: invalid parent while getting zone index");
+        return -1;
+    }
+
+    zone = this._parent._zones[this._zone];
+    if (!zone || !zone.length) {
+        console.log("Error: zone not found while getting zone index: " +
+                    this._zone);
+        return -1;
+    }
+
+    length = zone.length;
+    for (i = 0; i < length; i++) {
+        if (zone[i] === this) {
+            return i;
+        }
+    }
+};
+
+/**
+ * Returns whether this node is selected.
+ *
+ * @return {Boolean} True if this node is selected.
+ */
+ADMNode.prototype.isSelected = function () {
+    return this._uid === ADM.getSelected();
+};
+
+/**
+ * Tests whether this node is allowed to be selected.
+ *
+ * @return {Boolean} True if the node is allowed to be selected.
+ */
+ADMNode.prototype.isSelectable = function () {
+    return BWidget.isSelectable(this.getType());
+};
+
+/**
+ * Tests whether this node is allowed to be repositioned.
+ *
+ * @return {Boolean} True if the node is allowed to be repositioned.
+ */
+ADMNode.prototype.isMoveable = function () {
+    return BWidget.isMoveable(this.getType());
+};
+
+/**
+ * Tests whether this node is a container object.  An object is
+ * considered to be a container if it has one (1) zone and that
+ * zone's cardinality is "N".
+ *
+ * @return {Boolean} True if the node is a container object.
+ */
+ADMNode.prototype.isContainer = function () {
+    var zones = BWidget.getZones(this.getType());
+    return (zones.length === 1 &&
+            BWidget.getZoneCardinality(this.getType(),zones[0]) === "N");
+};
+
+/**
+ * Finds the object in the subtree rooted at this object (inclusive), by UID.
+ *
+ * @param {Number} uid The unique ID of the object to be found.
+ * @return {ADMNode} The ADM object with the given UID, or null if not found.
+ */
+ADMNode.prototype.findNodeByUid = function (uid) {
+    var children, i, rval;
+    /*jslint eqeq: true */
+    if (this._uid == uid) {
+        return this;
+    }
+
+    // TODO: we could hash this in an object for faster lookup
+    children = this.getChildren();
+    for (i = children.length - 1; i >= 0; i--) {
+        rval = children[i].findNodeByUid(uid);
+        if (rval) {
+            return rval;
+        }
+    }
+    return null;
+};
+
+/**
+ * Gets the ADMDesign object at the root of this object's tree.
+ *
+ * @return {ADMDesign} The ADMDesign root object, or null if this object is
+ *                     unparented or the root is not an ADMDesign.
+ */
+ADMNode.prototype.getDesign = function () {
+    return this._root;
+};
+
+/**
+ * Fires named event from the ADMDesign at the root of the tree, if found.
+ *
+ * @param {String} name The name of the event.
+ * @param {Object} data Object with properties to include in the event.
+ */
+ADMNode.prototype.fireModelEvent = function (name, data) {
+    var design = this.getDesign();
+    if (!design) {
+        console.log("Warning: no root design found to fire model event");
+        return;
+    }
+    design.fireEvent(name, data);
+};
+
+/**
+ * Gets the children of this object in the design tree.
+ *
+ * @return {Array} Array of the the children of this object.
+ */
+ADMNode.prototype.getChildren = function () {
+    var children = [], zones, length, i;
+    zones = BWidget.getZones(this.getType());
+    length = zones.length;
+    for (i = 0; i < length; i++) {
+        children = children.concat(this._zones[zones[i]]);
+    }
+    return children;
+};
+
+/**
+ * Gets the count of children of this object in the design tree.
+ *
+ * @return {Number} Total count of this object's children.
+ */
+ADMNode.prototype.getChildrenCount = function () {
+    var count = 0, zones, length, i;
+    zones = BWidget.getZones(this.getType());
+    length = zones.length;
+    for (i = 0; i < length; i++) {
+        count += this._zones[zones[i]].length;
+    }
+    return count;
+};
+
+/**
+ * Adds given child object to this object, generally at the end of the first
+ * zone that accepts the child.
+ *
+ * @param {ADMNode} child The child object to be added.
+ * @return {Boolean} True if the child was added successfully, false otherwise.
+ */
+ADMNode.prototype.addChild = function (child) {
+    var myType, childType, zones, redirect, widgets, wrapper, length, i;
+    myType = this.getType();
+    childType = child.getType();
+
+    zones = BWidget.zonesForChild(myType, childType);
+    if (zones.length === 0) {
+        redirect = BWidget.getRedirect(myType);
+        if (redirect) {
+            widgets = this._zones[redirect.zone];
+            if (widgets && widgets.length > 0) {
+                if (widgets[0].addChild(child)) {
+                    return true;
+                }
+            } else {
+                wrapper = ADM.createNode(redirect.type);
+                if (wrapper.addChild(child)) {
+                    if (!this.addChildToZone(wrapper, redirect.zone)) {
+                        console.log("Unable to create redirect wrapper for " +
+                                    myType);
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        console.log("Warning: no zones found for child type");
+        return false;
+    }
+
+    length = zones.length;
+    for (i = 0; i < length; i++) {
+        if (this.addChildToZone(child, zones[i])) {
+            return true;
+        }
+    }
+
+    return false;
+};
+
+/**
+ * Adds given child object to the given zone in this object.
+ *
+ * @param {ADMNode} child The child object to be added.
+ * @param {String} zoneName The name of the zone in which to add the child.
+ * @param {Number} zoneIndex [Optional] The index at which to insert the child,
+ *                           or if undefined, the default (end) location will
+ *                           be used.
+ * @return {Boolean} True if the child was added successfully, false otherwise.
+ */
+ADMNode.prototype.addChildToZone = function (child, zoneName, zoneIndex) {
+    // requires: assumes cardinality is "N", or a numeric string
+    var add = false, myType, childType, zone, cardinality, limit;
+    myType = this.getType();
+    childType = child.getType();
+    zone = this._zones[zoneName];
+
+    if (!BWidget.zoneAllowsChild(myType, zoneName, childType)) {
+        console.log("Warning: zone " + zoneName + " doesn't allow child type " +
+                    childType);
+        return false;
+    }
+
+    if (!BWidget.childAllowsParent(myType, childType)) {
+        console.log("Warning: child type " + childType + " doesn't allow " +
+                    "parent type " + myType);
+        return false;
+    }
+
+    cardinality = BWidget.getZoneCardinality(myType, zoneName);
+    if (!cardinality) {
+        console.log("Warning: no cardinality found for zone " + zoneName);
+        return false;
+    }
+
+    if (cardinality !== "N") {
+        limit = parseInt(cardinality, 10);
+        if (zone.length >= limit) {
+            // this zone is already full
+            console.log("Debug: zone already full: " + zoneName);
+            return false;
+        }
+    }
+
+    if (zoneIndex === undefined) {
+        zoneIndex = zone.length;
+    }
+    return this.insertChildInZone(child, zoneName, zoneIndex);
+};
+
+/**
+ * Inserts a new child node as a sibling relative to this existing node. They
+ * will have the same parent and be in the same zone, if the insertion is
+ * allowed.
+ * 
+ * @param {ADMNode} child The child node to insert.
+ * @param {Number} offset The offset from this item to insert the child at:
+ *                        0 is immediately before, 1 is immediately after,
+ *                        lower numbers are at earlier positions and higher
+ *                        numbers at higher positions.
+ * @return {Boolean} True if the child was successfully inserted.
+ */
+ADMNode.prototype.insertChildRelative = function (child, offset) {
+    var zone, i, index;
+    if (!this._parent) {
+        console.log("Warning: cannot insert child relative to orphan sibling");
+        return false;
+    }
+
+    zone = this._parent._zones[this._zone];
+    if (!zone || !zone.length) {
+        console.log("Warning: zone not found in parent");
+        return false;
+    }
+
+    for (i = zone.length - 1; i >= 0; i--) {
+        if (zone[i] === this) {
+            index = i + offset;
+
+            // limit index to valid range
+            if (index < 0) {
+                index = 0;
+            } else if (index >= zone.length) {
+                index = zone.length;
+            }
+
+            return this._parent.addChildToZone(child, this._zone, index);
+        }
+    }
+
+    console.log("Warning: sibling not found in expected zone");
+    return false;
+};
+
+/**
+ * Inserts child in the given zone at the given index. Note: Does not check
+ * cardinality, this should have been validated already.
+ *
+ * @param {ADMNode} child The child object to be added.
+ * @param {String} zoneName The name of the zone in which to insert the child.
+ * @param {Number} index The index in the zone at which to insert the child.
+ * @return {Boolean} True if the child was added successfully, false otherwise.
+ */
+ADMNode.prototype.insertChildInZone = function (child, zoneName, index) {
+    function setRootRecursive(node, root) {
+        var children, i;
+        node._root = root;
+        children = node.getChildren();
+        for (i = children.length - 1; i >= 0; i--) {
+            setRootRecursive(children[i], root);
+        }
+    }
+
+    var zone = this._zones[zoneName];
+    if (!zone) {
+        console.log("Error: zone not found in insertChildInZone: " + zoneName);
+        return false;
+    }
+    if (index < 0 || index > zone.length) {
+        console.log("Error: invalid child insertion index");
+        return false;
+    }
+    if (child instanceof ADMNode) {
+        zone.splice(index, 0, child);
+
+        setRootRecursive(child, this._root);
+
+        child._parent = this;
+        child._zone = zoneName;
+        this.fireEvent("childAdded",
+                       { parent: this, child: child, index: index,
+                         zone: zoneName });
+        this.fireModelEvent("modelUpdated", { node: this });
+        return true;
+    } else {
+        console.log("Warning: children of ADMNode must be ADMNode");
+        return false;
+    }
+};
+
+/**
+ * Moves a node from its current parent to a new parent within the same design.
+ *
+ * @param {ADMNode} newParent The new parent for this node.
+ * @param {String} zoneName The new zone for this child in the parent.
+ * @param {Number} zoneIndex [Optional] The index at which to insert the child,
+ *                           or if undefined, the default (end) location will
+ *                           be used.
+ */
+ADMNode.prototype.moveNode = function (newParent, zoneName, zoneIndex) {
+    var oldParent, oldDesign, newDesign, oldZone, oldIndex, removed, rval;
+    rval = false;
+    if (!newParent) {
+        console.log("Error: invalid argument to moveChild");
+        return undefined;
+    }
+
+    if (this._root !== newParent._root) {
+        console.log("Error: attempted to move node between designs");
+        return undefined;
+    }
+
+    oldParent = this._parent;
+    if (!oldParent) {
+        console.log("Error: parent invalid in moveNode");
+        return undefined;
+    }
+
+    // TODO: could optimize case where parent/zone don't change
+
+    oldParent.suppressEvents(true);
+    this._root.suppressEvents(true);
+    newParent.suppressEvents(true);
+
+    oldZone = this._zone;
+    oldIndex = this.getZoneIndex();
+    removed = oldParent.removeChild(this);
+    if (removed) {
+        if (removed != this) {
+            console.log("Error: removed node didn't match in moveNode");
+        } else {
+            // try to add child to new parent and zone
+            rval = newParent.addChildToZone(this, zoneName, zoneIndex);
+            if (!rval) {
+                // try to replace node in original position
+                oldParent.addChildToZone(this, oldZone, oldIndex);
+            }
+        }
+    }
+
+    newParent.suppressEvents(false);
+    this._root.suppressEvents(false);
+    oldParent.suppressEvents(false);
+
+    if (rval) {
+        // TODO: If these node events start getting used, we might add a
+        //       childMoved event for the case where a node merely changes
+        //       index within a zone or within a parent
+        this.fireEvent("childRemoved",
+                       { parent: oldParent, child: this, index: oldIndex,
+                         zone: oldZone });
+        this.fireEvent("childAdded",
+                       { parent: newParent, child: this, index: zoneIndex,
+                         zone: zoneName });
+
+        // only send two modelUpdated events if two parent nodes were affected
+        if (oldParent !== newParent) {
+            this.fireModelEvent("modelUpdated", { node: oldParent });
+        }
+        this.fireModelEvent("modelUpdated", { node: newParent });
+    }
+
+    return rval;
+};
+
+/**
+ * Removes the given child from this node.
+ *
+ * @param {ADMNode} child The child node to be removed.
+ * @return {ADMNode} The removed child, or null if unsuccessful.
+ */
+ADMNode.prototype.removeChild = function (child) {
+    var index;
+    if (child._parent !== this) {
+        console.log("Error: child reports another parent while removing");
+        return null;
+    }
+
+    index = child.getZoneIndex();
+    if (index == -1) {
+        console.log("Error: child not found within this parent while removing");
+        return null;
+    }
+
+    return this.removeChildFromZone(child._zone, index);
+};
+
+/**
+ * Removes child at given index from this zone's list of children.
+ *
+ * @param {String} zoneName The name of the zone.
+ * @param {Number} index The 0-based zone index of the child to be removed.
+ * @return {ADMNode} The removed child, or null if not found.
+ */
+ADMNode.prototype.removeChildFromZone = function (zoneName, index) {
+    var zone, removed, child;
+    zone = this._zones[zoneName];
+    if (!zone) {
+        console.log("Error: no such zone found while removing child: " +
+                    zoneName);
+    }
+
+    removed = zone.splice(index, 1);
+    if (removed.length === 0) {
+        console.log("Warning: failed to remove child at index " + index);
+        return null;
+    }
+
+    child = removed[0];
+    child._parent = null;
+    child._root = null;
+
+    if (child.isSelected()) {
+        ADM.setSelected(null);
+    }
+
+    this.fireEvent("childRemoved",
+                   { parent: this, child: child, index: index,
+                     zone: zoneName });
+    this.fireModelEvent("modelUpdated", { node: this });
+    return child;
+};
+
+/**
+ * Call the given function on each node of the tree rooted at this node.
+ *
+ * @param {Function(ADMNode)} The function to call, which takes an ADMNode.
+ */
+ADMNode.prototype.foreach = function (func) {
+    var children = this.getChildren(), length, i;
+    func(this);
+    if (children) {
+        length = children.length;
+        for (i = 0; i < length; i++) {
+            children[i].foreach(func);
+        }
+    }
+};
+
+/**
+ * Auto-generate this property if it is so configured in the widget registry.
+ * Takes the autoGenerate prefix and appends the integer one higher than any
+ * already-defined properties on widgets of the same type in this tree.
+ * 
+ * @param {String} The name of the property.
+ * @return {String} The generated property value.
+ */
+ADMNode.prototype.generateUniqueProperty = function (property) {
+    var generate, design, myType, length, i, genLength, max, num, existing = [];
+    myType = this.getType();
+    generate = BWidget.getPropertyAutoGenerate(myType, property);
+    if (!generate) {
+        return undefined;
+    }
+
+    // find existing nodes with this property set
+    design = this.getDesign();
+    design.foreach(function (node) {
+        if (node.getType() === myType) {
+            if (node.isPropertyExplicit(property)) {
+                existing.push(node.getProperty(property));
+            }
+        }
+    });
+
+    // find the maximum suffix number set
+    length = existing.length;
+    genLength = generate.length;
+    max = 0;
+    for (i = 0; i < length; i++) {
+        if (existing[i].substring(0, genLength) === generate) {
+            num = parseInt(existing[i].substring(genLength), 10);
+            if (!isNaN(num) && num > max) {
+                max = num;
+            }
+        }
+    }
+
+    // generate using the next higher suffix
+    this.setProperty(property, generate + (max + 1));
+};
+
+/**
+ * Gets the properties defined for this object. If a property is not explicitly
+ * set, it will be included with its default value.
+ *
+ * @return {Object} Object containing all the defined properties and values.
+ */
+ADMNode.prototype.getProperties = function () {
+    var props = {}, defaults, i;
+    defaults = BWidget.getPropertyDefaults(this.getType());
+    for (i in defaults) {
+        if (defaults.hasOwnProperty(i)) {
+            props[i] = this._properties[i];
+            if (props[i] === undefined) {
+                props[i] = this.generateUniqueProperty(i);
+                if (props[i] === undefined) {
+                    props[i] = defaults[i];
+                }
+            }
+        }
+    }
+    return props;
+};
+
+/**
+ * Gets the named property for this object. If the property is not explicitly
+ * set, returns the default value for property.
+ *
+ * @param {String} The name of the requested property.
+ * @return {Any} The value of the property, or null if it is not set, or
+ *               undefined if the property is invalid for this object. The type
+ *               returned depends on the property.
+ */
+ADMNode.prototype.getProperty = function (property) {
+    var value = this._properties[property], generate;
+    if (value === undefined) {
+        value = this.generateUniqueProperty(property);
+        if (value === undefined) {
+            return BWidget.getPropertyDefault(this.getType(), property);
+        }
+    }
+    return value;
+};
+
+/**
+ * Gets the options for the named property for this widget type.
+ *
+ * @param {String} The name of the requested property.
+ * @return {Any} The options of the property, or undefined if the
+ *               property is invalid for this object. The type returned depends
+ *               on the property.
+ */
+ADMNode.prototype.getPropertyOptions= function (property) {
+    return BWidget.getPropertyOptions(this.getType(), property);
+};
+
+/**
+ * Gets the default value for the named property for this widget type.
+ *
+ * @param {String} The name of the requested property.
+ * @return {Any} The default value of the property, or undefined if the
+ *               property is invalid for this object. The type returned depends
+ *               on the property.
+ */
+ADMNode.prototype.getPropertyDefault = function (property) {
+    return BWidget.getPropertyDefault(this.getType(), property);
+};
+
+/**
+ * Returns whether the property is explicitly set or not. Properties that are
+ * explicitly set should be serialized to disk.
+ *
+ * @param {String} The name of the property.
+ * @return {Boolean} True if the property is explicitly set, false if the
+ *                   property value comes from the widget's default, or
+ *                   undefined if the property is invalid for this object.
+ */
+ADMNode.prototype.isPropertyExplicit = function (property) {
+    var value = this._properties[property];
+    if (value === undefined) {
+        return false;
+    }
+    return true;
+};
+
+/**
+ * Sets the named property to the given value. Fires a propertyChanged event
+ * if the value changed.
+ *
+ * @param {String} property The name of the property to be set.
+ * @param {Any} value The value to set for the property.
+ * @return {Boolean} True if the property was set, false if it was the wrong
+ *                   type, or undefined if the property is invalid for this
+ *                   object.
+ */
+ADMNode.prototype.setProperty = function (property, value) {
+    var type = BWidget.getPropertyType(this.getType(), property);
+    if (!type) {
+        console.log("Error: attempted to set non-existent property: " +
+                    property);
+        return undefined;
+    }
+    if (typeof value !== type) {
+        var numberTypes = {float:0,integer:0,number:0};
+        if ((type in numberTypes) && isNaN(value)) {
+            console.log("Error: attempted to set property " + property +
+                        " (" + type + ") with wrong type (" + typeof value + ")");
+            return false;
+        }
+    }
+
+    if (this._properties[property] !== value) {
+        this._properties[property] = value;
+        this.fireEvent("propertyChanged",
+                       { node: this, property: property, value: value });
+        this.fireModelEvent("modelUpdated", { node: this });
+    }
+    return true;
+};
+
+/**
+ * Gets the template defined for this object. Currently this is based only on
+ * the widget type, not specific to this instance.
+ *
+ * @return {String} The template defined for this widget type.
+ */
+ADMNode.prototype.getTemplate = function () {
+    return BWidget.getTemplate(this.getType());
+};

@@ -1,0 +1,19 @@
+Requirements:
+=============
+
+nodejs:
+    # Ubuntu installation...
+    $ sudo apt-get install nodejs
+
+Instructions:
+=============
+
+    $ node build/jslint-check.js
+
+Attributiosn:
+=============
+
+jslint-check.js:
+    Copied from jquery:
+    https://github.com/jquery/jquery/blob/master/build/jslint-check.js
+

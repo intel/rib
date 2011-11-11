@@ -1,0 +1,110 @@
+=TODO=
+
+[ADM]
+=====
+
+Definite
+--------
+- convert ADM API to use exceptions for errors
+- move test utils into a separate .js file
+- add ADM unit tests
+- add event type to modelUpdated events
+
+Need Thought
+------------
+- higher-level validation like id can only start with alpha character
+- consider preventing selection outside of active page
+- consider providing old value in propertyChanged event
+- consider moving active page and selection concepts to design node
+- consider validating widget registry entries on startup
+
+[Design View]
+=============
+
+- Implement breadcrumb trail for selection at the top of the view
+
+- Add visual page picker (not a seperate dialog).
+  * Could be in the toolbar, or a vertical "palette" on the right of
+    the screen
+
+- Page delete option someplace
+
+- Make all DOM interactions into a "framework" class with well
+  defined APIs for things like:
+  * change page
+  * select object
+  * refresh (or reload) page
+  * refresh (or reload) document
+  * setting framework specific options (e.g. default transitions)
+  * generic message handler (?)
+  * delete object
+  * move object
+  * etc...
+
+[FileIO]
+========
+
+- Implement Export to HTML from File menu
+
+- Implement File view/browser for HTML5 localstorage contents
+
+[General]
+=========
+
+- Rename template.js to something more appropriate for what it actually
+  does, which is handling the embedded design view contents styling and
+  behaviors in the framework context as opposed to the GUI Builder JS/CSS
+  context
+
+- Separate "controller" and "design view" logic in js/builder.js.  For
+  example, split it into two files... and make them more object oriented
+
+
+[Palette]
+=========
+
+- Convert palette.json and palette.js to be usable for BWidget objects
+ Migrate the non-base widgets from widgets.js to palette JSON
+  * Base, Design, Page, Header, Footer and maybe Content will remain
+    in widgets.js
+  * Button, TextInput and others should migrate to a JSON format
+
+- Start adding Tizen "win set" framework widgets to the palette JSON
+
+- Convert existing widgets in palette.json to BWidget formats
+  * Flip switch
+  * Slider
+  * Radio Buttons
+  * Checkboxes
+  * Select menus
+  * Button controlgroup
+
+- Add additional jQM widgets to the palette JSON:
+  * Password Input
+  * Validated Inputs (number, email, url, telephone, etc.)
+  * Search Input
+
+- Convert the palette to a "palette.d" format, where new, custom palettes
+  can be added by simply adding new files into that dir.  Needs some high
+  level design documentation.
+
+- Visual cleanup, try making the widget boxes constant width, maybe two wide
+  with a smaller font so they'll fit? Ask UX team for a better default icon,
+  and maybe a set of icons.
+
+[Properties]
+============
+
+[Serialize]
+===========
+
+[Template]
+==========
+
+- Create additional templates
+
+- Add a "template picker" at startup and pre-populate the content area with
+  selected template
+
+[Widget Registry]
+- Provide real UX icons for widgets

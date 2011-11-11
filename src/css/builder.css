@@ -1,0 +1,195 @@
+/*
+ * gui-builder - A simple WYSIWYG HTML5 app creator
+ * Copyright (c) 2011, Intel Corporation.
+ *
+ * This program is licensed under the terms and conditions of the
+ * Apache License, version 2.0.  The full text of the Apache License is at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ */
+/***************************/
+/* Element specific tweaks */
+/***************************/
+html {
+    padding: 0px;
+}
+html, body {
+    margin: 0px;
+    padding: 0px;
+    width: 100%;
+    height: 100%;
+    border: none;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+/*************************/
+/* Class specific tweaks */
+/*************************/
+.compact {
+    border: none;
+    margin: 0px;
+    padding: 0px;
+}
+.exploded {
+    border: 1px dashed;
+    margin: 0.5em;
+    padding: 0.5em;
+}
+.fullsize {
+    width: 100%;
+    height: 100%;
+}
+.bar {
+    height: 32px;
+    max-height: 64px;
+}
+.hasflex {
+    display: box;
+    display: -webkit-box;
+    display: -moz-box;
+}
+.hbox {
+    box-orient: horizontal;
+    -moz-box-orient: horizontal;
+    -webkit-box-orient: horizontal;
+
+    box-pack: start;
+    -moz-box-pack: start;
+    -webkit-box-pack: start;
+
+    display: box;
+    display: -webkit-box;
+    display: -moz-box;
+}
+.vbox {
+    box-orient: vertical;
+    -moz-box-orient: vertical;
+    -webkit-box-orient: vertical;
+
+    box-align: stretch;
+    -moz-box-align: stretch;
+    -webkit-box-align: stretch;
+
+    display: box;
+    display: -webkit-box;
+    display: -moz-box;
+}
+.flex0 {
+    -webkit-box-flex: 0;
+    -moz-box-flex: 0;
+    box-flex: 0;
+}
+.flex1 {
+    -webkit-box-flex: 1;
+    -moz-box-flex: 1;
+    box-flex: 1;
+}
+.flex2 {
+    -webkit-box-flex: 2;
+    -moz-box-flex: 2;
+    box-flex: 2;
+}
+.ui-accordion .ui-accordion-header {
+    padding-left: 1.5em;
+}
+.ui-accordion .ui-accordion-header .ui-icon {
+    padding-left: 0;
+}
+
+/* LAME menu class specific tweaks */
+.hmenu {
+    list-style: none;
+    padding: 0;
+}
+.hmenu li {
+    float: left;
+}
+.hmenu li a {
+    border: 0px;
+    display: block;
+}
+.hmenu .ui-accordion-header {
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+}
+.sub-menu {
+    position: absolute;
+    display: none;
+    list-style: none;
+    padding: 0;
+    width: 150px;
+    z-index: 1001;
+}
+.sub-menu li {
+    float: none;
+}
+.sub-menu .sub-menu {
+    position: absolute;
+    display: none;
+    list-style: none;
+    padding: 0;
+    width: 150px;
+    margin-left: 150px;
+    margin-top: -33px;
+}
+
+/**********************/
+/* ID specific tweaks */
+/**********************/
+#controls-panel {
+    min-width: 200px;
+}
+
+#controls-handle {
+    min-width: 8px;
+    max-width: 8px;
+    border: 1px;
+    border-left: 0px;
+    background-color: none;
+}
+
+/*
+  Palette Pane
+*/
+#palette-panel {
+    width: 300px;
+    min-width: 300px;
+    max-width: 300px;
+    max-height: 60%;
+}
+#palette_header {
+    text-align: center;
+    margin: 0px;
+}
+#palette_accordion {
+    border: 0px;
+    margin: 0px;
+    padding: 0px;
+    display: block;
+}
+
+/*
+  Property Pane
+*/
+#properties-panel {
+    width: 300px;
+    min-width: 300px;
+    max-width: 300px;
+    max-height: 40%;
+}
+#property_header {
+    text-align: center;
+    margin: 0px;
+}
+.prop-tab {
+    border: 0px;
+    margin: 0px;
+    padding: 0px;
+}
+#property_tabs {
+    border: 0px;
+    margin: 0px;
+    padding: 0px;
+}
