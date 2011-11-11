@@ -23,6 +23,8 @@ Need Thought
 
 - Implement breadcrumb trail for selection at the top of the view
 
+- Make tools/panels movable to "dock" positions
+
 - Add visual page picker (not a seperate dialog).
   * Could be in the toolbar, or a vertical "palette" on the right of
     the screen
@@ -58,6 +60,8 @@ Need Thought
 
 - Separate "controller" and "design view" logic in js/builder.js.  For
   example, split it into two files... and make them more object oriented
+
+- Start saving context for UI states, preferences, current design, etc...
 
 
 [Palette]
