@@ -509,6 +509,28 @@ var BWidgetRegistry = {
             }
         },
         template: '<label>%TEXT%</label>',
+    },
+
+    /**
+     * Represents a text area entry.
+     */
+    TextArea: {
+        parent: "Base",
+        properties: {
+            placeholder: {
+                type: "string",
+                defaultValue: "Placeholder text"
+            },
+            cols: {
+                type: "integer",
+                defaultValue: "40"
+            },
+            rows: {
+                type: "integer",
+                defaultValue: "2"
+            }
+        },
+        template: '<textarea></textarea>',
     }
 };
 
@@ -532,9 +554,11 @@ var BWidget = {
                 if (type === "ButtonGroup") {
                     BWidgetRegistry[type].displayLabel = "Button Group";
                 }
-
                 if (type === "TextInput") {
                     BWidgetRegistry[type].displayLabel = "Text Input";
+                }
+                if (type === "TextArea") {
+                    BWidgetRegistry[type].displayLabel = "Text Area";
                 }
             }
         }

@@ -46,6 +46,9 @@ P2 - Make all DOM interactions into a "framework" class with well
   * move object
   * etc...
 
+- Bugs to fixed:
+  * Changing cols and rows for Text Area in properties panel has no effect in the design view.
+
 [FileIO]
 ========
 
