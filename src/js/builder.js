@@ -120,7 +120,10 @@ function ADM2DOM (admNode, domNode){
                 // attribute name does, so we replace '_' with '-'
                 var attrName = p.replace(/_/g, '-'),
                     attrValue = admNode.getProperty(p);
-                attrMap[attrName] = attrValue;
+                // We shouldn't capture properties of the Design node here
+                if (!admNode.instanceOf('Design')) {
+                    attrMap[attrName] = attrValue;
+                }
                 break;
         }
     }

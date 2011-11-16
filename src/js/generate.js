@@ -10,32 +10,31 @@
 "use strict";
 
 function generateHTML(){
-    var htmlDoc = $('<html/>');
-    var design_root = ADM.getDesignRoot();
-    var head = $("<head/>");
-    var i;
-    var metas = design_root.getProperty("metas") ;
-    for (i in metas) {
-        var mt = $('<meta/>');
-        mt.attr( metas[i].key, metas[i].value);
-        mt.attr('content', metas[i].content);
-        head.append(mt);
-    }
-    var css = design_root.getProperty("css") ;
-    for (i in css) {
-        var link = $('<link/>');
-        link.attr("rel", "stylesheet");
-        link.attr("href", css[i]);
-        head.append(link);
-    }
+    var design_root = ADM.getDesignRoot(),
+        body = $('<body/>'),
+        head = '<head>\n',
+        props = {}, i;
 
-    var libs = design_root.getProperty("libs");
-    var scripts = "";
-    //JQuery will try to execute script if we append it to head, so we have to compse a script string
-    for (i in libs) {
-        scripts += '<script type ="text/javascript" src="' + libs[i] + '"></script>';
+    // Serialize any <meta> properties
+    props = design_root.getProperty("metas") ;
+    for (i in props) {
+        head += '<meta ' + props[i].key + '="' + props[i].value +
+                 '" content="' + props[i].content + '">\n';
     }
-    ADM2DOM(design_root, htmlDoc);
-    return style_html("<html><head>" + head.html() + scripts + "</head>" +
-        htmlDoc.html() + "</html>");
+    // Serialize any <link> properties
+    props = design_root.getProperty("css") ;
+    for (i in props) {
+        head += '<link rel="stylesheet" href="' + props[i] + '">\n';
+    }
+    // Serialize any <script> properties
+    props = design_root.getProperty("libs");
+    for (i in props) {
+        head += '<script src="' + props[i] + '"></script>\n';
+    }
+    head += '</head>\n';
+
+    // Serialize the <body>
+    ADM2DOM(design_root, body);
+
+    return style_html('<html>\n' + head + body.html() + '\n</html>');
 }
