@@ -39,27 +39,3 @@ function generateHTML(){
     return style_html("<html><head>" + head.html() + scripts + "</head>" +
         htmlDoc.html() + "</html>");
 }
-
-$(function() {
-    // Global variables
-    var $codeTab,
-        $codeArea,
-
-        showCodeView = function () {
-            $codeArea.html( function (index, oldHtml) {
-                var textArea,
-                    textAreaPrefix = '<textarea id="text-code">\n',
-                    textAreaSuffix = '</textarea>\n',
-
-                textArea = textAreaPrefix + generateHTML() + textAreaSuffix;
-                return textArea;
-            }).height($('#tabs-2').height());
-        };
-
-    $codeTab = $('#code-tab');
-    $codeArea = $('#code-area');
-
-    // Refresh tab contents when click tab
-    $codeTab.click(showCodeView);
-
-});

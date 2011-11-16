@@ -110,6 +110,11 @@ html, body {
     border: 0px;
     display: block;
 }
+hr.menu-separator {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    border: 2px solid lightgray;
+}
 .hmenu .ui-accordion-header {
     padding-left: 0.5em;
     padding-right: 0.5em;
@@ -119,7 +124,7 @@ html, body {
     display: none;
     list-style: none;
     padding: 0;
-    width: 150px;
+    min-width: 150px;
     z-index: 1001;
 }
 .sub-menu li {
@@ -194,32 +199,23 @@ html, body {
     padding: 0px;
 }
 
-/*
-  Code View tab
-*/
-#tabs {
-    border: none;
-    padding: 0px;
-    position: relative;
-}
-#tabs > .ui-tabs-panel {
+#content-panel > iframe, #content-panel > div {
     border: 0px;
     padding: 0px;
-    position: absolute;
-    top: 46px;
-    bottom: 0px;
-    left: 0px;
-    right: 0px;
     min-width: 100%;
     min-width: 100%;
 }
-#tabs > .ui-tabs-panel > iframe {
+#preview-frame {
+    width: 100%;
     border: 0px;
+    margin: 0px;
+    display: none;
 }
 #code-area {
     width: 100%;
     border: 0px;
     margin: 0px;
+    display: none;
 }
 #text-code {
     width: 100%;

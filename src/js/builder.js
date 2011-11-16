@@ -242,10 +242,15 @@ $(function() {
                 .addClass('ui-accordion-content ui-helper-reset ui-widget-content ui-state-default');
             $toolbarPanel.find('.sub-menu li a')
                 .addClass('ui-helper-reset ui-widget ui-state-default');
+            $toolbarPanel.find('.menu-separator')
+                .addClass('ui-helper-reset ui-widget ui-state-hover');
 
             // ----------------------------- //
             // Menu item click handler setup //
             // ----------------------------- //
+            $toolbarPanel.find('#designView').click(showDesignView);
+            $toolbarPanel.find('#codeView').click(showCodeView);
+            $toolbarPanel.find('#preView').click(showPreView);
             $toolbarPanel.find('#showADMTree').click(showADMTree);
             $toolbarPanel.find('#reloadDesign').click(triggerDesignViewRefresh);
             $toolbarPanel.find('#loadDesign').click(triggerImportFileSelection);
@@ -894,6 +899,37 @@ $(function() {
     // -------------------------------- //
     dumpLog = function () {
         if ($logView) { $logView.text(logHist.join('\n')); }
+    },
+
+    showDesignView = function () {
+        $('#design-view').show();
+        $('#code-area').hide();
+        $('#preview-frame').hide();
+    },
+
+    showCodeView = function () {
+        $('#code-area').html('<textarea id="text-code">' +
+                             generateHTML() +
+                             '</textarea>')
+                       .height($('#content-panel').height());
+        $('#text-code')
+            .addClass('ui-helper-reset ui-widget');
+        $('#design-view').hide();
+        $('#code-area').show();
+        $('#preview-frame').hide();
+    },
+
+    showPreView = function () {
+        var doc;
+
+        doc = $('#preview-frame')[0].contentWindow.document;
+        doc.open();
+        doc.writeln(generateHTML());
+        doc.close();
+
+        $('#design-view').hide();
+        $('#code-area').hide();
+        $('#preview-frame').show();
     },
 
     showADMTree = function () {

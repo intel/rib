@@ -41,9 +41,12 @@ PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
         <li>
           <a id="view-sub-menu">View</a>
           <ul class="sub-menu">
+            <li><a id="designView">Design View</a></li>
+            <li><a id="codeView">Code View</a></li>
+            <li><a id="preView">Pre-View</a></li>
+            <li><div class='menu-separator'/></li>
             <li><a id="showADMTree">ADM Tree</a></li>
             <li><a id="reloadDesign">Reload Design View</a></li>
-            <li><a id="preview">Preview</a></li>
             <li><a id="theme">Theme</a></li>
             <li><a id="newpage">Add Page</a></li>
             <li><a id="removepage">Delete Current Page</a></li>
@@ -58,22 +61,9 @@ PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
       </div>
       <div id="controls-handle" class="flex0"><div id="handle-grip"></div></div>
       <div id="content-panel" class="flex1 vbox">
-         <div id="tabs" class="flex1 vbox">
-             <ul>
-               <li><a id="design-tab"  href="#tabs-1">Design View</a></li>
-               <li><a id="code-tab"    href="#tabs-2">Code View</a></li>
-               <li><a id="preview-tab" href="#tabs-3">Preview</a></li>
-             </ul>
-             <div id="tabs-1" class="flex1 vbox">
-                 <iframe id="design-view" width="100%" height="100%" class="flex1 vbox"></iframe>
-             </div>
-             <div id="tabs-2">
-               <div id="code-area" width="100%" height="100%" class="flex1 vbox"> <!-- code textarea --></div>
-             </div>
-             <div id="tabs-3" class="flex1 vbox">
-                 <iframe id="preview-frame" width="100%" height="100%" class="flex1 vbox"></iframe>
-             </div>
-         </div>
+        <iframe id="design-view" width="100%" height="100%" class="flex1 vbox"></iframe>
+        <div id="code-area" width="100%" height="100%" class="flex1 vbox"></div>
+        <iframe id="preview-frame" width="100%" height="100%" class="flex1 vbox"></iframe>
       </div>
     </div>
     <div id="status-panel" class="flex0 bar">
@@ -95,6 +85,5 @@ PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <script type="text/javascript" src="lib/beautify.js"></script>
 <script type="text/javascript" src="lib/beautify-html.js"></script>
 <script type="text/javascript" src="src/js/generate.js"></script>
-<script type="text/javascript" src="src/js/preview.js"></script>
 </body>
 </html>
