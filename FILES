@@ -26,6 +26,10 @@ Intel     src/css/builder.css                  APLv2          N/A
 Intel     src/css/template.css                 APLv2          N/A
 jQuery    src/css/jquery.mobile-1.0b3.css      MIT & GPLv2    [9]
 jQuery    src/css/jquery.mobile-1.0b3.min.css  MIT & GPLv2    [10]
+Einar     lib/js-beautify/beautify-html.js     MIT            [13]
+Lielmanis
+Einar     lib/js-beautify/beautify.js          MIT            [13]
+Lielmanis
 
 Unreleased/Unpackaged Files (build/debug/development)
 =====================================================
@@ -55,3 +59,4 @@ Notes:
 [10] http://code.jquery.com/mobile/1.0b3/jquery.mobile-1.0b3.min.css
 [11] https://github.com/douglascrockford/JSLint/blob/master/jslint.js
 [12] Portions of the file (jslint.js) are copyright Intel Corporation, 2011.
+[13] https://github.com/einars/js-beautify

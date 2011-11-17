@@ -55,6 +55,8 @@ src/css/jquery.mobile-1.0b3.css		MIT & GPLv2	The jQuery Project
 src/css/jquery.mobile-1.0b3.min.css	MIT & GPLv2	The jQuery Project
 lib/json2.js				Public Domain	N/A
 lib/jquery.lame.js			FreeBSD		Ryan Ray[1]
+lib/js-beautify/beautify-html.js	MIT		Einar Lielmanis[4]
+lib/js-beautify/beautify.js		MIT		Einar Lielmanis[4]
 
 The following files were copied into this project from upstream and are
 only included as development tools (build, debugging, reporting).  They
@@ -69,3 +71,4 @@ Notes:
 [1] ryan@trainwrecked.net
 [2] douglas@crockford.com
 [3] Portions of the file (jslint.js) are copyright Intel Corporation, 2011.
+[4] einar@jsbeautifier.org

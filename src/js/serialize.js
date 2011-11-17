@@ -158,10 +158,11 @@ function JSObjectFromADMTree(ADMTreeNode){
 function exportFile(fileUrl, listName){
     var listId = "export" + listName;
     if($('#' + listId).length === 0){
-        var listString = "<li><a href=" + fileUrl + " id=" + listId + ">" + listName + "</a></li>";
+        var listString = "<li><a href=" + fileUrl + " id=" + listId + ">" + listName + "target='_blank'</a></li>";
         $(listString).appendTo("ul#exportFiles");
     }else{
         $('#' + listId)[0].href = fileUrl;
+        $('#' + listId)[0].target = "_blank";
         console.log("ID: " + listId + " is already exist." );
     }
     return true;

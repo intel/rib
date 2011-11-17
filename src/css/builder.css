@@ -193,3 +193,40 @@ html, body {
     margin: 0px;
     padding: 0px;
 }
+
+/*
+  Code View tab
+*/
+#tabs {
+    border: none;
+    padding: 0px;
+    position: relative;
+}
+#tabs > .ui-tabs-panel {
+    border: 0px;
+    padding: 0px;
+    position: absolute;
+    top: 46px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    min-width: 100%;
+    min-width: 100%;
+}
+#tabs > .ui-tabs-panel > iframe {
+    border: 0px;
+}
+#code-area {
+    width: 100%;
+    border: 0px;
+    margin: 0px;
+}
+#text-code {
+    width: 100%;
+    overflow: auto;
+    min-height: 100%;
+    border: 0px;
+    margin: 0px;
+    padding: 0px;
+    resize: none;
+}

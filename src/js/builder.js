@@ -65,6 +65,90 @@ function moveADMNode(node, zone, index) {
     reparentADMNode(node, node.getParent(), zone, index);
 }
 
+function ADM2DOM (admNode, domNode){
+    if (domNode === undefined || domNode === null ||
+        !domNode || domNode.length < 1) {
+        console.error('DOMNode is invalid');
+        return false;
+    }
+    var template = "<body/>";
+    if (!admNode.instanceOf('Design')) {
+        template = admNode.getTemplate();
+    }
+    var type = admNode.getType();
+    var uid = admNode.getUid();
+    var attrMap = {};
+
+    // Ensure we have at least something to use as HTML for this item
+    if (template === undefined || template === '') {
+        console.warn('Missing template for ADMNode type: '+type+
+                        '.  Trying defaults...');
+        template = defaultTemplates[type];
+        // If no default exists, we must error out
+        if (template === undefined || template === '') {
+            console.error('No template exists for ADMNode type: '+type);
+            return false;
+        }
+    }
+
+    // The ADMNode.getProperties() call will trigger a modelUpdated
+    // event due to any property being set to autogenerate
+    blockModelUpdated = true;
+    var props = admNode.getProperties();
+    var id = admNode.getProperty('id');
+    blockModelUpdated = false;
+    // Apply any special ADMNode properties to the template before we
+    // create the DOM Element instance
+    for (var p in props) {
+        switch (p) {
+            case "text":
+            case "min":
+            case "max":
+            case "value":
+                template = template.replace('%' + p.toUpperCase() + '%',
+                                            props[p]);
+                break;
+            case "id":
+                if (id === '' || id === undefined || id === null) {
+                    id = type+'-'+uid;
+                }
+                template = template.replace(/%ID%/g, id);
+                attrMap[p] = id;
+                break;
+            default:
+                // JSON prop names can't have '-' in them, but the DOM
+                // attribute name does, so we replace '_' with '-'
+                var attrName = p.replace(/_/g, '-'),
+                    attrValue = admNode.getProperty(p);
+                attrMap[attrName] = attrValue;
+                break;
+        }
+    }
+
+    // Turn the template into an element instance, via jquery
+    var widget = $(template);
+
+    // Apply any unhandled properties on the ADMNode to the DOM Element
+    // as Element attributes
+    $(widget).attr(attrMap);
+
+    // Attach the ADM UID to the element as an attribute so the DOM-id can
+    // change w/out affecting our ability to index back into the ADM tree
+    // XXX: Tried using .data(), but default jQuery can't select on this
+    //      as it's not stored in the element, but rather in $.cache...
+    //      There exist plugins that add the ability to do this, but they
+    //      add more code to load and performance impacts on selections
+    $(widget).attr('data-uid',uid);
+
+    // Now we actually add the new element to it's parent
+    // TODO: Be smarter about insert vs. append...
+    $(domNode).append($(widget));
+    var children = admNode.getChildren();
+    for (var i=0; i<children.length; i++) {
+        ADM2DOM(children[i], widget );
+    }
+}
+
 $(function() {
     var $designContentDocument,        // iframe contentDocument ref
         $toolbarPanel,
@@ -196,6 +280,14 @@ $(function() {
             // ------------------------------------------- //
             $statusPanel.addClass('ui-widget-header');
 
+            // ---------------------------------------------- //
+            // Create view tabs in worspace of the builder UI //
+            // ---------------------------------------------- //
+            $('#tabs').tabs();
+            // Need to hide preview tab so it will not affect the
+            // redendering of design view
+            $('#tabs-3').hide();
+
             // -------------------------------------------- //
             // Populate design view panel of the builder UI //
             // using one of our pre-defined templates       //
@@ -280,8 +372,8 @@ $(function() {
     },
 
     triggerExportHTML = function () {
-        fsUtils.write("index.html", "<html>" + ($designContentDocument[0].body.outerHTML) + "</html>", function(fileEntry){
-            exportFile(fileEntry.toURL(), "index");
+        fsUtils.write("index.html.download", generateHTML(),  function(fileEntry){
+            exportFile(fileEntry.toURL(), "HTML");
         }, _onError);
     },
 

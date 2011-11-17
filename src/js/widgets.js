@@ -58,6 +58,52 @@ var BWidgetRegistry = {
         showInPalette: false,
         selectable: false,
         moveable: false,
+        properties: {
+            metas: {
+                type: "array",
+                defaultValue:[
+                        { key:'name',
+                          value: 'viewport',
+                          content: 'width=device-width, initial-scale=1'
+                        },
+                 ]
+            },
+            libs: {
+                type: "array",
+                defaultValue: [
+                    'lib/jquery-1.6.2.js',
+                    'lib/jquery.mobile-1.0b3.js',
+                ],
+            },
+            css: {
+                type: "array",
+                defaultValue: [
+                    'src/css/jquery.mobile-1.0b3.css',
+                ],
+            },
+            design_metas: {
+                type: "array",
+                defaultValue: [
+                    { key:'http-equiv',
+                      value: 'cache-control',
+                      content: 'no-cache'
+                    },
+                ],
+            },
+            design_libs: {
+                type: "array",
+                design_libs: [
+                    'lib/jquery-ui-1.8.16.custom.js',
+                    'src/js/template.js',
+                ],
+            },
+            design_css: {
+                type: "array",
+                design_css: [
+                    'src/css/template.css',
+                ]
+            }
+        },
         zones: [
             {
                 name: "default",
