@@ -19,6 +19,8 @@ var blockModelUpdated = false,
 var SHOW_IDS = true,
     logHist = [];
 
+var xmlserializer = new XMLSerializer();
+
 function logit(msg) {
     var entry = $.now()+": "+msg;
     var i = logHist.push(entry);
@@ -64,35 +66,52 @@ function moveADMNode(node, zone, index) {
     //        parents are the same?
     reparentADMNode(node, node.getParent(), zone, index);
 }
-function createHeaders (design_root, head, admPropoertyName, headerName, attrName, additionalAttrs) {
-    var props = design_root.getProperty(admPropoertyName),
-        doc = head.ownerDocument,
-        i;
+
+// Convert ADM Design node header properties into DOM elements
+// and append them to the document <head>
+function appendHeader (headElement, header) {
+    var props, i, j, el;
+
+    if (!header || header === undefined) {
+        return;
+    }
+
+    props = ADM.getDesignRoot().getProperty(header.admPropoertyName);
+
     for (i in props) {
-        var header = doc.createElement(headerName);
-        if (props[i].key !== undefined)
-        {
-            header.setAttribute(props[i].key, props[i].value);
-            header.setAttribute("content", props[i].content);
+        el = headElement.ownerDocument.createElement(header.headerName);
+
+        if (props[i].key !== undefined) {
+            el.setAttribute(props[i].key, props[i].value);
+            el.setAttribute("content", props[i].content);
+        } else {
+            el.setAttribute(header.attrName, props[i]);
         }
-        else
-            header.setAttribute(attrName, props[i]);
-        var j;
-        for (j in additionalAttrs){
-            header.setAttribute(additionalAttrs[j].name, additionalAttrs[j].value);
+
+        for (j in header.additionalAttrs){
+            el.setAttribute(header.additionalAttrs[j].name,
+                            header.additionalAttrs[j].value);
         }
-        head.appendChild(header);
+
+        headElement.appendChild(el);
     }
-};
-function createNewDocWithHead(admDesignNode, headers){
+}
+
+// Construct a new HTML document from scratch with provided headers
+function constructNewDocument(headers) {
     var docType = document.implementation.createDocumentType ('html', '', ''),
-        doc = document.implementation.createDocument('http://www.w3.org/1999/xhtml', 'html', docType),
-        head = doc.createElement("head"),
-        i;
+        nsURI = 'http://www.w3.org/1999/xhtml',
+        doc = document.implementation.createDocument(nsURI, 'html', docType),
+        head = doc.createElement("head");
+
     doc.documentElement.appendChild(head);
-    for (i in headers){
-        createHeaders(admDesignNode, head, headers[i].admPropoertyName, headers[i].headerName, headers[i].attrName, headers[i].additionalAttrs);
+
+    if (headers && headers.length > 0) {
+        for (var i in headers) {
+            appendHeader(head, headers[i]);
+        }
     }
+
     return doc;
 }
 
@@ -667,9 +686,9 @@ $(function() {
             });
     },
 
-    serializeFramework = function (admDesignNode) {
-        var doc = createNewDocWithHead(admDesignNode, $designHeaders);
-        return new XMLSerializer().serializeToString(doc);
+    serializeFramework = function () {
+        var doc = constructNewDocument($designHeaders);
+        return xmlserializer.serializeToString(doc);
     },
 
     // ------------------------------------------------ //

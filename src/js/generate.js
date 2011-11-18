@@ -42,9 +42,9 @@ var $headers = [
             attrName: "src",
         }
     ]);
+
 function generateHTML(){
-    var design_root = ADM.getDesignRoot(),
-        doc = createNewDocWithHead(design_root,$headers);
-    ADM2DOM(design_root, doc.documentElement);
-    return style_html(new XMLSerializer().serializeToString(doc));
+    var doc = constructNewDocument($headers);
+    ADM2DOM(ADM.getDesignRoot(), doc.documentElement);
+    return style_html(xmlserializer.serializeToString(doc));
 }
