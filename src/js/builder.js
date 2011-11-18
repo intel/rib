@@ -64,8 +64,40 @@ function moveADMNode(node, zone, index) {
     //        parents are the same?
     reparentADMNode(node, node.getParent(), zone, index);
 }
+function createHeaders (design_root, head, admPropoertyName, headerName, attrName, additionalAttrs) {
+    var props = design_root.getProperty(admPropoertyName),
+        doc = head.ownerDocument,
+        i;
+    for (i in props) {
+        var header = doc.createElement(headerName);
+        if (props[i].key !== undefined)
+        {
+            header.setAttribute(props[i].key, props[i].value);
+            header.setAttribute("content", props[i].content);
+        }
+        else
+            header.setAttribute(attrName, props[i]);
+        var j;
+        for (j in additionalAttrs){
+            header.setAttribute(additionalAttrs[j].name, additionalAttrs[j].value);
+        }
+        head.appendChild(header);
+    }
+};
+function createNewDocWithHead(admDesignNode, headers){
+    var docType = document.implementation.createDocumentType ('html', '', ''),
+        doc = document.implementation.createDocument('http://www.w3.org/1999/xhtml', 'html', docType),
+        head = doc.createElement("head"),
+        i;
+    doc.documentElement.appendChild(head);
+    for (i in headers){
+        createHeaders(admDesignNode, head, headers[i].admPropoertyName, headers[i].headerName, headers[i].attrName, headers[i].additionalAttrs);
+    }
+    return doc;
+}
 
-function ADM2DOM (admNode, domNode){
+function ADM2DOM (admNode, domNode, renderFunc){
+    var updateId = false;
     if (domNode === undefined || domNode === null ||
         !domNode || domNode.length < 1) {
         console.error('DOMNode is invalid');
@@ -110,6 +142,7 @@ function ADM2DOM (admNode, domNode){
                 break;
             case "id":
                 if (id === '' || id === undefined || id === null) {
+                    updateId = true;
                     id = type+'-'+uid;
                 }
                 template = template.replace(/%ID%/g, id);
@@ -142,13 +175,21 @@ function ADM2DOM (admNode, domNode){
     //      There exist plugins that add the ability to do this, but they
     //      add more code to load and performance impacts on selections
     $(widget).attr('data-uid',uid);
+    if (renderFunc !== undefined){
+        renderFunc(admNode, widget);
+    }
 
     // Now we actually add the new element to it's parent
     // TODO: Be smarter about insert vs. append...
     $(domNode).append($(widget));
+    if (updateId) {
+        blockModelUpdated = true;
+        admNode.setProperty('id', id);
+        blockModelUpdated = false;
+    }
     var children = admNode.getChildren();
     for (var i=0; i<children.length; i++) {
-        ADM2DOM(children[i], widget );
+        ADM2DOM(children[i], widget,  renderFunc);
     }
 }
 
@@ -539,191 +580,11 @@ $(function() {
 
         doc = $designContentDocument[0];
         doc.open();
-        contents = serializeFramework();
+        contents = serializeFramework($admDesign);
         doc.writeln(contents);
         doc.close();
 
         ADM.setDesignRoot($admDesign);
-    },
-
-    serializeADMNodeToDOM = function (node, parentSelector) {
-        var parentNode = $designContentDocument.find(parentSelector),
-            template = node.getTemplate(),
-            uid = node.getUid(),
-            type = node.getType(),
-            props, id,
-            updateId = false,
-            attrMap = {},
-            widget;
-
-        // Find the parent element of this node in the DOM tree
-        if (parentNode === undefined || parentNode === null ||
-            !parentNode || parentNode.length < 1) {
-            // No sense adding it to the DOM if we can't find it's parent
-            console.error(parentSelector+' not found in Design View');
-            return false;
-        }
-
-        // Ensure we have at least something to use as HTML for this item
-        if (template === undefined || template === '') {
-            console.warn('Missing template for ADMNode type: '+type+
-                            '.  Trying defaults...');
-            template = defaultTemplates[type];
-            // If no default exists, we must error out
-            if (template === undefined || template === '') {
-                console.error('No template exists for ADMNode type: '+type);
-                return false;
-            }
-        }
-
-        // The ADMNode.getProperties() call will trigger a modelUpdated
-        // event due to any property being set to autogenerate
-        blockModelUpdated = true;
-        props = node.getProperties();
-        id = node.getProperty('id');
-        blockModelUpdated = false;
-        // Apply any special ADMNode properties to the template before we
-        // create the DOM Element instance
-        for (var p in props) {
-            switch (p) {
-                case "text":
-                case "min":
-                case "max":
-                case "value":
-                    template = template.replace('%' + p.toUpperCase() + '%',
-                                                props[p]);
-                    break;
-                case "id":
-                    if (id === '' || id === undefined || id === null) {
-                        updateId = true;
-                        id = type+'-'+uid;
-                    }
-                    template = template.replace(/%ID%/g, id);
-                    attrMap[p] = id;
-                    break;
-                default:
-                    // JSON prop names can't have '-' in them, but the DOM
-                    // attribute name does, so we replace '_' with '-'
-                    var attrName = p.replace(/_/g, '-'),
-                        attrValue = node.getProperty(p);
-                    attrMap[attrName] = attrValue;
-                    break;
-            }
-        }
-
-        // Turn the template into an element instance, via jquery
-        widget = $(template);
-
-        // Apply any unhandled properties on the ADMNode to the DOM Element
-        // as Element attributes
-        $(widget).attr(attrMap);
-
-        // Attach the ADM UID to the element as an attribute so the DOM-id can
-        // change w/out affecting our ability to index back into the ADM tree
-        // XXX: Tried using .data(), but default jQuery can't select on this
-        //      as it's not stored in the element, but rather in $.cache...
-        //      There exist plugins that add the ability to do this, but they
-        //      add more code to load and performance impacts on selections
-        $(widget).attr('data-uid',uid);
-
-        // Add a special (temporary) class used by the JQM engine to
-        // easily identify the "new" element(s) added to the DOM
-        $(widget).addClass('nrc-dropped-widget');
-        $(widget).addClass('adm-node');
-
-        // If this node is "selected", make sure it's class reflects this
-        if (node.isSelected()) {
-            $(widget).addClass('ui-selected');
-        }
-
-        // If this node is a "container", make sure it's class reflects this
-        if (node.isContainer() || node.getType() === 'Header') {
-            $(widget).addClass('nrc-sortable-container');
-            if (node.getChildrenCount() === 0) {
-                $(widget).addClass('nrc-empty');
-            } else {
-                $(widget).removeClass('nrc-empty');
-            }
-        }
-
-        // Now we actually add the new element to it's parent
-        // TODO: Be smarter about insert vs. append...
-        $(parentNode).append($(widget));
-
-        if (updateId) {
-            blockModelUpdated = true;
-            node.setProperty('id', id);
-            blockModelUpdated = false;
-        }
-
-        return true;
-    },
-
-    serializeADMSubtreeToDOM = function (node, spaces) {
-        var isContainer, indent = ' '+(spaces?spaces:'');
-
-        // 1. Only handle ADMNodes
-        if (!(node instanceof ADMNode)) {
-            return;
-        }
-
-        // 2. Do something with this node
-        isContainer = (node.getChildrenCount() !== 0);
-
-        // Since we're regenerating this DOM subtree, delete this node
-        // (and it's subtree)
-        if (node.instanceOf('Design')) {
-            // Special Case... Only remove "pages" not other divs
-            $designContentDocument.find('body > div[data-role="page"]').remove();
-        } else {
-            var uid = node.getUid(),
-                type = node.getType(),
-                pid, pNode, pSelector;
-
-            if (node.instanceOf('Page')) {
-                pSelector = 'body';
-            } else {
-                pid = node.getParent().getUid();
-                pSelector = '.adm-node[data-uid=\''+pid+'\']';
-            }
-
-            // Only proceed if the parent element of this node is in the DOM
-            pNode = $designContentDocument.find(pSelector);
-            if (pNode && pNode.length >= 1) {
-                // Remove any previous DOM element instance of this node
-                if ($('.adm-node[data-uid=\''+uid+'\']',pNode).remove()) {
-                    // ATM, we don't care if it fails
-                    console.warn('Failed to remove: ".adm-node[data-uid=\'' +
-                                  uid+'\']" from "'+pSelector+'"');
-                }
-                node.suppressEvents(true);
-                node.getDesign().suppressEvents(true);
-                if (serializeADMNodeToDOM(node, pSelector, indent)) {
-                    console.log(indent+(isContainer?'+':' ')+type+' ('+uid+')'+
-                                        (node.isSelected()?' <--':''));
-                } else {
-                    console.warn(indent+' DOM add Failed: '+type+' ('+uid+')'+
-                                        (node.isSelected()?' <--':''));
-                }
-                node.getDesign().suppressEvents(false);
-                node.suppressEvents(false);
-            } else {
-                console.error(indent+' DOM parent not found: '+pSelector);
-                return;
-            }
-
-        }
-
-        // 3. Recurse over any children
-        if (isContainer) {
-            var children = node.getChildren();
-            for (var i=0; i<children.length; i++) {
-                serializeADMSubtreeToDOM(children[i], indent);
-            }
-        }
-
-        // 4. Return (anything?)
-        return;
     },
 
     serializeADMDesignToDOM = function () {
@@ -731,7 +592,29 @@ $(function() {
             $admDesign = ADM.getDesignRoot();
         }
 
-        serializeADMSubtreeToDOM($admDesign);
+        $designContentDocument.find('body').remove();
+        ADM2DOM($admDesign, $designContentDocument.find('html'),  function (admNode, domNode) {
+            // Add a special (temporary) class used by the JQM engine to
+            // easily identify the "new" element(s) added to the DOM
+            $(domNode).addClass('nrc-dropped-widget');
+            $(domNode).addClass('adm-node');
+
+            // If this node is "selected", make sure it's class reflects this
+            if (admNode.isSelected()) {
+                $(domNode).addClass('ui-selected');
+            }
+
+            // If this node is a "container", make sure it's class reflects this
+            if (admNode.isContainer() || admNode.getType() === 'Header') {
+                $(domNode).addClass('nrc-sortable-container');
+                if (admNode.getChildrenCount() === 0) {
+                    $(domNode).addClass('nrc-empty');
+                } else {
+                    $(domNode).removeClass('nrc-empty');
+                }
+            }
+
+         });
     },
 
     // Attempt to add child, walking up the tree until it works or
@@ -784,53 +667,9 @@ $(function() {
             });
     },
 
-    serializeFramework = function () {
-        var start = '<!DOCTYPE html>\n <html><head><title>Page Title</title>\n',
-            i,
-            head = "",
-            links = "",
-            scripts = "",
-            styles = "",
-            end = "",
-            metas = [
-                { key:'name',
-                  value: 'viewport',
-                  content: 'width=device-width, initial-scale=1'
-                },
-                { key:'http-equiv',
-                  value: 'cache-control',
-                  content: 'no-cache'
-                },
-            ],
-            libs = [
-                'lib/jquery-1.6.2.js',
-                'lib/jquery-ui-1.8.16.custom.js',
-                'src/js/template.js',
-                'lib/jquery.mobile-1.0b3.js',
-            ],
-            css = [
-                'src/css/jquery.mobile-1.0b3.css',
-                'src/css/template.css',
-            ];
-
-        for (i in metas) {
-            head += '<meta '+metas[i].name+'="'+metas[i].value+'" content="'+metas[i].content+'"> \n';
-        }
-
-        for (i in css) {
-            links += '<link rel="stylesheet" href="'+css[i]+'" /> \n';
-        }
-
-        for (i in libs) {
-            scripts += '<script type="text/javascript" src="'+libs[i]+'"></script> \n';
-        }
-
-        styles = '<style type="text/css"> \n';
-        styles += '</style> \n';
-        end = '</head>\n<body>\n';
-//        end += '<div data-role="page" id="ADMPage7"><div data-role="content" id="main"><p class="nrc-hint-text">Add content here...</p></div></div>\n';
-        end += '</body>\n</html>';
-        return start+head+links+scripts+styles+end;
+    serializeFramework = function (admDesignNode) {
+        var doc = createNewDocWithHead(admDesignNode, $designHeaders);
+        return new XMLSerializer().serializeToString(doc);
     },
 
     // ------------------------------------------------ //

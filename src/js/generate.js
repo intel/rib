@@ -8,33 +8,43 @@
  *
  */
 "use strict";
-
+var $headers = [
+        {
+            admPropoertyName: "metas",
+            headerName: "meta",
+        },
+        {
+            admPropoertyName: "css",
+            headerName: "link",
+            attrName: "href",
+            additionalAttrs: [{name: "rel", value: "stylesheet"}]
+        },
+        {
+            admPropoertyName: "libs",
+            headerName: "script",
+            attrName: "src",
+        },
+    ],
+    $designHeaders = $.merge($.merge([],$headers), [
+        {
+            admPropoertyName: "design_metas",
+            headerName: "meta",
+        },
+        {
+            admPropoertyName: "design_css",
+            headerName: "link",
+            attrName: "href",
+            additionalAttrs: [{name: "rel", value: "stylesheet"}]
+        },
+        {
+            admPropoertyName: "design_libs",
+            headerName: "script",
+            attrName: "src",
+        }
+    ]);
 function generateHTML(){
     var design_root = ADM.getDesignRoot(),
-        body = $('<body/>'),
-        head = '<head>\n',
-        props = {}, i;
-
-    // Serialize any <meta> properties
-    props = design_root.getProperty("metas") ;
-    for (i in props) {
-        head += '<meta ' + props[i].key + '="' + props[i].value +
-                 '" content="' + props[i].content + '">\n';
-    }
-    // Serialize any <link> properties
-    props = design_root.getProperty("css") ;
-    for (i in props) {
-        head += '<link rel="stylesheet" href="' + props[i] + '">\n';
-    }
-    // Serialize any <script> properties
-    props = design_root.getProperty("libs");
-    for (i in props) {
-        head += '<script src="' + props[i] + '"></script>\n';
-    }
-    head += '</head>\n';
-
-    // Serialize the <body>
-    ADM2DOM(design_root, body);
-
-    return style_html('<html>\n' + head + body.html() + '\n</html>');
+        doc = createNewDocWithHead(design_root,$headers);
+    ADM2DOM(design_root, doc.documentElement);
+    return style_html(new XMLSerializer().serializeToString(doc));
 }

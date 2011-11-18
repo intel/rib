@@ -92,14 +92,14 @@ var BWidgetRegistry = {
             },
             design_libs: {
                 type: "array",
-                design_libs: [
+                defaultValue: [
                     'lib/jquery-ui-1.8.16.custom.js',
                     'src/js/template.js',
                 ],
             },
             design_css: {
                 type: "array",
-                design_css: [
+                defaultValue: [
                     'src/css/template.css',
                 ]
             }
