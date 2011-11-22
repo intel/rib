@@ -107,15 +107,10 @@ $(function() {
                 stop: function(event, ui){
                     console.log('sortable:stop() on "'+this.id+'"');
                     if (ui.item) {
-                        var idx = ui.item.index(),
+                        var idx = $(ui.item).parent().children('.adm-node').index(ui.item),
                             cid = $(ui.item).attr('data-uid'),
                             pid = $(ui.item).parent().attr('data-uid'),
-                            msg = 'childMoved:',
-                            off = $(ui.item).parent().children().length -
-                                  $(ui.item).parent().find('.adm-node').length;
-
-                        // Account for possible non-ADM children in the parent
-                        idx = idx-off;
+                            msg = 'childMoved:';
                         console.log(ui.item[0].id+' @ '+idx);
 
                         // Notify the ADM that element has been moved
@@ -138,6 +133,31 @@ $(function() {
             }
         });
     });
+    $('div:jqmData(role="page")').live('pageinit', function(e) {
+        // jQM generates an div next to the slider, which is the actually clicked item when users try to click the flip toggle switch.
+        var flipToggleSwithes = $('[data-role="slider"]'),
+            clickable = flipToggleSwithes.next();
+        flipToggleSwithes.bind("change", function(e){
+            return handleSelect(e, this);
+        });
+
+        //Move the adm-node class to the clickable and assign data-uid to it so that in sortable.stop we can always get it from ui.item.
+        clickable.addClass('adm-node');
+        flipToggleSwithes.removeClass('adm-node');
+        clickable.attr('data-uid', flipToggleSwithes.attr('data-uid'));
+        clickable.click( function(e) {
+            return handleSelect(e,$(this).prev());
+        });
+
+        //jQM generates two levels of divs for a select, the topmost one is what is clicked. 
+        var selects = $('select.adm-node'),
+            selectClickable = selects.parent().parent();
+
+        selectClickable.addClass('adm-node');
+        selects.removeClass('adm-node');
+        selectClickable.attr('data-uid', selects.attr('data-uid'));
+    });
+
 
     // Allow for deletion of selected widget
     $(document).keyup(function(e) {
@@ -197,13 +217,6 @@ $(function() {
         } else {
             $.mobile.initializePage();
         }
-        var flipToggleSwithes = $('[data-role="slider"]');
-        flipToggleSwithes.bind("change", function(e){
-            return handleSelect(e, this);
-        });
-        flipToggleSwithes.next().click( function(e) {
-            return handleSelect(e, $(this).prev()[0]);
-        });
     }
 
     function refreshPage() {
