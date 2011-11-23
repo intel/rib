@@ -406,11 +406,6 @@ var BWidgetRegistry = {
                 options: [ "true", "false" ],
                 defaultValue: "false"
             },
-            data_theme: {
-                type: "string",
-                options: [ "a", "b", "c", "d", "e", "" ],
-                defaultValue: "",
-            },
             data_icon: {
                 type: "string",
                 options: [ "arrow-l", "arrow-r", "arrow-u", "arrow-d", "delete", "plus", "minus", "check", "gear", "refresh", "forward", "back", "grid", "star", "alert", "info", "home", "search", "" ],
@@ -419,6 +414,11 @@ var BWidgetRegistry = {
             data_iconpos: {
                 type: "string",
                 options: [ "top", "bottom", "right", "notext", "" ],
+                defaultValue: "",
+            },
+            data_theme: {
+                type: "string",
+                options: [ "a", "b", "c", "d", "e", "" ],
                 defaultValue: "",
             }
         },
@@ -438,6 +438,11 @@ var BWidgetRegistry = {
             placeholder: {
                 type: "string",
                 defaultValue: "Placeholder text"
+            },
+            data_theme: {
+                type: "string",
+                options: [ "a", "b", "c", "d", "e", "" ],
+                defaultValue: "",
             }
         },
         template: '<input type="text" value="%VALUE%"  />',
@@ -489,9 +494,19 @@ var BWidgetRegistry = {
             max: {
                 type: "integer",
                 defaultValue: 100
+            },
+            data_theme: {
+                type: "string",
+                options: [ "a", "b", "c", "d", "e", "" ],
+                defaultValue: "",
+            },
+            data_track_theme: {
+                type: "string",
+                options: [ "a", "b", "c", "d", "e", "" ],
+                defaultValue: "",
             }
         },
-        template: { 'yes':'<div data-role="fieldcontain"> <label for="%ID%-range">%CONDITIONAL%</label> <input type="range" name="%ID%-range" id="%ID%-range" value="%VALUE%" min="%MIN%" max="%MAX%" /> </div>', 'no':'<div data-role="fieldcontain"><input type="range" name="%ID%-range" id="%ID%-range" value="%VALUE%" min="%MIN%" max="%MAX%" /> </div>'},
+        template: { 'yes':'<div data-role="fieldcontain"> <label for="%ID%-range">%CONDITIONAL%</label> <input type="range" name="%ID%-range" id="%ID%-range" value="%VALUE%" min="%MIN%" max="%MAX%" data-theme="%DATA-THEME%" data-track-theme="%DATA-TRACK-THEME%" /> </div>', 'no':'<div data-role="fieldcontain"><input type="range" name="%ID%-range" id="%ID%-range" value="%VALUE%" min="%MIN%" max="%MAX%" data-theme="%DATA-THEME%" data-track-theme="%DATA-TRACK-THEME%" /> </div>'},
     },
 
     /**
@@ -528,6 +543,11 @@ var BWidgetRegistry = {
             rows: {
                 type: "integer",
                 defaultValue: "2"
+            },
+            data_theme: {
+                type: "string",
+                options: [ "a", "b", "c", "d", "e", "" ],
+                defaultValue: "",
             }
         },
         template: '<textarea></textarea>',
@@ -554,6 +574,11 @@ var BWidgetRegistry = {
             label2: {
                 type: "string",
                 defaultValue: "On"
+            },
+            data_theme: {
+                type: "string",
+                options: [ "a", "b", "c", "d", "e", "" ],
+                defaultValue: "",
             }
         },
         template: '<select data-role="slider"><option value="%VALUE1%">%LABEL1%</option><option value="%VALUE2%">%LABEL2%</option></select>',
@@ -631,6 +656,11 @@ var BWidgetRegistry = {
             label: {
                 type: "string",
                 defaultValue: "Label"
+            },
+            data_theme: {
+                type: "string",
+                options: [ "a", "b", "c", "d", "e", "" ],
+                defaultValue: "",
             }
         },
         template: '<option>%LABEL%</option>'
@@ -650,6 +680,11 @@ var BWidgetRegistry = {
             label: {
                 type: "string",
                 defaultValue: "Label"
+            },
+            data_theme: {
+                type: "string",
+                options: [ "a", "b", "c", "d", "e", "" ],
+                defaultValue: "",
             }
         },
         template: '<input type="radio" id="%ID" /><label for="%ID%">%LABEL%</label>',
@@ -669,6 +704,11 @@ var BWidgetRegistry = {
             label: {
                 type: "string",
                 defaultValue: "Label"
+            },
+            data_theme: {
+                type: "string",
+                options: [ "a", "b", "c", "d", "e", "" ],
+                defaultValue: "",
             }
         },
         template: '<input type="checkbox" id="%ID" /><label for="%ID%">%LABEL%</label>',
