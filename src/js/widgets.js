@@ -380,8 +380,17 @@ var BWidgetRegistry = {
                 type: "string",
                 defaultValue: "Button"
             },
+            type: {
+                type: "string",
+                options: [ "Default", "Link", "Submit", "Reset" ],
+                defaultValue: "Default"
+            },
+            type_label: {
+                type: "string",
+                defaultValue: "type"
+            },
         },
-        template: '<a data-role="button">%TEXT%</a>',
+        template: { 'Default':'<button>%TEXT%</button>', 'Link':'<a href="%TARGET%" data-role="button">%TEXT%</a>', 'Submit':'<input type="submit" data-role="button" value="%TEXT%" />', 'Reset':'<input type="reset" value="%TEXT%" />' },
     },
 
     /**
