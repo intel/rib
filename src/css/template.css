@@ -15,9 +15,6 @@
     margin: 0px;
     padding: 0px;
 }
-.adm-node {
-    position: relative;
-}
 .nrc-sortable-container:not([data-role=footer]):not([data-role=header]) {
     outline: black dashed 1px;
     padding: 5px 10px;
