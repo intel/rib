@@ -389,8 +389,40 @@ var BWidgetRegistry = {
                 type: "string",
                 defaultValue: "type"
             },
+            conditional: {
+               type: "string",
+               defaultValue: "#"
+            },
+            conditional_label: {
+                type: "string",
+                defaultValue: "target"
+            },
+            conditional_for: {
+                type: "string",
+                defaultValue: "Link"
+            },
+            data_inline: {
+                type: "string",
+                options: [ "true", "false" ],
+                defaultValue: "false"
+            },
+            data_theme: {
+                type: "string",
+                options: [ "a", "b", "c", "d", "e", "" ],
+                defaultValue: "",
+            },
+            data_icon: {
+                type: "string",
+                options: [ "arrow-l", "arrow-r", "arrow-u", "arrow-d", "delete", "plus", "minus", "check", "gear", "refresh", "forward", "back", "grid", "star", "alert", "info", "home", "search", "" ],
+                defaultValue: "",
+            },
+            data_iconpos: {
+                type: "string",
+                options: [ "top", "bottom", "right", "notext", "" ],
+                defaultValue: "",
+            }
         },
-        template: { 'Default':'<button>%TEXT%</button>', 'Link':'<a href="%TARGET%" data-role="button">%TEXT%</a>', 'Submit':'<input type="submit" data-role="button" value="%TEXT%" />', 'Reset':'<input type="reset" value="%TEXT%" />' },
+        template: { 'Default':'<button>%TEXT%</button>', 'Link':'<a href="%CONDITIONAL%" data-role="button">%TEXT%</a>', 'Submit':'<input type="submit" data-role="button" value="%TEXT%" />', 'Reset':'<input type="reset" value="%TEXT%" />' },
     },
 
     /**
@@ -477,8 +509,7 @@ var BWidgetRegistry = {
             }
         },
         template: '<label>%TEXT%</label>',
-    },
-
+    }
 };
 
 /**
