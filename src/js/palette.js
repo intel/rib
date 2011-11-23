@@ -70,25 +70,6 @@ function loadPalette(container, filename) {
 			$(ul).append($(li));
                 });
 
-		$.each(data.palettes, function(i, p){
-			$(acc).append('<li><p>'+p.name+'</p><ul id="'+p.id+'"></ul></li>');
-
-			$.each(p.widgets, function(j, w) {
-				// Add new <li> element to hold this widget
-				var ul = $('#'+p.id);
-				var li = $('<li id="nrc_'+w.type+'"></li>').appendTo($(ul));
-				$(li).button({
-					label: w.name,
-					icons: {primary: w.icon}
-					});
-				$(li).disableSelection();
-				$(li).addClass('nrc-palette-widget');
-				$(li).data("code", w.code);
-				$(li).data("adm-node", {type: w.type});
-				$(ul).append($(li));
-			});
-		});
-
 		$(acc).accordion({
 			fillSpace: true,
 			});
