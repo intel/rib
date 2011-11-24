@@ -612,6 +612,14 @@ $(function() {
         // Add a special (temporary) class used by the JQM engine to
         // easily identify the "new" element(s) added to the DOM
         $(domNode).addClass('nrc-dropped-widget');
+
+        // Most buttons can't be dragged properly, so we put them behind
+        // the associated span, which can be dragged properly
+        if (admNode.getType() === "Button" &&
+            admNode.getProperty("type") != "Link") {
+            $(domNode).css("z-index", "-1");
+        }
+
         $(domNode).addClass('adm-node');
 
         // If this node is "selected", make sure it's class reflects this

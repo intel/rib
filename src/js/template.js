@@ -49,9 +49,6 @@ $(function() {
         var selects = $('select.adm-node[data-role!="slider"]');
         // Configure "select" handlers on all nodes added from the ADM
         // except for pages and content
-        $('.adm-node[data-role!="slider"]').not('select').click( function (e) {
-            return handleSelect(e, this);
-        });
         selects.focus( function (e) {
             return handleSelect(e, this);
         });
@@ -77,6 +74,7 @@ $(function() {
                 placeholder: 'nrc-dragging',
                 appendTo: 'body',
                 connectWith: '.nrc-sortable-container',
+                cancel: '> :not(.adm-node),select',
                 items: '> *.adm-node',
                 // TODO: add connectWith option to allow movement into
                 //       other sortables
@@ -156,6 +154,16 @@ $(function() {
         selectClickable.addClass('adm-node');
         selects.removeClass('adm-node');
         selectClickable.attr('data-uid', selects.attr('data-uid'));
+
+        var buttons = $( $.mobile.button.prototype.options.initSelector, e.target )
+		    .not( ":jqmData(role='none'), :jqmData(role='nojs')" );
+        buttons.each( function (index, button) {
+                $(button).removeClass("adm-node").parent().addClass("adm-node").attr("data-uid", $(button).attr("data-uid"));
+        });
+
+        $('.adm-node[data-role!="slider"]').not('select').click( function (e) {
+            return handleSelect(e, this);
+        });
     });
 
 
