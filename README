@@ -49,10 +49,10 @@ lib/jquery-1.6.2.js			MIT & GPLv2	The jQuery Project
 lib/jquery-1.6.2.min.js			MIT & GPLv2	The jQuery Project
 lib/jquery-ui-1.8.16.custom.js		MIT & GPLv2	The jQuery Project
 lib/jquery-ui-1.8.16.custom.min.js	MIT & GPLv2	The jQuery Project
-lib/jquery.mobile-1.0b3.js		MIT & GPLv2	The jQuery Project
-lib/jquery.mobile-1.0b3.min.js		MIT & GPLv2	The jQuery Project
-src/css/jquery.mobile-1.0b3.css		MIT & GPLv2	The jQuery Project
-src/css/jquery.mobile-1.0b3.min.css	MIT & GPLv2	The jQuery Project
+lib/jquery.mobile-1.0.js		MIT & GPLv2	The jQuery Project
+lib/jquery.mobile-1.0.min.js		MIT & GPLv2	The jQuery Project
+src/css/jquery.mobile-1.0.css		MIT & GPLv2	The jQuery Project
+src/css/jquery.mobile-1.0.min.css	MIT & GPLv2	The jQuery Project
 lib/json2.js				Public Domain	N/A
 lib/jquery.lame.js			FreeBSD		Ryan Ray[1]
 lib/js-beautify/beautify-html.js	MIT		Einar Lielmanis[4]

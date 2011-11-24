@@ -8,8 +8,8 @@ jQuery    lib/jquery-1.6.2.js                  MIT & GPLv2    [1]
 jQuery    lib/jquery-1.6.2.min.js              MIT & GPLv2    [2]
 jQuery    lib/jquery-ui-1.8.16.custom.js       MIT & GPLv2    [3]
 jQuery    lib/jquery-ui-1.8.16.custom.min.js   MIT & GPLv2    [4]
-jQuery    lib/jquery.mobile-1.0b3.js           MIT & GPLv2    [5]
-jQuery    lib/jquery.mobile-1.0b3.min.js       MIT & GPLv2    [6]
+jQuery    lib/jquery.mobile-1.0.js             MIT & GPLv2    [5]
+jQuery    lib/jquery.mobile-1.0.min.js         MIT & GPLv2    [6]
 Ryan Ray  lib/jquery.lame.js                   FreeBSD        [7]
 N/A       lib/json2.js                         Public Domain  [8]
 Intel     src/js/serialize.js                  APLv2          N/A
@@ -24,8 +24,8 @@ Intel     src/assets/palette.json              APLv2          N/A
 Intel     src/assets/serializeText.json        APLv2          N/A
 Intel     src/css/builder.css                  APLv2          N/A
 Intel     src/css/template.css                 APLv2          N/A
-jQuery    src/css/jquery.mobile-1.0b3.css      MIT & GPLv2    [9]
-jQuery    src/css/jquery.mobile-1.0b3.min.css  MIT & GPLv2    [10]
+jQuery    src/css/jquery.mobile-1.0.css        MIT & GPLv2    [9]
+jQuery    src/css/jquery.mobile-1.0.min.css    MIT & GPLv2    [10]
 Einar     lib/js-beautify/beautify-html.js     MIT            [13]
 Lielmanis
 Einar     lib/js-beautify/beautify.js          MIT            [13]
