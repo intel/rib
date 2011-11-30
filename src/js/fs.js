@@ -223,11 +223,12 @@ fsUtils = {
      * @param {function(string)=} opt_successCallback An optional
      * @param {function(FileError)=} opt_errorCallback An optional
      * @param {bool} opt_append Flag for append mode An optinal
+     * @param {bool} binary Flag for writing binary contents An optinal
      *
      * success callback passed the FileEntry referring to the file.
      * error callback passed the generated error.
      */
-    write: function (path, contents, success, error, opt_append){
+    write: function (path, contents, success, error, opt_append, binary){
 
                var onError = error || _onError;
                function write(fileEntry) {
@@ -243,12 +244,26 @@ fsUtils = {
                            fileWriter.seek(fileWriter.length);
                        }
 
-                       bb.append(contents);
-                       fileWriter.write(bb.getBlob('text/plain'));
+                       var mimeString = "text/plain";
+                       if (binary) {
+                           // write the bytes of the string to an ArrayBuffer
+                           var ab = new ArrayBuffer(contents.length);
+                           var ia = new Uint8Array(ab);
+                           for (var i = 0; i < contents.length; i++) {
+                               ia[i] = contents.charCodeAt(i);
+                           }
+                           // write the ArrayBuffer to a blob, and you're done
+                           bb.append(ab);
+                           mimeString = "";
+                       }
+                       else
+                           bb.append(contents);
+                       fileWriter.write(bb.getBlob(mimeString));
+
                    }, onError);
                }
 
-               fsUtils.pathToEntry(path, function (FileEntry) {
+               fsUtils.pathToEntry(path, function (fileEntry) {
                    if (opt_append) {
                        write(fileEntry);
                    } else {

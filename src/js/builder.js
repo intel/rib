@@ -378,6 +378,7 @@ $(function() {
             $toolbarPanel.find('#showADMTree').click(showADMTree);
             $toolbarPanel.find('#reloadDesign').click(triggerDesignViewRefresh);
             $toolbarPanel.find('#exportHTML').click(triggerExportHTML);
+            $toolbarPanel.find('#exportPackage').mousedown(triggerExportPackage);
             $toolbarPanel.find('#newpage').click(addNewPage);
             $toolbarPanel.find('#removepage').click(deleteCurrentPage);
 
@@ -540,20 +541,20 @@ $(function() {
 ////////////////////////////////////////////////////
 // FUNCTIONS FOLLOW
 ////////////////////////////////////////////////////
-    triggerExportHTML = function () {
+    exportFile = function (fileName, content, binary) {
         var cookieValue = cookieUtils.get("exportNotice"),
             $exportNoticeDialog = $("#exportNoticeDialog"),
-            saveAndExportCode = function () {
-                fsUtils.write("index.html.download", resultHTML,  function(fileEntry){
-                    fsUtils.exportToBlank(fileEntry.fullPath, "HTML");
-                }, _onError);
+            saveAndExportFile = function () {
+                fsUtils.write(fileName, content, function(fileEntry){
+                    fsUtils.exportToBlank(fileEntry.fullPath);
+                }, _onError, false, binary);
             };
 
         if(cookieValue === "true" && $exportNoticeDialog.length > 0) {
             // bind exporting HTML code handler to OK button
             $exportNoticeDialog.dialog("option", "buttons", {
                 "OK": function () {
-                    saveAndExportCode();
+                    saveAndExportFile();
                     $("#exportNoticeDialog").dialog("close");
                 }
             });
@@ -561,9 +562,73 @@ $(function() {
             $exportNoticeDialog.dialog("open");
         } else {
             // if cookieValue is not true, export HTML code directly
-            saveAndExportCode();
+            saveAndExportFile();
         }
     },
+
+    triggerExportHTML = function () {
+        exportFile("index.html.download", resultHTML);
+    },
+
+    triggerExportPackage = function () {
+        var zip = new JSZip();
+        zip.add("index.html", resultHTML);
+        var files = [
+            'src/css/images/ajax-loader.png',
+            'src/css/images/icons-18-white.png',
+            'src/css/images/icons-36-white.png',
+            'src/css/images/icons-18-black.png',
+            'src/css/images/icons-36-black.png',
+            'src/css/images/icon-search-black.png',
+            'src/css/images/web-ui-fw_noContent.png',
+            'src/css/images/web-ui-fw_volume_icon.png'
+        ];
+        var getDefaultHeaderFiles = function (type) {
+            var files = [];
+            var headers = ADM.getDesignRoot().getProperty(type);
+            for ( var header in headers) {
+                // Skip design only header properties
+                if (headers[header].hasOwnProperty('designOnly') && headers[header].designOnly) {
+                    continue;
+                }
+                files.push(headers[header].value);
+            }
+            return files;
+        };
+        $.merge(files, $.merge(getDefaultHeaderFiles("libs"), getDefaultHeaderFiles("css")));
+
+        var i = 0;
+        var getFile = function () {
+            if (i < files.length)
+            {
+                // We have to do ajax request not using jquery as we can't get "arraybuffer" response from jquery
+                var req = window.ActiveXObject ? new window.ActiveXObject( "Microsoft.XMLHTTP" ): new XMLHttpRequest();
+                req.onload = function() {
+                    var uIntArray = new Uint8Array(this.response);
+                    var charArray = new Array(uIntArray.length);
+                    for (var j = 0; j < uIntArray.length; j ++)
+                        charArray[j] = String.fromCharCode(uIntArray[j]);
+                    zip.add(files[i],btoa(charArray.join('')), {base64:true});
+                    if (i === files.length - 1){
+                        var content = zip.generate(true);
+                        exportFile("design.zip", content, true);
+                    }
+                    i++;
+                    getFile();
+                }
+                try
+                {
+                    req.open("GET", files[i], true);
+                    req.responseType = 'arraybuffer';
+                } catch (e) {
+                    alert(e);
+                }
+                req.send(null);
+            }
+        }
+        getFile();
+    },
+
 
     triggerDesignViewReload = function () {
         $('#design-view')[0].contentWindow.postMessage('reload', '*');

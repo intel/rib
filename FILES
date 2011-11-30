@@ -34,6 +34,8 @@ Intel     lib/web-ui-fw.js                     MIT            [14]
 Intel     lib/web-ui-fw-libs.js                MIT            [14]
 Intel     src/css/web-ui-fw-theme.css          MIT            [14]
 Intel     src/css/web-ui-fw-widgets.css        MIT            [14]
+Stuart    lib/jszip.js                         MIT or GPLv3   [15]
+Knightley
 
 Unreleased/Unpackaged Files (build/debug/development)
 =====================================================
@@ -65,3 +67,4 @@ Notes:
 [12] Portions of the file (jslint.js) are copyright Intel Corporation, 2011.
 [13] https://github.com/einars/js-beautify
 [14] https://github.com/web-ui-fw/web-ui-fw
+[15] http://jszip.stuartk.co.uk
