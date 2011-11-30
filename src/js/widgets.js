@@ -777,6 +777,28 @@ var BWidgetRegistry = {
             },
         },
         template: '<li>%TEXT%</li>',
+    },
+
+    /**
+     * Represents a grid element.
+     */
+    Grid: {
+        parent: "Base",
+        properties: {
+            subtype: {
+                type: "string",
+                options: [ "a", "b", "c", "d" ],
+                defaultValue: "a",
+            },
+        },
+        template: '<div class="ui-grid-%SUBTYPE%"></div>',
+        zones: [
+            {
+                name: "default",
+                cardinality: "N",
+                allow: "Block"
+            }
+        ],
     }
 };
 
