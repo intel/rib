@@ -5,33 +5,34 @@
 
 Definite
 --------
-- convert ADM API to use exceptions for errors
-- move test utils into a separate .js file
-- add ADM unit tests
-- add event type to modelUpdated events
+P2 - convert ADM API to use exceptions for errors
+P3 - move test utils into a separate .js file
+P3 - add ADM unit tests
+P1 - add event type to modelUpdated events
 
 Need Thought
 ------------
-- higher-level validation like id can only start with alpha character
-- consider preventing selection outside of active page
-- consider providing old value in propertyChanged event
-- consider moving active page and selection concepts to design node
-- consider validating widget registry entries on startup
+P2 - higher-level validation like id can only start with alpha character
+P1 - consider preventing selection outside of active page, or as Xu suggests,
+     making selection outside automatically change active page
+P2 - consider providing old value in propertyChanged event
+P1 - consider moving active page and selection concepts to design node
+P2 - consider validating widget registry entries on startup
 
 [Design View]
 =============
 
-- Implement breadcrumb trail for selection at the top of the view
+P1 - Implement breadcrumb trail for selection at the top of the view
 
-- Make tools/panels movable to "dock" positions
+P2 - Make tools/panels movable to "dock" positions
 
-- Add visual page picker (not a seperate dialog).
+P2 - Add visual page picker (not a separate dialog).
   * Could be in the toolbar, or a vertical "palette" on the right of
     the screen
 
-- Page delete option someplace
+P1 - Page delete option someplace
 
-- Make all DOM interactions into a "framework" class with well
+P2 - Make all DOM interactions into a "framework" class with well
   defined APIs for things like:
   * change page
   * select object
@@ -46,36 +47,36 @@ Need Thought
 [FileIO]
 ========
 
-- Implement Export to HTML from File menu
+P1 - Implement Export to HTML from File menu
 
-- Implement File view/browser for HTML5 localstorage contents
+P2 - Implement File view/browser for HTML5 localstorage contents
 
 [General]
 =========
 
-- Rename template.js to something more appropriate for what it actually
+P2 - Rename template.js to something more appropriate for what it actually
   does, which is handling the embedded design view contents styling and
   behaviors in the framework context as opposed to the GUI Builder JS/CSS
   context
 
-- Separate "controller" and "design view" logic in js/builder.js.  For
+P1 - Separate "controller" and "design view" logic in js/builder.js.  For
   example, split it into two files... and make them more object oriented
 
-- Start saving context for UI states, preferences, current design, etc...
+P2 - Start saving context for UI states, preferences, current design, etc...
 
 
 [Palette]
 =========
 
-- Convert palette.json and palette.js to be usable for BWidget objects
+P1 - Convert palette.json and palette.js to be usable for BWidget objects
  Migrate the non-base widgets from widgets.js to palette JSON
   * Base, Design, Page, Header, Footer and maybe Content will remain
     in widgets.js
   * Button, TextInput and others should migrate to a JSON format
 
-- Start adding Tizen "win set" framework widgets to the palette JSON
+P1 - Start adding Tizen "win set" framework widgets to the palette JSON
 
-- Convert existing widgets in palette.json to BWidget formats
+P1 - Convert existing widgets in palette.json to BWidget formats
   * Flip switch
   * Slider
   * Radio Buttons
@@ -83,16 +84,16 @@ Need Thought
   * Select menus
   * Button controlgroup
 
-- Add additional jQM widgets to the palette JSON:
+P2 - Add additional jQM widgets to the palette JSON:
   * Password Input
   * Validated Inputs (number, email, url, telephone, etc.)
   * Search Input
 
-- Convert the palette to a "palette.d" format, where new, custom palettes
+P2 - Convert the palette to a "palette.d" format, where new, custom palettes
   can be added by simply adding new files into that dir.  Needs some high
   level design documentation.
 
-- Visual cleanup, try making the widget boxes constant width, maybe two wide
+P1 - Visual cleanup, try making the widget boxes constant width, maybe two wide
   with a smaller font so they'll fit? Ask UX team for a better default icon,
   and maybe a set of icons.
 
@@ -105,10 +106,10 @@ Need Thought
 [Template]
 ==========
 
-- Create additional templates
+P2 - Create additional templates
 
-- Add a "template picker" at startup and pre-populate the content area with
+P2 - Add a "template picker" at startup and pre-populate the content area with
   selected template
 
 [Widget Registry]
-- Provide real UX icons for widgets
+P1 - Provide real UX icons for widgets
