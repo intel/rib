@@ -975,7 +975,9 @@ ADMNode.prototype.insertChildInZone = function (child, zoneName, index) {
         this.fireEvent("childAdded",
                        { parent: this, child: child, index: index,
                          zone: zoneName });
-        this.fireModelEvent("modelUpdated", { node: this });
+        this.fireModelEvent("modelUpdated",
+                            { type: "nodeAdded", node: child, parent: this,
+                              index: index, zone: zoneName });
         return true;
     } else {
         console.log("Warning: children of ADMNode must be ADMNode");
@@ -1048,11 +1050,11 @@ ADMNode.prototype.moveNode = function (newParent, zoneName, zoneIndex) {
                        { parent: newParent, child: this, index: zoneIndex,
                          zone: zoneName });
 
-        // only send two modelUpdated events if two parent nodes were affected
-        if (oldParent !== newParent) {
-            this.fireModelEvent("modelUpdated", { node: oldParent });
-        }
-        this.fireModelEvent("modelUpdated", { node: newParent });
+        this.fireModelEvent("modelUpdated",
+                            { type: "nodeMoved", node: this,
+                              oldParent: oldParent, newParent: newParent,
+                              oldIndex: oldIndex, newIndex: zoneIndex,
+                              oldZone: oldZone, newZone: zoneName });
     }
 
     return rval;
@@ -1112,7 +1114,9 @@ ADMNode.prototype.removeChildFromZone = function (zoneName, index) {
     this.fireEvent("childRemoved",
                    { parent: this, child: child, index: index,
                      zone: zoneName });
-    this.fireModelEvent("modelUpdated", { node: this });
+    this.fireModelEvent("modelUpdated",
+                        { type: "nodeRemoved", node: child, parent: this,
+                          index: index, zone: zoneName });
     return child;
 };
 
@@ -1270,7 +1274,7 @@ ADMNode.prototype.isPropertyExplicit = function (property) {
  *                   object.
  */
 ADMNode.prototype.setProperty = function (property, value) {
-    var type = BWidget.getPropertyType(this.getType(), property);
+    var orig, type = BWidget.getPropertyType(this.getType(), property);
     if (!type) {
         console.log("Error: attempted to set non-existent property: " +
                     property);
@@ -1286,10 +1290,14 @@ ADMNode.prototype.setProperty = function (property, value) {
     }
 
     if (this._properties[property] !== value) {
+        orig = this._properties[property];
         this._properties[property] = value;
         this.fireEvent("propertyChanged",
                        { node: this, property: property, value: value });
-        this.fireModelEvent("modelUpdated", { node: this });
+        this.fireModelEvent("modelUpdated",
+                            { type: "propertyChanged", node: this,
+                              property: property, oldValue: orig,
+                              newValue: value });
     }
     return true;
 };
