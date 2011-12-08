@@ -62,45 +62,43 @@ var BWidgetRegistry = {
             metas: {
                 type: "array",
                 defaultValue:[
-                        { key:'name',
-                          value: 'viewport',
-                          content: 'width=device-width, initial-scale=1'
-                        },
-                 ]
+                    { key:'name',
+                      value: 'viewport',
+                      content: 'width=device-width, initial-scale=1'
+                    },
+                    { designOnly: true,
+                      key:'http-equiv',
+                      value: 'cache-control',
+                      content: 'no-cache'
+                    },
+                ]
             },
             libs: {
                 type: "array",
                 defaultValue: [
-                    'lib/jquery-1.6.2.js',
-                    'lib/jquery.mobile-1.0b3.js',
-                ],
+                    { designOnly: false,
+                      value: 'lib/jquery-1.6.2.js'
+                    },
+                    { designOnly: true,
+                      value: 'lib/jquery-ui-1.8.16.custom.js'
+                    },
+                    { designOnly: true,
+                      value: 'src/js/template.js'
+                    },
+                    { designOnly: false,
+                      value: 'lib/jquery.mobile-1.0b3.js'
+                    }
+                ]
             },
             css: {
                 type: "array",
                 defaultValue: [
-                    'src/css/jquery.mobile-1.0b3.css',
-                ],
-            },
-            design_metas: {
-                type: "array",
-                defaultValue: [
-                    { key:'http-equiv',
-                      value: 'cache-control',
-                      content: 'no-cache'
+                    { designOnly: false,
+                      value: 'src/css/jquery.mobile-1.0b3.css'
                     },
-                ],
-            },
-            design_libs: {
-                type: "array",
-                defaultValue: [
-                    'lib/jquery-ui-1.8.16.custom.js',
-                    'src/js/template.js',
-                ],
-            },
-            design_css: {
-                type: "array",
-                defaultValue: [
-                    'src/css/template.css',
+                    { designOnly: true,
+                      value: 'src/css/template.css'
+                    }
                 ]
             }
         },
