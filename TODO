@@ -55,6 +55,8 @@ P1 - Implement Export to HTML from File menu
 
 P2 - Implement File view/browser for HTML5 localstorage contents
 
+P2 - Hide "Folder" support in file manager until it's more bug-free
+
 [General]
 =========
 
@@ -68,6 +70,17 @@ P1 - Separate "controller" and "design view" logic in js/builder.js.  For
 
 P2 - Start saving context for UI states, preferences, current design, etc...
 
+P2 - Menu items should probably have hover state
+P3 - Menu items should show we clicked with an active state
+P1 - Menu should be dismissed when we click an option (e.g. try File | New)
+
+P2 - Make a "developer" setting somewhere
+     - When not in developer mode, hide the "uid=92" text in Properties
+     - Turn off "Folder" support in file manager until it's more bug-free
+
+P2 - Text is selectable with dragging, need to disable that somehow
+     - e.g. title (filename) text bar
+     - or clicking in the page below footer and dragging lets you select stuff
 
 [Palette]
 =========
@@ -103,6 +116,10 @@ P1 - Visual cleanup, try making the widget boxes constant width, maybe two wide
 
 [Properties]
 ============
+P2 - Properties pane header text should have some margin from palette
+     - Apparently the "jQuery Mobile Widgets" button is covering part of it
+
+P2 - Only display the (uid=92) when in "developer mode" (see [General])
 
 [Serialize]
 ===========
@@ -117,3 +134,19 @@ P2 - Add a "template picker" at startup and pre-populate the content area with
 
 [Widget Registry]
 P1 - Provide real UX icons for widgets
+
+[Code Generation]
+P2 - Remove the xmlns stuff from generated code, not needed, right?
+P3 - Don't wrap </script> to next line
+     - Perhaps these are adjustments we run after beautify?
+P3 - Don't wrap /> to next line after <meta> or <input>
+     - Also make sure these /> are legit in HTML5
+
+[Code View]
+P1 - Should not be editable, at least not any time soon
+
+P2 - Color syntax highlighting would be highly desirable
+
+[Preview]
+=========
+P1 - Respond to page selector and display the selected page
