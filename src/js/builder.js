@@ -711,29 +711,23 @@ $(function() {
         // create the DOM Element instance
         for (var p in props) {
             switch (p) {
-                case "text":
-                case "min":
-                case "max":
-                case "value":
-                    template = template.replace('%' + p.toUpperCase() + '%',
-                                                props[p]);
-                    break;
                 case "id":
                     if (id === '' || id === undefined || id === null) {
                         updateId = true;
                         id = type+'-'+uid;
                     }
-                    template = template.replace(/%ID%/g, id);
                     attrMap[p] = id;
                     break;
                 default:
                     // JSON prop names can't have '-' in them, but the DOM
                     // attribute name does, so we replace '_' with '-'
-                    var attrName = p.replace(/_/g, '-'),
-                        attrValue = node.getProperty(p);
-                    attrMap[attrName] = attrValue;
+                    var attrValue = node.getProperty(p);
+                    p = p.replace(/_/g, '-');
+                    attrMap[p] = attrValue;
                     break;
             }
+            template = template.replace('%' + p.toUpperCase() + '%',
+                                        attrMap[p]);
         }
 
         // Turn the template into an element instance, via jquery
