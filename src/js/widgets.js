@@ -712,6 +712,52 @@ var BWidgetRegistry = {
             }
         },
         template: '<input type="checkbox" id="%ID" /><label for="%ID%">%LABEL%</label>',
+    },
+
+    /**
+     * Represents a unordered list element.
+     */
+    ListView: {
+        parent: "Base",
+        properties: {
+            type: {
+                type: "string",
+                options: [ "Numbered", "Normal" ],
+                defaultValue: "Normal"
+            },
+            type_label: {
+                type: "string",
+                defaultValue: "type"
+            },
+            data_inset: {
+                type: "string",
+                options: [ "true", "false" ],
+                defaultValue: "true",
+            },
+            data_filter: {
+                type: "string",
+                options: [ "true", "false" ],
+                defaultValue: "false",
+            },
+            data_theme: {
+                type: "string",
+                options: [ "a", "b", "c", "d", "e", "" ],
+                defaultValue: "",
+            },
+            data_divider_theme: {
+                type: "string",
+                options: [ "a", "b", "c", "d", "e" ],
+                defaultValue: "b",
+            }
+        },
+        template: { 'Normal':'<ul data-role="listview">', 'Numbered':'<ol data-role="listview">' },
+        zones: [
+            {
+                name: "default",
+                cardinality: "N",
+                allow: "ListItem"
+            }
+        ],
     }
 };
 
@@ -752,6 +798,9 @@ var BWidget = {
                 }
                 if (type === "RadioButton") {
                     BWidgetRegistry[type].displayLabel = "Radio Button";
+                }
+                if (type === "ListView") {
+                    BWidgetRegistry[type].displayLabel = "List View";
                 }
             }
         }
