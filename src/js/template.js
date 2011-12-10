@@ -18,8 +18,8 @@ $(document).bind('mobileinit', function() {
     // Make sure to sync up the ADM anytime the page changes in jQM
     $('div').live('pageshow', function(e) {
         var pageId = $(this).data('uid'),
-            node = window.parent.ADM.getDesignRoot().findNodeByUid(pageId),
-            currentPage = window.parent.ADM.getActivePage();
+            node = (window.parent !== window)?window.parent.ADM.getDesignRoot().findNodeByUid(pageId):null,
+            currentPage = (window.parent !== window)?window.parent.ADM.getActivePage():null;
 
         // No change so do nothing
         if (currentPage && currentPage.getUid() === pageId) {
@@ -33,20 +33,34 @@ $(document).bind('mobileinit', function() {
 });
 
 $(function() {
+    var handleSelect = function (e, ui){
+        if ($(ui).data('role') === 'content' ||
+            $(ui).data('role') === 'page') {
+            setSelected(null);
+        } else if (!$(ui).hasClass('ui-selected')) {
+            setSelected(ui);
+        } else if (e.ctrlKey) {
+            setSelected(null);
+        }
+        e.stopPropagation();
+        return false;  // Stop event bubbling
+    }
     $('div:jqmData(role="page")').live('pagebeforecreate', function(e) {
+        var selects = $('select.adm-node[data-role!="slider"]');
         // Configure "select" handlers on all nodes added from the ADM
         // except for pages and content
-        $('.adm-node').click( function (e) {
-            if ($(this).data('role') === 'content' ||
-                $(this).data('role') === 'page') {
-                setSelected(null);
-            } else if (!$(this).hasClass('ui-selected')) {
-                setSelected(this);
-            } else if (e.ctrlKey) {
-                setSelected(null);
-            }
+        $('.adm-node[data-role!="slider"]').not('select').click( function (e) {
+            return handleSelect(e, this);
+        });
+        selects.focus( function (e) {
+            return handleSelect(e, this);
+        });
+        selects.click( function (e) {
             e.stopPropagation();
-            return false;  // Stop event bubbling
+            return false;
+        });
+        selects.change( function (e) {
+            return handleSelect(e, $(this).children(':selected')[0]);
         });
 
         // Configure "sortable" behaviors
@@ -63,7 +77,6 @@ $(function() {
                 placeholder: 'nrc-dragging',
                 appendTo: 'body',
                 connectWith: '.nrc-sortable-container',
-                cancel: '> :not(.adm-node)',
                 items: '> *.adm-node',
                 // TODO: add connectWith option to allow movement into
                 //       other sortables
@@ -184,6 +197,13 @@ $(function() {
         } else {
             $.mobile.initializePage();
         }
+        var flipToggleSwithes = $('[data-role="slider"]');
+        flipToggleSwithes.bind("change", function(e){
+            return handleSelect(e, this);
+        });
+        flipToggleSwithes.next().click( function(e) {
+            return handleSelect(e, $(this).prev()[0]);
+        });
     }
 
     function refreshPage() {
