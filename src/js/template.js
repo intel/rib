@@ -68,30 +68,27 @@ $(function() {
                 // TODO: add connectWith option to allow movement into
                 //       other sortables
                 start: function(event, ui){
+                    var stylesToCopy = [
+                            'width', 'height',
+                            'padding-top', 'padding-left',
+                            'padding-right', 'padding-bottom',
+                            'margin-top', 'margin-left',
+                            'margin-right', 'margin-bottom',
+                            'border-top-left-radius',
+                            'border-top-right-radius',
+                            'border-bottom-left-radius',
+                            'border-bottom-right-radius'],
+                        attrMap = {};
                     console.log('sortable:start() on "'+this.id+'"');
                     if (ui.placeholder) {
                         // Try our best to make the placeholder occupy the
                         // same space as the Element that it represents
-                        $(ui.placeholder).css({
-                            'width':$(ui.item).css('width'),
-                            'height':$(ui.item).css('height'),
-                            'padding-top':$(ui.item).css('padding-top'),
-                            'padding-left':$(ui.item).css('padding-left'),
-                            'padding-right':$(ui.item).css('padding-right'),
-                            'padding-bottom':$(ui.item).css('padding-bottom'),
-                            'margin-top':$(ui.item).css('margin-top'),
-                            'margin-left':$(ui.item).css('margin-left'),
-                            'margin-right':$(ui.item).css('margin-right'),
-                            'margin-bottom':$(ui.item).css('margin-bottom'),
-                            'border-top-left-radius':
-                                $(ui.item).css('border-top-left-radius'),
-                            'border-top-right-radius':
-                                $(ui.item).css('border-top-right-radius'),
-                            'border-bottom-left-radius':
-                                $(ui.item).css('border-bottom-left-radius'),
-                            'border-bottom-right-radius':
-                                $(ui.item).css('border-bottom-right-radius'),
-                        });
+                        if (ui.item) {
+                            $.each(stylesToCopy, function (key, val) {
+                                attrMap[val] = ui.item.css(val);
+                            });
+                            $(ui.placeholder).css(attrMap);
+                        }
                     }
                 },
                 stop: function(event, ui){
