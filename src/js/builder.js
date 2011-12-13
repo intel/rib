@@ -653,7 +653,7 @@ $(function() {
             return null;
         }
 
-        template = node.getTemplate();
+        template = BWidget.getTemplate(node.getType());
 
         // 1. Regenerating the entire Design, re-create entire document
         if (node.instanceOf('Design')) {
@@ -707,10 +707,19 @@ $(function() {
         props = node.getProperties();
         id = node.getProperty('id');
         blockModelUpdated = false;
-        // Apply any special ADMNode properties to the template before we
-        // create the DOM Element instance
-        for (var p in props) {
-            switch (p) {
+
+        if (typeof template === "function") {
+            widget = template(node);
+        }
+        else {
+            if (typeof template === "object") {
+                template = template[props["type"]];
+            }
+
+            // Apply any special ADMNode properties to the template before we
+            // create the DOM Element instance
+            for (var p in props) {
+                switch (p) {
                 case "id":
                     if (id === '' || id === undefined || id === null) {
                         updateId = true;
@@ -725,19 +734,20 @@ $(function() {
                     p = p.replace(/_/g, '-');
                     attrMap[p] = attrValue;
                     break;
+                }
+                template = template.replace('%' + p.toUpperCase() + '%',
+                                            attrMap[p]);
             }
-            template = template.replace('%' + p.toUpperCase() + '%',
-                                        attrMap[p]);
+
+            // Turn the template into an element instance, via jquery
+            widget = $(template);
+
+            // Apply any unhandled properties on the ADMNode to the DOM Element
+            // as Element attributes
+            $(widget).attr(attrMap);
         }
 
-        // Turn the template into an element instance, via jquery
-        widget = $(template);
-
-        // Apply any unhandled properties on the ADMNode to the DOM Element
-        // as Element attributes
-        $(widget).attr(attrMap);
-
-        // Now we actually add the new element to it's parent
+        // Now we actually add the new element to its parent
         // TODO: Be smarter about insert vs. append...
         $(parentNode).append($(widget));
 

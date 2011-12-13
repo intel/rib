@@ -122,7 +122,15 @@ var BWidgetRegistry = {
     Page: {
         parent: "Base",
         allowIn: "Design",
-        template: '<div data-role="page" id="%UID%"></div>',
+        template: function (node) {
+            var code = $('<div data-role="page"></div>')
+                .attr("id", node.getProperty("id"));
+            if (node.isPropertyExplicit("theme")) {
+                code.attr("data-theme", node.getProperty("theme"));
+            }
+            return code;
+        },
+
         showInPalette: false,
         selectable: false,
         moveable: false,
@@ -131,7 +139,7 @@ var BWidgetRegistry = {
                 type: "string",
                 autoGenerate: "page"
             },
-            data_theme: {
+            theme: {
                 type: "string",
                 options: [ "a", "b", "c", "d", "e" ],
                 defaultValue: "c",
@@ -737,7 +745,8 @@ var BWidget = {
         }
 
         template = widget.template;
-        if (typeof template !== "string") {
+        if (typeof template !== "string" && typeof template !== "object" &&
+            typeof template !== "function") {
             return "";
         }
         return template;
