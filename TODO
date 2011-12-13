@@ -145,6 +145,10 @@ P1 - Should not be editable, at least not any time soon
 
 P2 - Color syntax highlighting would be highly desirable
 
+P2 - [Bug] If we make a change in the property pane, it's not reflected
+     in the Code View, apparently until we reload the Code View. So
+     probably need to watch for modelUpdated and refresh?
+
 [Preview]
 =========
 P1 - Respond to page selector and display the selected page
