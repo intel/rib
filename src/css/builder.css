@@ -10,6 +10,9 @@
 /***************************/
 /* Element specific tweaks */
 /***************************/
+body {
+    overflow: hidden;
+}
 html {
     padding: 0px;
 }

@@ -29,6 +29,10 @@
     text-align: center;
 }
 
+.adm-node.ui-sortable.ui-content, body {
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
 /********************************************/
 /* Necessary to override some jQM css rules */
 /********************************************/
