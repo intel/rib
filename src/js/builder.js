@@ -643,7 +643,6 @@ $(function() {
             parentSelector = 'body',
             parentNode = null,
             template, props, id,
-            updateId = false,
             attrMap = {},
             widget;
 
@@ -720,12 +719,7 @@ $(function() {
             // create the DOM Element instance
             for (var p in props) {
                 switch (p) {
-                case "id":
-                    if (id === '' || id === undefined || id === null) {
-                        updateId = true;
-                        id = type+'-'+uid;
-                    }
-                    attrMap[p] = id;
+                case "type":
                     break;
                 default:
                     // JSON prop names can't have '-' in them, but the DOM
@@ -750,12 +744,6 @@ $(function() {
         // Now we actually add the new element to its parent
         // TODO: Be smarter about insert vs. append...
         $(parentNode).append($(widget));
-
-        if (updateId) {
-            blockModelUpdated = true;
-            node.setProperty('id', id);
-            blockModelUpdated = false;
-        }
 
         node.getDesign().suppressEvents(false);
         node.suppressEvents(false);
