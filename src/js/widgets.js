@@ -38,6 +38,13 @@ var BWidgetRegistry = {
     Base: {
         parent: null,
         allowIn: [],
+        applyProperties: function (node, code) {
+            var id = node.getProperty("id");
+            if (id && node.isPropertyExplicit("id")) {
+                code.attr("id", id);
+            }
+            return code;
+        },
         showInPalette: false,
         selectable: false,
         moveable: false,
@@ -123,8 +130,8 @@ var BWidgetRegistry = {
         parent: "Base",
         allowIn: "Design",
         template: function (node) {
-            var code = $('<div data-role="page"></div>')
-                .attr("id", node.getProperty("id"));
+            var code = $('<div data-role="page"></div>');
+            code.attr("id", node.getProperty("id"));
             if (node.isPropertyExplicit("theme")) {
                 code.attr("data-theme", node.getProperty("theme"));
             }
@@ -176,16 +183,34 @@ var BWidgetRegistry = {
     Header: {
         parent: "Base",
         allowIn: "Page",
-        template: '<div data-role="header"><h1>%TEXT%</h1></div>',
+        template: function (node) {
+            var code = $('<div data-role="header"><h1></h1></div>');
+            code = BWidgetRegistry.Base.applyProperties(node, code);
+            if (node.getProperty("position") === "fixed") {
+                code.attr("data-position", "fixed");
+            }
+            if (node.getProperty("theme") !== "default") {
+                code.attr("data-theme", node.getProperty("theme"));
+            }
+            code.find("h1")
+                .text(node.getProperty("text"));
+            return code;
+        },
+
         moveable: false,
         properties: {
             text: {
                 type: "string",
                 defaultValue: "Title"
             },
-            data_position: {
+            position: {
                 type: "string",
                 options: [ "default", "fixed" ],
+                defaultValue: "default",
+            },
+            theme: {
+                type: "string",
+                options: [ "default", "a", "b", "c", "d", "e" ],
                 defaultValue: "default",
             }
         },
