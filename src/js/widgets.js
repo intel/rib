@@ -249,16 +249,43 @@ var BWidgetRegistry = {
     Footer: {
         parent: "Base",
         allowIn: "Page",
-        template: '<div data-role="footer"></div>',
+        template: function (node) {
+            var prop, code = $('<div data-role="footer"></div>');
+            code = BWidgetRegistry.Base.applyProperties(node, code);
+
+            // only write data-position if it's being set to fixed
+            if (node.getProperty("position") === "fixed") {
+                code.attr("data-position", "fixed");
+            }
+
+            // don't write data-theme if it's using the default
+            prop = node.getProperty("theme");
+            if (prop !== "default") {
+                code.attr("data-theme", prop);
+            }
+
+            // write the text if non-empty
+            prop = node.getProperty("text");
+            if (prop) {
+                code.append('<h1>' + prop + '</h1>');
+            }
+            return code;
+        },
+
         moveable: false,
         properties: {
             text: {
                 type: "string",
-                defaultValue: "Footer",
+                defaultValue: "",
             },
-	    data_position: {
+	    position: {
                 type: "string",
                 options: [ "default", "fixed" ],
+                defaultValue: "default",
+            },
+            theme: {
+                type: "string",
+                options: [ "default", "a", "b", "c", "d", "e" ],
                 defaultValue: "default",
             }
         },
