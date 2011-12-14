@@ -130,10 +130,13 @@ var BWidgetRegistry = {
         parent: "Base",
         allowIn: "Design",
         template: function (node) {
-            var code = $('<div data-role="page"></div>');
+            var prop, code = $('<div data-role="page"></div>');
             code.attr("id", node.getProperty("id"));
-            if (node.isPropertyExplicit("theme")) {
-                code.attr("data-theme", node.getProperty("theme"));
+
+            // don't write data-theme if it's using the default
+            prop = node.getProperty("theme");
+            if (prop !== "default") {
+                code.attr("data-theme", prop);
             }
             return code;
         },
@@ -148,8 +151,8 @@ var BWidgetRegistry = {
             },
             theme: {
                 type: "string",
-                options: [ "a", "b", "c", "d", "e" ],
-                defaultValue: "c",
+                options: [ "default", "a", "b", "c", "d", "e" ],
+                defaultValue: "default",
             }
         },
         redirect: {
@@ -184,14 +187,21 @@ var BWidgetRegistry = {
         parent: "Base",
         allowIn: "Page",
         template: function (node) {
-            var code = $('<div data-role="header"><h1></h1></div>');
+            var prop, code = $('<div data-role="header"><h1></h1></div>');
             code = BWidgetRegistry.Base.applyProperties(node, code);
+
+            // only write data-position if it's being set to fixed
             if (node.getProperty("position") === "fixed") {
                 code.attr("data-position", "fixed");
             }
-            if (node.getProperty("theme") !== "default") {
-                code.attr("data-theme", node.getProperty("theme"));
+
+            // don't write data-theme if it's using the default
+            prop = node.getProperty("theme");
+            if (prop !== "default") {
+                code.attr("data-theme", prop);
             }
+
+            // always write the title
             code.find("h1")
                 .text(node.getProperty("text"));
             return code;
