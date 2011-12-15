@@ -1122,8 +1122,9 @@ $(function() {
         updateBreadcrumb(null);
     },
 
+    lastSelected = null,
     updateBreadcrumb = function (e) {
-        var crumbs = [],
+        var crumbs = [], ancestors = [],
             current = null,
             target = null,
             pageSelected = false;
@@ -1156,22 +1157,47 @@ $(function() {
         crumbs = crumbs.reverse();
 
         if (target.getChildrenCount() > 0) {
-            current = target.getChildren()[0];
-            // Special case, when deciding which child tree to show,
-            // prefer non-empty Content nodes and subtrees
-            if (target.instanceOf('Page', false)) {
-                target.foreach( function (node) {
-                    if (node.instanceOf('Content', false) &&
-                        node.getChildrenCount() > 0) {
-                        current = node;
+            // If lastSelected is a child of the new target
+            // use it's ancestry branch as the breadcrumb path
+            // FIXME: Convert to "ADMNode.isAncestorOf(UID)" for efficiency
+            if (target.findNodeByUid(lastSelected.getUid())) {
+                current = lastSelected;
+                // Iterate over the ancestors of lastSelected, adding
+                // them to the path, until we reach the selection target
+                while (current !== target) {
+                    if (current.isSelectable()) {
+                        ancestors.push(current);
                     }
-                });
-            }
-            while (current !== null && current !== undefined) {
-                if (current.isSelectable()) {
-                    crumbs.push(current);
+                    current = current.getParent();
                 }
-                current = current.getChildren()[0];
+                crumbs = crumbs.concat(ancestors.reverse());
+                // Iterate over the descendants of lastSelected, adding
+                // them to the path, until we reach a "leaf" node
+                current = lastSelected.getChildren()[0];
+                while (current !== null && current !== undefined) {
+                    if (current.isSelectable()) {
+                        crumbs.push(current);
+                    }
+                    current = current.getChildren()[0];
+                }
+            } else {
+                current = target.getChildren()[0];
+                // Special case, when deciding which child tree to show,
+                // prefer non-empty Content nodes and subtrees
+                if (target.instanceOf('Page', false)) {
+                    target.foreach( function (node) {
+                        if (node.instanceOf('Content', false) &&
+                            node.getChildrenCount() > 0) {
+                            current = node;
+                        }
+                    });
+                }
+                while (current !== null && current !== undefined) {
+                    if (current.isSelectable()) {
+                        crumbs.push(current);
+                    }
+                    current = current.getChildren()[0];
+                }
             }
         }
 
@@ -1184,6 +1210,7 @@ $(function() {
             if (entry.isSelected() ||
                 (entry.instanceOf('Page', false) && pageSelected)) {
                 state = 'ui-state-active';
+                lastSelected = entry;
             }
 
             button.text(entry.getType())
