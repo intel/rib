@@ -275,3 +275,12 @@ hr.menu-separator {
     padding-left: 0px;
     padding-right: 0px;
 }
+
+/*
+  Outline Pane
+ */
+#outline-panel {
+    width: 300px;
+    min-width: 300px;
+    max-width: 300px;
+}

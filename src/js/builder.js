@@ -200,6 +200,7 @@ $(function() {
         $controlsPanel,
         $palettePanel,
         $propertiesPanel,
+        $outlinePanel,
         $controlsHandle,
         $controlsGrip,
         $statusPanel,
@@ -236,6 +237,7 @@ $(function() {
             $controlsPanel = $('#controls-panel');
             $palettePanel = $('#palette-panel');
             $propertiesPanel = $('#properties-panel');
+            $outlinePanel = $('#outline-panel');
             $controlsHandle = $('#controls-handle');
             $controlsGrip = $('#handle-grip');
             $statusPanel = $('#status-panel');
@@ -852,6 +854,11 @@ $(function() {
         serializeADMDesignToDOM();
         triggerDesignViewReload();
         refreshDropTargets();
+
+        //-------------------------------------------- //
+        // Populate outline panel of the builder UI    //
+        // -------------------------------------------- //
+        loadOutline($outlinePanel);
     },
 
     paletteLoadDoneCallback = function () {

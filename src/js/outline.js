@@ -1,0 +1,151 @@
+/*
+ * gui-builder - A simple WYSIWYG HTML5 app creator
+ * Copyright (c) 2011, Intel Corporation.
+ *
+ * This program is licensed under the terms and conditions of the
+ * Apache License, version 2.0.  The full text of the Apache License is at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ */
+"use strict";
+
+function loadOutline(container) {
+    var defaultContainer = '#outline-panel',
+        myContainer = container,contents;
+    if (!myContainer) {
+        myContainer = $(defaultContainer);
+    }
+    if (!myContainer || !myContainer.get()) {
+        return false;
+    }
+
+    myContainer.append('<p id="outline_header" class="ui-helper-reset ui-widget ui-widget-header">Outline</p>')
+               .addClass('ui-widget-content');
+    contents = $('<div id="outline_content"></div>')
+        .appendTo(myContainer);
+
+    renderOutlineView();
+    // ---------------------------------------------- //
+    // Now, bind to the ADM modelUpdate to handle all //
+    // additional changes                             //
+    // ---------------------------------------------- //
+    var $admDesign = ADM.getDesignRoot();
+    $admDesign.bind("modelUpdated", admModelUpdatedCallback);
+    ADM.bind("designReset", admDesignResetCallback);
+    ADM.bind("selectionChanged", admSelectionChangedCallback);
+    ADM.bind("activePageChanged",admActivePageChangedCallback);
+}
+
+function admSelectionChangedCallback(event) {
+    var node = event.node;
+    if (node === null) {
+        return false;
+    }
+
+    dumplog(node.getUid() + " is selected");
+
+    //find this node in outline pane
+    var rootNode = $("#pageList");
+    var nodeInOutline = $(rootNode).find("#Outline-"+node.getUid());
+    $(nodeInOutline).addClass('ui-state-active');
+    var currentNode = nodeInOutline;
+    while (currentNode && currentNode.html() !== rootNode.html())  {
+        $(currentNode).toggleClass("open");
+        $(currentNode).show();
+        currentNode = currentNode.parent();
+    }
+}
+
+function admActivePageChangedCallback(event) {
+    dumplog("in outline.js: activePageChangedCallback");
+    var activePage = event.page;
+    renderOutlineView();
+}
+
+function admModelUpdatedCallback(event) {
+    dumplog("admModelUpdatedCallback");
+    renderOutlineView();
+}
+
+function admDesignResetCallback(event) {
+    dumplog("admDesignResetCallback");
+    renderOutlineView();
+}
+
+function renderOutlineView() {
+    var page, i;
+    var $tree = $("#outline_content");
+
+    $tree.empty();
+    $('<ul id="pageList"></ul>').appendTo($tree);
+    for ( var i = 0; i < ADM.getDesignRoot().getChildrenCount(); i++) {
+        page = ADM.getDesignRoot().getChildren()[i];
+        render_sub(page, $("#pageList"));
+    }
+
+    function render_sub(node, $container) {
+        var folderId, newItem, children, i;
+        if (!(node instanceof ADMNode)) {
+            return;
+        }
+        var type = node.getType();
+        var UID = node.getUid();
+        var widgetID = type + '-' + UID;
+        var label = BWidget.getDisplayLabel(type);
+        if (node.getChildrenCount() > 0) {
+            newItem = $('<li id="Outline-' + UID + '"><a>'
+                    + label + '</a><ul id="'
+                    + widgetID + '"></ul></li>');
+        } else {
+            newItem = $('<li id="Outline-' + UID + '"><a>' + label + '</a></li>');
+        }
+
+        $container.append($(newItem));
+        if (type === "Page")
+        {
+            //set page id
+            var id_value = node.getProperty("id");
+            $(newItem).find("a").html($(newItem).find("a").html() + ' (id: ' + id_value + ')');
+        }
+
+        $(newItem).attr('adm-uid',UID);
+        // add click handler
+        $(newItem).find("a").click(function(e) {
+            var that =$(this).parent();
+            $(this).nextAll("ul").toggle();
+            //set current node to be selected
+            setSelected(that);
+            e.stopPropagation();
+            return false;  // Stop event bubbling
+        });
+
+        function  setSelected(item) {
+            var selectedItems = $('.ui-selected');
+            var UID = $(item).attr('adm-uid');
+            if (selectedItems.length) {
+                // Mark all selectees as unselect{ed,ing}
+                $(selectedItems).removeClass('ui-selected')
+                                .removeClass('ui-selecting')
+                                .removeClass('ui-unselecting')
+                                .removeClass('ui-state-active');
+            }
+            // Mark this selectee element as being selecting
+            $(item).removeClass('ui-unselecting')
+                   .removeClass('ui-selecting')
+                   .addClass('ui-selected')
+                   .addClass('ui-state-active');
+            dumplog("Outline.js: setSelected is called. UID is " + UID);
+            window.ADM.setSelected(UID);
+        }
+
+        if (node.getChildrenCount() > 0) {
+            var $subContainer = $container.find("#" + widgetID);
+            children = node.getChildren();
+            for (i = 0; i < children.length; i++) {
+                render_sub(children[i], $subContainer);
+            }
+        }
+        return;
+    }
+    return true;
+}

@@ -19,6 +19,7 @@ var print = require("sys").print,
 		"src/js/serialize.js",
 		"src/js/generate.js",
 		"src/js/preview.js",
+		"src/js/outline.js",
         ],
         options = {
 		plusplus: false,
