@@ -284,3 +284,10 @@ hr.menu-separator {
     min-width: 300px;
     max-width: 300px;
 }
+#outline-handle {
+    min-width: 8px;
+    max-width: 8px;
+    border: 1px;
+    border-right: 0px;
+    background-color: none;
+}

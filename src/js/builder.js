@@ -367,21 +367,21 @@ $(function() {
             window.addEventListener('message', designViewMessageHandler, false);
 
             // ------------------------------------------- //
-            // Style and activate the control panel handle //
-            // for hiding/showing the palette and property //
-            // panels                                      //
+            // Style and activate the control or outline   //
+            // panel handle for hiding/showing the palette,//
+            // propert and outline panels                  //
             // ------------------------------------------- //
-            $controlsHandle
-                .addClass('ui-helper-reset ui-widget ui-widget-header ui-corner-right');
+            var handler = $controlsHandle.add('#outline-handle')
+                          .addClass('ui-helper-reset ui-widget ui-widget-header ui-corner-right');
             gripPos = $controlsHandle.height()*0.5 - $controlsGrip.height()*0.5;
-            $controlsGrip
-                .addClass('ui-icon ui-icon-grip-solid-vertical')
-                .css({
-                    'position' : 'relative',
-                    'top' : gripPos,
-                    'left' : '-4px',
-                });
-            $controlsHandle.click( toggleControls );
+            $controlsGrip.add('#outline-grip')
+                         .addClass('ui-icon ui-icon-grip-solid-vertical')
+                         .css({
+                             'position' : 'relative',
+                             'top' : gripPos,
+                             'left' : '-4px',
+                         });
+            handler.click( toggleControls );
         },
 
 /*
@@ -527,10 +527,24 @@ $(function() {
     // Misc functions                         //
     // -------------------------------------- //
     toggleControls = function () {
-        if ($controlsPanel.is(':visible')) {
-            $controlsPanel.hide('slide', 50);
-        } else {
-            $controlsPanel.show('slide', 50);
+        var id = $(this).attr("id");
+        switch (id) {
+            case "controls-handle":
+                if ($controlsPanel.is(':visible')) {
+                    $controlsPanel.hide('slide', 50);
+                } else {
+                    $controlsPanel.show('slide', 50);
+                }
+                break;
+            case "outline-handle":
+                if ($outlinePanel.is(':visible')) {
+                    $outlinePanel.hide('slide', 50);
+                } else {
+                    $outlinePanel.show('slide', 50);
+                }
+                break;
+            default:
+                logit("unexpected element clicked");
         }
     },
 
