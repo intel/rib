@@ -159,3 +159,12 @@ P2 - [Bug] If we make a change in the property pane, it's not reflected
 [Preview]
 =========
 P1 - Respond to page selector and display the selected page
+
+[Outline View]
+P2 - Provide outline of ADM tree in a view for easy selection of
+     perhaps-invisible containers, etc.
+P2 - Update selected widget in outline view to reflect selected widget
+     in the model
+P2 - Allow selection of a widget in the outline view and reflect this
+     in the model
+P2 - Support deletion of a widget / subtree from the outline view
