@@ -48,6 +48,7 @@ P2 - Make all DOM interactions into a "framework" class with well
 
 - Bugs to fixed:
   * Changing cols and rows for Text Area in properties panel has no effect in the design view.
+  * Flip toggle switch widget in the design view cannot be selected.
 
 [FileIO]
 ========

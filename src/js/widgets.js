@@ -531,6 +531,32 @@ var BWidgetRegistry = {
             }
         },
         template: '<textarea></textarea>',
+    },
+
+    /**
+     * Represents a flip toggle switch.
+     */
+    FlipToggleSwitch: {
+        parent: "Base",
+        properties: {
+            value1: {
+                type: "string",
+                defaultValue: "off"
+            },
+            label1: {
+                type: "string",
+                defaultValue: "Off"
+            },
+            value2: {
+                type: "string",
+                defaultValue: "on"
+            },
+            label2: {
+                type: "string",
+                defaultValue: "On"
+            }
+        },
+        template: '<select data-role="slider"><option value="%VALUE1%">%LABEL1%</option><option value="%VALUE2%">%LABEL2%</option></select>',
     }
 };
 
@@ -559,6 +585,9 @@ var BWidget = {
                 }
                 if (type === "TextArea") {
                     BWidgetRegistry[type].displayLabel = "Text Area";
+                }
+                if (type === "FlipToggleSwitch") {
+                    BWidgetRegistry[type].displayLabel = "Flip Toggle Switch";
                 }
             }
         }
