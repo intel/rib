@@ -758,6 +758,25 @@ var BWidgetRegistry = {
                 allow: "ListItem"
             }
         ],
+    },
+
+    /**
+     * Represents a list item element.
+     */
+    ListItem: {
+        parent: "Base",
+        properties: {
+            text: {
+                type: "string",
+                defaultValue: "",
+            },
+            data_role: {
+                type: "string",
+                options: [ "list-divider", "" ],
+                defaultValue: "",
+            },
+        },
+        template: '<li>%TEXT%</li>',
     }
 };
 
@@ -801,6 +820,9 @@ var BWidget = {
                 }
                 if (type === "ListView") {
                     BWidgetRegistry[type].displayLabel = "List View";
+                }
+                if (type === "ListItem") {
+                    BWidgetRegistry[type].displayLabel = "List Item";
                 }
             }
         }
