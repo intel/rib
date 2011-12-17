@@ -572,6 +572,50 @@ var BWidgetRegistry = {
                 allow: [ "Option" ]
             }
         ],
+    },
+
+    /**
+     * Represents a Control Group object. Includes an "data-type" property
+     * that should be "vertical" or "horizontal"
+     */
+    ControlGroup: {
+        parent: "Base",
+        properties: {
+            data_type: {
+                type: "string",
+                options: [ "vertical", "horizontal" ],
+                defaultValue: "vertical"
+            },
+            type: {
+                type: "string",
+                options: [ "yes", "no" ],
+                defaultValue: "yes"
+            },
+            type_label: {
+                type: "string",
+                defaultValue: "with-legend"
+            },
+            conditional: {
+               type: "string",
+               defaultValue: "Legend"
+            },
+            conditional_label: {
+                type: "string",
+                defaultValue: "legend"
+            },
+            conditional_for: {
+                type: "string",
+                defaultValue: "yes"
+            },
+        },
+        zones: [
+            {
+                name: "default",
+                cardinality: "N",
+                allow: [ "RadioButton", "Checkbox" ]
+            }
+        ],
+        template: {'yes':'<div data-role="fieldcontain"><fieldset data-role="controlgroup" data-type="%DATA-TYPE%"><legend>%CONDITIONAL%</legend></fieldset></div>', 'no':'<div data-role="fieldcontain"><fieldset data-role="controlgroup" data-type="%DATA-TYPE%"></fieldset></div>'},
     }
 };
 
@@ -606,6 +650,9 @@ var BWidget = {
                 }
                 if (type === "SelectMenu") {
                     BWidgetRegistry[type].displayLabel = "Select Menu";
+                }
+                if (type === "ControlGroup") {
+                    BWidgetRegistry[type].displayLabel = "Control Group";
                 }
             }
         }
