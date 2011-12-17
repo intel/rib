@@ -821,6 +821,31 @@ var BWidgetRegistry = {
                 cardinality: "N"
             }
         ],
+    },
+
+    /**
+     * Represents a collapsible element.
+     */
+    Collapsible: {
+        parent: "Base",
+        template: '<div data-role="collapsible"><%SIZE%>%HEADER%</%SIZE%></div>',
+        properties: {
+            size: {
+                type: "string",
+                options: ["H1", "H2", "H3", "H4", "H5", "H6" ],
+                defaultValue: "H3",
+            },
+            header: {
+                type: "string",
+                defaultValue: "",
+            },
+        },
+        zones: [
+            {
+                name: "default",
+                cardinality: "N"
+            }
+        ],
     }
 };
 
