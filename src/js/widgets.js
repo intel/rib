@@ -616,6 +616,24 @@ var BWidgetRegistry = {
             }
         ],
         template: {'yes':'<div data-role="fieldcontain"><fieldset data-role="controlgroup" data-type="%DATA-TYPE%"><legend>%CONDITIONAL%</legend></fieldset></div>', 'no':'<div data-role="fieldcontain"><fieldset data-role="controlgroup" data-type="%DATA-TYPE%"></fieldset></div>'},
+    },
+
+    /**
+     * Represents an option element.
+     */
+    Option: {
+        parent: "Base",
+        properties: {
+            value: {
+                type: "string",
+                defaultValue: ""
+            },
+            label: {
+                type: "string",
+                defaultValue: "Label"
+            }
+        },
+        template: '<option>%LABEL%</option>'
     }
 };
 
