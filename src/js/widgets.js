@@ -846,6 +846,21 @@ var BWidgetRegistry = {
                 cardinality: "N"
             }
         ],
+    },
+
+    /**
+     * Represents a set of collapsible elements.
+     */
+    CollapsibleSet: {
+        parent: "Base",
+        template: '<div data-role="collapsible-set"></div>',
+        zones: [
+            {
+                name: "default",
+                cardinality: "N",
+                allow: "Collapsible"
+            }
+        ],
     }
 };
 
@@ -892,6 +907,9 @@ var BWidget = {
                 }
                 if (type === "ListItem") {
                     BWidgetRegistry[type].displayLabel = "List Item";
+                }
+                if (type === "CollapsibleSet") {
+                    BWidgetRegistry[type].displayLabel = "Collapsible Set";
                 }
             }
         }
