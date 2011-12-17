@@ -745,7 +745,7 @@ $(function() {
 
         // Now we actually add the new element to its parent
         // TODO: Be smarter about insert vs. append...
-        if (type === "RadioButton") {
+        if(type === "RadioButton" || type === "Checkbox") {
             $(parentNode[0].children).append($(widget));
         } else {
             $(parentNode).append($(widget));

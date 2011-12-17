@@ -653,6 +653,25 @@ var BWidgetRegistry = {
             }
         },
         template: '<input type="radio" id="%ID" /><label for="%ID%">%LABEL%</label>',
+    },
+
+    /**
+     * Represents an checkbox element.
+     */
+    Checkbox: {
+        parent: "Base",
+        allowIn: "ControlGroup",
+        properties: {
+            value: {
+                type: "string",
+                defaultValue: ""
+            },
+            label: {
+                type: "string",
+                defaultValue: "Label"
+            }
+        },
+        template: '<input type="checkbox" id="%ID" /><label for="%ID%">%LABEL%</label>',
     }
 };
 
