@@ -799,6 +799,28 @@ var BWidgetRegistry = {
                 allow: "Block"
             }
         ],
+    },
+
+    /**
+     * Represents a grid block element.
+     */
+    Block: {
+        parent: "Base",
+        allowIn: "Grid",
+        properties: {
+            subtype: {
+                type: "string",
+                options: [ "a", "b", "c", "d" ],
+                defaultValue: "a",
+            },
+        },
+        template: '<div class="ui-block-%SUBTYPE%"></div>',
+        zones: [
+            {
+                name: "default",
+                cardinality: "N"
+            }
+        ],
     }
 };
 
