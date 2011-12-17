@@ -557,6 +557,21 @@ var BWidgetRegistry = {
             }
         },
         template: '<select data-role="slider"><option value="%VALUE1%">%LABEL1%</option><option value="%VALUE2%">%LABEL2%</option></select>',
+    },
+
+    /**
+     * Represents a select element.
+     */
+    SelectMenu: {
+        parent: "Base",
+        template: '<select></select>',
+        zones: [
+            {
+                name: "default",
+                cardinality: "N",
+                allow: [ "Option" ]
+            }
+        ],
     }
 };
 
@@ -588,6 +603,9 @@ var BWidget = {
                 }
                 if (type === "FlipToggleSwitch") {
                     BWidgetRegistry[type].displayLabel = "Flip Toggle Switch";
+                }
+                if (type === "SelectMenu") {
+                    BWidgetRegistry[type].displayLabel = "Select Menu";
                 }
             }
         }
