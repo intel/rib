@@ -50,6 +50,7 @@ P2 - Make all DOM interactions into a "framework" class with well
   * Changing cols and rows for Text Area in properties panel has no effect in the design view.
   * Flip toggle switch widget in the design view cannot be selected.
   * The option widget within a select menu does not show correctly in the design view.
+  * Radio button within a control group does not show correctly in the design view.
 
 [FileIO]
 ========

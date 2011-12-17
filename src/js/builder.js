@@ -745,7 +745,11 @@ $(function() {
 
         // Now we actually add the new element to its parent
         // TODO: Be smarter about insert vs. append...
-        $(parentNode).append($(widget));
+        if (type === "RadioButton") {
+            $(parentNode[0].children).append($(widget));
+        } else {
+            $(parentNode).append($(widget));
+        }
 
         node.getDesign().suppressEvents(false);
         node.suppressEvents(false);

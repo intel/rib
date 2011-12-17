@@ -634,6 +634,25 @@ var BWidgetRegistry = {
             }
         },
         template: '<option>%LABEL%</option>'
+    },
+
+    /**
+     * Represents an radio button element.
+     */
+    RadioButton: {
+        parent: "Base",
+        allowIn: "ControlGroup",
+        properties: {
+            value: {
+                type: "string",
+                defaultValue: ""
+            },
+            label: {
+                type: "string",
+                defaultValue: "Label"
+            }
+        },
+        template: '<input type="radio" id="%ID" /><label for="%ID%">%LABEL%</label>',
     }
 };
 
@@ -671,6 +690,9 @@ var BWidget = {
                 }
                 if (type === "ControlGroup") {
                     BWidgetRegistry[type].displayLabel = "Control Group";
+                }
+                if (type === "RadioButton") {
+                    BWidgetRegistry[type].displayLabel = "Radio Button";
                 }
             }
         }
