@@ -934,7 +934,7 @@ $(function() {
     },
 
     showCodeView = function () {
-        $('#code-area').html('<textarea id="text-code">' +
+        $('#code-area').html('<textarea id="text-code" readonly="readonly">' +
                              generateHTML() +
                              '</textarea>')
                        .height($('#content-panel').height());
