@@ -420,5 +420,26 @@ fsUtils = {
                              onError(e);
                          }
                      }, false);
-                 }
+                 },
+
+    /**
+     * Export file to a blank site: open the URL of the file in a blank site for items in "Export"
+     * @param {string} path of the exporting file.
+     *
+     */
+    exportToBlank: function (path) {
+                    var url = fsUtils.pathToUrl(path),
+                        blocked = false, exportWindow;
+                    try {
+                        exportWindow = window.open(url, "_blank");
+                        if (!exportWindow) {
+                            blocked = true;
+                        }
+                    } catch(e) {
+                        blocked = true;
+                    }
+                    if (blocked) {
+                        alert("Export window was blocked!");
+                    }
+            },
 };

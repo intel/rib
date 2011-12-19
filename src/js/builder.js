@@ -297,8 +297,6 @@ $(function() {
             $toolbarPanel.find('#preView').click(showPreView);
             $toolbarPanel.find('#showADMTree').click(showADMTree);
             $toolbarPanel.find('#reloadDesign').click(triggerDesignViewRefresh);
-            $toolbarPanel.find('#loadDesign').click(triggerImportFileSelection);
-            $toolbarPanel.find('#exportDesign').mousedown(triggerSerialize);
             $toolbarPanel.find('#exportHTML').mousedown(triggerExportHTML);
             $toolbarPanel.find('#newpage').click(addNewPage);
             $toolbarPanel.find('#removepage').click(deleteCurrentPage);
@@ -321,11 +319,6 @@ $(function() {
             themeUriTemplate = "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/%NAME%/jquery-ui.css";
             setBuilderTheme(defaultTheme);
             initThemePicker();
-
-            // ------------------------------------ //
-            // Import file selection change handler //
-            // ------------------------------------ //
-            $('#importFile').change(importFileChangedCallback);
 
             // ------------------------------------------- //
             // Style the status bar with jquery-ui theming //
@@ -417,34 +410,10 @@ $(function() {
 ////////////////////////////////////////////////////
 // FUNCTIONS FOLLOW
 ////////////////////////////////////////////////////
-    triggerImportFileSelection = function () {
-        $('#importFile').click();
-    },
-
-    triggerSerialize = function () {
-        serializeADMToJSON();
-    },
-
     triggerExportHTML = function () {
         fsUtils.write("index.html.download", generateHTML(),  function(fileEntry){
-            exportFile(fileEntry.toURL(), "HTML");
+            fsUtils.exportToBlank(fileEntry.fullPath, "HTML");
         }, _onError);
-    },
-
-    importFileChangedCallback = function (e) {
-        if (e.currentTarget.files.length === 1) {
-            fsUtils.cpLocalFile(e.currentTarget.files[0],
-                                fsDefaults.files.ADMDesign,
-                                buildDesignFromJson);
-            return true;
-        } else {
-            if (e.currentTarget.files.length <= 1) {
-                console.warn("No files specified to import");
-            } else {
-                console.warn("Multiple file import not supported");
-            }
-            return false;
-        }
     },
 
     triggerDesignViewReload = function () {
