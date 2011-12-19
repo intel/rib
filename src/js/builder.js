@@ -490,6 +490,8 @@ $(function() {
         triggerDesignViewReload();
         refreshDropTargets();
 
+        $('#text-code').val(generateHTML());
+
         // Refresh the page picker when pages change to update it's id
         if (e.node && e.node.getType() === 'Page') {
             updatePageZone();
