@@ -215,6 +215,7 @@ $(function() {
         currentTheme,
         themeUriTemplate,
         resultHTML,
+        previewWindow = $('#preview-frame')[0].contentWindow,
 
         init = function () {
 
@@ -442,7 +443,14 @@ $(function() {
         }
     },
 
+    setPreviewPage = function (pageId) {
+        if (previewWindow.$)
+            previewWindow.$.mobile.changePage("#" + pageId);
+    },
+
     admModelUpdatedCallback = function (e) {
+        var doc = previewWindow.document;
+
         if (blockModelUpdated) {
             // Ignore this event instance
             return;
@@ -463,6 +471,11 @@ $(function() {
         triggerDesignViewReload();
         refreshDropTargets();
         refreshCodeView();
+
+        doc.open();
+        doc.writeln(generateHTML());
+        doc.close();
+        setPreviewPage(ADM.getActivePage().getProperty('id'));
 
         // Refresh the page picker when pages change to update it's id
         if (e.node && (e.node.getType() === 'Page' || e.node.getType() === 'Design')) {
@@ -504,6 +517,7 @@ $(function() {
         // inform template to change active page
         var pageId = e.page.getProperty('id');
         $('#design-view')[0].contentWindow.$.mobile.changePage('#'+pageId);
+        setPreviewPage(pageId);
         updatePageZone();
         blockActivePageChanged = false;
     },
