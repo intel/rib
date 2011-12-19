@@ -119,13 +119,18 @@ $(function() {
             return false;
         }
 
-        var design = new ADMNode("Design");
+        var result, design = new ADMNode("Design");
 
         // add children in ADM
-        add_child(design, obj.children);
+        result = add_child(design, obj.children);
 
-        ADM.setDesignRoot(design);
-        return true;
+        if (result) {
+            result = ADM.setDesignRoot(design);
+        } else {
+            alert("Error while build design root.");
+            return false;
+        }
+        return result;
     }
 
 
@@ -134,20 +139,20 @@ $(function() {
      */
     function buildDesignFromJson(fileEntry) {
         // Set a fixed JSON file
-        // TODO: This will be changed to let the user to seclect the path
-
-        fileEntry.file(function(file) {
-            var reader = new FileReader();
-
-            reader.onloadend = function(e) {
-                var parsedObject = $.parseJSON(e.target.result);
-                loadFromJsonObj(parsedObject);
-            };
-            reader.onError = _onError;
-
-            reader.readAsText(file); // Read the file as plaintext.
-
-        }, _onError);
+        if (fileEntry && fileEntry.isFile) {
+            var parsedObject;
+            fsUtils.read(fileEntry.fullPath, function(result) {
+                try {
+                    parsedObject = $.parseJSON(result);
+                    return loadFromJsonObj(parsedObject);
+                } catch(e) {
+                    alert("Invalid design file.");
+                    return false;
+                }
+            }, _onError);
+        } else {
+            console.error("invalid fileEntry to load");
+        }
     }
 
     /*******************************************************
