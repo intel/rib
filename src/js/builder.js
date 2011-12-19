@@ -297,6 +297,7 @@ $(function() {
             $toolbarPanel.find('#designView').click(showDesignView);
             $toolbarPanel.find('#codeView').click(showCodeView);
             $toolbarPanel.find('#preView').click(showPreView);
+            $toolbarPanel.find('#outlineView').click(toggleOutlineView);
             $toolbarPanel.find('#showADMTree').click(showADMTree);
             $toolbarPanel.find('#reloadDesign').click(triggerDesignViewRefresh);
             $toolbarPanel.find('#exportHTML').mousedown(triggerExportHTML);
@@ -982,6 +983,10 @@ $(function() {
         $('#design-view').hide();
         $('#code-area').hide();
         $('#preview-frame').show();
+    },
+
+    toggleOutlineView = function() {
+        $outlinePanel.toggle();
     },
 
     showADMTree = function () {
