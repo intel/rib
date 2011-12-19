@@ -646,7 +646,7 @@ $(function() {
             parentNode = null,
             template, props, id,
             attrMap = {},
-            widget;
+            widget, regEx;
 
         // Check for valid node
         if (node === null || node === undefined ||
@@ -731,8 +731,8 @@ $(function() {
                     attrMap[p] = attrValue;
                     break;
                 }
-                template = template.replace('%' + p.toUpperCase() + '%',
-                                            attrMap[p]);
+                regEx = new RegExp('%'+p.toUpperCase()+'%','g');
+                template = template.replace(regEx, attrMap[p]);
             }
 
             // Turn the template into an element instance, via jquery
