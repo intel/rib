@@ -47,7 +47,7 @@ function propertyValueChanged(event) {
 
 function showProperties(event) {
         var node = event.node,
-            showUid = true,
+            showUid = false,
             labelId, labelVal, valueId, valueVal;
 
         // Clear the properties pane when nothing is selected
