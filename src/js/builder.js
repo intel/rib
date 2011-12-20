@@ -836,7 +836,8 @@ $(function() {
                                  $(doc).find('body'),
                                  null); // No renderer used here
         return style_html(xmlserializer.serializeToString(doc)
-                          .replace(/(<script [^>]*")\/>/ig,'$1></script>'), {
+                          .replace(/(<script [^>]*")\/>/ig,'$1></script>')
+                          .replace(/(<meta [^>]*)\/>/ig,'$1>'), {
                               'max_char': 80, 
                               'unformatted': ['a', 'h1']
                           });
