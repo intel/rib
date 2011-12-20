@@ -57,6 +57,10 @@ lib/json2.js				Public Domain	N/A
 lib/jquery.lame.js			FreeBSD		Ryan Ray[1]
 lib/js-beautify/beautify-html.js	MIT		Einar Lielmanis[4]
 lib/js-beautify/beautify.js		MIT		Einar Lielmanis[4]
+lib/web-ui-fw.js                        MIT             Intel
+lib/web-ui-fw-libs.js                   MIT             Intel
+src/css/web-ui-fw-theme.css             MIT             Intel
+src/css/web-ui-fw-widgets.css           MIT             Intel
 
 The following files were copied into this project from upstream and are
 only included as development tools (build, debugging, reporting).  They
