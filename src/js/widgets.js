@@ -95,6 +95,12 @@ var BWidgetRegistry = {
                     },
                     { designOnly: false,
                       value: 'lib/jquery.mobile-1.0.js'
+                    },
+                    { designOnly: false,
+                      value: 'lib/web-ui-fw-libs.js'
+                    },
+                    { designOnly: false,
+                      value: 'lib/web-ui-fw.js'
                     }
                 ]
             },
@@ -106,6 +112,12 @@ var BWidgetRegistry = {
                     },
                     { designOnly: false,
                       value: 'src/css/jquery.mobile-1.0.css'
+                    },
+                    { designOnly: false,
+                      value: 'src/css/web-ui-fw-theme.css'
+                    },
+                    { designOnly: false,
+                      value: 'src/css/web-ui-fw-widget.css'
                     },
                     { designOnly: true,
                       value: 'src/css/template.css'
