@@ -552,6 +552,14 @@ $(function() {
         }
     },
 
+    toggleControlsEnabled = function () {
+        var designIsVisible = $('#design-view').is(':visible');
+
+        // Enable/Disable all palette items "draggable" feature
+        $('.nrc-palette-widget').draggable('option', 'disabled',
+                                           !designIsVisible);
+    },
+
     fixPropertyPanelSize = function () {
        // Nasty hack to ensure the Property Panel maintains a 40% sizing
        $propertiesPanel.height(($controlsPanel.height()*0.4));
@@ -960,14 +968,14 @@ $(function() {
     },
 
     showDesignView = function () {
-        $('#design-view').show();
+        $('#design-view').show('_default', toggleControlsEnabled);
         $('#code-area').hide();
         $('#preview-frame').hide();
     },
 
     showCodeView = function () {
         $('#code-area').height($('#content-panel').height());
-        $('#design-view').hide();
+        $('#design-view').hide('_default', toggleControlsEnabled);
         $('#code-area').show();
         $('#preview-frame').hide();
     },
@@ -980,7 +988,7 @@ $(function() {
         doc.writeln(resultHTML);
         doc.close();
 
-        $('#design-view').hide();
+        $('#design-view').hide('_default', toggleControlsEnabled);
         $('#code-area').hide();
         $('#preview-frame').show();
     },
