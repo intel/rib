@@ -1083,6 +1083,11 @@ var BWidgetRegistry = {
         template: '<div data-role="switch" />',
     },
 
+    CalendarPicker: {
+        parent: "Base",
+        template: '<div data-role="calendarpicker" />',
+    },
+
 };
 
 /**
@@ -1123,6 +1128,9 @@ var BWidget = {
                 }
                 if (type === "ProgressBar") {
                     BWidgetRegistry[type].displayLabel = "Progress Bar";
+                }
+                if (type === "CalendarPicker") {
+                    BWidgetRegistry[type].displayLabel = "Calendar Picker";
                 }
             }
         }
