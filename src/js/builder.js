@@ -444,8 +444,20 @@ $(function() {
     },
 
     setPreviewPage = function (pageId) {
-        if (previewWindow.$)
-            previewWindow.$.mobile.changePage("#" + pageId, {transition: "none"});
+        var $previewFrame = $("#preview-frame"),
+            changePreviewPage = function (pageId) {
+                if (previewWindow.$)
+                    previewWindow.$.mobile.changePage("#" + pageId, {transition: "none"});
+            };
+
+        if ($previewFrame.is(":visible")) {
+            $previewFrame.hide();
+            changePreviewPage(pageId);
+            $previewFrame.show();
+        }
+        else {
+            changePreviewPage(pageId);
+        }
     },
 
     admModelUpdatedCallback = function (e) {
