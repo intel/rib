@@ -1077,6 +1077,12 @@ var BWidgetRegistry = {
         parent: "Base",
         template: '<div data-role="processingbar" />',
     },
+
+    Switch: {
+        parent: "Base",
+        template: '<div data-role="switch" />',
+    },
+
 };
 
 /**
