@@ -1051,6 +1051,16 @@ var BWidgetRegistry = {
     },
 
 
+    ColorTitle: {
+        parent: "Base",
+        template: '<div data-role="colortitle" />',
+        properties: {
+            data_color: {
+                type: "string",
+                defaultValue: "#1a8039",
+            },
+        },
+    },
 };
 
 /**
@@ -1082,6 +1092,9 @@ var BWidget = {
                 }
                 if (type === "ColorPalette") {
                     BWidgetRegistry[type].displayLabel = "Color Palette";
+                }
+                if (type === "ColorTitle") {
+                    BWidgetRegistry[type].displayLabel = "Color Title";
                 }
             }
         }
