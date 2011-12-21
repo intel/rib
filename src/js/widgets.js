@@ -1028,6 +1028,17 @@ var BWidgetRegistry = {
         }
     },
 
+    ColorPickerButton: {
+        parent: "Base",
+        template: '<div data-role="colorpickerbutton" />',
+        properties: {
+            data_color: {
+                type: "string",
+                defaultValue: "#1a8039",
+            },
+        },
+    },
+
 };
 
 /**
@@ -1053,6 +1064,9 @@ var BWidget = {
                 }
                 if (type === "ColorPicker") {
                     BWidgetRegistry[type].displayLabel = "Color Picker";
+                }
+                if (type === "ColorPickerButton") {
+                    BWidgetRegistry[type].displayLabel = "Color Picker Button";
                 }
             }
         }
