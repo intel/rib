@@ -1061,6 +1061,17 @@ var BWidgetRegistry = {
             },
         },
     },
+
+    HsvPicker: {
+        parent: "Base",
+        template: '<div data-role="hsvpicker" />',
+        properties: {
+            data_color: {
+                type: "string",
+                defaultValue: "#1a8039",
+            },
+        },
+    },
 };
 
 /**
@@ -1095,6 +1106,9 @@ var BWidget = {
                 }
                 if (type === "ColorTitle") {
                     BWidgetRegistry[type].displayLabel = "Color Title";
+                }
+                if (type === "HsvPicker") {
+                    BWidgetRegistry[type].displayLabel = "HSV Picker";
                 }
             }
         }
