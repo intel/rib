@@ -43,14 +43,20 @@ function admSelectionChangedCallback(event) {
     }
 
     dumplog(node.getUid() + " is selected");
+    //deative state of selected before
+    $('#outline-panel').find('.ui-state-active')
+                       .removeClass('ui-state-active');
+    $('#outline-panel').find('.ui-selected')
+                       .removeClass('ui-selected');
 
     //find this node in outline pane
     var rootNode = $("#pageList");
     var nodeInOutline = $(rootNode).find("#Outline-"+node.getUid());
-    $(nodeInOutline).addClass('ui-state-active');
+    $(nodeInOutline).addClass('ui-state-active')
+        .addClass('ui-selected');
+
     var currentNode = nodeInOutline;
     while (currentNode && currentNode.html() !== rootNode.html())  {
-        $(currentNode).toggleClass("open");
         $(currentNode).show();
         currentNode = currentNode.parent();
     }
@@ -93,11 +99,11 @@ function renderOutlineView() {
         var widgetID = type + '-' + UID;
         var label = BWidget.getDisplayLabel(type);
         if (node.getChildrenCount() > 0) {
-            newItem = $('<li id="Outline-' + UID + '"><a>'
+            newItem = $('<li class="folder open" id="Outline-' + UID + '"><a>'
                     + label + '</a><ul id="'
                     + widgetID + '"></ul></li>');
         } else {
-            newItem = $('<li id="Outline-' + UID + '"><a>' + label + '</a></li>');
+            newItem = $('<li class="file" id="Outline-' + UID + '"><a>' + label + '</a></li>');
         }
 
         $container.append($(newItem));
@@ -110,30 +116,22 @@ function renderOutlineView() {
 
         $(newItem).attr('adm-uid',UID);
         // add click handler
+        $(newItem).click(function(e) {
+            $(this).toggleClass("close")
+                   .toggleClass("open");
+            $(this).children("ul").toggle();
+            e.stopPropagation();
+        });
+
         $(newItem).find("a").click(function(e) {
             var that =$(this).parent();
-            $(this).nextAll("ul").toggle();
-            //set current node to be selected
             setSelected(that);
             e.stopPropagation();
             return false;  // Stop event bubbling
         });
 
         function  setSelected(item) {
-            var selectedItems = $('.ui-selected');
             var UID = $(item).attr('adm-uid');
-            if (selectedItems.length) {
-                // Mark all selectees as unselect{ed,ing}
-                $(selectedItems).removeClass('ui-selected')
-                                .removeClass('ui-selecting')
-                                .removeClass('ui-unselecting')
-                                .removeClass('ui-state-active');
-            }
-            // Mark this selectee element as being selecting
-            $(item).removeClass('ui-unselecting')
-                   .removeClass('ui-selecting')
-                   .addClass('ui-selected')
-                   .addClass('ui-state-active');
             dumplog("Outline.js: setSelected is called. UID is " + UID);
             window.ADM.setSelected(UID);
         }

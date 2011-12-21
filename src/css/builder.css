@@ -291,3 +291,14 @@ hr.menu-separator {
     border-right: 0px;
     background-color: none;
 }
+#pageList li{
+    list-style: none inside url("../assets/file.gif");
+    position:relative;
+    width: 90%;
+}
+#pageList li.folder.close {
+    list-style: none inside url("../assets/plus.gif");
+}
+#pageList li.folder.open {
+    list-style: none inside url("../assets/minus.gif");
+}
