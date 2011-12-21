@@ -668,6 +668,7 @@ $(function() {
             parentNode = null,
             template, props, id,
             attrMap = {},
+            attrValue, propDefault,
             widget, regEx;
 
         // Check for valid node
@@ -742,19 +743,26 @@ $(function() {
             // Apply any special ADMNode properties to the template before we
             // create the DOM Element instance
             for (var p in props) {
+                attrValue = undefined;
                 switch (p) {
                 case "type":
                     break;
                 default:
                     // JSON prop names can't have '-' in them, but the DOM
                     // attribute name does, so we replace '_' with '-'
-                    var attrValue = node.getProperty(p);
-                    p = p.replace(/_/g, '-');
-                    attrMap[p] = attrValue;
+                    attrValue = node.getProperty(p);
+                    propDefault = BWidget.getPropertyDefault(node.getType(), p);
+                    if (attrValue !== propDefault) {
+                        p = p.replace(/_/g, '-');
+                        attrMap[p] = attrValue;
+                    }
                     break;
                 }
-                regEx = new RegExp('%'+p.toUpperCase()+'%','g');
-                template = template.replace(regEx, attrMap[p]);
+
+                if (attrValue !== undefined) {
+                    regEx = new RegExp('%' + p.toUpperCase() + '%', 'g');
+                    template = template.replace(regEx, attrValue);
+                }
             }
 
             // Turn the template into an element instance, via jquery
