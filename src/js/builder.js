@@ -445,7 +445,7 @@ $(function() {
 
     setPreviewPage = function (pageId) {
         if (previewWindow.$)
-            previewWindow.$.mobile.changePage("#" + pageId);
+            previewWindow.$.mobile.changePage("#" + pageId, {transition: "none"});
     },
 
     admModelUpdatedCallback = function (e) {
