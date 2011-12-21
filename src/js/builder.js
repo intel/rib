@@ -214,6 +214,7 @@ $(function() {
         defaultTheme,
         currentTheme,
         themeUriTemplate,
+        resultHTML,
 
         init = function () {
 
@@ -414,7 +415,7 @@ $(function() {
 // FUNCTIONS FOLLOW
 ////////////////////////////////////////////////////
     triggerExportHTML = function () {
-        fsUtils.write("index.html.download", generateHTML(),  function(fileEntry){
+        fsUtils.write("index.html.download", resultHTML,  function(fileEntry){
             fsUtils.exportToBlank(fileEntry.fullPath, "HTML");
         }, _onError);
     },
@@ -461,8 +462,7 @@ $(function() {
         serializeADMDesignToDOM();
         triggerDesignViewReload();
         refreshDropTargets();
-
-        $('#text-code').val(generateHTML());
+        refreshCodeView();
 
         // Refresh the page picker when pages change to update it's id
         if (e.node && (e.node.getType() === 'Page' || e.node.getType() === 'Design')) {
@@ -477,6 +477,7 @@ $(function() {
         serializeADMDesignToDOM();
         triggerDesignViewReload();
         refreshDropTargets();
+        refreshCodeView();
 
         // Sync ADM's active page to what is shown in design view
         var page = null;
@@ -801,6 +802,10 @@ $(function() {
         }
         return node;
     },
+    refreshCodeView = function () {
+        resultHTML = generateHTML();
+        $('#text-code').val(resultHTML);
+    },
 
     refreshDropTargets = function () {
         var targets = $designContentDocument.find('.nrc-sortable-container')
@@ -869,6 +874,7 @@ $(function() {
         serializeADMDesignToDOM();
         triggerDesignViewReload();
         refreshDropTargets();
+        refreshCodeView();
 
         //-------------------------------------------- //
         // Populate outline panel of the builder UI    //
@@ -944,12 +950,7 @@ $(function() {
     },
 
     showCodeView = function () {
-        $('#code-area').html('<textarea id="text-code" readonly="readonly">' +
-                             generateHTML() +
-                             '</textarea>')
-                       .height($('#content-panel').height());
-        $('#text-code')
-            .addClass('ui-helper-reset ui-widget');
+        $('#code-area').height($('#content-panel').height());
         $('#design-view').hide();
         $('#code-area').show();
         $('#preview-frame').hide();
@@ -960,7 +961,7 @@ $(function() {
 
         doc = $('#preview-frame')[0].contentWindow.document;
         doc.open();
-        doc.writeln(generateHTML());
+        doc.writeln(resultHTML);
         doc.close();
 
         $('#design-view').hide();
