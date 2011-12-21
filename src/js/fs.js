@@ -429,9 +429,10 @@ fsUtils = {
      */
     exportToBlank: function (path) {
                     var url = fsUtils.pathToUrl(path),
-                        blocked = false, exportWindow;
+                        blocked = false, exportWindow,
+                        options = "height=200, width=500, top=10, left=10, resizable=yes";
                     try {
-                        exportWindow = window.open(url, "_blank");
+                        exportWindow = window.open(url, "_blank", options);
                         if (!exportWindow) {
                             blocked = true;
                         }
