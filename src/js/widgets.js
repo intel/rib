@@ -1017,6 +1017,17 @@ var BWidgetRegistry = {
         template: '<input type="date" />',
     },
 
+    ColorPicker: {
+        parent: "Base",
+        template: '<div data-role="colorpicker" />',
+        properties: {
+            data_color: {
+                type: "string",
+                defaultValue: "#ff00ff",
+            },
+        }
+    },
+
 };
 
 /**
@@ -1039,6 +1050,9 @@ var BWidget = {
                 }
                 if (type === "DateTimePicker") {
                     BWidgetRegistry[type].displayLabel = "Date Time Picker";
+                }
+                if (type === "ColorPicker") {
+                    BWidgetRegistry[type].displayLabel = "Color Picker";
                 }
             }
         }
