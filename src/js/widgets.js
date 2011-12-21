@@ -1072,6 +1072,11 @@ var BWidgetRegistry = {
             },
         },
     },
+
+    ProgressBar: {
+        parent: "Base",
+        template: '<div data-role="processingbar" />',
+    },
 };
 
 /**
@@ -1109,6 +1114,9 @@ var BWidget = {
                 }
                 if (type === "HsvPicker") {
                     BWidgetRegistry[type].displayLabel = "HSV Picker";
+                }
+                if (type === "ProgressBar") {
+                    BWidgetRegistry[type].displayLabel = "Progress Bar";
                 }
             }
         }
