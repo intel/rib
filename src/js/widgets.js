@@ -1010,7 +1010,13 @@ var BWidgetRegistry = {
                 allow: "Collapsible"
             }
         ],
-    }
+    },
+
+    DateTimePicker: {
+        parent: "Base",
+        template: '<input type="date" />',
+    },
+
 };
 
 /**
@@ -1030,6 +1036,9 @@ var BWidget = {
                 if (BWidgetRegistry[type].displayLabel === undefined) {
                     // TODO: i18n: localize displayLabel based on type
                     BWidgetRegistry[type].displayLabel = type;
+                }
+                if (type === "DateTimePicker") {
+                    BWidgetRegistry[type].displayLabel = "Date Time Picker";
                 }
             }
         }
