@@ -251,7 +251,7 @@ var BWidgetRegistry = {
             {
                 name: "bottom",
                 cardinality: "1",
-                allow: "Navbar"
+                allow: "Navbar, OptionHeader"
             }
         ],
     },
@@ -1088,6 +1088,18 @@ var BWidgetRegistry = {
         template: '<div data-role="calendarpicker" />',
     },
 
+    OptionHeader: {
+        parent: "Base",
+        template: '<div data-role="optionheader" />',
+        zones: [
+            {
+                name: "default",
+                cardinality: "N",
+                allow: "Grid"
+            }
+        ],
+    },
+
 };
 
 /**
@@ -1131,6 +1143,9 @@ var BWidget = {
                 }
                 if (type === "CalendarPicker") {
                     BWidgetRegistry[type].displayLabel = "Calendar Picker";
+                }
+                if (type === "OptionHeader") {
+                    BWidgetRegistry[type].displayLabel = "Option Header";
                 }
             }
         }
