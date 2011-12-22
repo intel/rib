@@ -339,6 +339,33 @@ $(function() {
             $toolbarPanel.find('#newpage').click(addNewPage);
             $toolbarPanel.find('#removepage').click(deleteCurrentPage);
 
+            // ----------------------------- //
+            // Menu item hover handler setup //
+            // ----------------------------- //
+            var menuIndications = {
+                'file-sub-menu'  : 'File',
+                'loadDesign'     : 'improt local nrc file to current project',
+                'exportToLocal'  : 'exprot current builder as nrc or html to local storage',
+                'exportDesign'   : 'exprot current builder as nrc file to local storage',
+                'exportHTML'     : 'exprot current builder as html file to local storage',
+                'view-sub-menu'  : 'View',
+                'designView'     : 'switch to design view',
+                'codeView'       : 'switch to code view',
+                'preView'        : 'preview current design',
+                'showADMTree'    : 'show ADM tree for debug',
+                'reloadDesign'   : 'reload design',
+                'theme'          : 'choose a theme for GUI builder application',
+                'newpage'        : 'Add a new page to current project',
+                'removepage'     : 'remove current display page from project',
+            };
+            $mainMenu.find("li").hover(function(){
+                var menuID = $(this).children("a").attr("id");
+                var menuIndication =  menuIndications[menuID];
+                $statusPanel.html(menuIndication);
+            }, function(){
+                   $statusPanel.html("");
+            });
+
             // ----------------------- //
             // Initialize Page Content //
             // ----------------------- //
