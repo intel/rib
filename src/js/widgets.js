@@ -1080,7 +1080,7 @@ var BWidgetRegistry = {
 
     Switch: {
         parent: "Base",
-        template: '<div data-role="switch" />',
+        template: '<div data-role="toggleswitch" />',
     },
 
     CalendarPicker: {
