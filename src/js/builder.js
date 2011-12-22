@@ -784,24 +784,7 @@ $(function() {
             $(widget[0]).attr(attrMap);
         }
 
-        // FIXME: Instead of hard-coding this kind of thing here, we should
-        //        have added a "selector" we can ask the widget for, which
-        //        helps us find the right DOM node to append to. For the
-        //        moment, I'm removing the nested cases that require this
-        //        so it's not needed. This can all be removed as early as the
-        //        next git commit, I just wanted to check it in so there
-        //        would be a record of what happened.
-/*
-        // Now we actually add the new element to its parent
-        // TODO: Be smarter about insert vs. append...
-        if(type === "RadioButton" || type === "Checkbox") {
-            $(parentNode[0].children).append($(widget));
-        } else {
-*/
         $(parentNode).append($(widget));
-/*
-        }
-*/
 
         node.getDesign().suppressEvents(false);
         node.suppressEvents(false);
