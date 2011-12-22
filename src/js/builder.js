@@ -668,7 +668,7 @@ $(function() {
             parentNode = null,
             template, props, id,
             attrMap = {},
-            attrValue, propDefault,
+            attrName, attrValue, propDefault,
             widget, regEx;
 
         // Check for valid node
@@ -743,23 +743,27 @@ $(function() {
             // Apply any special ADMNode properties to the template before we
             // create the DOM Element instance
             for (var p in props) {
-                attrValue = undefined;
+                attrValue = node.getProperty(p);
+
                 switch (p) {
                 case "type":
                     break;
                 default:
-                    // JSON prop names can't have '-' in them, but the DOM
-                    // attribute name does, so we replace '_' with '-'
-                    attrValue = node.getProperty(p);
-                    propDefault = BWidget.getPropertyDefault(node.getType(), p);
-                    if (attrValue !== propDefault) {
-                        p = p.replace(/_/g, '-');
-                        attrMap[p] = attrValue;
+                    attrName = BWidget.getPropertyHTMLAttribute(type, p);
+                    if (attrName) {
+                        propDefault = BWidget.getPropertyDefault(type, p);
+
+                        if (attrValue !== propDefault ||
+                            BWidget.getPropertyForceAttribute(type, p)) {
+                            attrMap[attrName] = attrValue;
+                        }
                     }
                     break;
                 }
 
-                if (attrValue !== undefined) {
+                if (typeof attrValue === "string" ||
+                    typeof attrValue === "number") {
+                    // reasonable value to substitute in template
                     regEx = new RegExp('%' + p.toUpperCase() + '%', 'g');
                     template = template.replace(regEx, attrValue);
                 }
@@ -770,16 +774,34 @@ $(function() {
 
             // Apply any unhandled properties on the ADMNode to the DOM Element
             // as Element attributes
-            $(widget).attr(attrMap);
+
+            // TODO: Some widgets may return multiple DOM elements, like a
+            //       radio button currently returns <input><label>. Indexing
+            //       by [0] below so that only the first gets the attributes
+            //       applied. A better solution would have each property
+            //       specify a selector to find the right element(s) for the
+            //       attributed to be applied to.
+            $(widget[0]).attr(attrMap);
         }
 
+        // FIXME: Instead of hard-coding this kind of thing here, we should
+        //        have added a "selector" we can ask the widget for, which
+        //        helps us find the right DOM node to append to. For the
+        //        moment, I'm removing the nested cases that require this
+        //        so it's not needed. This can all be removed as early as the
+        //        next git commit, I just wanted to check it in so there
+        //        would be a record of what happened.
+/*
         // Now we actually add the new element to its parent
         // TODO: Be smarter about insert vs. append...
         if(type === "RadioButton" || type === "Checkbox") {
             $(parentNode[0].children).append($(widget));
         } else {
-            $(parentNode).append($(widget));
+*/
+        $(parentNode).append($(widget));
+/*
         }
+*/
 
         node.getDesign().suppressEvents(false);
         node.suppressEvents(false);

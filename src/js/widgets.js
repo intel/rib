@@ -51,7 +51,8 @@ var BWidgetRegistry = {
         properties: {
             id: {
                 type: "string",
-                defaultValue: ""
+                defaultValue: "",
+                htmlAttribute: "id"
             }
         }
     },
@@ -68,7 +69,7 @@ var BWidgetRegistry = {
         properties: {
             metas: {
                 type: "array",
-                defaultValue:[
+                defaultValue: [
                     { key:'name',
                       value: 'viewport',
                       content: 'width=device-width, initial-scale=1'
@@ -327,7 +328,7 @@ var BWidgetRegistry = {
         //        a form for each widget to be associated with in properties,
         //        for example. Need to look at this.
         parent: "Base",
-        template: '<form action="" method=""></form>',
+        template: '<form></form>',
         zones: [
             {
                 name: "default",
@@ -337,12 +338,16 @@ var BWidgetRegistry = {
         properties: {
             action: {
                 type: "string",
-                defaultValue: "#"
+                defaultValue: "#",
+                htmlAttribute: "action",
+                forceAttribute: true
             },
             method: {
                 type: "string",
                 options: [ "GET", "POST" ],
-                defaultValue: "POST"
+                defaultValue: "POST",
+                htmlAttribute: "method",
+                forceAttribute: true
             }
         }
     },
@@ -362,10 +367,13 @@ var BWidgetRegistry = {
             }
         ],
         properties: {
-            data_type: {
+            // TODO: Look into why, if this property is renamed "type",
+            //       the ButtonGroup goes crazy and doesn't work
+            orientation: {
                 type: "string",
-                options: ["vertical", "horizontal" ],
-                defaultValue: "vertical"
+                options: [ "vertical", "horizontal" ],
+                defaultValue: "vertical",
+                htmlAttribute: "data-type"
             }
         }
     },
@@ -431,21 +439,26 @@ var BWidgetRegistry = {
     TextInput: {
         parent: "Base",
         properties: {
-            value: {
+            hint: {
                 type: "string",
-                defaultValue: ""
-            },
-            placeholder: {
-                type: "string",
-                defaultValue: "Placeholder text"
-            },
-            data_theme: {
-                type: "string",
-                options: [ "a", "b", "c", "d", "e", "" ],
                 defaultValue: "",
+                htmlAttribute: "placeholder"
+            },
+            theme: {
+                type: "string",
+                options: [ "default", "a", "b", "c", "d", "e" ],
+                defaultValue: "default",
+                htmlAttribute: "data-theme"
+            },
+            value: {
+                // FIXME: Probably value should be removed, setting initial
+                //        static text is not a common thing to do
+                type: "string",
+                defaultValue: "",
+                htmlAttribute: "value"
             }
         },
-        template: '<input type="text" value="%VALUE%"  />',
+        template: '<input type="text">',
     },
 
     /**
@@ -462,26 +475,9 @@ var BWidgetRegistry = {
                 type: "string",
                 autoGenerate: "slider"
             },
-            type: {
+            label: {
                 type: "string",
-                options: [ "yes", "no" ],
-                defaultValue: "yes"
-            },
-            type_label: {
-                type: "string",
-                defaultValue: "with-label"
-            },
-            conditional: {
-               type: "string",
-               defaultValue: "Slider"
-            },
-            conditional_label: {
-                type: "string",
-                defaultValue: "label"
-            },
-            conditional_for: {
-                type: "string",
-                defaultValue: "yes"
+                defaultValue: ""
             },
             value: {
                 type: "integer",
@@ -495,27 +491,68 @@ var BWidgetRegistry = {
                 type: "integer",
                 defaultValue: 100
             },
-            data_theme: {
+            theme: {
                 type: "string",
-                options: [ "a", "b", "c", "d", "e", "" ],
-                defaultValue: "",
+                options: [ "default", "a", "b", "c", "d", "e" ],
+                defaultValue: "default"
             },
-            data_track_theme: {
+            track: {
+                displayName: "track theme",
                 type: "string",
-                options: [ "a", "b", "c", "d", "e", "" ],
-                defaultValue: "",
+                options: [ "default", "a", "b", "c", "d", "e" ],
+                defaultValue: "default"
             }
         },
-        template: { 'yes':'<div data-role="fieldcontain"> <label for="%ID%-range">%CONDITIONAL%</label> <input type="range" name="%ID%-range" id="%ID%-range" value="%VALUE%" min="%MIN%" max="%MAX%" data-theme="%DATA-THEME%" data-track-theme="%DATA-TRACK-THEME%" /> </div>', 'no':'<div data-role="fieldcontain"><input type="range" name="%ID%-range" id="%ID%-range" value="%VALUE%" min="%MIN%" max="%MAX%" data-theme="%DATA-THEME%" data-track-theme="%DATA-TRACK-THEME%" /> </div>'},
+        template: function (node) {
+            var label, idstr, prop, input,
+                code = $('<div data-role="fieldcontain"></div>');
+
+            prop = node.getProperty("id");
+            idstr = prop + "-range";
+
+            label = node.getProperty("label");
+            if (label) {
+                code.append($('<label for="$1">$2</label>'
+                              .replace(/\$1/, idstr)
+                              .replace(/\$2/, label)));
+            }
+
+            input = $('<input type="range">');
+            if (label) {
+                input.attr("id", idstr);
+            }
+
+            prop = node.getProperty("value");
+            input.attr("value", prop);
+
+            prop = node.getProperty("min");
+            input.attr("min", prop);
+
+            prop = node.getProperty("max");
+            input.attr("max", prop);
+
+            prop = node.getProperty("theme");
+            if (prop !== "default") {
+                input.attr("data-theme", prop);
+            }
+
+            prop = node.getProperty("track");
+            if (prop !== "default") {
+                input.attr("data-track-theme", prop);
+            }
+
+            code.append(input);
+            return code;
+        }
     },
 
     /**
      * Represents a text label. A "text" string property holds the text.
      */
     Label: {
-        // FIXME: I'm not sure we should really have this. Instead we make label
-        //        text a property of other form elements and the <label> part of
-        //        their templates.
+        // FIXME: I'm not sure we should really have this. Instead we make
+        //        label text a property of other form elements and the
+        //        <label> part of their templates.
         parent: "Base",
         properties: {
             text: {
@@ -530,27 +567,23 @@ var BWidgetRegistry = {
      * Represents a text area entry.
      */
     TextArea: {
+        // FIXME: good form is to include a <label> with all form elements
+        //        and wrap them in a fieldcontain
         parent: "Base",
         properties: {
-            placeholder: {
+            hint: {
                 type: "string",
-                defaultValue: "Placeholder text"
-            },
-            cols: {
-                type: "integer",
-                defaultValue: "40"
-            },
-            rows: {
-                type: "integer",
-                defaultValue: "2"
-            },
-            data_theme: {
-                type: "string",
-                options: [ "a", "b", "c", "d", "e", "" ],
                 defaultValue: "",
+                htmlAttribute: "placeholder"
+            },
+            theme: {
+                type: "string",
+                options: [ "default", "a", "b", "c", "d", "e" ],
+                defaultValue: "default",
+                htmlAttribute: "data-theme"
             }
         },
-        template: '<textarea></textarea>',
+        template: '<textarea></textarea>'
     },
 
     /**
@@ -575,10 +608,11 @@ var BWidgetRegistry = {
                 type: "string",
                 defaultValue: "On"
             },
-            data_theme: {
+            theme: {
                 type: "string",
-                options: [ "a", "b", "c", "d", "e", "" ],
-                defaultValue: "",
+                options: [ "default", "a", "b", "c", "d", "e" ],
+                defaultValue: "default",
+                htmlAttribute: "data-theme"
             }
         },
         template: '<select data-role="slider"><option value="%VALUE1%">%LABEL1%</option><option value="%VALUE2%">%LABEL2%</option></select>',
@@ -606,41 +640,36 @@ var BWidgetRegistry = {
     ControlGroup: {
         parent: "Base",
         properties: {
-            data_type: {
+            // FIXME: Put fieldcontain back in here, but will require
+            //        support for selector on HTML attribute for data-type
+
+            // FIXME: Before the legend was not written if with-legend was
+            //        "no" -- instead, we could just check for empty legend
+            //        in a template function, like I did in Slider in this
+            //        commit. But it seems to work fine with a blank
+            //        legend, so maybe it makes sense to always write to
+            //        guide the user as they edit the HTML.
+            orientation: {
                 type: "string",
                 options: [ "vertical", "horizontal" ],
-                defaultValue: "vertical"
+                defaultValue: "vertical",
+                htmlAttribute: "data-type"
             },
-            type: {
-                type: "string",
-                options: [ "yes", "no" ],
-                defaultValue: "yes"
-            },
-            type_label: {
-                type: "string",
-                defaultValue: "with-legend"
-            },
-            conditional: {
+            legend: {
                type: "string",
-               defaultValue: "Legend"
-            },
-            conditional_label: {
-                type: "string",
-                defaultValue: "legend"
-            },
-            conditional_for: {
-                type: "string",
-                defaultValue: "yes"
+               defaultValue: ""
             },
         },
         zones: [
             {
                 name: "default",
                 cardinality: "N",
+                // TODO: probably only a single type should be allowed, that
+                //       would take more work to enforce
                 allow: [ "RadioButton", "Checkbox" ]
             }
         ],
-        template: {'yes':'<div data-role="fieldcontain"><fieldset data-role="controlgroup" data-type="%DATA-TYPE%"><legend>%CONDITIONAL%</legend></fieldset></div>', 'no':'<div data-role="fieldcontain"><fieldset data-role="controlgroup" data-type="%DATA-TYPE%"></fieldset></div>'},
+        template: '<fieldset data-role="controlgroup"><legend>%LEGEND%</legend></fieldset>',
     },
 
     /**
@@ -649,21 +678,22 @@ var BWidgetRegistry = {
     Option: {
         parent: "Base",
         properties: {
+            text: {
+                type: "string",
+                defaultValue: "Option"
+            },
             value: {
                 type: "string",
                 defaultValue: ""
             },
-            label: {
+            theme: {
                 type: "string",
-                defaultValue: "Label"
-            },
-            data_theme: {
-                type: "string",
-                options: [ "a", "b", "c", "d", "e", "" ],
-                defaultValue: "",
+                options: [ "default", "a", "b", "c", "d", "e" ],
+                defaultValue: "default",
+                htmlAttribute: "data-theme"
             }
         },
-        template: '<option>%LABEL%</option>'
+        template: '<option>%TEXT%</option>'
     },
 
     /**
@@ -673,21 +703,36 @@ var BWidgetRegistry = {
         parent: "Base",
         allowIn: "ControlGroup",
         properties: {
-            value: {
+            // FIXME: All the radio buttons in a group need to have a common
+            //        "name" field in order to work correctly
+            id: {
                 type: "string",
-                defaultValue: ""
+                autoGenerate: "radio",
+                htmlAttribute: "id"
             },
             label: {
                 type: "string",
-                defaultValue: "Label"
+                defaultValue: "Radio Button"
             },
-            data_theme: {
+            value: {
                 type: "string",
-                options: [ "a", "b", "c", "d", "e", "" ],
                 defaultValue: "",
+                htmlAttribute: "value"
+            },
+            checked: {
+                type: "string",
+                options: [ "not checked", "checked" ],
+                defaultValue: "not checked",
+                htmlAttribute: "checked"
+            },
+            theme: {
+                type: "string",
+                options: [ "default", "a", "b", "c", "d", "e" ],
+                defaultValue: "default",
+                htmlAttribute: "data-theme"
             }
         },
-        template: '<input type="radio" id="%ID" /><label for="%ID%">%LABEL%</label>',
+        template: '<input type="radio"><label for="%ID%">%LABEL%</label>',
     },
 
     /**
@@ -697,65 +742,127 @@ var BWidgetRegistry = {
         parent: "Base",
         allowIn: "ControlGroup",
         properties: {
-            value: {
+            id: {
                 type: "string",
-                defaultValue: ""
+                autoGenerate: "checkbox",
+                htmlAttribute: "id"
             },
             label: {
                 type: "string",
-                defaultValue: "Label"
+                defaultValue: "Checkbox",
             },
-            data_theme: {
+            value: {
                 type: "string",
-                options: [ "a", "b", "c", "d", "e", "" ],
                 defaultValue: "",
+                htmlAttribute: "value"
+            },
+            checked: {
+                type: "string",
+                options: [ "not checked", "checked" ],
+                defaultValue: "not checked",
+                htmlAttribute: "checked"
+            },
+            theme: {
+                type: "string",
+                options: [ "default", "a", "b", "c", "d", "e" ],
+                defaultValue: "default",
+                htmlAttribute: "data-theme"
             }
         },
-        template: '<input type="checkbox" id="%ID" /><label for="%ID%">%LABEL%</label>',
+        template: '<input type="checkbox"><label for="%ID%">%LABEL%</label>',
     },
 
     /**
      * Represents a unordered list element.
      */
-    ListView: {
+    List: {
         parent: "Base",
         properties: {
-            type: {
-                type: "string",
-                options: [ "Numbered", "Normal" ],
-                defaultValue: "Normal"
-            },
-            type_label: {
-                type: "string",
-                defaultValue: "type"
-            },
-            data_inset: {
+            inset: {
                 type: "string",
                 options: [ "true", "false" ],
                 defaultValue: "true",
+                htmlAttribute: "data-inset",
+                // because data-inset="false" is the real default, do this:
+                forceAttribute: true
+                // FIXME: would be better to distinguish from the default that
+                //        occurs if you leave it off, vs. the default we think
+                //        the user is most likely to want
             },
-            data_filter: {
+            filter: {
                 type: "string",
                 options: [ "true", "false" ],
                 defaultValue: "false",
+                htmlAttribute: "data-filter"
             },
-            data_theme: {
+            theme: {
                 type: "string",
-                options: [ "a", "b", "c", "d", "e", "" ],
-                defaultValue: "",
+                options: [ "default", "a", "b", "c", "d", "e" ],
+                defaultValue: "default",
+                htmlAttribute: "data-theme"
             },
-            data_divider_theme: {
+            divider: {
+                displayName: "divider theme",
                 type: "string",
-                options: [ "a", "b", "c", "d", "e" ],
-                defaultValue: "b",
+                options: [ "default", "a", "b", "c", "d", "e" ],
+                defaultValue: "default",
+                htmlAttribute: "data-divider-theme"
             }
         },
-        template: { 'Normal':'<ul data-role="listview">', 'Numbered':'<ol data-role="listview">' },
+        template: '<ul data-role="listview">',
         zones: [
             {
                 name: "default",
                 cardinality: "N",
-                allow: "ListItem"
+                allow: [ "ListItem", "ListDivider" ]
+            }
+        ],
+    },
+
+    /**
+     * Represents an ordered list element.
+     */
+    OrderedList: {
+        displayName: "Ordered List",
+        parent: "Base",
+        properties: {
+            inset: {
+                type: "string",
+                options: [ "true", "false" ],
+                defaultValue: "true",
+                htmlAttribute: "data-inset",
+                // because data-inset="false" is the real default, do this:
+                forceAttribute: true
+                // FIXME: would be better to distinguish from the default that
+                //        occurs if you leave it off, vs. the default we think
+                //        the user is most likely to want
+            },
+            filter: {
+                type: "string",
+                options: [ "true", "false" ],
+                defaultValue: "false",
+                htmlAttribute: "data-filter"
+            },
+            theme: {
+                type: "string",
+                options: [ "default", "a", "b", "c", "d", "e" ],
+                defaultValue: "default",
+                htmlAttribute: "data-theme"
+            },
+            divider: {
+                displayName: "divider theme",
+                type: "string",
+                options: [ "default", "a", "b", "c", "d", "e" ],
+                defaultValue: "default",
+                htmlAttribute: "data-divider-theme"
+            }
+        },
+        template: '<ol data-role="listview">',
+        zones: [
+            {
+                name: "default",
+                cardinality: "N",
+                allow: [ "ListItem", "ListDivider" ]
             }
         ],
     },
@@ -765,18 +872,29 @@ var BWidgetRegistry = {
      */
     ListItem: {
         parent: "Base",
+        allowIn: [ "List", "OrderedList" ],
         properties: {
             text: {
                 type: "string",
-                defaultValue: "",
-            },
-            data_role: {
-                type: "string",
-                options: [ "list-divider", "" ],
-                defaultValue: "",
-            },
+                defaultValue: "List Item",
+            }
         },
-        template: '<li>%TEXT%</li>',
+        template: '<li>%TEXT%</li>'
+    },
+
+    /**
+     * Represents a list divider element.
+     */
+    ListDivider: {
+        parent: "Base",
+        allowIn: [ "List", "OrderedList" ],
+        properties: {
+            text: {
+                type: "string",
+                defaultValue: "List Divider"
+            }
+        },
+        template: '<li data-role="list-divider">%TEXT%</li>'
     },
 
     /**
@@ -828,22 +946,31 @@ var BWidgetRegistry = {
      */
     Collapsible: {
         parent: "Base",
-        template: '<div data-role="collapsible"><%SIZE%>%HEADER%</%SIZE%></div>',
+        template: '<div data-role="collapsible"><h1>%HEADING%</h1></div>',
         properties: {
-            size: {
+            // NOTE: Removed "size" (h1 - h6) for the same reason we don't
+            //       provide that option in header/footer currently. jQM
+            //       renders them all the same, the purpose is only for the
+            //       developer to distinguish between different levels of
+            //       hierarchy for their own purposes. For now, I think it
+            //       just makes sense to have them manually change them if
+            //       they care, it's rather advanced and not something most
+            //       of our users would care about.
+            heading: {
                 type: "string",
-                options: ["H1", "H2", "H3", "H4", "H5", "H6" ],
-                defaultValue: "H3",
-            },
-            header: {
-                type: "string",
-                defaultValue: "",
+                defaultValue: "Collapsible Area",
             },
         },
         zones: [
             {
                 name: "default",
-                cardinality: "N"
+                cardinality: "N",
+                // FIXME: Ultimately, this should probably be allowed, but
+                //        for now, it's way too hard to drop two collapsibles
+                //        into a collapsible set without this line, because
+                //        when it's prevented the canvas looks up to the
+                //        parent and tries to add it.
+                deny: "Collapsible"
             }
         ],
     },
@@ -881,6 +1008,9 @@ var BWidget = {
                 // TODO: i18n: localize displayLabel based on type
                 BWidgetRegistry[type].displayLabel = type;
 
+                // FIXME: Set these in the widget definitions as displayLabel,
+                //        and check for them here before using the widget
+                //        name as a default, rather than this nastiness
                 if (type === "ButtonGroup") {
                     BWidgetRegistry[type].displayLabel = "Button Group";
                 }
@@ -902,11 +1032,14 @@ var BWidget = {
                 if (type === "RadioButton") {
                     BWidgetRegistry[type].displayLabel = "Radio Button";
                 }
-                if (type === "ListView") {
-                    BWidgetRegistry[type].displayLabel = "List View";
+                if (type === "OrderedList") {
+                    BWidgetRegistry[type].displayLabel = "Ordered List";
                 }
                 if (type === "ListItem") {
                     BWidgetRegistry[type].displayLabel = "List Item";
+                }
+                if (type === "ListDivider") {
+                    BWidgetRegistry[type].displayLabel = "List Divider";
                 }
                 if (type === "CollapsibleSet") {
                     BWidgetRegistry[type].displayLabel = "Collapsible Set";
@@ -1167,6 +1300,42 @@ var BWidget = {
         var schema = BWidget.getPropertySchema(widgetType, property);
         if (schema) {
             return schema.defaultValue;
+        }
+        return schema;
+    },
+
+    /**
+     * Gets the HTML attribute associated with this property.
+     *
+     * @param {String} widgetType The type of the widget.
+     * @param {String} property The name of the property.
+     * @return {String} The name of an HTML attribute to set to this property
+     *                  value in the template, or undefined if no HTML
+     *                  attribute should be set.
+     * @throws {Error} If widgetType is invalid, or property not found.
+     */
+    getPropertyHTMLAttribute: function (widgetType, property) {
+        var schema = BWidget.getPropertySchema(widgetType, property);
+        if (schema) {
+            return schema.htmlAttribute;
+        }
+        return schema;
+    },
+
+    /**
+     * Gets whether or not the HTML attribute for this property should be
+     * output even if it is the default value.
+     *
+     * @param {String} widgetType The type of the widget.
+     * @param {String} property The name of the property.
+     * @return {Boolean} True if the HTML attribute for this property should
+     *                   be set even if the proeprty is a default value.
+     * @throws {Error} If widgetType is invalid, or property not found.
+     */
+    getPropertyForceAttribute: function (widgetType, property) {
+        var schema = BWidget.getPropertySchema(widgetType, property);
+        if (schema) {
+            return schema.forceAttribute;
         }
         return schema;
     },

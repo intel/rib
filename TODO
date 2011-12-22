@@ -139,6 +139,17 @@ P2 - Add a "template picker" at startup and pre-populate the content area with
 
 [Widget Registry]
 P1 - Provide real UX icons for widgets
+P2 - Perhaps display placeholder text in TextInput to guide user
+     (e.g. Enter hint text here) -- but only in design canvas
+P2 - Very uncommon to actual set TextInput's "value" to a hard-coded initial
+     state; we should consider removing the property (for now I've at least
+     moved it to the bottom of the TextInput properties)
+P3 - Someday we might want to distinguish between the order properties are
+     listed in properties pane and the order they are written in codegen
+P3 - Could make form elements based on a common FormElement to inherit
+     the name attribute
+P3 - Whether or not to wrap widget and label with a fieldcontain could be
+     an option on the widget
 
 [Code Generation]
 P2 - Remove the xmlns stuff from generated code, not needed, right?
