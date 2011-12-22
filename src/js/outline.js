@@ -133,6 +133,20 @@ function renderOutlineView() {
         function  setSelected(item) {
             var UID = $(item).attr('adm-uid');
             dumplog("Outline.js: setSelected is called. UID is " + UID);
+
+            // find whether selected widget in current active page
+            var currentNode = ADM.getDesignRoot().findNodeByUid(UID);
+            while (currentNode.getType() !== "Page" && currentNode.getType() !=="Design") {
+                currentNode = currentNode.getParent();
+            }
+            if (currentNode.getType() !== "Page") {
+                dumplog("error: can't find select node's Page");
+                return;
+            }
+            if (ADM.getActivePage() !== currentNode) {
+                ADM.setActivePage(currentNode);
+            }
+
             window.ADM.setSelected(UID);
         }
 

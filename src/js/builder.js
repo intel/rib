@@ -439,23 +439,6 @@ $(function() {
             $designContentDocument.find('.adm-node[data-uid=\''+e.uid+'\']')
                                   .addClass('ui-selected');
         }
-        //active page which contains selected node
-        if (e.node === null) {
-            return false;
-        }
-
-        var currentNode = e.node;
-        while(currentNode.getType() !== "Page") {
-            currentNode = currentNode.getParent();
-        }
-        if (currentNode.getType() !== "Page") {
-            logit("error: selected node doesn't contain in page!");
-            return false;
-        }
-        if (currentNode !== ADM.getActivePage()){
-            ADM.setActivePage(currentNode);
-        }
-        return true;
     },
 
     admModelUpdatedCallback = function (e) {
