@@ -165,16 +165,9 @@ function getDesignHeaders() {
 
 // Construct a new HTML document from scratch with provided headers
 function constructNewDocument(headers) {
-    var docType = document.implementation.createDocumentType ('html', '', ''),
-        nsURI = 'http://www.w3.org/1999/xhtml',
-        doc = document.implementation.createDocument(nsURI, 'html', docType),
-        head = $('<head/>'),
-        body = $('<body/>'),
-        html = $(doc).find('html'),
+    var doc = document.implementation.createHTMLDocument('title'),
+        head = $(doc.head),
         tmpHead = '', i;
-
-    head.appendTo(html);
-    body.appendTo(html);
 
     if (headers && headers.length > 0) {
         for (i=0; i < headers.length; i++) {
@@ -878,18 +871,15 @@ $(function() {
 
     generateHTML = function () {
         var doc = constructNewDocument($defaultHeaders);
-        $(doc).find('body').empty();
 
         serializeADMSubtreeToDOM(ADM.getDesignRoot(),
                                  $(doc).find('body'),
                                  null); // No renderer used here
-        return style_html(xmlserializer.serializeToString(doc)
-                          .replace(/(<script [^>]*")\/>/ig,'$1></script>')
-                          .replace(/(<meta [^>]*)\/>/ig,'$1>'), {
+        return style_html(xmlserializer.serializeToString(doc),
+                          {
                               'max_char': 80, 
-                              'unformatted': ['a', 'h1']
+                              'unformatted': ['a', 'h1', 'script', 'title']
                           });
-
     },
 
     // ------------------------------------------------ //
