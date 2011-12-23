@@ -112,8 +112,8 @@ function showProperties(event) {
             else {
                 $('#property_content').children().last()
                     .append('<tr><th id="' + labelId + '">' + labelVal + '</th>' +
-                            '<td>' +
-                            '<input class="full" id="' + valueId + '" value="'+valueVal + '" />' +
+                            '<td width="100%">' +
+                            '<input size=15 id="' + valueId + '" value="'+valueVal + '" />' +
                             '</td></tr>');
             }
 
