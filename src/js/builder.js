@@ -520,7 +520,7 @@ $(function() {
     setPreviewPage = function (pageId) {
         var $previewFrame = $("#preview-frame"),
             changePreviewPage = function (pageId) {
-                if (previewWindow.$)
+                if (previewWindow.$ && previewWindow.$.mobile)
                     previewWindow.$.mobile.changePage("#" + pageId, {transition: "none"});
             };
 
@@ -923,9 +923,12 @@ $(function() {
         resultHTML = generateHTML();
         $('#text-code').val(resultHTML);
         doc.open();
-        doc.writeln(generateHTML());
+        doc.writeln(resultHTML);
         doc.close();
-        setPreviewPage(ADM.getActivePage().getProperty('id'));
+        $(doc).load( function () {
+            if (ADM.getActivePage())
+                setPreviewPage(ADM.getActivePage().getProperty('id'));
+        });
     },
 
     isInDesignView = function (el) {
