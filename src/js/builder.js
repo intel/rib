@@ -21,6 +21,46 @@ var SHOW_IDS = true,
 
 var xmlserializer = new XMLSerializer();
 
+/*
+ * FIXME: This is a desparate workaround for a flaw in jQuery-ui drag
+ *        and drop manager ($.ui.ddmanager) not dealing with iframes
+ *
+ * We override the jQuery-ui prepareOffsets() function to account for
+ * elements within iframes, caluculating their toplevel page relative
+ * positions
+ *
+ * Copied from jquery-ui version 1.8.16, ui/jquery.ui.droppable.js
+ */
+jQuery.ui.ddmanager.prepareOffsets = function (t, event) {
+
+    var m = $.ui.ddmanager.droppables[t.options.scope] || [];
+    var type = event ? event.type : null; // workaround for #2317
+    var list = (t.currentItem || t.element).find(":data(droppable)").andSelf();
+
+    droppablesLoop: for (var i = 0; i < m.length; i++) {
+
+        if(m[i].options.disabled || (t && !m[i].accept.call(m[i].element[0],(t.currentItem || t.element)))) continue;   //No disabled and non-accepted
+        for (var j=0; j < list.length; j++) { if(list[j] == m[i].element[0]) { m[i].proportions.height = 0; continue droppablesLoop; } }; //Filter out elements in the current dragged item
+        m[i].visible = m[i].element.css("display") != "none"; if(!m[i].visible) continue;                                                                       //If the element is not visible, continue
+
+        if(type == "mousedown") m[i]._activate.call(m[i], event); //Activate the droppable if used directly from draggables
+
+        m[i].offset = m[i].element.offset();
+        m[i].proportions = { width: m[i].element[0].offsetWidth, height: m[i].element[0].offsetHeight };
+
+        /////////////////////////////////////////////////////////////////
+        // Start of our changes
+        if ($($(document).find('#design-view')[0].contentDocument)
+                         .find(m[i].element).length) {
+            var dv = $(document).find('#design-view');
+            m[i].offset.top += dv.offset().top;
+            m[i].offset.left += dv.offset().left;
+        }
+        // End of our changes
+        /////////////////////////////////////////////////////////////////
+    }
+};
+
 function logit(msg) {
     var entry = $.now()+": "+msg;
     var i = logHist.push(entry);
@@ -847,6 +887,13 @@ $(function() {
         $('#text-code').val(resultHTML);
     },
 
+    isInDesignView = function (el) {
+        var left = $designView.offset().left,
+            right = left + $designView.width(),
+            elCenter = $(el).offset().left + $(el).width()/2;
+        return (elCenter >= left && elCenter <= right);
+    },
+
     refreshDropTargets = function () {
         var targets = $designContentDocument.find('.nrc-sortable-container')
                                             .add('.adm-node[data-role="page"]',
@@ -863,15 +910,19 @@ $(function() {
                 drop: function(event, ui){
                     var t = $(ui.draggable).data("adm-node").type,
                         pid = $(this).attr('data-uid'),
-                        node = addChildRecursive(pid, t);
-                    logit('dropped a "'+t+'" onto ('+this.id+')');
-                    if (!node) {
-                        logit('Error: "'+t+'" could not be added to "'+this.id);
+                        node = null;
+                    // Prevent drops outside the Design View
+                    if (!isInDesignView(ui.helper)) {
                         $(ui.draggable).draggable("option", { revert: true });
+                        return false;
                     } else {
-                        logit('Added new "'+t+'" to "'+this.id);
-                        $(ui.draggable).draggable("option", { revert: false });
-                        ADM.setSelected(node.getUid());
+                        node = addChildRecursive(pid, t);
+                        if (!node) {
+                            $(ui.draggable).draggable("option",{revert:true});
+                        } else {
+                            $(ui.draggable).draggable("option",{revert:false});
+                            ADM.setSelected(node.getUid());
+                        }
                     }
                 }
             });
