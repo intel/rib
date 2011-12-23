@@ -337,7 +337,7 @@ $(function() {
             $toolbarPanel.find('#outlineView').click(toggleOutlineView);
             $toolbarPanel.find('#showADMTree').click(showADMTree);
             $toolbarPanel.find('#reloadDesign').click(triggerDesignViewRefresh);
-            $toolbarPanel.find('#exportHTML').mousedown(triggerExportHTML);
+            $toolbarPanel.find('#exportHTML').click(triggerExportHTML);
             $toolbarPanel.find('#newpage').click(addNewPage);
             $toolbarPanel.find('#removepage').click(deleteCurrentPage);
 
@@ -490,9 +490,28 @@ $(function() {
 // FUNCTIONS FOLLOW
 ////////////////////////////////////////////////////
     triggerExportHTML = function () {
-        fsUtils.write("index.html.download", resultHTML,  function(fileEntry){
-            fsUtils.exportToBlank(fileEntry.fullPath, "HTML");
-        }, _onError);
+        var cookieValue = cookieUtils.get("exportNotice"),
+            $exportNoticeDialog = $("#exportNoticeDialog"),
+            saveAndExportCode = function () {
+                fsUtils.write("index.html.download", resultHTML,  function(fileEntry){
+                    fsUtils.exportToBlank(fileEntry.fullPath, "HTML");
+                }, _onError);
+            };
+
+        if(cookieValue === "true" && $exportNoticeDialog.length > 0) {
+            // bind exporting HTML code handler to OK button
+            $exportNoticeDialog.dialog("option", "buttons", {
+                "OK": function () {
+                    saveAndExportCode();
+                    $("#exportNoticeDialog").dialog("close");
+                }
+            });
+            // open the dialog
+            $exportNoticeDialog.dialog("open");
+        } else {
+            // if cookieValue is not true, export HTML code directly
+            saveAndExportCode();
+        }
     },
 
     triggerDesignViewReload = function () {

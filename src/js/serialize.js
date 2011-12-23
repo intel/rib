@@ -38,8 +38,24 @@ $(function() {
         $('#importFile').click();
     }
 
-    function triggerSerialize () {
-        serializeADMToJSON();
+    function triggerExportDesign () {
+        var cookieValue = cookieUtils.get("exportNotice"),
+            $exportNoticeDialog = $("#exportNoticeDialog");
+
+        if(cookieValue === "true" && $exportNoticeDialog.length > 0) {
+            // bind exporting design handler to OK button
+            $exportNoticeDialog.dialog("option", "buttons", {
+                "OK": function () {
+                    serializeADMToJSON();
+                    $("#exportNoticeDialog").dialog("close");
+                }
+            });
+            // open the dialog
+            $exportNoticeDialog.dialog("open");
+        } else {
+            // if cookieValue is not true, export design directly
+            serializeADMToJSON();
+        }
     }
 
     function importFileChangedCallback (e) {
@@ -56,6 +72,40 @@ $(function() {
             }
             return false;
         }
+    }
+
+    function createExportNoticeDialog () {
+        var dialogStr, dialogOpts, $exportNoticeDialog;
+        dialogStr = '<div id="exportNoticeDialog">';
+        dialogStr += '<label>Notice:<br />Files will be saved in the default download path of Browser.<br />';
+        dialogStr += '<br />Configure to ask download path every time:';
+        dialogStr += '<br />Preferences -> Under the Hood -> Download<br />';
+        dialogStr += '<br />Then check the checkbox "Ask where to save each file before downloading"</label><br />';
+        dialogStr += '<br /><br /><input type="checkbox" />Do not remind me any more.<br />';
+        dialogStr += '</div>';
+        dialogOpts = {
+            autoOpen: false,
+            modal: true,
+            width: 600,
+            resizable: false,
+            height: 400,
+            title: "Tizen GUI Builder",
+        };
+        $(dialogStr).dialog(dialogOpts);
+        $exportNoticeDialog = $("#exportNoticeDialog");
+        if($exportNoticeDialog.length <= 0) {
+            console.error("create saveAlertDialog failed.");
+            return false;
+        }
+
+        $exportNoticeDialog.find("input:checkbox").click(function () {
+            var notice = this.checked ? "false" : "true";
+            // set cookie
+            if(!cookieUtils.set("exportNotice", notice)) {
+                console.error("Set exportNotice cookie failed.");
+            }
+        });
+        return true;
     }
 
     /*******************************************************
@@ -207,9 +257,20 @@ $(function() {
     // init the sandbox file system
     fsUtils.initFS(fsDefaults.type, fsDefaults.size);
 
+    // if can't get the cookie(no this record), then add exportNotice cookie
+    if (!cookieUtils.get("exportNotice")) {
+        if(!cookieUtils.set("exportNotice", "true")) {
+            console.error("Set exportNotice cookie failed.");
+        }
+    }
+
+    // create a notice Dialog for user to configure the browser,
+    // so that a native dialog can be shown when exporting design or HTML code
+    createExportNoticeDialog();
+
     // bind handlers for sub-menu
     $toolbarPanel.find('#loadDesign').click(triggerImportFileSelection);
-    $toolbarPanel.find('#exportDesign').mousedown(triggerSerialize);
+    $toolbarPanel.find('#exportDesign').click(triggerExportDesign);
 
     // Import file selection change handler //
     $('#importFile').change(importFileChangedCallback);

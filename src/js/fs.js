@@ -19,10 +19,9 @@ var fsDefaults = {
     files:{
         ADMDesign: "design.json",
         generatedCode: "proj.html",
-        project: "proj.nrc"
     }
 },
-    _fs, fsUtils;
+    _fs, fsUtils, cookieUtils;
 
 
 /**
@@ -443,4 +442,65 @@ fsUtils = {
                         alert("Export window was blocked!");
                     }
             },
+},
+
+/**
+ * Global object to add and set cookies.
+ *
+ */
+cookieUtils = {
+    /**
+     * Get value of the given name cookie record
+     *
+     * @param {string} name The string name of the cookie record.
+     *
+     * @return {string} value The value of the cookie record or null if failed.
+     */
+    get:function (name) {
+            var cookies, record, value = null, i;
+            if(typeof name !== "string") {
+                alert("Invalid cookie name.");
+                return value;
+            }
+            if(document.cookie && document.cookie !== "") {
+                // split cookie records
+                cookies = document.cookie.split(';');
+
+                for(i = 0; i < cookies.length; i++) {
+                    record = $.trim(cookies[i]);
+                    // find the record matchs the name
+                    if(record.substring(0, name.length + 1) === (name + '=')) {
+                        // get the value
+                        value = decodeURIComponent(record.substring(name.length + 1));
+                        break;
+                    }
+                }
+            } else {
+                console.warn("Don't support cookie or empty cookie.");
+            }
+            return value;
+        },
+
+    /**
+     * Set a pair of name-value into document.cookie
+     *
+     * @param {string} name The string name of the cookie record.
+     * @param {string} value The string value of the cookie record.
+     *
+     * @return {bool} set cooke success or not.
+     */
+    set: function (name, value) {
+            if(typeof name !== "string" || typeof value !== "string") {
+                alert("Invalid cookie name or name.");
+                return false;
+            }
+             document.cookie = encodeURIComponent(name) + "=" +
+                               encodeURIComponent(value);
+             if(document.cookie && document.cookie !== "") {
+                 return true;
+             } else {
+                 alert("Open Chrome with '--enable-file-cookies' please.");
+                 return false;
+             }
+         }
 };
