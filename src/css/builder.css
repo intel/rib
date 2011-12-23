@@ -122,6 +122,16 @@ hr.menu-separator {
     padding-left: 0.5em;
     padding-right: 0.5em;
 }
+.hmenu li a:hover {
+    color: red;
+    background: Darkorange;
+}
+.hmenu li a:active {
+    font-weight: bold;
+    color: red;
+    background-color: Darkorange;
+}
+
 .sub-menu {
     position: absolute;
     display: none;
