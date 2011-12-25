@@ -291,7 +291,7 @@ var BWidgetRegistry = {
                 type: "string",
                 defaultValue: "Footer",
             },
-	    position: {
+            position: {
                 type: "string",
                 options: [ "default", "fixed" ],
                 defaultValue: "default",
@@ -628,6 +628,13 @@ var BWidgetRegistry = {
             }
         },
         template: '<select data-role="slider"><option value="%VALUE1%">%LABEL1%</option><option value="%VALUE2%">%LABEL2%</option></select>',
+        // jQM generates an div next to the slider, which is the actually clicked item when users try to click the flip toggle switch.
+        delegate:"next",
+        events: {
+           change: function (e) {
+               return this.ownerDocument.defaultView.handleSelect(e, this);
+           }
+        }
     },
 
     /**
@@ -645,6 +652,16 @@ var BWidgetRegistry = {
                 allow: [ "Option" ]
             }
         ],
+        //jQM generates two levels of divs for a select, the topmost one is what is clicked.
+        delegate: "grandparent",
+        events: {
+           click: function (e) {
+               e.stopPropagation();
+               if (Math.abs(e.offsetY) > this.offsetHeight)
+                  return this.ownerDocument.defaultView.handleSelect(e, this.options[this.selectedIndex]);
+           }
+        }
+
     },
 
     /**
@@ -1777,7 +1794,21 @@ var BWidget = {
             throw new Error("widget type invalid in startsNewGroup");
         }
         return widget.newGroup ? true : false;
+    },
+
+    /**
+     * Gets the selection delegate for the given widget type.
+     *
+     * @return The attribute of the widget
+     */
+    getWidgetAttribute: function (widgetType, attribute) {
+        var widget = BWidgetRegistry[widgetType];
+        if (typeof widget !== "object") {
+            throw new Error("widget type invalid in getWidgetAttribute");
+        }
+        return widget[attribute];
     }
+
 };
 
 // initialize the widget registry

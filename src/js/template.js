@@ -45,20 +45,8 @@ $(function() {
         e.stopPropagation();
         return false;  // Stop event bubbling
     }
+    window.handleSelect = handleSelect;
     $('div:jqmData(role="page")').live('pagebeforecreate', function(e) {
-        var selects = $('select.adm-node[data-role!="slider"]');
-        // Configure "select" handlers on all nodes added from the ADM
-        // except for pages and content
-        selects.focus( function (e) {
-            return handleSelect(e, this);
-        });
-        selects.click( function (e) {
-            e.stopPropagation();
-            return false;
-        });
-        selects.change( function (e) {
-            return handleSelect(e, $(this).children(':selected')[0]);
-        });
 
         // Configure "sortable" behaviors
         var targets = $('.nrc-sortable-container');
@@ -150,37 +138,55 @@ $(function() {
         });
     });
     $('div:jqmData(role="page")').live('pageinit', function(e) {
-        // jQM generates an div next to the slider, which is the actually clicked item when users try to click the toggle switch.
-        var toggleSwitches = $('[data-role="slider"]'),
-            clickable = toggleSwitches.next();
-        toggleSwitches.bind("change", function(e){
-            return handleSelect(e, this);
-        });
+        $('.adm-node').each ( function (index, node) {
+            var admNode, widgetType, delegate, events,
+                delegateNode = $(node),
+                adm = window.parent.ADM,
+                bw = window.parent.BWidget;
 
-        //Move the adm-node class to the clickable and assign data-uid to it so that in sortable.stop we can always get it from ui.item.
-        clickable.addClass('adm-node');
-        toggleSwitches.removeClass('adm-node');
-        clickable.attr('data-uid', toggleSwitches.attr('data-uid'));
-        clickable.click( function(e) {
-            return handleSelect(e,$(this).prev());
-        });
+            if (adm && bw) {
+                admNode = adm.getDesignRoot()
+                             .findNodeByUid($(node).attr('data-uid')),
+                widgetType = admNode.getType(),
+                delegate = bw.getWidgetAttribute(widgetType, 'delegate'),
+                events = bw.getWidgetAttribute(widgetType, 'events');
 
-        //jQM generates two levels of divs for a select, the topmost one is what is clicked. 
-        var selects = $('select.adm-node'),
-            selectClickable = selects.parent().parent();
+                if (delegate) {
+                   if (typeof delegate === "function") {
+                      delegateNode = delegate($(node), admNode);
+                   } else {
+                       switch (delegate){
+                           case "next":
+                               delegateNode =  $(node).next();
+                               break;
+                           case "grandparent":
+                               delegateNode =  $(node).parent().parent();
+                               break;
+                           case "parent":
+                               delegateNode =  $(node).parent();
+                               break;
+                           default:
+                               delegateNode = $(node);
+                       }
+                   }
+               }
 
-        selectClickable.addClass('adm-node');
-        selects.removeClass('adm-node');
-        selectClickable.attr('data-uid', selects.attr('data-uid'));
+               // Move the adm-node class to the delegateNode and assign
+               // data-uid to it so that in sortable.stop we can always get
+               // it from ui.item.
+               $(node).removeClass('adm-node');
+               delegateNode.addClass('adm-node');
+               delegateNode.attr('data-uid', $(node).attr('data-uid'));
 
-        var buttons = $( $.mobile.button.prototype.options.initSelector, e.target )
-		    .not( ":jqmData(role='none'), :jqmData(role='nojs')" );
-        buttons.each( function (index, button) {
-                $(button).removeClass("adm-node").parent().addClass("adm-node").attr("data-uid", $(button).attr("data-uid"));
-        });
+               // Configure "select" handler
+               delegateNode.click( function(e) {
+                   return handleSelect(e, this);
+               });
 
-        $('.adm-node[data-role!="slider"]').not('select').click( function (e) {
-            return handleSelect(e, this);
+               if (events) {
+                   $(node).bind(events);
+               }
+            }
         });
     });
 
