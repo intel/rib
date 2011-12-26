@@ -1032,6 +1032,7 @@ var BWidgetRegistry = {
     DateTimePicker: {
         parent: "Base",
         template: '<input type="date" />',
+        delegate: 'next'
     },
 
     ColorPicker: {
@@ -1054,6 +1055,7 @@ var BWidgetRegistry = {
                 defaultValue: "#1a8039",
             },
         },
+        delegate: 'next'
     },
 
     ColorPalette: {
@@ -1098,6 +1100,7 @@ var BWidgetRegistry = {
     Switch: {
         parent: "Base",
         template: '<div data-role="toggleswitch" />',
+        delegate: 'next'
     },
 
     CalendarPicker: {
