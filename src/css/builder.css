@@ -302,3 +302,12 @@ hr.menu-separator {
 #pageList li.folder.open {
     list-style: none inside url("../assets/minus.gif");
 }
+#status-panel {
+    position: relative;
+    padding-left: 10px;
+}
+#status-message {
+    position: absolute;
+    top: 50%;
+    margin-top: -25%;
+}

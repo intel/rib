@@ -237,6 +237,7 @@ $(function() {
         $controlsHandle,
         $controlsGrip,
         $statusPanel,
+        $statusMessage,
         $contentsPanel,
         $designView,
         $logView,
@@ -276,6 +277,7 @@ $(function() {
             $controlsHandle = $('#controls-handle');
             $controlsGrip = $('#handle-grip');
             $statusPanel = $('#status-panel');
+            $statusMessage = $('#status-message');
             $contentsPanel = $('#contents-panel');
             $designView = $('#design-view');
             $logView = $('#logView');
@@ -361,9 +363,9 @@ $(function() {
             $mainMenu.find("li").hover(function(){
                 var menuID = $(this).children("a").attr("id");
                 var menuIndication =  menuIndications[menuID];
-                $statusPanel.html(menuIndication);
+                $statusMessage.html(menuIndication);
             }, function(){
-                   $statusPanel.html("");
+                $statusMessage.html("");
             });
 
             // ----------------------- //
