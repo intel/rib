@@ -77,11 +77,11 @@ $(function() {
     function createExportNoticeDialog () {
         var dialogStr, dialogOpts, $exportNoticeDialog;
         dialogStr = '<div id="exportNoticeDialog">';
-        dialogStr += '<label>Notice:<br />Files will be saved in the default download path of Browser.<br />';
-        dialogStr += '<br />Configure to ask download path every time:';
-        dialogStr += '<br />Preferences -> Under the Hood -> Download<br />';
-        dialogStr += '<br />Then check the checkbox "Ask where to save each file before downloading"</label><br />';
-        dialogStr += '<br /><br /><input type="checkbox" />Do not remind me any more.<br />';
+        dialogStr += 'Note: Files will be saved in the default download path of the Browser.';
+        dialogStr += '<p>To configure the Browser to ask you to where to save files, go to:<br>';
+        dialogStr += 'Preferences -> Under the Hood -> Download</p>';
+        dialogStr += '<p>Then check the box "Ask where to save each file before downloading"</p>';
+        dialogStr += '<p><input type="checkbox">Do not remind me again</p>';
         dialogStr += '</div>';
         dialogOpts = {
             autoOpen: false,
