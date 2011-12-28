@@ -1105,7 +1105,8 @@ var BWidgetRegistry = {
 
     CalendarPicker: {
         parent: "Base",
-        template: '<div data-role="calendarpicker" />',
+        template: '<a data-role="calendarpicker" data-icon="grid" data-iconpos="notext" data-inline="true"></a>',
+
     },
 
     OptionHeader: {
