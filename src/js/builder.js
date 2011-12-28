@@ -360,12 +360,24 @@ $(function() {
                 'newpage'        : 'Add a new page to the design',
                 'removepage'     : 'Remove the current page from the design',
             };
-            $mainMenu.find("li").hover(function(){
-                var menuID = $(this).children("a").attr("id");
+            $mainMenu.find("li a").hover(function(){
+                var menuID = $(this).attr("id");
                 var menuIndication =  menuIndications[menuID];
                 $statusMessage.html(menuIndication);
+                if (!$(this).closest("ul").hasClass("hmenu")) {
+                    $(this).addClass("ui-state-hover");
+                }
             }, function(){
                 $statusMessage.html("");
+                $(this).removeClass("ui-state-hover");
+                $(this).removeClass("ui-state-active");
+            });
+
+            $mainMenu.find("li li a").mousedown(function(){
+                $(this).addClass("ui-state-active");
+            });
+            $mainMenu.find("li li a").mouseup(function(){
+                $(this).removeClass("ui-state-active");
             });
 
             // ----------------------- //
