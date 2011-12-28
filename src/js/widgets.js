@@ -143,7 +143,7 @@ var BWidgetRegistry = {
         },
 
         showInPalette: false,
-        selectable: false,
+        selectable: true,
         moveable: false,
         properties: {
             id: {

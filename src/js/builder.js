@@ -531,6 +531,9 @@ $(function() {
 
         // Set selected item only if there is one
         if (e.uid !== null || e.node !== null) {
+            if ((e.node !== null) && (e.node.getType() === 'Page')) {
+                return;
+            }
             $designContentDocument.find('.adm-node[data-uid=\''+e.uid+'\']')
                                   .addClass('ui-selected');
         }
