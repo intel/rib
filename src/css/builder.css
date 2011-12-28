@@ -191,6 +191,13 @@ hr.menu-separator {
     text-align: center;
     margin: 0px;
 }
+#property_content {
+    margin: 5px;
+    margin-right: 8px;
+}
+#property_content input.full {
+    width: 100%;
+}
 .prop-tab {
     border: 0px;
     margin: 0px;
