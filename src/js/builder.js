@@ -343,20 +343,20 @@ $(function() {
             // Menu item hover handler setup //
             // ----------------------------- //
             var menuIndications = {
-                'file-sub-menu'  : 'File',
-                'loadDesign'     : 'improt local nrc file to current project',
-                'exportToLocal'  : 'exprot current builder as nrc or html to local storage',
-                'exportDesign'   : 'exprot current builder as nrc file to local storage',
-                'exportHTML'     : 'exprot current builder as html file to local storage',
-                'view-sub-menu'  : 'View',
-                'designView'     : 'switch to design view',
-                'codeView'       : 'switch to code view',
-                'preView'        : 'preview current design',
-                'showADMTree'    : 'show ADM tree for debug',
-                'reloadDesign'   : 'reload design',
-                'theme'          : 'choose a theme for GUI builder application',
-                'newpage'        : 'Add a new page to current project',
-                'removepage'     : 'remove current display page from project',
+                'file-sub-menu'  : 'File menu',
+                'loadDesign'     : 'Import a design from a JSON file',
+                'exportToLocal'  : 'Export the design',
+                'exportDesign'   : 'Export the current design as a JSON file',
+                'exportHTML'     : 'Export the current design as an HTML file',
+                'view-sub-menu'  : 'View menu',
+                'designView'     : 'Switch to design view',
+                'codeView'       : 'Switch to code view',
+                'preView'        : 'Switch to preview',
+                'showADMTree'    : 'Show ADM tree for debugging',
+                'reloadDesign'   : 'Reload the design',
+                'theme'          : 'Choose a theme for the GUI Builder application',
+                'newpage'        : 'Add a new page to the design',
+                'removepage'     : 'Remove the current page from the design',
             };
             $mainMenu.find("li").hover(function(){
                 var menuID = $(this).children("a").attr("id");
