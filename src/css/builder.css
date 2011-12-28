@@ -195,6 +195,9 @@ hr.menu-separator {
     margin: 5px;
     margin-right: 8px;
 }
+#property_title {
+    font-weight: bold;
+}
 #property_content input.full {
     width: 100%;
 }

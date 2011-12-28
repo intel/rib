@@ -63,18 +63,14 @@ function showProperties(event) {
         }
 
         console.log("User selected ADMNode_" + node._uid);
-        labelId = 'widget-type-label';
-        labelVal = 'Type';
-        valueId = 'widget-type-value';
-        valueVal = node.getType();
 
         $('#property_content').empty()
-            .append('<table></table>').children().last()
-                .append('<tr><th id="' + labelId+ '">' + labelVal + '</th>' +
-                      '<td width="100%">' +
-                      '<label id="' + valueId + '"><b>' + valueVal + '</b>' +
-                      (showUid?' (uid=' + node.getUid() + ')':'') + '</label>' +
-                      '</td></tr>');
+            .append('<table><tr><td colspan="2">' +
+                    '<span id="property_title">' +
+                    BWidget.getDisplayLabel(node.getType()) +
+                    '</span>' +
+                    (showUid ? ' (uid=' + node.getUid() + ')' : '') +
+                    '</td></tr></table>');
 
         var props = node.getProperties();
         var options = node.getPropertyOptions();
