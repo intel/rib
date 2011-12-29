@@ -212,7 +212,7 @@ var BWidgetRegistry = {
         properties: {
             text: {
                 type: "string",
-                defaultValue: "Title"
+                defaultValue: "Header"
             },
             position: {
                 type: "string",
@@ -277,7 +277,7 @@ var BWidgetRegistry = {
         properties: {
             text: {
                 type: "string",
-                defaultValue: "",
+                defaultValue: "Footer",
             },
 	    position: {
                 type: "string",
