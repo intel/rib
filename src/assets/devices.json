@@ -1,0 +1,7 @@
+{
+   "HVGA":   { "width": "320",  "height": "480" },
+   "QVGA":   { "width": "240",  "height": "320" },
+   "WQVGA":  { "width": "240",  "height": "480" },
+   "WSVGA":  { "width": "1024", "height": "600" },
+   "WVGA":   { "width": "480",  "height": "800" }
+}

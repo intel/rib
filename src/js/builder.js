@@ -258,6 +258,29 @@ $(function() {
             fixPropertyPanelSize();
             $(window).resize( function() { fixPropertyPanelSize(); });
 
+            $.ajax({
+                type: 'GET',
+                url: "src/assets/devices.json",
+                dataType: 'json',
+                success: function(data) {
+                    var $devicesMenu = $("#devices-sub-menu").next();
+                    $.each(data, function (key, val) {
+                        var li = $('<li>');
+                        var a = $('<a id="'+ key + '">' + key + '(' + val.width + 'x' + val.height + ')</a>');
+                        li.append(a);
+                        $devicesMenu.append(li);
+                        a.data("device-data", val);
+                        a.click( function () {
+                           var data = $(this).data("device-data");
+                           var $previewFrame = $("#preview-frame");
+                           $designView.attr(data);
+                           $previewFrame.attr(data);
+                        });
+                    });
+                },
+                data: {},
+                async: false
+            });
             // -------------------------------------------- //
             // Turn UL "#main-menu" into a LAME menu object //
             // -------------------------------------------- //
