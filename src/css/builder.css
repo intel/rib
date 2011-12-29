@@ -303,10 +303,18 @@ hr.menu-separator {
     border-right: 0px;
     background-color: none;
 }
-#pageList li{
+#outline_content {
+    margin: 5px;
+}
+#outline_content ul {
+    padding-left: 0px;
+}
+#pageList ul {
+    padding-left: 24px;
+}
+#pageList li {
     list-style: none inside url("../assets/file.gif");
-    position:relative;
-    width: 90%;
+    position: relative;
 }
 #pageList li.folder.close {
     list-style: none inside url("../assets/plus.gif");
