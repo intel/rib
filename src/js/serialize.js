@@ -29,7 +29,8 @@ function dumplog(loginfo){
 
 
 $(function() {
-    var $toolbarPanel = $('#toolbar-panel');
+    var $toolbarPanel = $('#toolbar-panel'),
+        cookieExpires = new Date("January 1, 2022");
 
     /*******************************************************
      * define handlers
@@ -101,7 +102,7 @@ $(function() {
         $exportNoticeDialog.find("input:checkbox").click(function () {
             var notice = this.checked ? "false" : "true";
             // set cookie
-            if(!cookieUtils.set("exportNotice", notice)) {
+            if(!cookieUtils.set("exportNotice", notice, cookieExpires)) {
                 console.error("Set exportNotice cookie failed.");
             }
         });
@@ -259,7 +260,7 @@ $(function() {
 
     // if can't get the cookie(no this record), then add exportNotice cookie
     if (!cookieUtils.get("exportNotice")) {
-        if(!cookieUtils.set("exportNotice", "true")) {
+        if(!cookieUtils.set("exportNotice", "true", cookieExpires)) {
             console.error("Set exportNotice cookie failed.");
         }
     }

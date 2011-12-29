@@ -489,13 +489,17 @@ cookieUtils = {
      *
      * @return {bool} set cooke success or not.
      */
-    set: function (name, value) {
-            if(typeof name !== "string" || typeof value !== "string") {
-                alert("Invalid cookie name or name.");
-                return false;
-            }
-             document.cookie = encodeURIComponent(name) + "=" +
-                               encodeURIComponent(value);
+    set: function (name, value, expires) {
+             var text;
+             if(typeof name !== "string" || typeof value !== "string") {
+                 alert("Invalid cookie name or name.");
+                 return false;
+             }
+             text = encodeURIComponent(name) + "=" + encodeURIComponent(value);
+             if(expires instanceof Date) {
+                 text += "; expires=" + expires.toGMTString();
+             }
+             document.cookie = text;
              if(document.cookie && document.cookie !== "") {
                  return true;
              } else {
