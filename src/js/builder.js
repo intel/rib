@@ -1075,7 +1075,7 @@ $(function() {
     showDesignView = function () {
         $('#design-view').show('_default', toggleControlsEnabled);
         $('#code-area').hide();
-        $('#preview-frame').hide();
+        $('#preview-frame-wrapper').hide();
         $("#designView").find("span").html("&#x2022;");
         $("#codeView").find("span").html("&nbsp;");
         $("#preView").find("span").html("&nbsp;");
@@ -1085,17 +1085,17 @@ $(function() {
         $('#code-area').height($('#content-panel').height());
         $('#design-view').hide('_default', toggleControlsEnabled);
         $('#code-area').show();
-        $('#preview-frame').hide();
+        $('#preview-frame-wrapper').hide();
         $("#designView").find("span").html("&nbsp;");
         $("#codeView").find("span").html("&#x2022;");
         $("#preView").find("span").html("&nbsp;");
     },
 
     showPreView = function () {
-        $('#preview-frame').height($('#content-panel').height());
+        $('#preview-frame-wrapper').height($('#content-panel').height());
         $('#design-view').hide('_default', toggleControlsEnabled);
         $('#code-area').hide();
-        $('#preview-frame').show();
+        $('#preview-frame-wrapper').show();
         $("#designView").find("span").html("&nbsp;");
         $("#codeView").find("span").html("&nbsp;");
         $("#preView").find("span").html("&#x2022;");
