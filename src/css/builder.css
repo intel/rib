@@ -12,6 +12,8 @@
 /***************************/
 body {
     overflow: hidden;
+    cursor: default;
+    -webkit-user-select: none;
 }
 html {
     padding: 0px;
