@@ -1108,6 +1108,7 @@ $(function() {
     },
 
     showPreView = function () {
+        $('#preview-frame').height($('#content-panel').height());
         $('#design-view').hide('_default', toggleControlsEnabled);
         $('#code-area').hide();
         $('#preview-frame').show();
