@@ -68,6 +68,8 @@ function loadPalette(container, filename) {
 	    $(li).data("code", BWidget.getTemplate(id));
 	    $(li).data("adm-node", {type: id});
 	    $(ul).append($(li));
+        if(id === "Form" || id === "Button" || id === "FlipToggleSwitch" || id === "Option" || id === "Checkbox" || id === "ListDivider" || id === "Block")
+	        $(ul).append("<hr>");
         });
 
 	$(acc).accordion({
