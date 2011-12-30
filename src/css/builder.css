@@ -164,6 +164,7 @@ hr.menu-separator {
   Palette Pane
 */
 #palette-panel {
+    margin-bottom: 24px;  /* hack to make up for apparent jQ-UI / vbox bug? */
     width: 300px;
     min-width: 300px;
     max-width: 300px;
@@ -179,7 +180,11 @@ hr.menu-separator {
     padding: 0px;
     display: block;
 }
+#palette_accordion div {
+    padding: 0px;
+}
 #palette_accordion ul {
+    margin: 0px;
     padding: 5px;
 }
 
@@ -187,6 +192,7 @@ hr.menu-separator {
   Property Pane
 */
 #properties-panel {
+    border: none;
     width: 300px;
     min-width: 300px;
     max-width: 300px;

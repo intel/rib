@@ -172,7 +172,14 @@ function loadProperties(container) {
         return false;
     }
 
-    myContainer.append('<br><p id="property_header">Properties</p>')
+    // FIXME: There was a <br> here to partially make up for an overlap
+    //        issue that appears to be caused by the interaction of jQuery UI
+    //        accordion and flex box implementation. The palette wants to
+    //        draw over the top of the properties pane, by the height of the
+    //        Palette header, which leads me to believe it's calculating its
+    //        height from its bottom to the top of its parent. I replaced
+    //        this <br> with a tweak to the CSS margin of palette-panel.
+    myContainer.append('<p id="property_header">Properties</p>')
         .children().last()
             .addClass("ui-helper-reset ui-widget ui-widget-header")
             .end()

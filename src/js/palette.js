@@ -40,7 +40,7 @@ function loadPalette(container, filename) {
     return $.getJSON(filename, function(data){
         console.log("Starting palette load...");
 	myContainer.append('<p id="palette_header" class="ui-helper-reset ui-widget ui-widget-header">Palette</p>');
-	myContainer.append('<ul id="palette_accordion"></ul>');
+	myContainer.append('<div id="palette_accordion"></div>');
 
 	var hdr = $('#palette_header');
 	var acc = $('#palette_accordion');
@@ -54,7 +54,7 @@ function loadPalette(container, filename) {
         // FIXME: Eventually, all widgets should come from the BWidget
         //        global structure.  For now, we load them as their own
         //        subcategory in the palette
-	$(acc).append('<li><p>Tizen Framework</p><ul id="Tizen-widgets"></ul></li>');
+	$(acc).append('<h3>Tizen Framework</h3><div><ul id="Tizen-widgets"></ul></div>');
         $.each(BWidget.getPaletteWidgetTypes(), function(n, id) {
 	    // Add new <li> element to hold this widget
 	    var ul = $('#Tizen-widgets');
@@ -71,7 +71,7 @@ function loadPalette(container, filename) {
         });
 
 	$(acc).accordion({
-	    fillSpace: true,
+	    fillSpace: true
 	});
 
 	// Must explicitly react to window resize events to be
