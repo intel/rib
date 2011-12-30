@@ -634,6 +634,30 @@ var BWidgetRegistry = {
     },
 
     /**
+     * Represents an option element.
+     */
+    Option: {
+        parent: "Base",
+        properties: {
+            text: {
+                type: "string",
+                defaultValue: "Option"
+            },
+            value: {
+                type: "string",
+                defaultValue: ""
+            },
+            theme: {
+                type: "string",
+                options: [ "default", "a", "b", "c", "d", "e" ],
+                defaultValue: "default",
+                htmlAttribute: "data-theme"
+            }
+        },
+        template: '<option>%TEXT%</option>'
+    },
+
+    /**
      * Represents a Control Group object. Includes an "data-type" property
      * that should be "vertical" or "horizontal"
      */
@@ -670,30 +694,6 @@ var BWidgetRegistry = {
             }
         ],
         template: '<fieldset data-role="controlgroup"><legend>%LEGEND%</legend></fieldset>',
-    },
-
-    /**
-     * Represents an option element.
-     */
-    Option: {
-        parent: "Base",
-        properties: {
-            text: {
-                type: "string",
-                defaultValue: "Option"
-            },
-            value: {
-                type: "string",
-                defaultValue: ""
-            },
-            theme: {
-                type: "string",
-                options: [ "default", "a", "b", "c", "d", "e" ],
-                defaultValue: "default",
-                htmlAttribute: "data-theme"
-            }
-        },
-        template: '<option>%TEXT%</option>'
     },
 
     /**
