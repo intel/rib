@@ -1176,7 +1176,9 @@ ADMNode.prototype.generateUniqueProperty = function (property) {
     }
 
     // generate using the next higher suffix
-    this.setProperty(property, generate + (max + 1));
+    generate = generate + (max + 1);
+    this.setProperty(property, generate);
+    return generate;
 };
 
 /**
