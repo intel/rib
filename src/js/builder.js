@@ -1312,7 +1312,7 @@ $(function() {
             // If lastSelected is a child of the new target
             // use it's ancestry branch as the breadcrumb path
             // FIXME: Convert to "ADMNode.isAncestorOf(UID)" for efficiency
-            if (target.findNodeByUid(lastSelected.getUid())) {
+            if (lastSelected && target.findNodeByUid(lastSelected.getUid())) {
                 current = lastSelected;
                 // Iterate over the ancestors of lastSelected, adding
                 // them to the path, until we reach the selection target
