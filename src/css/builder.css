@@ -187,6 +187,9 @@ hr.menu-separator {
     margin: 0px;
     padding: 5px;
 }
+#palette_accordion hr {
+    border: 1px solid transparent;
+}
 
 /*
   Property Pane
