@@ -325,6 +325,7 @@ var BWidgetRegistry = {
         parent: "Base",
         template: '<div data-role="controlgroup"></div>',
         newGroup: true,
+        displayLabel: "Button Group",
         zones: [
             {
                 name: "default",
@@ -542,6 +543,7 @@ var BWidgetRegistry = {
      */
     TextInput: {
         parent: "Base",
+        displayLabel: "Text Input",
         properties: {
             hint: {
                 type: "string",
@@ -572,6 +574,7 @@ var BWidgetRegistry = {
         // FIXME: good form is to include a <label> with all form elements
         //        and wrap them in a fieldcontain
         parent: "Base",
+        displayLabel: "Text Area",
         properties: {
             hint: {
                 type: "string",
@@ -593,6 +596,7 @@ var BWidgetRegistry = {
      */
     ToggleSwitch: {
         parent: "Base",
+        displayLabel: "Toggle Switch",
         properties: {
             value1: {
                 type: "string",
@@ -627,6 +631,7 @@ var BWidgetRegistry = {
         parent: "Base",
         template: '<select></select>',
         newGroup: true,
+        displayLabel: "Select Menu",
         zones: [
             {
                 name: "default",
@@ -667,6 +672,7 @@ var BWidgetRegistry = {
     ControlGroup: {
         parent: "Base",
         newGroup: true,
+        displayLabel: "Control Group",
         properties: {
             // FIXME: Put fieldcontain back in here, but will require
             //        support for selector on HTML attribute for data-type
@@ -705,6 +711,7 @@ var BWidgetRegistry = {
      */
     RadioButton: {
         parent: "Base",
+        displayLabel: "Radio Button",
         allowIn: "ControlGroup",
         properties: {
             // FIXME: All the radio buttons in a group need to have a common
@@ -828,8 +835,8 @@ var BWidgetRegistry = {
      * Represents an ordered list element.
      */
     OrderedList: {
-        displayName: "Ordered List",
         parent: "Base",
+        displayLabel: "Ordered List",
         properties: {
             inset: {
                 type: "string",
@@ -877,6 +884,7 @@ var BWidgetRegistry = {
      */
     ListItem: {
         parent: "Base",
+        displayLabel: "List Item",
         allowIn: [ "List", "OrderedList" ],
         properties: {
             text: {
@@ -892,6 +900,7 @@ var BWidgetRegistry = {
      */
     ListDivider: {
         parent: "Base",
+        displayLabel: "List Divider",
         allowIn: [ "List", "OrderedList" ],
         properties: {
             text: {
@@ -1012,41 +1021,9 @@ var BWidget = {
             if (BWidgetRegistry.hasOwnProperty(type)) {
                 BWidgetRegistry[type].type = type;
 
-                // TODO: i18n: localize displayLabel based on type
-                BWidgetRegistry[type].displayLabel = type;
-
-                // FIXME: Set these in the widget definitions as displayLabel,
-                //        and check for them here before using the widget
-                //        name as a default, rather than this nastiness
-                if (type === "ButtonGroup") {
-                    BWidgetRegistry[type].displayLabel = "Button Group";
-                }
-                if (type === "TextInput") {
-                    BWidgetRegistry[type].displayLabel = "Text Input";
-                }
-                if (type === "TextArea") {
-                    BWidgetRegistry[type].displayLabel = "Text Area";
-                }
-                if (type === "ToggleSwitch") {
-                    BWidgetRegistry[type].displayLabel = "Toggle Switch";
-                }
-                if (type === "SelectMenu") {
-                    BWidgetRegistry[type].displayLabel = "Select Menu";
-                }
-                if (type === "ControlGroup") {
-                    BWidgetRegistry[type].displayLabel = "Control Group";
-                }
-                if (type === "RadioButton") {
-                    BWidgetRegistry[type].displayLabel = "Radio Button";
-                }
-                if (type === "OrderedList") {
-                    BWidgetRegistry[type].displayLabel = "Ordered List";
-                }
-                if (type === "ListItem") {
-                    BWidgetRegistry[type].displayLabel = "List Item";
-                }
-                if (type === "ListDivider") {
-                    BWidgetRegistry[type].displayLabel = "List Divider";
+                if (BWidgetRegistry[type].displayLabel === undefined) {
+                    // TODO: i18n: localize displayLabel based on type
+                    BWidgetRegistry[type].displayLabel = type;
                 }
             }
         }
