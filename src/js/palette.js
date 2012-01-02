@@ -67,9 +67,14 @@ function loadPalette(container, filename) {
 	    $(li).addClass('nrc-palette-widget');
 	    $(li).data("code", BWidget.getTemplate(id));
 	    $(li).data("adm-node", {type: id});
+
+            // FIXME: This should probably be replaced by a more flexible
+            //        concept of widget groups.
+            if (BWidget.startsNewGroup(id)) {
+                $(ul).append("<hr>");
+            }
+
 	    $(ul).append($(li));
-        if(id === "Form" || id === "Button" || id === "FlipToggleSwitch" || id === "Option" || id === "Checkbox" || id === "ListDivider" || id === "Block")
-	        $(ul).append("<hr>");
         });
 
 	$(acc).accordion({

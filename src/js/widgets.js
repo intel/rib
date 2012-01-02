@@ -329,6 +329,7 @@ var BWidgetRegistry = {
         //        for example. Need to look at this.
         parent: "Base",
         template: '<form></form>',
+        newGroup: true,
         zones: [
             {
                 name: "default",
@@ -359,6 +360,7 @@ var BWidgetRegistry = {
     ButtonGroup: {
         parent: "Base",
         template: '<div data-role="controlgroup"></div>',
+        newGroup: true,
         zones: [
             {
                 name: "default",
@@ -438,6 +440,7 @@ var BWidgetRegistry = {
      */
     TextInput: {
         parent: "Base",
+        newGroup: true,
         properties: {
             hint: {
                 type: "string",
@@ -624,6 +627,7 @@ var BWidgetRegistry = {
     SelectMenu: {
         parent: "Base",
         template: '<select></select>',
+        newGroup: true,
         zones: [
             {
                 name: "default",
@@ -663,6 +667,7 @@ var BWidgetRegistry = {
      */
     ControlGroup: {
         parent: "Base",
+        newGroup: true,
         properties: {
             // FIXME: Put fieldcontain back in here, but will require
             //        support for selector on HTML attribute for data-type
@@ -777,6 +782,7 @@ var BWidgetRegistry = {
      */
     List: {
         parent: "Base",
+        newGroup: true,
         properties: {
             inset: {
                 type: "string",
@@ -902,6 +908,7 @@ var BWidgetRegistry = {
      */
     Grid: {
         parent: "Base",
+        newGroup: true,
         properties: {
             subtype: {
                 type: "string",
@@ -947,6 +954,7 @@ var BWidgetRegistry = {
     Collapsible: {
         parent: "Base",
         template: '<div data-role="collapsible"><h1>%HEADING%</h1></div>',
+        newGroup: true,
         properties: {
             // NOTE: Removed "size" (h1 - h6) for the same reason we don't
             //       provide that option in header/footer currently. jQM
@@ -1660,6 +1668,20 @@ var BWidget = {
             throw new Error("widget type invalid in isMoveable");
         }
         return widget.hasOwnProperty("moveable") ? widget.moveable : true;
+    },
+
+    /**
+     * Tests whether this BWidget begins a new widget group.
+     *
+     * @return {Boolean} True if this BWidget is the first in a new group.
+     * @throws {Error} If widgetType is invalid.
+     */
+    startsNewGroup: function (widgetType) {
+        var widget = BWidgetRegistry[widgetType];
+        if (typeof widget !== "object") {
+            throw new Error("widget type invalid in startsNewGroup");
+        }
+        return widget.newGroup ? true : false;
     }
 };
 
