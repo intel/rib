@@ -293,7 +293,10 @@ var BWidgetRegistry = {
         zones: [
             {
                 name: "default",
-                cardinality: "N"
+                cardinality: "N",
+                // deny Slider widgets because they render poorly; this may be
+                // a bug in jQuery Mobile
+                deny: "Slider"
             }
         ],
     },
