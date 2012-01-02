@@ -331,7 +331,7 @@ hr.menu-separator {
 #pageList li.folder.close {
     list-style: none inside url("../assets/plus.gif");
 }
-#pageList li.folder.open {
+#pageList li.folder {
     list-style: none inside url("../assets/minus.gif");
 }
 #status-panel {
