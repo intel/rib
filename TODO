@@ -137,7 +137,7 @@ P2 - Create additional templates
 P2 - Add a "template picker" at startup and pre-populate the content area with
   selected template
 
-[Widget Registry]
+[Widgets]
 P1 - Provide real UX icons for widgets
 P2 - Perhaps display placeholder text in TextInput to guide user
      (e.g. Enter hint text here) -- but only in design canvas
@@ -151,7 +151,7 @@ P3 - Could make form elements based on a common FormElement to inherit
 P3 - Whether or not to wrap widget and label with a fieldcontain could be
      an option on the widget
 
-[Code Generation]
+[Code Gen]
 P2 - Remove the xmlns stuff from generated code, not needed, right?
 P3 - Don't wrap </script> to next line
      - Perhaps these are adjustments we run after beautify?
