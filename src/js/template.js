@@ -132,17 +132,17 @@ $(function() {
         });
     });
     $('div:jqmData(role="page")').live('pageinit', function(e) {
-        // jQM generates an div next to the slider, which is the actually clicked item when users try to click the flip toggle switch.
-        var flipToggleSwithes = $('[data-role="slider"]'),
-            clickable = flipToggleSwithes.next();
-        flipToggleSwithes.bind("change", function(e){
+        // jQM generates an div next to the slider, which is the actually clicked item when users try to click the toggle switch.
+        var toggleSwitches = $('[data-role="slider"]'),
+            clickable = toggleSwitches.next();
+        toggleSwitches.bind("change", function(e){
             return handleSelect(e, this);
         });
 
         //Move the adm-node class to the clickable and assign data-uid to it so that in sortable.stop we can always get it from ui.item.
         clickable.addClass('adm-node');
-        flipToggleSwithes.removeClass('adm-node');
-        clickable.attr('data-uid', flipToggleSwithes.attr('data-uid'));
+        toggleSwitches.removeClass('adm-node');
+        clickable.attr('data-uid', toggleSwitches.attr('data-uid'));
         clickable.click( function(e) {
             return handleSelect(e,$(this).prev());
         });

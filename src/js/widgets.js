@@ -589,7 +589,7 @@ var BWidgetRegistry = {
     },
 
     /**
-     * Represents a flip toggle switch.
+     * Represents a toggle switch.
      */
     ToggleSwitch: {
         parent: "Base",
