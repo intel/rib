@@ -318,42 +318,6 @@ var BWidgetRegistry = {
     },
 
     /**
-     * Represents an HTML form object. Includes an "action" property with the
-     * submission URL and a "method" string property that should be "get" or
-     * "post".
-     */
-    Form: {
-        // FIXME: I'm not positive that forms should be widgets. We could
-        //        alternately make forms a separate concept, the user can pick
-        //        a form for each widget to be associated with in properties,
-        //        for example. Need to look at this.
-        parent: "Base",
-        template: '<form></form>',
-        newGroup: true,
-        zones: [
-            {
-                name: "default",
-                cardinality: "N"
-            }
-        ],
-        properties: {
-            action: {
-                type: "string",
-                defaultValue: "#",
-                htmlAttribute: "action",
-                forceAttribute: true
-            },
-            method: {
-                type: "string",
-                options: [ "GET", "POST" ],
-                defaultValue: "POST",
-                htmlAttribute: "method",
-                forceAttribute: true
-            }
-        }
-    },
-
-    /**
      * Represents a Control Group object. Includes an "data-type" property
      * that should be "vertical" or "horizontal"
      */
@@ -436,32 +400,39 @@ var BWidgetRegistry = {
     },
 
     /**
-     * Represents a text entry.
+     * Represents an HTML form object. Includes an "action" property with the
+     * submission URL and a "method" string property that should be "get" or
+     * "post".
      */
-    TextInput: {
+    Form: {
+        // FIXME: I'm not positive that forms should be widgets. We could
+        //        alternately make forms a separate concept, the user can pick
+        //        a form for each widget to be associated with in properties,
+        //        for example. Need to look at this.
         parent: "Base",
+        template: '<form></form>',
         newGroup: true,
-        properties: {
-            hint: {
-                type: "string",
-                defaultValue: "",
-                htmlAttribute: "placeholder"
-            },
-            theme: {
-                type: "string",
-                options: [ "default", "a", "b", "c", "d", "e" ],
-                defaultValue: "default",
-                htmlAttribute: "data-theme"
-            },
-            value: {
-                // FIXME: Probably value should be removed, setting initial
-                //        static text is not a common thing to do
-                type: "string",
-                defaultValue: "",
-                htmlAttribute: "value"
+        zones: [
+            {
+                name: "default",
+                cardinality: "N"
             }
-        },
-        template: '<input type="text">',
+        ],
+        properties: {
+            action: {
+                type: "string",
+                defaultValue: "#",
+                htmlAttribute: "action",
+                forceAttribute: true
+            },
+            method: {
+                type: "string",
+                options: [ "GET", "POST" ],
+                defaultValue: "POST",
+                htmlAttribute: "method",
+                forceAttribute: true
+            }
+        }
     },
 
     /**
@@ -567,6 +538,34 @@ var BWidgetRegistry = {
     },
 
     /**
+     * Represents a text entry.
+     */
+    TextInput: {
+        parent: "Base",
+        properties: {
+            hint: {
+                type: "string",
+                defaultValue: "",
+                htmlAttribute: "placeholder"
+            },
+            theme: {
+                type: "string",
+                options: [ "default", "a", "b", "c", "d", "e" ],
+                defaultValue: "default",
+                htmlAttribute: "data-theme"
+            },
+            value: {
+                // FIXME: Probably value should be removed, setting initial
+                //        static text is not a common thing to do
+                type: "string",
+                defaultValue: "",
+                htmlAttribute: "value"
+            }
+        },
+        template: '<input type="text">',
+    },
+
+    /**
      * Represents a text area entry.
      */
     TextArea: {
@@ -592,7 +591,7 @@ var BWidgetRegistry = {
     /**
      * Represents a flip toggle switch.
      */
-    FlipToggleSwitch: {
+    ToggleSwitch: {
         parent: "Base",
         properties: {
             value1: {
@@ -986,7 +985,7 @@ var BWidgetRegistry = {
     /**
      * Represents a set of collapsible elements.
      */
-    CollapsibleSet: {
+    Accordion: {
         parent: "Base",
         template: '<div data-role="collapsible-set"></div>',
         zones: [
@@ -1028,8 +1027,8 @@ var BWidget = {
                 if (type === "TextArea") {
                     BWidgetRegistry[type].displayLabel = "Text Area";
                 }
-                if (type === "FlipToggleSwitch") {
-                    BWidgetRegistry[type].displayLabel = "Flip Toggle Switch";
+                if (type === "ToggleSwitch") {
+                    BWidgetRegistry[type].displayLabel = "Toggle Switch";
                 }
                 if (type === "SelectMenu") {
                     BWidgetRegistry[type].displayLabel = "Select Menu";
@@ -1048,9 +1047,6 @@ var BWidget = {
                 }
                 if (type === "ListDivider") {
                     BWidgetRegistry[type].displayLabel = "List Divider";
-                }
-                if (type === "CollapsibleSet") {
-                    BWidgetRegistry[type].displayLabel = "Collapsible Set";
                 }
             }
         }
@@ -1130,7 +1126,7 @@ var BWidget = {
         //       real icons based on UX input/assets
         if (typeof widget === "object") {
             if (widget.icon === undefined) {
-                return "ui-icon-pencil";
+                return "";
             } else {
                 return widget.icon;
             }
