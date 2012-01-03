@@ -690,6 +690,7 @@ $(function() {
             page.addChild(that);
             that = new ADMNode('Footer');
             page.addChild(that);
+            ADM.setActivePage(page);
         } else {
             console.warn('Design has no page!');
         }
@@ -1271,6 +1272,7 @@ $(function() {
             .addClass('ui-widget')
             .appendTo('#toolbar-panel');
         ADM.bind("selectionChanged", updateBreadcrumb);
+        ADM.bind("activePageChanged", updateBreadcrumb);
         updateBreadcrumb(null);
     },
 
@@ -1282,7 +1284,7 @@ $(function() {
             pageSelected = false;
 
         if (e === null || e.node === null) {
-            current = ADM.getSelected();
+            current = ADM.getDesignRoot().findNodeByUid(ADM.getSelected());
             if (current === null || current === undefined) {
                 current = ADM.getActivePage();
                 if (current === null || current === undefined) {
@@ -1290,7 +1292,10 @@ $(function() {
                 }
             }
         } else {
-            current = e.node;
+            current = e.node || e.page;
+            if (current === null || current === undefined) {
+                return; // Nothing to show!
+            }
         }
         target = current;
 
