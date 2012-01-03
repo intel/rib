@@ -723,12 +723,11 @@ $(function() {
         // easily identify the "new" element(s) added to the DOM
         $(domNode).addClass('nrc-dropped-widget');
 
+        // NOTE: if we bring back non-link buttons, we may need this trick
         // Most buttons can't be dragged properly, so we put them behind
         // the associated span, which can be dragged properly
-        if (admNode.getType() === "Button" &&
-            admNode.getProperty("type") != "Link") {
-            $(domNode).css("z-index", "-1");
-        }
+        // if (!isLinkButton(admNode))
+        //     $(domNode).css("z-index", "-1");
 
         $(domNode).addClass('adm-node');
 

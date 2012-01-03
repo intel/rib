@@ -358,49 +358,35 @@ var BWidgetRegistry = {
                 type: "string",
                 defaultValue: "Button"
             },
-            type: {
+            icon: {
                 type: "string",
-                options: [ "Default", "Link", "Submit", "Reset" ],
-                defaultValue: "Default"
+                options: [ "none", "alert", "arrow-d", "arrow-l", "arrow-r",
+                           "arrow-u", "back", "check", "delete", "forward",
+                           "gear", "grid", "home", "info", "minus", "plus",
+                           "refresh", "search", "star" ],
+                defaultValue: "none",
+                htmlAttribute: "data-icon"
             },
-            type_label: {
+            iconpos: {
                 type: "string",
-                defaultValue: "type"
+                options: [ "left", "top", "bottom", "right", "notext" ],
+                defaultValue: "left",
+                htmlAttribute: "data-iconpos"
             },
-            conditional: {
-               type: "string",
-               defaultValue: "#"
-            },
-            conditional_label: {
+            theme: {
                 type: "string",
-                defaultValue: "target"
+                options: [ "default", "a", "b", "c", "d", "e" ],
+                defaultValue: "default",
+                htmlAttribute: "data-theme"
             },
-            conditional_for: {
-                type: "string",
-                defaultValue: "Link"
-            },
-            data_inline: {
+            inline: {
                 type: "string",
                 options: [ "true", "false" ],
-                defaultValue: "false"
-            },
-            data_icon: {
-                type: "string",
-                options: [ "arrow-l", "arrow-r", "arrow-u", "arrow-d", "delete", "plus", "minus", "check", "gear", "refresh", "forward", "back", "grid", "star", "alert", "info", "home", "search", "" ],
-                defaultValue: "",
-            },
-            data_iconpos: {
-                type: "string",
-                options: [ "top", "bottom", "right", "notext", "" ],
-                defaultValue: "",
-            },
-            data_theme: {
-                type: "string",
-                options: [ "a", "b", "c", "d", "e", "" ],
-                defaultValue: "",
+                defaultValue: "false",
+                htmlAttribute: "data-inline"
             }
         },
-        template: { 'Default':'<button>%TEXT%</button>', 'Link':'<a href="%CONDITIONAL%" data-role="button">%TEXT%</a>', 'Submit':'<input type="submit" data-role="button" value="%TEXT%" />', 'Reset':'<input type="reset" value="%TEXT%" />' },
+        template: '<a href="" data-role="button">%TEXT%</a>'
     },
 
     /**
@@ -1250,7 +1236,7 @@ var BWidget = {
         }
 
         // no such property found in hierarchy
-        throw new Error("property not found in getPropertyScheme: " + property);
+        throw new Error("property not found in getPropertySchema: " + property);
     },
 
     /**
