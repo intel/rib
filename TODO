@@ -8,14 +8,12 @@ Definite
 P2 - convert ADM API to use exceptions for errors
 P3 - move test utils into a separate .js file
 P3 - add ADM unit tests
-P1 - add event type to modelUpdated events
 
 Need Thought
 ------------
 P2 - higher-level validation like id can only start with alpha character
 P1 - consider preventing selection outside of active page, or as Xu suggests,
      making selection outside automatically change active page
-P2 - consider providing old value in propertyChanged event
 P1 - consider moving active page and selection concepts to design node
 P2 - consider validating widget registry entries on startup
 
@@ -24,15 +22,13 @@ P2 - consider validating widget registry entries on startup
 
 P1 - When you drag a new item from the palette, it should be displayed in the
      canvas as you drag around. Worst case, maybe insert one and pick it up
-     and use it as the draggable?
+     and use it as the draggable? (PTSDK-108)
 
 P2 - Make tools/panels movable to "dock" positions
 
-P2 - Add visual page picker (not a separate dialog).
+P3 - Add visual page picker (not a separate dialog).
   * Could be in the toolbar, or a vertical "palette" on the right of
     the screen
-
-P1 - Page delete option someplace
 
 P2 - Make all DOM interactions into a "framework" class with well
   defined APIs for things like:
@@ -46,21 +42,16 @@ P2 - Make all DOM interactions into a "framework" class with well
   * move object
   * etc...
 
-- Bugs to fixed:
-  * Changing cols and rows for Text Area in properties panel has no effect in the design view.
+- Bugs to be fixed:
   * Flip toggle switch widget in the design view cannot be selected.
+    - Update 1/3/12: Selectable but ugly and clicks fall through to it
   * The option widget within a select menu does not show correctly in the design view.
-  * Radio button within a control group does not show correctly in the design view.
-  * Checkbox within a control group does not show correctly in the design view.
 
 [FileIO]
 ========
 
-P1 - Implement Export to HTML from File menu
-
 P2 - Implement File view/browser for HTML5 localstorage contents
-
-P2 - Hide "Folder" support in file manager until it's more bug-free
+   * In file-manager branch, on hold pending UX feedback
 
 [General]
 =========
@@ -75,17 +66,10 @@ P1 - Separate "controller" and "design view" logic in js/builder.js.  For
 
 P2 - Start saving context for UI states, preferences, current design, etc...
 
-P2 - Menu items should probably have hover state
-P3 - Menu items should show we clicked with an active state
-P1 - Menu should be dismissed when we click an option (e.g. try File | New)
+P3 - Menu should perhaps be dismissed when we click an option
 
 P2 - Make a "developer" setting somewhere
-     - When not in developer mode, hide the "uid=92" text in Properties
-     - Turn off "Folder" support in file manager until it's more bug-free
-
-P2 - Text is selectable with dragging, need to disable that somehow
-     - e.g. title (filename) text bar
-     - or clicking in the page below footer and dragging lets you select stuff
+   - Show Debug menu only when developer mode is on
 
 [Palette]
 =========
@@ -97,14 +81,7 @@ P1 - Convert palette.json and palette.js to be usable for BWidget objects
   * Button, TextInput and others should migrate to a JSON format
 
 P1 - Start adding Tizen "win set" framework widgets to the palette JSON
-
-P1 - Convert existing widgets in palette.json to BWidget formats
-  * Flip switch
-  * Slider
-  * Radio Buttons
-  * Checkboxes
-  * Select menus
-  * Button controlgroup
+  * Work has begun in a web-ui-fw branch
 
 P2 - Add additional jQM widgets to the palette JSON:
   * Password Input
@@ -152,30 +129,14 @@ P3 - Whether or not to wrap widget and label with a fieldcontain could be
      an option on the widget
 
 [Code Gen]
-P2 - Remove the xmlns stuff from generated code, not needed, right?
-P3 - Don't wrap </script> to next line
-     - Perhaps these are adjustments we run after beautify?
-P3 - Don't wrap /> to next line after <meta> or <input>
-     - Also make sure these /> are legit in HTML5
+==========
 
 [Code View]
-P1 - Should not be editable, at least not any time soon
-
-P2 - Color syntax highlighting would be highly desirable
-
-P2 - [Bug] If we make a change in the property pane, it's not reflected
-     in the Code View, apparently until we reload the Code View. So
-     probably need to watch for modelUpdated and refresh?
+===========
+P2 - Color syntax highlighting would be highly desirable (PTSDK-121)
 
 [Preview]
 =========
-P1 - Respond to page selector and display the selected page
 
 [Outline View]
-P2 - Provide outline of ADM tree in a view for easy selection of
-     perhaps-invisible containers, etc.
-P2 - Update selected widget in outline view to reflect selected widget
-     in the model
-P2 - Allow selection of a widget in the outline view and reflect this
-     in the model
-P2 - Support deletion of a widget / subtree from the outline view
+==============
