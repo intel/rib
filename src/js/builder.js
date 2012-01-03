@@ -12,8 +12,6 @@
 // Global Event handling control //
 // ----------------------------- //
 var blockModelUpdated = false,
-    blockChildAdded = false,
-    blockChildRemoved = false,
     blockActivePageChanged = false;
 
 var SHOW_IDS = true,

@@ -485,65 +485,6 @@ function ADMNode(widgetType) {
 
     this._valid = true;
 
-    /**
-     * Sent by an ADMNode when a direct child is added or inserted within it.
-     *
-     * @name ADMNode#childAdded
-     * @event
-     * @param {Object} event Object including standard "id" and "name"
-     *                       properties, as well as a
-     *                         "parent" property set to the parent ADMNode, a
-     *                         "child"  property set to the new child ADMNode, a
-     *                         "zone"   property set to the string name of the
-     *                                  zone the child is in, and an
-     *                         "index"  property set to the integer index of the
-     *                                  child's position within that zone.
-     * @param {Any} data The data you supplied to the bind() call.
-     * @see ADMEventSource.bind
-     * @see ADMEventSource.unbind
-     */
-    this.addEventType("childAdded");
-
-    /**
-     * Sent by an ADMNode when a direct child is removed from it.
-     *
-     * @name ADMNode#childRemoved
-     * @event
-     * @param {Object} event Object including standard "id" and "name"
-     *                       properties, as well as a
-     *                         "parent" property set to the parent ADMNode, a
-     *                         "child"  property set to the removed child
-     *                                  ADMNode, a
-     *                         "zone"   property set to the string name of the
-     *                                  zone the child was in, and an
-     *                         "index"  property set to the integer index of
-     *                                  the child's former position within that
-     *                                  zone.
-     * @param {Any} data The data you supplied to the bind() call.
-     * @see ADMEventSource.bind
-     * @see ADMEventSource.unbind
-     */
-    this.addEventType("childRemoved");
-
-    /**
-     * Sent by an ADMNode when a property changes.
-     *
-     * @name ADMNode#propertyChanged
-     * @event
-     * @param {Object} event Object including standard "id" and "name"
-     *                       properties, as well as a
-     *                         "node"     property set to the affected
-     *                                    ADMNode, a
-     *                         "property" property set to name of the affected
-     *                                    property, and a
-     *                         "value"    property set to the new value of that
-     *                                    property.
-     * @param {Any} data The data you supplied to the bind() call.
-     * @see ADMEventSource.bind
-     * @see ADMEventSource.unbind
-     */
-    this.addEventType("propertyChanged");
-
     if (this.instanceOf("Design")) {
         this._root = this;
 
@@ -972,9 +913,6 @@ ADMNode.prototype.insertChildInZone = function (child, zoneName, index) {
 
         child._parent = this;
         child._zone = zoneName;
-        this.fireEvent("childAdded",
-                       { parent: this, child: child, index: index,
-                         zone: zoneName });
         this.fireModelEvent("modelUpdated",
                             { type: "nodeAdded", node: child, parent: this,
                               index: index, zone: zoneName });
@@ -1040,16 +978,6 @@ ADMNode.prototype.moveNode = function (newParent, zoneName, zoneIndex) {
     oldParent.suppressEvents(false);
 
     if (rval) {
-        // TODO: If these node events start getting used, we might add a
-        //       childMoved event for the case where a node merely changes
-        //       index within a zone or within a parent
-        this.fireEvent("childRemoved",
-                       { parent: oldParent, child: this, index: oldIndex,
-                         zone: oldZone });
-        this.fireEvent("childAdded",
-                       { parent: newParent, child: this, index: zoneIndex,
-                         zone: zoneName });
-
         this.fireModelEvent("modelUpdated",
                             { type: "nodeMoved", node: this,
                               oldParent: oldParent, newParent: newParent,
@@ -1111,9 +1039,6 @@ ADMNode.prototype.removeChildFromZone = function (zoneName, index) {
         ADM.setSelected(null);
     }
 
-    this.fireEvent("childRemoved",
-                   { parent: this, child: child, index: index,
-                     zone: zoneName });
     this.fireModelEvent("modelUpdated",
                         { type: "nodeRemoved", node: child, parent: this,
                           index: index, zone: zoneName });
@@ -1294,8 +1219,6 @@ ADMNode.prototype.setProperty = function (property, value) {
     if (this._properties[property] !== value) {
         orig = this._properties[property];
         this._properties[property] = value;
-        this.fireEvent("propertyChanged",
-                       { node: this, property: property, value: value });
         this.fireModelEvent("modelUpdated",
                             { type: "propertyChanged", node: this,
                               property: property, oldValue: orig,
