@@ -943,7 +943,7 @@ $(function() {
         doc.open();
         doc.writeln(resultHTML);
         doc.close();
-        $(doc).load( function () {
+        $("#preview-frame").load( function () {
             if (ADM.getActivePage())
                 setPreviewPage(ADM.getActivePage().getProperty('id'));
         });
