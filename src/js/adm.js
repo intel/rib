@@ -933,7 +933,7 @@ ADMNode.prototype.insertChildInZone = function (child, zoneName, index) {
  *                           be used.
  */
 ADMNode.prototype.moveNode = function (newParent, zoneName, zoneIndex) {
-    var oldParent, oldDesign, newDesign, oldZone, oldIndex, removed, rval;
+    var oldParent, oldDesign, newDesign, oldZone, oldIndex, removed, rval, root;
     rval = false;
     if (!newParent) {
         console.log("Error: invalid argument to moveChild");
@@ -953,9 +953,8 @@ ADMNode.prototype.moveNode = function (newParent, zoneName, zoneIndex) {
 
     // TODO: could optimize case where parent/zone don't change
 
-    oldParent.suppressEvents(true);
-    this._root.suppressEvents(true);
-    newParent.suppressEvents(true);
+    root = this._root;
+    root.suppressEvents(true);
 
     oldZone = this._zone;
     oldIndex = this.getZoneIndex();
@@ -973,9 +972,7 @@ ADMNode.prototype.moveNode = function (newParent, zoneName, zoneIndex) {
         }
     }
 
-    newParent.suppressEvents(false);
-    this._root.suppressEvents(false);
-    oldParent.suppressEvents(false);
+    root.suppressEvents(false);
 
     if (rval) {
         this.fireModelEvent("modelUpdated",
