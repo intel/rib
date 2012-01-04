@@ -103,19 +103,37 @@ $(function() {
                     }
                 },
                 stop: function(event, ui){
+                    var adm = window.parent.ADM,
+                        bw = window.parent.BWidget,
+                        root = adm.getDesignRoot(),
+                        node, zones, newParent,
+                        idx, cid, pid;
                     console.log('sortable:stop() on "'+this.id+'"');
                     if (ui.item) {
-                        var idx = $(ui.item).parent().children('.adm-node').index(ui.item),
-                            cid = $(ui.item).attr('data-uid'),
-                            pid = $(ui.item).parent().attr('data-uid'),
-                            msg = 'childMoved:';
+                        idx = $(ui.item).parent().children('.adm-node')
+                                                 .index(ui.item),
+                        cid = $(ui.item).attr('data-uid'),
+                        pid = $(ui.item).parent().attr('data-uid');
+                        node = root.findNodeByUid(cid);
+                        newParent = root.findNodeByUid(pid);
+                        zones = bw.getZones(newParent.getType());
+
                         console.log(ui.item[0].id+' @ '+idx);
 
                         // Notify the ADM that element has been moved
-                        moveChild(cid, pid, idx);
-                        $(ui.item).triggerHandler('click');
+                        if ((zones.length===1 && zones[0].cardinality!=='1') ||
+                            (newParent.getType() === 'Header')) {
+                            if (!node.moveNode(newParent, zones[0], idx)) {
+                                $(this).sortable('cancel');
+                            } else {
+                                $(ui.item).triggerHandler('click');
+                            }
+                        } else {
+                                $(this).sortable('cancel');
+                        }
                     } else {
                         console.warn('ui.item undefined after sort...');
+                        $(this).sortable('cancel');
                     }
                 },
             })
@@ -276,26 +294,5 @@ $(function() {
                .addClass('ui-selected');
 
         adm.setSelected((item?$(item).attr('data-uid'):item));
-    }
-
-    function moveChild(child, parent, index) {
-        var adm = window.parent.ADM,
-            bw = window.parent.BWidget,
-            root, node, zones,
-            oldZone, oldIndex, oldParent,
-            newZone, newIndex, newParent;
-
-        root = adm.getDesignRoot();
-        newParent = root.findNodeByUid(parent);
-        zones = bw.getZones(newParent.getType());
-
-        if ((zones.length === 1 && zones[0].cardinality !== '1') ||
-            (newParent.getType() === 'Header')) {
-
-            node = root.findNodeByUid(child);
-            if (!node.moveNode(newParent, zones[0], index)) {
-                // FIXME: cancel drag event here
-            }
-        }
     }
 });
