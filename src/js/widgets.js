@@ -384,9 +384,14 @@ var BWidgetRegistry = {
                 options: [ "true", "false" ],
                 defaultValue: "false",
                 htmlAttribute: "data-inline"
+            },
+            target: {
+                type: "string",
+                defaultValue: "",
+                htmlAttribute: "href"
             }
         },
-        template: '<a href="" data-role="button">%TEXT%</a>'
+        template: '<a data-role="button">%TEXT%</a>'
     },
 
     /**
