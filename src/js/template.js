@@ -291,21 +291,10 @@ $(function() {
 
         if ((zones.length === 1 && zones[0].cardinality !== '1') ||
             (newParent.getType() === 'Header')) {
-            node = root.findNodeByUid(child);
-            oldParent = node.getParent();
-            oldZone = node.getZone();
-            newIndex = index;
 
-            if (oldParent.getUid() === newParent.getUid()) {
-                console.log('Moving node '+node.getUid()+
-                      ' with in its parent to position '+newIndex);
-                top.moveADMNode(node, zones[0], newIndex);
-            } else {
-                console.log('Moving node '+node.getUid()+
-                      ' from old parent('+oldParent.getUid()+
-                      ') to new parent('+newParent.getUid()+
-                      ') at position '+newIndex);
-                top.reparentADMNode(node, newParent, zones[0], newIndex);
+            node = root.findNodeByUid(child);
+            if (!node.moveNode(newParent, zones[0], index)) {
+                // FIXME: cancel drag event here
             }
         }
     }

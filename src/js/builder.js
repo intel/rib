@@ -65,46 +65,6 @@ function logit(msg) {
     if (typeof console !== "undefined") { console.log(logHist[i-1]); }
 }
 
-function reparentADMNode(node, parent, zone, index) {
-    var child = null,
-        curParent = node.getParent(),
-        curZone = node.getZone();
-
-    // FIXME: need to return something so that drag can be
-    //        reverted in the design view
-    if (!parent || !curParent) {
-        return;
-    }
-
-    // Preventing event handling during removal
-    blockModelUpdated = true;
-
-    // 1. Remove child
-    child = curParent.removeChild(node);
-
-    // FIXME: need to return something so that drag can be
-    //        reverted in the design view
-    if (!child) {
-        return;
-    }
-
-    // Re-enable event handling
-    blockModelUpdated = false;
-
-    // 2. Insert child at new position
-    if (!parent.addChildToZone(child, zone, index)) {
-        // FIXME: No method exists to get an nodes zone index
-        //        so until there is, we simply append it
-        curParent.addChildToZone(child, curZone);
-    }
-}
-
-function moveADMNode(node, zone, index) {
-    // FIXME: Should we do anthing different if the
-    //        parents are the same?
-    reparentADMNode(node, node.getParent(), zone, index);
-}
-
 var $defaultHeaders = [];
 function getDefaultHeaders() {
     var i, props, el;
