@@ -329,9 +329,10 @@ ADM.setSelected = function (uid) {
  *
  * @param {Number} parentUid The UID of the parent object in the tree.
  * @param {String} childType The widget type string for the child to add.
+ * @param {Boolean} dryrun [Optional] True if the call should be a dry run.
  * @return {ADMNode} The child object, on success; null, on failure.
  */
-ADM.addChild = function (parentUid, childType) {
+ADM.addChild = function (parentUid, childType, dryrun) {
     var design, parent, child;
     design = ADM.getDesignRoot();
     parent = design.findNodeByUid(parentUid);
@@ -348,17 +349,34 @@ ADM.addChild = function (parentUid, childType) {
         return null;
     }
 
-    if (parent.addChild(child)) {
+    if (parent.addChild(child, dryrun)) {
+        if (dryrun) {
+            return true;
+        }
         return child;
     }
     return null;
 };
 
 /**
+ * Find out whether a child of the given type can be added to parent
+ *
+ * @param {Number} parentUid The UID of the parent object in the tree.
+ * @param {String} childType The widget type string for the child to add.
+ * @return {ADMNode} True if adding the child would succeed, false otherwise.
+ */
+ADM.canAddChild = function (parentUid, childType) {
+    if (ADM.addChild(parentUid, childType, true)) {
+        return true;
+    }
+    return false;
+}
+
+/**
  * Not intended as a public API.
  * @private
  */
-ADM.insertChildRelative = function (siblingUid, childType, offset) {
+ADM.insertChildRelative = function (siblingUid, childType, offset, dryrun) {
     var design, sibling, child;
     design = ADM.getDesignRoot();
     sibling = design.findNodeByUid(siblingUid);
@@ -375,7 +393,7 @@ ADM.insertChildRelative = function (siblingUid, childType, offset) {
         return null;
     }
 
-    if (sibling.insertChildRelative(child, offset)) {
+    if (sibling.insertChildRelative(child, offset, dryrun)) {
         return child;
     }
     return null;
@@ -387,10 +405,11 @@ ADM.insertChildRelative = function (siblingUid, childType, offset) {
  *
  * @param {Number} siblingUid The UID of the existing sibling.
  * @param {String} childType The widget type of the new widget to create.
+ * @param {Boolean} dryrun [Optional] True if the call should be a dry run.
  * @return {ADMNode} The new child, or null on failure.
  */
-ADM.insertChildBefore = function (siblingUid, childType) {
-    return ADM.insertChildRelative(siblingUid, childType, 0);
+ADM.insertChildBefore = function (siblingUid, childType, dryrun) {
+    return ADM.insertChildRelative(siblingUid, childType, 0, dryrun);
 };
 
 /**
@@ -401,17 +420,18 @@ ADM.insertChildBefore = function (siblingUid, childType) {
  * @param {String} childType The widget type of the new widget to create.
  * @return {ADMNode} The new child, or null on failure.
  */
-ADM.insertChildAfter = function (siblingUid, childType) {
-    return ADM.insertChildRelative(siblingUid, childType, 1);
+ADM.insertChildAfter = function (siblingUid, childType, dryrun) {
+    return ADM.insertChildRelative(siblingUid, childType, 1, dryrun);
 };
 
 /**
  * Removes the child with the given UID from the design.
  *
  * @param {Number} uid The unique ID of the child to remove.
+ * @param {Boolean} dryrun [Optional] True if the call should be a dry run.
  * @return {ADMNode} The removed child, or null it or its parent is not found.
  */
-ADM.removeChild = function (uid) {
+ADM.removeChild = function (uid, dryrun) {
     var design, child, parent;
     design = ADM.getDesignRoot();
     child = design.findNodeByUid(uid);
@@ -426,7 +446,7 @@ ADM.removeChild = function (uid) {
         return null;
     }
 
-    return parent.removeChild(child);
+    return parent.removeChild(child, dryrun);
 };
 
 /**
@@ -740,9 +760,10 @@ ADMNode.prototype.getChildrenCount = function () {
  * zone that accepts the child.
  *
  * @param {ADMNode} child The child object to be added.
+ * @param {Boolean} dryrun [Optional] True if the call should be a dry run.
  * @return {Boolean} True if the child was added successfully, false otherwise.
  */
-ADMNode.prototype.addChild = function (child) {
+ADMNode.prototype.addChild = function (child, dryrun) {
     var myType, childType, zones, redirect, widgets, wrapper, length, i;
     myType = this.getType();
     childType = child.getType();
@@ -753,13 +774,14 @@ ADMNode.prototype.addChild = function (child) {
         if (redirect) {
             widgets = this._zones[redirect.zone];
             if (widgets && widgets.length > 0) {
-                if (widgets[0].addChild(child)) {
+                if (widgets[0].addChild(child, dryrun)) {
                     return true;
                 }
             } else {
                 wrapper = ADM.createNode(redirect.type);
-                if (wrapper.addChild(child)) {
-                    if (!this.addChildToZone(wrapper, redirect.zone)) {
+                if (wrapper.addChild(child, dryrun)) {
+                    if (!this.addChildToZone(wrapper, redirect.zone, undefined,
+                                             dryrun)) {
                         console.log("Unable to create redirect wrapper for " +
                                     myType);
                         return false;
@@ -776,7 +798,7 @@ ADMNode.prototype.addChild = function (child) {
 
     length = zones.length;
     for (i = 0; i < length; i++) {
-        if (this.addChildToZone(child, zones[i])) {
+        if (this.addChildToZone(child, zones[i], undefined, dryrun)) {
             return true;
         }
     }
@@ -792,9 +814,11 @@ ADMNode.prototype.addChild = function (child) {
  * @param {Number} zoneIndex [Optional] The index at which to insert the child,
  *                           or if undefined, the default (end) location will
  *                           be used.
+ * @param {Boolean} dryrun [Optional] True if the call should be a dry run.
  * @return {Boolean} True if the child was added successfully, false otherwise.
  */
-ADMNode.prototype.addChildToZone = function (child, zoneName, zoneIndex) {
+ADMNode.prototype.addChildToZone = function (child, zoneName, zoneIndex,
+                                             dryrun) {
     // requires: assumes cardinality is "N", or a numeric string
     var add = false, myType, childType, zone, cardinality, limit;
     myType = this.getType();
@@ -831,7 +855,7 @@ ADMNode.prototype.addChildToZone = function (child, zoneName, zoneIndex) {
     if (zoneIndex === undefined) {
         zoneIndex = zone.length;
     }
-    return this.insertChildInZone(child, zoneName, zoneIndex);
+    return this.insertChildInZone(child, zoneName, zoneIndex, dryrun);
 };
 
 /**
@@ -844,9 +868,10 @@ ADMNode.prototype.addChildToZone = function (child, zoneName, zoneIndex) {
  *                        0 is immediately before, 1 is immediately after,
  *                        lower numbers are at earlier positions and higher
  *                        numbers at higher positions.
+ * @param {Boolean} dryrun [Optional] True if the call should be a dry run.
  * @return {Boolean} True if the child was successfully inserted.
  */
-ADMNode.prototype.insertChildRelative = function (child, offset) {
+ADMNode.prototype.insertChildRelative = function (child, offset, dryrun) {
     var zone, i, index;
     if (!this._parent) {
         console.log("Warning: cannot insert child relative to orphan sibling");
@@ -870,7 +895,8 @@ ADMNode.prototype.insertChildRelative = function (child, offset) {
                 index = zone.length;
             }
 
-            return this._parent.addChildToZone(child, this._zone, index);
+            return this._parent.addChildToZone(child, this._zone, index,
+                                               dryrun);
         }
     }
 
@@ -885,9 +911,11 @@ ADMNode.prototype.insertChildRelative = function (child, offset) {
  * @param {ADMNode} child The child object to be added.
  * @param {String} zoneName The name of the zone in which to insert the child.
  * @param {Number} index The index in the zone at which to insert the child.
+ * @param {Boolean} dryrun [Optional] True if the call should be a dry run.
  * @return {Boolean} True if the child was added successfully, false otherwise.
  */
-ADMNode.prototype.insertChildInZone = function (child, zoneName, index) {
+ADMNode.prototype.insertChildInZone = function (child, zoneName, index,
+                                                dryrun) {
     function setRootRecursive(node, root) {
         var children, i;
         node._root = root;
@@ -907,15 +935,17 @@ ADMNode.prototype.insertChildInZone = function (child, zoneName, index) {
         return false;
     }
     if (child instanceof ADMNode) {
-        zone.splice(index, 0, child);
+        if (!dryrun) {
+            zone.splice(index, 0, child);
 
-        setRootRecursive(child, this._root);
+            setRootRecursive(child, this._root);
 
-        child._parent = this;
-        child._zone = zoneName;
-        this.fireModelEvent("modelUpdated",
-                            { type: "nodeAdded", node: child, parent: this,
-                              index: index, zone: zoneName });
+            child._parent = this;
+            child._zone = zoneName;
+            this.fireModelEvent("modelUpdated",
+                                { type: "nodeAdded", node: child, parent: this,
+                                  index: index, zone: zoneName });
+        }
         return true;
     } else {
         console.log("Warning: children of ADMNode must be ADMNode");
@@ -931,8 +961,11 @@ ADMNode.prototype.insertChildInZone = function (child, zoneName, index) {
  * @param {Number} zoneIndex [Optional] The index at which to insert the child,
  *                           or if undefined, the default (end) location will
  *                           be used.
+ * @param {Boolean} dryrun [Optional] True if the call should be a dry run.
+ * @return {Boolean} True if the child was added successfully, false otherwise,
+ *                   or undefined on invalid input.
  */
-ADMNode.prototype.moveNode = function (newParent, zoneName, zoneIndex) {
+ADMNode.prototype.moveNode = function (newParent, zoneName, zoneIndex, dryrun) {
     var oldParent, oldDesign, newDesign, oldZone, oldIndex, removed, rval, root;
     rval = false;
     if (!newParent) {
@@ -958,23 +991,24 @@ ADMNode.prototype.moveNode = function (newParent, zoneName, zoneIndex) {
 
     oldZone = this._zone;
     oldIndex = this.getZoneIndex();
-    removed = oldParent.removeChild(this);
+    removed = oldParent.removeChild(this, dryrun);
+
     if (removed) {
         if (removed != this) {
             console.log("Error: removed node didn't match in moveNode");
         } else {
             // try to add child to new parent and zone
-            rval = newParent.addChildToZone(this, zoneName, zoneIndex);
+            rval = newParent.addChildToZone(this, zoneName, zoneIndex, dryrun);
             if (!rval) {
                 // try to replace node in original position
-                oldParent.addChildToZone(this, oldZone, oldIndex);
+                oldParent.addChildToZone(this, oldZone, oldIndex, dryrun);
             }
         }
     }
 
     root.suppressEvents(false);
 
-    if (rval) {
+    if (rval && !dryrun) {
         this.fireModelEvent("modelUpdated",
                             { type: "nodeMoved", node: this,
                               oldParent: oldParent, newParent: newParent,
@@ -989,9 +1023,10 @@ ADMNode.prototype.moveNode = function (newParent, zoneName, zoneIndex) {
  * Removes the given child from this node.
  *
  * @param {ADMNode} child The child node to be removed.
+ * @param {Boolean} dryrun [Optional] True if the call should be a dry run.
  * @return {ADMNode} The removed child, or null if unsuccessful.
  */
-ADMNode.prototype.removeChild = function (child) {
+ADMNode.prototype.removeChild = function (child, dryrun) {
     var index;
     if (child._parent !== this) {
         console.log("Error: child reports another parent while removing");
@@ -1004,7 +1039,7 @@ ADMNode.prototype.removeChild = function (child) {
         return null;
     }
 
-    return this.removeChildFromZone(child._zone, index);
+    return this.removeChildFromZone(child._zone, index, dryrun);
 };
 
 /**
@@ -1012,9 +1047,10 @@ ADMNode.prototype.removeChild = function (child) {
  *
  * @param {String} zoneName The name of the zone.
  * @param {Number} index The 0-based zone index of the child to be removed.
+ * @param {Boolean} dryrun [Optional] True if the call should be a dry run.
  * @return {ADMNode} The removed child, or null if not found.
  */
-ADMNode.prototype.removeChildFromZone = function (zoneName, index) {
+ADMNode.prototype.removeChildFromZone = function (zoneName, index, dryrun) {
     var zone, removed, child;
     zone = this._zones[zoneName];
     if (!zone) {
@@ -1028,17 +1064,19 @@ ADMNode.prototype.removeChildFromZone = function (zoneName, index) {
         return null;
     }
 
-    child = removed[0];
-    child._parent = null;
-    child._root = null;
+    if (!dryrun) {
+        child = removed[0];
+        child._parent = null;
+        child._root = null;
 
-    if (child.isSelected()) {
-        ADM.setSelected(null);
+        if (child.isSelected()) {
+            ADM.setSelected(null);
+        }
+
+        this.fireModelEvent("modelUpdated",
+                            { type: "nodeRemoved", node: child, parent: this,
+                              index: index, zone: zoneName });
     }
-
-    this.fireModelEvent("modelUpdated",
-                        { type: "nodeRemoved", node: child, parent: this,
-                          index: index, zone: zoneName });
     return child;
 };
 
