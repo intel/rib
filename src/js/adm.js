@@ -432,7 +432,7 @@ ADM.insertChildAfter = function (siblingUid, childType, dryrun) {
  * @return {ADMNode} The removed child, or null it or its parent is not found.
  */
 ADM.removeChild = function (uid, dryrun) {
-    var design, child, parent;
+    var design, child, parent, pageIndex, page, pages;
     design = ADM.getDesignRoot();
     child = design.findNodeByUid(uid);
     if (!child) {
@@ -446,6 +446,24 @@ ADM.removeChild = function (uid, dryrun) {
         return null;
     }
 
+    if (ADM._activePage === child) {
+        // trying to remove the current page, make another page active
+        pages = design.getChildren();
+        for (pageIndex in pages) {
+            page = pages[pageIndex];
+            if (page !== child) {
+                if (!dryrun) {
+                    ADM.setActivePage(page);
+                }
+                break;
+            }
+        }
+
+        if (ADM._activePage === child) {
+            console.log("Warning: attempted to remove the only page");
+            return null;
+        }
+    }
     return parent.removeChild(child, dryrun);
 };
 
