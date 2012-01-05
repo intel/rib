@@ -1074,6 +1074,12 @@ var BWidgetRegistry = {
                 type: "string",
                 defaultValue: "#1a8039",
             },
+            show_preview: {
+                type: "string",
+                options: [ "true", "false" ],
+                defaultValue: "false",
+                htmlAttribute: "data-show-preview"
+            }
         },
     },
 
