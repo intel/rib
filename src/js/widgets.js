@@ -1032,12 +1032,20 @@ var BWidgetRegistry = {
     DateTimePicker: {
         parent: "Base",
         template: '<input type="date" />',
+        newGroup: true,
         delegate: 'next'
+    },
+
+    CalendarPicker: {
+        parent: "Base",
+        template: '<a data-role="calendarpicker" data-icon="grid" data-iconpos="notext" data-inline="true"></a>',
+
     },
 
     ColorPicker: {
         parent: "Base",
         template: '<div data-role="colorpicker" />',
+        newGroup: true,
         properties: {
             data_color: {
                 type: "string",
@@ -1094,6 +1102,7 @@ var BWidgetRegistry = {
 
     ProgressBar: {
         parent: "Base",
+        newGroup: true,
         template: '<div data-role="processingbar" />',
     },
 
@@ -1101,12 +1110,6 @@ var BWidgetRegistry = {
         parent: "Base",
         template: '<div data-role="toggleswitch" />',
         delegate: 'next'
-    },
-
-    CalendarPicker: {
-        parent: "Base",
-        template: '<a data-role="calendarpicker" data-icon="grid" data-iconpos="notext" data-inline="true"></a>',
-
     },
 
     OptionHeader: {
