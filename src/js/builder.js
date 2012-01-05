@@ -48,16 +48,76 @@ jQuery.ui.ddmanager.prepareOffsets = function (t, event) {
 
         /////////////////////////////////////////////////////////////////
         // Start of our changes
-        if ($($(document).find('#design-view')[0].contentDocument)
-                         .find(m[i].element).length) {
-            var dv = $(document).find('#design-view');
-            m[i].offset.top += dv.offset().top;
-            m[i].offset.left += dv.offset().left;
-        }
-        // End of our changes
+        var getOwnerWindow = function (node) {
+            return node.ownerDocument.defaultView || node.parentWindow;
+        };
+        var getOffsetInWindow = function (node, win) {
+            var myWin = getOwnerWindow(node);
+            if ( myWin === win)
+                return $(node).offset();
+            else if (myWin === top) {
+                // win is a child of myWin(top), so we caculate the offset of win
+                //in related to myWin and substract it.
+                var offset = $(node).offset();
+                var winOffSet = getOffsetInWindow(win.document.documentElement, myWin);
+                return { left: offset.left - winOffSet.left, top: offset.top - winOffSet.top};
+            }
+            else {
+                //find myWin in its parent as an frame element and get the offset
+                var parentFrames = $('iframe, frame', myWin.parent.document);
+                for ( var frame in parentFrames) {
+                    if (parentFrames[frame].contentWindow === myWin) {
+                        var offset = $(node).offset();
+                        var frameTagOffset = $(parentFrames[frame]).offset();
+                        var parentOffsetInWindow = getOffsetInWindow(myWin.parent.document.documentElement, win);
+                        return { left: offset.left + frameTagOffset.left + parentOffsetInWindow.left, top: offset.top + frameTagOffset.top + parentOffsetInWindow.top };
+                    }
+                }
+            }
+        };
+        m[i].offset = getOffsetInWindow(m[i].element[0], getOwnerWindow((t.currentItem || t.element)[0]));
         /////////////////////////////////////////////////////////////////
+        // End of our changes
     }
 };
+$.widget("ui.droppable", $.extend({}, $.ui.droppable.prototype, {
+    _drop: function(event,custom) {
+        console.log("entering extended drop");
+
+		var draggable = custom || $.ui.ddmanager.current;
+		if (!draggable || (draggable.currentItem || draggable.element)[0] == this.element[0]) return false; // Bail if draggable and droppable are same element
+
+		var childrenIntersection = false;
+		this.element.find(":data(droppable)").not(".ui-draggable-dragging").each(function() {
+			var inst = $.data(this, 'droppable');
+			if(
+				inst.options.greedy
+				&& !inst.options.disabled
+				&& inst.options.scope == draggable.options.scope
+				&& inst.accept.call(inst.element[0], (draggable.currentItem || draggable.element))
+                /////////////////////////////////////////////////////////////////
+                // Start of our changes
+                // This is the original line
+				// && $.ui.intersect(draggable, $.extend(inst, { offset: inst.element.offset() }), inst.options.tolerance)
+                // This is our line
+                && $.ui.intersect(draggable, inst, inst.options.tolerance)
+                /////////////////////////////////////////////////////////////////
+                // End of our changes
+			) { childrenIntersection = true; return false; }
+		});
+		if(childrenIntersection) return false;
+
+		if(this.accept.call(this.element[0],(draggable.currentItem || draggable.element))) {
+			if(this.options.activeClass) this.element.removeClass(this.options.activeClass);
+			if(this.options.hoverClass) this.element.removeClass(this.options.hoverClass);
+			this._trigger('drop', event, this.ui(draggable));
+			return this.element;
+		}
+
+		return false;
+
+	}
+}));
 
 function logit(msg) {
     var entry = $.now()+": "+msg;
