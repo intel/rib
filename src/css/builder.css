@@ -115,6 +115,10 @@ html, body {
     border: 0px;
     display: block;
 }
+.hmenu span.space {
+    float: left;
+    width: 2ex;
+}
 hr.menu-separator {
     margin-top: 0px;
     margin-bottom: 0px;

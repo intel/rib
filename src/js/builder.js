@@ -587,22 +587,18 @@ $(function() {
     toggleControls = function () {
         var id = $(this).attr("id");
         switch (id) {
-            case "controls-handle":
-                if ($controlsPanel.is(':visible')) {
-                    $controlsPanel.hide('slide', 50);
-                } else {
-                    $controlsPanel.show('slide', 50);
-                }
-                break;
-            case "outline-handle":
-                if ($outlinePanel.is(':visible')) {
-                    $outlinePanel.hide('slide', 50);
-                } else {
-                    $outlinePanel.show('slide', 50);
-                }
-                break;
-            default:
-                logit("unexpected element clicked");
+        case "controls-handle":
+            if ($controlsPanel.is(':visible')) {
+                $controlsPanel.hide();
+            } else {
+                $controlsPanel.show();
+            }
+            break;
+        case "outline-handle":
+            toggleOutlineView();
+            break;
+        default:
+            logit("unexpected element clicked");
         }
     },
 
@@ -1057,6 +1053,9 @@ $(function() {
         $('#design-view').show('_default', toggleControlsEnabled);
         $('#code-area').hide();
         $('#preview-frame').hide();
+        $("#designView").find("span").html("&#x2022;");
+        $("#codeView").find("span").html("&nbsp;");
+        $("#preView").find("span").html("&nbsp;");
     },
 
     showCodeView = function () {
@@ -1064,6 +1063,9 @@ $(function() {
         $('#design-view').hide('_default', toggleControlsEnabled);
         $('#code-area').show();
         $('#preview-frame').hide();
+        $("#designView").find("span").html("&nbsp;");
+        $("#codeView").find("span").html("&#x2022;");
+        $("#preView").find("span").html("&nbsp;");
     },
 
     showPreView = function () {
@@ -1071,9 +1073,18 @@ $(function() {
         $('#design-view').hide('_default', toggleControlsEnabled);
         $('#code-area').hide();
         $('#preview-frame').show();
+        $("#designView").find("span").html("&nbsp;");
+        $("#codeView").find("span").html("&nbsp;");
+        $("#preView").find("span").html("&#x2022;");
     },
 
     toggleOutlineView = function() {
+        var item = $("#outlineView").find("span");
+        if ($outlinePanel.filter(":visible").length) {
+            item.html("&nbsp;");
+        } else {
+            item.html("&#x2713;");
+        }
         $outlinePanel.toggle();
     },
 
