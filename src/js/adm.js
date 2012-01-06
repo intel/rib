@@ -184,8 +184,9 @@ ADM.addEventType("designReset");
  * @event
  * @param {Object} event Object including standard "id" and "name"
  *                       properties, as well as a
- *                         "page" property set to the new page ADMNode,
- *                                or null.
+ *                         "page"    property set to the new page ADMNode,
+ *                                   or null, and a
+ *                         "oldPage" property set to the old page.
  * @param {Any} data The data you supplied to the bind() call.
  * @see ADMEventSource.bind
  * @see ADMEventSource.unbind
@@ -270,6 +271,7 @@ ADM.getActivePage = function () {
  * @return {Boolean} True if the active page was set successfully.
  */
 ADM.setActivePage = function (page) {
+    var oldPage;
     if (page !== null && (!(page instanceof ADMNode) ||
                           page.getType() !== "Page")) {
         console.log("Warning: tried to set an invalid active page");
@@ -277,9 +279,10 @@ ADM.setActivePage = function (page) {
     }
 
     if (ADM._activePage !== page) {
+        oldPage = ADM._activePage;
         ADM._activePage = page;
         ADM.setSelected(null);
-        ADM.fireEvent("activePageChanged", { page: page });
+        ADM.fireEvent("activePageChanged", { page: page, oldPage: oldPage });
         return true;
     }
     return false;

@@ -48,13 +48,11 @@ PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
         </li>
         <li>
           <a id="page-sub-menu">Page</a>
-          <ul class="sub-menu">
-            <li><a id="newpage">Add Page</a></li>
-            <li><a id="removepage">Delete Current Page</a></li>
-            <!-- FIXME: put this separator back in and replace page picker
-                 with items that appear dynamically below the separator
-            <li><div class='menu-separator'/></li>
-            -->
+          <ul class="sub-menu" id="pages-menu">
+            <li><a><span class="space">&nbsp;</span><label></label></a></li>
+            <li id="page-divider"><div class='menu-separator'/></li>
+            <li><a id="newpage"><span class="space">&nbsp;</span>Add Page</a></li>
+            <li><a id="removepage"><span class="space">&nbsp;</span>Delete Current Page</a></li>
           </ul>
         </li>
         <li>

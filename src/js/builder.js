@@ -417,6 +417,17 @@ $(function() {
                              'left' : '-4px',
                          });
             handler.click( toggleControls );
+
+            $(document).delegate('#pages-menu li a[id|="showpage"]', "click",
+                                 function () {
+                                     var uid, root, node;
+                                     uid = $(this).attr("adm-uid");
+                                     if (uid) {
+                                         root = ADM.getDesignRoot();
+                                         node = root.findNodeByUid(uid);
+                                         ADM.setActivePage(node);
+                                     }
+                                 });
         },
 
 /*
@@ -577,7 +588,11 @@ $(function() {
         var pageId = e.page.getProperty('id');
         $('#design-view')[0].contentWindow.$.mobile.changePage('#'+pageId);
         setPreviewPage(pageId);
-        updatePageZone();
+        if (!e.oldPage) {
+            updatePageZone();
+        } else {
+            updateActivePage();
+        }
         blockActivePageChanged = false;
     },
 
@@ -1136,18 +1151,6 @@ $(function() {
         return tree;
     },
 
-    getAllPagesInADM = function () {
-        var children = ADM.getDesignRoot().getChildren(),
-            pageList = [];
-
-        for (var i = 0; i < children.length; i++) {
-            var id = children[i].getProperty('id');
-            pageList.push(id);
-        }
-        logit("ADM contains pages: "+ pageList.join(','));
-        return pageList;
-    },
-
     addNewPage = function () {
         var page = ADM.createNode('Page'),
             content = ADM.createNode('Content');
@@ -1187,53 +1190,40 @@ $(function() {
                        .appendTo('#toolbar-panel');
     },
 
+    updateActivePage = function() {
+        var id, list, activePage = ADM.getActivePage();
+        id = activePage.getProperty('id');
+        list = $("#pages-menu");
+        list.find('a[id="showpage-' + id + '"] span').
+            html("&#x2022;");
+        list.find('a[id!="showpage-' + id + '"] span').
+            html("&nbsp;");
+    },
+
     updatePageZone = function () {
-        $('#page_content').empty();
-        var selector = $('<label for="picker">Pages</label>' +
-                         '<select name="page-selector" id="page-selector"></select>')
-                .appendTo('#page_content');
+        var divider, list, source, pageItem, html, activePage, id, pages, p;
+        divider = $("#page-divider");
+        list = $("#pages-menu");
+        source = $("#pages-menu :first").clone(true, true);
+        source.find("a").removeClass("ui-state-hover");
 
-        // Insert the list of pages
-        var pageList = getAllPagesInADM();
-        if (!pageList.length) {
-            logit("there is no pages");
-            return;
+        // clear current page list
+        divider.prevAll().remove();
+
+        pages = ADM.getDesignRoot().getChildren();
+
+        for (p in pages) {
+            id = pages[p].getProperty('id');
+            pageItem = source.clone(true, true);
+            pageItem.find("a")
+                .attr("id", "showpage-" + id)
+                .attr("adm-uid", pages[p].getUid())
+                .find("label")
+                .text("Show Page: " + id);
+            pageItem.insertBefore(divider);
         }
 
-        for (var p in pageList) {
-            var id = pageList[p];
-            $('<option id="' + id + '" value="' + id + '">' + id + '</option>')
-                .appendTo('#page-selector');
-        }
-
-        var activePage = ADM.getActivePage();
-        logit("current active page id is "+ activePage.getUid());
-        //Make sure current selection matches current page
-        if (activePage) {
-            $('#page-selector #'+activePage.getProperty("id"))[0].selected=true;
-        }
-
-        //bind change event to select widget
-        $('#page-selector').change( function() {
-            var selectItem = $(this).children('option:selected').val();
-            var findPage = false;
-            var pageNode, i;
-            var children = [];
-            children = ADM.getDesignRoot().getChildren();
-
-            for (i = 0; i < children.length; i++) {
-                var id = children[i].getProperty("id");
-                if (id === selectItem) {
-                    findPage = true;
-                    pageNode = children[i];
-                }
-            }
-            if (!findPage) {
-                logit("error: can't find select page!");
-                return;
-            }
-            ADM.setActivePage(pageNode);
-        });
+        updateActivePage();
     },
 
     initBreadcrumb = function () {
