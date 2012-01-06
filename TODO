@@ -71,6 +71,17 @@ P3 - Menu should perhaps be dismissed when we click an option
 P2 - Make a "developer" setting somewhere
    - Show Debug menu only when developer mode is on
 
+P3 - App title is currently always "title" which can't be changed; perhaps
+     this can just be removed, or made blank -- or it should be exposed as a
+     general property of the design somewhere. If that's to show up in the
+     property pane, we would need some way to select the "design".
+
+P2 - It would be nice to preserve the ability to write pure jQuery Mobile apps,
+     which would require something like a design setting to turn Tizen widgets
+     on or off. Maybe better as a decision you make when opening a new project,
+     so we don't have to worry about deleting Tizen widgets if you turn those
+     off.
+
 [Palette]
 =========
 
@@ -127,6 +138,8 @@ P3 - Could make form elements based on a common FormElement to inherit
      the name attribute
 P3 - Whether or not to wrap widget and label with a fieldcontain could be
      an option on the widget
+P2 - Add the ability to insert simple HTML at any point in the design:
+       text, <p> and <br> tags, <h?> tags, <b>, <i>, character entities, ...
 
 [Code Gen]
 ==========
@@ -137,6 +150,13 @@ P2 - Color syntax highlighting would be highly desirable (PTSDK-121)
 
 [Preview]
 =========
+P2 - If you change pages with a button (e.g. with target "#page2") in the
+     preview, it might be nice if we noticed and updated our selection. OTOH,
+     maybe not.
+
+P2 - If you navigate as above in the preview, probably when you come back to
+     preview later it should start you back on the same page you were looking
+     at in the design canvas again. Could use UX thought.
 
 [Outline View]
 ==============
