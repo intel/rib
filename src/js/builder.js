@@ -245,7 +245,7 @@ $(function() {
             // and invoke a callback when async JSON call  //
             // has completed                               //
             // ------------------------------------------- //
-            request = loadPalette($palettePanel, 'src/assets/palette.json');
+            request = loadPalette($palettePanel);
             $.when(request).done(paletteLoadDoneCallback);
 
             // -------------------------------------------- //

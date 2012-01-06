@@ -25,7 +25,7 @@
  *                       into the DOM
  */
 
-function loadPalette(container, filename) {
+function loadPalette(container) {
     var defaultContainer = '#palette-panel';
     var myContainer = container;
 
@@ -37,52 +37,50 @@ function loadPalette(container, filename) {
 	return false;
     }
 
-    return $.getJSON(filename, function(data){
-        console.log("Starting palette load...");
-	myContainer.append('<p id="palette_header" class="ui-helper-reset ui-widget ui-widget-header">Palette</p>');
-	myContainer.append('<div id="palette_accordion"></div>');
+    console.log("Starting palette load...");
+    myContainer.append('<p id="palette_header" class="ui-helper-reset ui-widget ui-widget-header">Palette</p>');
+    myContainer.append('<div id="palette_accordion"></div>');
 
-	var hdr = $('#palette_header');
-	var acc = $('#palette_accordion');
+    var hdr = $('#palette_header');
+    var acc = $('#palette_accordion');
 
-	// Make use of the flex box model in CSS3 to allow the tabs
-	// to grow/shrink with the window/container
-	myContainer.addClass('vbox');
-	hdr.addClass('flex0');
-	acc.addClass('flex1');
+    // Make use of the flex box model in CSS3 to allow the tabs
+    // to grow/shrink with the window/container
+    myContainer.addClass('vbox');
+    hdr.addClass('flex0');
+    acc.addClass('flex1');
 
-        // FIXME: Eventually, all widgets should come from the BWidget
-        //        global structure.  For now, we load them as their own
-        //        subcategory in the palette
-	$(acc).append('<h3>Tizen Framework</h3><div><ul id="Tizen-widgets"></ul></div>');
-        $.each(BWidget.getPaletteWidgetTypes(), function(n, id) {
-	    // Add new <li> element to hold this widget
-	    var ul = $('#Tizen-widgets');
-	    var li = $('<li id="BWidget-'+id+'"></li>').appendTo($(ul));
-	    $(li).button({
-		label: BWidget.getDisplayLabel(id),
-		icons: {primary: BWidget.getIcon(id)}
-	    });
-	    $(li).disableSelection();
-	    $(li).addClass('nrc-palette-widget');
-	    $(li).data("code", BWidget.getTemplate(id));
-	    $(li).data("adm-node", {type: id});
-
-            // FIXME: This should probably be replaced by a more flexible
-            //        concept of widget groups.
-            if (BWidget.startsNewGroup(id)) {
-                $(ul).append("<hr>");
-            }
-
-	    $(ul).append($(li));
+    // FIXME: Eventually, all widgets should come from the BWidget
+    //        global structure.  For now, we load them as their own
+    //        subcategory in the palette
+    $(acc).append('<h3>Tizen Framework</h3><div><ul id="Tizen-widgets"></ul></div>');
+    $.each(BWidget.getPaletteWidgetTypes(), function(n, id) {
+        // Add new <li> element to hold this widget
+        var ul = $('#Tizen-widgets');
+        var li = $('<li id="BWidget-'+id+'"></li>').appendTo($(ul));
+        $(li).button({
+            label: BWidget.getDisplayLabel(id),
+            icons: {primary: BWidget.getIcon(id)}
         });
+        $(li).disableSelection();
+        $(li).addClass('nrc-palette-widget');
+        $(li).data("code", BWidget.getTemplate(id));
+        $(li).data("adm-node", {type: id});
 
-	$(acc).accordion({
-	    fillSpace: true
-	});
+        // FIXME: This should probably be replaced by a more flexible
+        //        concept of widget groups.
+        if (BWidget.startsNewGroup(id)) {
+            $(ul).append("<hr>");
+        }
 
-	// Must explicitly react to window resize events to be
-	// able to grow/shrink if we're in a flex box layout
-	$(window).resize( function () { $(acc).accordion("resize"); });
+        $(ul).append($(li));
     });
+
+    $(acc).accordion({
+        fillSpace: true
+    });
+
+    // Must explicitly react to window resize events to be
+    // able to grow/shrink if we're in a flex box layout
+    $(window).resize( function () { $(acc).accordion("resize"); });
 }
