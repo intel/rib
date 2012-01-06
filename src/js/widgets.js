@@ -370,6 +370,11 @@ var BWidgetRegistry = {
                 type: "string",
                 defaultValue: "Button"
             },
+            target: {
+                type: "string",
+                defaultValue: "",
+                htmlAttribute: "href"
+            },
             icon: {
                 type: "string",
                 options: [ "none", "alert", "arrow-d", "arrow-l", "arrow-r",
@@ -396,11 +401,6 @@ var BWidgetRegistry = {
                 options: [ "true", "false" ],
                 defaultValue: "false",
                 htmlAttribute: "data-inline"
-            },
-            target: {
-                type: "string",
-                defaultValue: "",
-                htmlAttribute: "href"
             }
         },
         template: '<a data-role="button">%TEXT%</a>'
@@ -849,7 +849,7 @@ var BWidgetRegistry = {
             {
                 name: "default",
                 cardinality: "N",
-                allow: [ "ListItem", "ListDivider" ]
+                allow: [ "ListItem", "ListDivider", "ListButton" ]
             }
         ],
     },
@@ -897,7 +897,7 @@ var BWidgetRegistry = {
             {
                 name: "default",
                 cardinality: "N",
-                allow: [ "ListItem", "ListDivider" ]
+                allow: [ "ListItem", "ListDivider", "ListButton" ]
             }
         ],
     },
@@ -932,6 +932,43 @@ var BWidgetRegistry = {
             }
         },
         template: '<li data-role="list-divider">%TEXT%</li>'
+    },
+
+    /**
+     * Represents a button. A "text" string property holds the button text.
+     */
+    ListButton: {
+        parent: "Base",
+        displayLabel: "List Button",
+        allowIn: [ "List", "OrderedList" ],
+        properties: {
+            text: {
+                type: "string",
+                defaultValue: "Button"
+            },
+            target: {
+                type: "string",
+                defaultValue: "",
+                htmlAttribute: "href",
+                htmlSelector: "a"
+            },
+            icon: {
+                type: "string",
+                options: [ "none", "alert", "arrow-d", "arrow-l", "arrow-r",
+                           "arrow-u", "back", "check", "delete", "forward",
+                           "gear", "grid", "home", "info", "minus", "plus",
+                           "refresh", "search", "star" ],
+                defaultValue: "none",
+                htmlAttribute: "data-icon"
+            },
+            theme: {
+                type: "string",
+                options: [ "default", "a", "b", "c", "d", "e" ],
+                defaultValue: "default",
+                htmlAttribute: "data-theme"
+            }
+        },
+        template: '<li><a>%TEXT%</a></li>'
     },
 
     /**
@@ -1451,6 +1488,25 @@ var BWidget = {
         var schema = BWidget.getPropertySchema(widgetType, property);
         if (schema) {
             return schema.htmlAttribute;
+        }
+        return schema;
+    },
+
+    /**
+     * Gets the HTML selector that will find the DOM node this attribute
+     * belongs to.
+     *
+     * @param {String} widgetType The type of the widget.
+     * @param {String} property The name of the property.
+     * @return {String} An HTML selector that can be applied to the template
+     *                  to find the DOM nodes that this attribute should be
+     *                  applied to, or undefined if none.
+     * @throws {Error} If widgetType is invalid, or property not found.
+     */
+    getPropertyHTMLSelector: function (widgetType, property) {
+        var schema = BWidget.getPropertySchema(widgetType, property);
+        if (schema) {
+            return schema.htmlSelector;
         }
         return schema;
     },

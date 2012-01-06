@@ -732,9 +732,9 @@ $(function() {
             parentSelector = 'body',
             parentNode = null,
             template, props, id,
-            attrMap = {},
+            selMap = {},  // maps selectors to attribute maps
             attrName, attrValue, propDefault,
-            widget, regEx;
+            widget, regEx, wrapper;
 
         // Check for valid node
         if (node === null || node === undefined ||
@@ -820,7 +820,19 @@ $(function() {
 
                         if (attrValue !== propDefault ||
                             BWidget.getPropertyForceAttribute(type, p)) {
-                            attrMap[attrName] = attrValue;
+                            selector = BWidget.getPropertyHTMLSelector(type, p);
+                            if (!selector) {
+                                // by default apply attributes to first element
+                                selector = ":first";
+                            }
+
+                            if (!selMap[selector]) {
+                                // create a new select map entry
+                                selMap[selector] = {};
+                            }
+
+                            // add attribute mapping to corresponding selector
+                            selMap[selector][attrName] = attrValue;
                         }
                     }
                     break;
@@ -834,22 +846,18 @@ $(function() {
                 }
             }
 
-            // Turn the template into an element instance, via jquery
+            // Turn the template into an element instance, via jQuery
             widget = $(template);
 
-            // Apply any unhandled properties on the ADMNode to the DOM Element
-            // as Element attributes
-
-            // TODO: Some widgets may return multiple DOM elements, like a
-            //       radio button currently returns <input><label>. Indexing
-            //       by [0] below so that only the first gets the attributes
-            //       applied. A better solution would have each property
-            //       specify a selector to find the right element(s) for the
-            //       attributed to be applied to.
-            $(widget[0]).attr(attrMap);
+            // apply the HTML attributes
+            wrapper = $("<div>").append(widget);
+            for (selector in selMap) {
+                wrapper.find(selector)
+                    .attr(selMap[selector]);
+            }
         }
 
-        $(parentNode).append($(widget));
+        $(parentNode).append(widget);
 
         node.getDesign().suppressEvents(false);
         node.suppressEvents(false);
