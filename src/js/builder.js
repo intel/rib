@@ -1479,4 +1479,7 @@ $(function() {
     };
 
     init();
+    // Force window to "resize" to ensure the property and palette panes
+    // get correctly positioned and sized after layout completes
+    $(window).trigger('resize');
 });
