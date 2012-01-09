@@ -90,15 +90,18 @@ fsUtils = {
      * @param {enum} type The value could be "window.TEMPORARY" or "window.PERSISTENT".
      * @param {number} size The required size for the file system.
      */
-    initFS: function (type, size) {
+    initFS: function (type, size, success, error) {
+               var onError = error || _onError;
                 // Create a temporary sandbox filesystem
-
                 if (requestFileSystem) {
                     requestFileSystem(type, size, function(filesystem) {
                         _fs = filesystem;
                         console.log("A sandbox filesystem: "+ _fs.name + " is created;");
                         console.log(_fs.name + " type: " + type + ", size: " + size );
-                    }, _onError);
+                        if(success) {
+                            success();
+                        }
+                    }, onError);
                 }else{
                     console.log("File System Not Available");
                 }

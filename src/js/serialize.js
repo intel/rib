@@ -255,25 +255,30 @@ $(function() {
     }
     /********************* Functions definition End **************************/
 
-    // init the sandbox file system
-    fsUtils.initFS(fsDefaults.type, fsDefaults.size);
-
-    // if can't get the cookie(no this record), then add exportNotice cookie
-    if (!cookieUtils.get("exportNotice")) {
-        if(!cookieUtils.set("exportNotice", "true", cookieExpires)) {
-            console.error("Set exportNotice cookie failed.");
+    function fsInitSuccess() {
+        // if can't get the cookie(no this record), then add exportNotice cookie
+        if (!cookieUtils.get("exportNotice")) {
+            if(!cookieUtils.set("exportNotice", "true", cookieExpires)) {
+                console.error("Set exportNotice cookie failed.");
+            }
         }
+
+        // create a notice Dialog for user to configure the browser,
+        // so that a native dialog can be shown when exporting design or HTML code
+        createExportNoticeDialog();
+
+        // bind handlers for sub-menu
+        $toolbarPanel.find('#loadDesign').click(triggerImportFileSelection);
+        $toolbarPanel.find('#exportDesign').click(triggerExportDesign);
+
+        // Import file selection change handler //
+        $('#importFile').change(importFileChangedCallback);
     }
 
-    // create a notice Dialog for user to configure the browser,
-    // so that a native dialog can be shown when exporting design or HTML code
-    createExportNoticeDialog();
+    function fsInitFailed() {
+        alert('File system initiation failed."Import" and "Export" feature can not work.');
+    }
 
-    // bind handlers for sub-menu
-    $toolbarPanel.find('#loadDesign').click(triggerImportFileSelection);
-    $toolbarPanel.find('#exportDesign').click(triggerExportDesign);
-
-    // Import file selection change handler //
-    $('#importFile').change(importFileChangedCallback);
-
+    // init the sandbox file system
+    fsUtils.initFS(fsDefaults.type, fsDefaults.size, fsInitSuccess, fsInitFailed);
 });
