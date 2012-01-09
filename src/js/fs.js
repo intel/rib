@@ -149,10 +149,10 @@ fsUtils = {
      * error callback passed the generated error.
      */
     ls: function (path, success, error) {
-            path = path || "/";
-            var onError = error || _onError;
+            var dstPath = path || "/",
+                onError = error || _onError;
 
-            _fs.root.getDirectory(path, {}, function (dirEntry) {
+            _fs.root.getDirectory(dstPath, {}, function (dirEntry) {
                 var dirReader = dirEntry.createReader();
                 dirReader.readEntries(function (entries) {
                     success(entries);
@@ -503,7 +503,8 @@ cookieUtils = {
              if(document.cookie && document.cookie !== "") {
                  return true;
              } else {
-                 alert("Open Chrome with '--enable-file-cookies' please.");
+                 alert("Open Chrome with '--enable-file-cookies' please." +
+                         "\nClose the browser if you have already opened it before.");
                  return false;
              }
          }
