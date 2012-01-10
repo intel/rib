@@ -53,11 +53,12 @@ function loadPalette(container) {
     // FIXME: Eventually, all widgets should come from the BWidget
     //        global structure.  For now, we load them as their own
     //        subcategory in the palette
+    $(acc).append('<h3>jQuery Mobile</h3><div><ul id="jqm-widgets"></ul></div>');
     $(acc).append('<h3>Tizen Framework</h3><div><ul id="Tizen-widgets"></ul></div>');
+    var ul = $('#jqm-widgets');
     $.each(BWidget.getPaletteWidgetTypes(), function(n, id) {
         // Add new <li> element to hold this widget
-        var ul = $('#Tizen-widgets'),
-            li = $('<li id="BWidget-'+id+'"></li>').appendTo($(ul));
+        var li = $('<li id="BWidget-'+id+'"></li>').appendTo($(ul));
         $(li).button({
             label: BWidget.getDisplayLabel(id),
             icons: {primary: BWidget.getIcon(id)}
@@ -71,6 +72,10 @@ function loadPalette(container) {
         //        concept of widget groups.
         if (BWidget.startsNewGroup(id)) {
             $(ul).append("<hr>");
+        }
+
+        if (BWidget.startsNewAccordion(id)) {
+            ul = $('#Tizen-widgets');
         }
 
         $(ul).append($(li));

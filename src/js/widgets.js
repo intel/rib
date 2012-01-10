@@ -1070,6 +1070,7 @@ var BWidgetRegistry = {
         parent: "Base",
         template: '<input type="date" />',
         newGroup: true,
+        newAccordion: true,
         delegate: 'next'
     },
 
@@ -1863,6 +1864,20 @@ var BWidget = {
             throw new Error("widget type invalid in startsNewGroup");
         }
         return widget.newGroup ? true : false;
+    },
+
+    /**
+     * Tests whether this BWidget begins a new accordion.
+     *
+     * @return {Boolean} True if this BWidget is the first in a new group.
+     * @throws {Error} If widgetType is invalid.
+     */
+    startsNewAccordion: function (widgetType) {
+        var widget = BWidgetRegistry[widgetType];
+        if (typeof widget !== "object") {
+            throw new Error("widget type invalid in startsNewAccordion");
+        }
+        return widget.newAccordion ? true : false;
     },
 
     /**
