@@ -30,7 +30,7 @@
 
 .adm-node.ui-sortable.ui-content, body {
     overflow-x: hidden;
-    overflow-y: hidden;
+    overflow-y: auto;
 }
 /********************************************/
 /* Necessary to override some jQM css rules */
