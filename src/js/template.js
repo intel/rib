@@ -202,7 +202,7 @@ $(function() {
     });
     // Watch our parent document also
     $(top.document).keyup(function(e) {
-        if (e.which === 46) {
+        if (e.which === 46 && !$(this.activeElement).is('input')) {
             $('.ui-selected').each( function () {
                 var id = $(this).attr('data-uid');
                 window.parent.ADM.removeChild(id);
