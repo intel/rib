@@ -1021,7 +1021,7 @@ var BWidgetRegistry = {
      */
     Collapsible: {
         parent: "Base",
-        template: '<div data-role="collapsible"><h1>%HEADING%</h1></div>',
+        template: '<div data-role="collapsible" data-collapsed="false"><h1>%HEADING%</h1></div>',
         newGroup: true,
         properties: {
             // NOTE: Removed "size" (h1 - h6) for the same reason we don't

@@ -46,7 +46,10 @@ $(function() {
         return false;  // Stop event bubbling
     }
     window.handleSelect = handleSelect;
-    $('div:jqmData(role="page")').live('pagebeforecreate', function(e) {
+    $('div:jqmData(role="page")').live('pageinit', function(e) {
+        //Unbind all event handlers except collapsible as we don't need them in design view
+        //Note that we also unbind events for widgets that contains in the collapsible
+        $(":not([data-role='collapsible'], [data-role='collapsible'] :not(.ui-collapsible-content *))").unbind();
 
         // Configure "sortable" behaviors
         var targets = $('.nrc-sortable-container');
@@ -136,8 +139,6 @@ $(function() {
                 $(this).append('<p class="nrc-hint-text">Drop target...</p>');
             }
         });
-    });
-    $('div:jqmData(role="page")').live('pageinit', function(e) {
         $('.adm-node').each ( function (index, node) {
             var admNode, widgetType, delegate, events,
                 delegateNode = $(node),
