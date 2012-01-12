@@ -630,11 +630,6 @@ var BWidgetRegistry = {
         template: '<select data-role="slider"><option value="%VALUE1%">%LABEL1%</option><option value="%VALUE2%">%LABEL2%</option></select>',
         // jQM generates an div next to the slider, which is the actually clicked item when users try to click the flip toggle switch.
         delegate:"next",
-        events: {
-           change: function (e) {
-               return this.ownerDocument.defaultView.handleSelect(e, this);
-           }
-        }
     },
 
     /**
