@@ -79,10 +79,16 @@ function loadOutline(container) {
     }
 
     function admDesignResetCallback(event) {
+        dumplog("admDesignResetCallback");
+        var $admDesign = ADM.getDesignRoot();
+        $admDesign.bind("modelUpdated", admModelUpdatedCallback);
         renderOutlineView();
     }
 
     function renderOutlineView() {
+        var page, selected,
+            $tree = $("#outline_content");
+
         function  setSelected(item) {
             var UID = $(item).attr('adm-uid');
             dumplog("Outline.js: setSelected is called. UID is " + UID);
@@ -172,9 +178,6 @@ function loadOutline(container) {
             }
             return;
         }
-
-        var page, selected,
-            $tree = $("#outline_content");
 
         $tree.empty();
         $('<ul id="pageList"></ul>').appendTo($tree);
