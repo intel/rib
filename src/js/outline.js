@@ -64,7 +64,7 @@ function loadOutline(container) {
             .addClass('ui-selected');
 
         currentNode = nodeInOutline;
-        while (currentNode && currentNode.html() !== rootNode.html())  {
+        while (currentNode.length && currentNode.html() !== rootNode.html())  {
             $(currentNode).show();
             currentNode = currentNode.parent();
         }
