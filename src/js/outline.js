@@ -34,167 +34,163 @@ function loadOutline(container) {
     ADM.bind("designReset", admDesignResetCallback);
     ADM.bind("selectionChanged", admSelectionChangedCallback);
     ADM.bind("activePageChanged",admActivePageChangedCallback);
-}
 
-function admSelectionChangedCallback(event) {
-    var node
-    // Make sure we show the page as selected if no node is selected
-    if (event === null || event.node === null) {
-        node = ADM.getDesignRoot().findNodeByUid(ADM.getSelected());
-        if (node === null || node === undefined) {
-            node = ADM.getActivePage();
+    //internal event handler
+    function admSelectionChangedCallback(event) {
+        var node, rootNode, nodeInOutline, currentNode;
+        // Make sure we show the page as selected if no node is selected
+        if (event === null || event.node === null) {
+            node = ADM.getDesignRoot().findNodeByUid(ADM.getSelected());
             if (node === null || node === undefined) {
-                return false;
+                node = ADM.getActivePage();
+                if (node === null || node === undefined) {
+                    return false;
+                }
             }
+        } else {
+            node = event.node;
         }
-    } else {
-        node = event.node;
+
+        //deative state of selected before
+        $('#outline-panel').find('.ui-state-active')
+            .removeClass('ui-state-active');
+        $('#outline-panel').find('.ui-selected')
+            .removeClass('ui-selected');
+
+        //find this node in outline pane
+        rootNode = $("#pageList");
+        nodeInOutline = $(rootNode).find("#Outline-"+node.getUid()+" > a");
+        $(nodeInOutline).addClass('ui-state-active')
+            .addClass('ui-selected');
+
+        currentNode = nodeInOutline;
+        while (currentNode && currentNode.html() !== rootNode.html())  {
+            $(currentNode).show();
+            currentNode = currentNode.parent();
+        }
     }
 
-    dumplog(node.getUid() + " is selected");
-    //deative state of selected before
-    $('#outline-panel').find('.ui-state-active')
-                       .removeClass('ui-state-active');
-    $('#outline-panel').find('.ui-selected')
-                       .removeClass('ui-selected');
-
-    //find this node in outline pane
-    var rootNode = $("#pageList");
-    var nodeInOutline = $(rootNode).find("#Outline-"+node.getUid()+" > a");
-    $(nodeInOutline).addClass('ui-state-active')
-        .addClass('ui-selected');
-
-    var currentNode = nodeInOutline;
-    while (currentNode && currentNode.html() !== rootNode.html())  {
-        $(currentNode).show();
-        currentNode = currentNode.parent();
-    }
-}
-
-function admActivePageChangedCallback(event) {
-    dumplog("in outline.js: activePageChangedCallback");
-    var activePage = event.page;
-    renderOutlineView();
-}
-
-function admModelUpdatedCallback(event) {
-    dumplog("admModelUpdatedCallback");
-    renderOutlineView();
-}
-
-function admDesignResetCallback(event) {
-    dumplog("admDesignResetCallback");
-    renderOutlineView();
-}
-
-function renderOutlineView() {
-    var page, selected,
-        $tree = $("#outline_content");
-
-    function  setSelected(item) {
-        var UID = $(item).attr('adm-uid');
-        dumplog("Outline.js: setSelected is called. UID is " + UID);
-
-        // find whether selected widget in current active page
-        var currentNode = ADM.getDesignRoot().findNodeByUid(UID);
-        while (currentNode.getType() !== "Page" && currentNode.getType() !=="Design") {
-            currentNode = currentNode.getParent();
-        }
-        if (currentNode.getType() !== "Page") {
-            dumplog("error: can't find select node's Page");
-            return;
-        }
-        if (ADM.getActivePage() !== currentNode) {
-            ADM.setActivePage(currentNode);
-        }
-
-        window.ADM.setSelected(UID);
+    function admActivePageChangedCallback(event) {
+        renderOutlineView();
     }
 
-    function render_sub(node, $container) {
-        var newItem, children, i, type, UID, isShowInOutline, widgetID,
-            label, id, $subContainer;
+    function admModelUpdatedCallback(event) {
+        renderOutlineView();
+    }
 
-        if (!(node instanceof ADMNode)) {
-            return;
-        }
+    function admDesignResetCallback(event) {
+        renderOutlineView();
+    }
 
-        type = node.getType();
-        UID = node.getUid();
-        isShowInOutline = node.isSelectable();
-        widgetID = type + '-' + UID;
-        label = BWidget.getDisplayLabel(type);
-        $subContainer = $container;
+    function renderOutlineView() {
+        function  setSelected(item) {
+            var UID = $(item).attr('adm-uid');
+            dumplog("Outline.js: setSelected is called. UID is " + UID);
 
-        // check current node whether can ben shown in outline pane
-        if (isShowInOutline) {
-            newItem = $('<li><a>' + label + '</a></li>')
-                          .attr('id', 'Outline-' + UID)
-                          .appendTo($container);
-
-            if (node.getChildrenCount() > 0) {
-                newItem.addClass('folder')
-                       .append('<ul id="' + widgetID + '"></ul>');
+            // find whether selected widget in current active page
+            var currentNode = ADM.getDesignRoot().findNodeByUid(UID);
+            while (currentNode.getType() !== "Page" && currentNode.getType() !=="Design") {
+                currentNode = currentNode.getParent();
+            }
+            if (currentNode.getType() !== "Page") {
+                dumplog("error: can't find select node's Page");
+                return;
+            }
+            if (ADM.getActivePage() !== currentNode) {
+                ADM.setActivePage(currentNode);
             }
 
-            if (type === "Page") {
-                //set page id
-                id = node.getProperty('id');
-                newItem.find("a").text(label + ' (id: ' + id + ')');
+            window.ADM.setSelected(UID);
+        }
 
-                if ((node.getChildrenCount() == 1) &&
-                    (node.getChildren()[0].getType() === "Content") &&
-                    (node.getChildren()[0].getChildrenCount() === 0)) {
-                    dumplog("only content in page");
-                    newItem.toggleClass('folder')
-                           .remove('ul');
+        function render_sub(node, $container) {
+            var newItem, children, i, type, UID, isShowInOutline, widgetID,
+                label, id, $subContainer;
+
+            if (!(node instanceof ADMNode)) {
+                return;
+            }
+
+            type = node.getType();
+            UID = node.getUid();
+            isShowInOutline = node.isSelectable();
+            widgetID = type + '-' + UID;
+            label = BWidget.getDisplayLabel(type);
+            $subContainer = $container;
+
+            // check current node whether can ben shown in outline pane
+            if (isShowInOutline) {
+                newItem = $('<li><a>' + label + '</a></li>')
+                    .attr('id', 'Outline-' + UID)
+                    .appendTo($container);
+
+                if (node.getChildrenCount() > 0) {
+                    newItem.addClass('folder')
+                        .append('<ul id="' + widgetID + '"></ul>');
+                }
+
+                if (type === "Page") {
+                    //set page id
+                    id = node.getProperty('id');
+                    newItem.find("a").text(label + ' (id: ' + id + ')');
+
+                    if ((node.getChildrenCount() == 1) &&
+                        (node.getChildren()[0].getType() === "Content") &&
+                        (node.getChildren()[0].getChildrenCount() === 0)) {
+                             dumplog("only content in page");
+                            newItem.toggleClass('folder')
+                                   .remove('ul');
+                    }
+                }
+
+                newItem.attr('adm-uid',UID);
+
+                // add click handler
+                newItem.click(function(e) {
+                    $(this).toggleClass("close")
+                    .children("ul").toggle();
+                e.stopPropagation();
+                });
+
+                newItem.find("a").click(function(e) {
+                    var that =$(this).parent();
+                    setSelected(that);
+                    e.stopPropagation();
+                    return false;  // Stop event bubbling
+                });
+
+                if (node.getChildrenCount() > 0) {
+                    $subContainer = $container.find("#" + widgetID);
                 }
             }
 
-            newItem.attr('adm-uid',UID);
-
-            // add click handler
-            newItem.click(function(e) {
-                $(this).toggleClass("close")
-                       .children("ul").toggle();
-                e.stopPropagation();
-            });
-
-            newItem.find("a").click(function(e) {
-                var that =$(this).parent();
-                setSelected(that);
-                e.stopPropagation();
-                return false;  // Stop event bubbling
-            });
-
             if (node.getChildrenCount() > 0) {
-                $subContainer = $container.find("#" + widgetID);
+                children = node.getChildren();
+                for (i = 0; i < children.length; i++) {
+                    render_sub(children[i], $subContainer);
+                }
             }
+            return;
         }
 
-        if (node.getChildrenCount() > 0) {
-            children = node.getChildren();
-            for (i = 0; i < children.length; i++) {
-                render_sub(children[i], $subContainer);
-            }
+        var page, selected,
+            $tree = $("#outline_content");
+
+        $tree.empty();
+        $('<ul id="pageList"></ul>').appendTo($tree);
+        for ( var i = 0; i < ADM.getDesignRoot().getChildrenCount(); i++) {
+            page = ADM.getDesignRoot().getChildren()[i];
+            render_sub(page, $("#pageList"));
         }
-        return;
-    }
 
-    $tree.empty();
-    $('<ul id="pageList"></ul>').appendTo($tree);
-    for ( var i = 0; i < ADM.getDesignRoot().getChildrenCount(); i++) {
-        page = ADM.getDesignRoot().getChildren()[i];
-        render_sub(page, $("#pageList"));
+        // Now make sure the selected node is properly identified
+        selected = ADM.getDesignRoot().findNodeByUid(ADM.getSelected()) ||
+            ADM.getActivePage();
+        if (selected) {
+            $tree.find("#Outline-"+selected.getUid()+" > a")
+                .addClass('ui-state-active')
+                .addClass('ui-selected');
+        }
+        return true;
     }
-
-    // Now make sure the selected node is properly identified
-    selected = ADM.getDesignRoot().findNodeByUid(ADM.getSelected()) ||
-                   ADM.getActivePage();
-    if (selected) {
-        $tree.find("#Outline-"+selected.getUid()+" > a")
-             .addClass('ui-state-active')
-             .addClass('ui-selected');
-    }
-    return true;
 }
