@@ -56,6 +56,11 @@ $(function() {
         // Configure "sortable" behaviors
         var targets = $('.nrc-sortable-container');
 
+        // Fixup "Collapsible" to make the content div jQM adds at runtime
+        // be a "sortable" as well
+        $('.ui-collapsible-content').addClass('nrc-sortable-container');
+        targets.add('.ui-collapsible-content');
+
         console.log("Found ["+targets.length+"] sortable targets: ");
 
         targets
@@ -135,6 +140,14 @@ $(function() {
 
         var inputs = targets.find('input');
         $(inputs).disableSelection();
+
+        // Fixup "Collapsible" to make the content div be marked as empty,
+        // not it's toplevel element
+        $('.ui-collapsible.nrc-empty').each (function () {
+            $(this).removeClass('nrc-empty')
+                   .find('.ui-collapsible-content')
+                       .addClass('nrc-empty');
+        });
 
         // Populate empty nodes with a "hint" to drop things there
         $('.nrc-empty').each( function() {
