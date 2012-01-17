@@ -1016,7 +1016,7 @@ var BWidgetRegistry = {
      */
     Collapsible: {
         parent: "Base",
-        template: '<div data-role="collapsible" data-collapsed="false"><h1>%HEADING%</h1></div>',
+        template: '<div data-role="collapsible"><h1>%HEADING%</h1></div>',
         newGroup: true,
         properties: {
             // NOTE: Removed "size" (h1 - h6) for the same reason we don't
@@ -1044,6 +1044,20 @@ var BWidgetRegistry = {
                 deny: "Collapsible"
             }
         ],
+        delegate: function (domNode, admNode) {
+            var toggleCollapse = function (e){
+                var selected = (e.node === admNode || e.node && admNode.findNodeByUid(e.node.getUid()))? true: false;
+                domNode.find('.ui-collapsible-content').toggleClass('ui-collapsible-content-collapsed', !selected);
+                domNode.find('.ui-icon').toggleClass('ui-icon-plus', !selected);
+                domNode.find('.ui-icon').toggleClass('ui-icon-minus', selected);
+            },
+            e = {};
+
+            e.node = ADM.getDesignRoot().findNodeByUid(ADM.getSelected());
+            toggleCollapse(e);
+            ADM.bind("selectionChanged", toggleCollapse);
+            return domNode;
+        },
     },
 
     /**
