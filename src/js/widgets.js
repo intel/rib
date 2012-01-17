@@ -1047,9 +1047,7 @@ var BWidgetRegistry = {
         delegate: function (domNode, admNode) {
             var toggleCollapse = function (e){
                 var selected = (e.node === admNode || e.node && admNode.findNodeByUid(e.node.getUid()))? true: false;
-                domNode.find('.ui-collapsible-content').toggleClass('ui-collapsible-content-collapsed', !selected);
-                domNode.find('.ui-icon').toggleClass('ui-icon-plus', !selected);
-                domNode.find('.ui-icon').toggleClass('ui-icon-minus', selected);
+                domNode.trigger(selected ? 'expand' : 'collapse');
             },
             e = {};
 
