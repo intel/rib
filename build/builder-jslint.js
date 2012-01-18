@@ -20,6 +20,7 @@ var print = require("sys").print,
 		"src/js/generate.js",
 		"src/js/preview.js",
 		"src/js/outline.js",
+		"src/js/pageTemplate.js",
         ],
         options = {
 		plusplus: false,
