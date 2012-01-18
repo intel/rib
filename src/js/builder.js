@@ -1263,14 +1263,20 @@ $(function() {
             logit("Warning: tried to remove an invalid  page");
             return false;
         }
-        //delete Current Page node from ADM
+        //if current page is the last page, we will create a new page which
+        //has the same template as current one
+        if ($admDesign.getChildren().length === 1) {
+            var newPage = createNewPage($admDesign, "last");
+            if (!newPage) {
+                logit("Warning: create new page failed");
+                return false;
+            }
+        }
+
+        //delete Current Page node from design
         ADM.removeChild(currentPage.getUid());
         //active the first page from left pages
-        if ($admDesign.getChildren().length > 0) {
-            ADM.setActivePage($admDesign.getChildren()[0]);
-        } else {
-            logit("there is no page left");
-        }
+        ADM.setActivePage($admDesign.getChildren()[0]);
         updatePageZone();
         return true;
     },
