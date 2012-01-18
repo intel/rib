@@ -71,6 +71,14 @@ function loadOutline(container) {
     }
 
     function admActivePageChangedCallback(event) {
+        if (!event.page || event.page === undefined) {
+            return;
+        }
+
+        if (event.page.getUid() === ADM.getActivePage()) {
+            return;
+        }
+
         renderOutlineView();
     }
 
