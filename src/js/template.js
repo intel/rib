@@ -207,6 +207,12 @@ $(function() {
         });
     });
 
+    $('div:jqmData(role="page")').live('pageshow', function(e) {
+        // Make sure selected node is visible on pageinit
+        $('.ui-selected:first').each(function () {
+            $.mobile.silentScroll($(this).offset().top);
+        });
+    });
 
     // Allow for deletion of selected widget
     $(document).keyup(function(e) {

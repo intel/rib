@@ -586,6 +586,11 @@ $(function() {
             $designContentDocument.find('.adm-node[data-uid=\''+e.uid+'\']')
                                   .not('[data-role=\'page\']')
                                   .addClass('ui-selected');
+
+            // Make sure selected node is visible on show
+            $designContentDocument.find('.ui-selected:first').each(function (){
+                this.scrollIntoViewIfNeeded();
+            });
         }
     },
 
@@ -1151,6 +1156,11 @@ $(function() {
         $("#designView").find("span").html("&#x2022;");
         $("#codeView").find("span").html("&nbsp;");
         $("#preView").find("span").html("&nbsp;");
+
+        // Make sure selected node is visible on show
+        $designContentDocument.find('.ui-selected:first').each(function () {
+            this.scrollIntoViewIfNeeded();
+        })
     },
 
     showCodeView = function () {
