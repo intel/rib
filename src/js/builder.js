@@ -733,19 +733,8 @@ $(function() {
         //        Need to convert to loading a user selected one //
         //        that is pulled from JSON (or XML or ???)       //
         // ----------------------------------------------------- //
-        page = new ADMNode('Page');
-        if ($admDesign.addChild(page)) {
-            var that;
-            that = new ADMNode('Header');
-            page.addChild(that);
-            that = new ADMNode('Content');
-            page.addChild(that);
-            that = new ADMNode('Footer');
-            page.addChild(that);
-            ADM.setActivePage(page);
-        } else {
-            console.warn('Design has no page!');
-        }
+        // use a JQM template at startup
+        createNewPage($admDesign,"JQM");
 
         getDefaultHeaders();
         getDesignHeaders();
