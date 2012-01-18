@@ -919,6 +919,13 @@ $(function() {
                     typeof attrValue === "number") {
                     // reasonable value to substitute in template
                     regEx = new RegExp('%' + p.toUpperCase() + '%', 'g');
+                    if(typeof attrValue === "string") {
+                        attrValue = attrValue.replace(/&/g, "&amp;");
+                        attrValue = attrValue.replace(/"/g, "&quot;");
+                        attrValue = attrValue.replace(/'/g, "&#39;");
+                        attrValue = attrValue.replace(/</g, "&lt;");
+                        attrValue = attrValue.replace(/>/g, "&gt;");
+                    }
                     template = template.replace(regEx, attrValue);
                 }
             }
