@@ -1243,17 +1243,9 @@ $(function() {
     },
 
     addNewPage = function () {
-        var page = ADM.createNode('Page'),
-            content = ADM.createNode('Content');
-        if (!page) {
-            logit("Warning: could not create ADM Page object");
-            return;
-        }
-        page.addChild(content);
-        $admDesign.suppressEvents(true);
-        $admDesign.addChild(page);
-        $admDesign.suppressEvents(false);
-        ADM.setActivePage(page);
+        // Open page picker dialog to select a page template
+        initPageTemplatePicker($admDesign);
+        updatePageZone();
     },
 
     deleteCurrentPage = function () {
@@ -1456,6 +1448,58 @@ $(function() {
                 }
             }
         });
+    },
+
+    initPageTemplatePicker = function(design) {
+        if (!design.instanceOf("Design")) {
+            console.log("Warning: only design node can add new page");
+            return null;
+        }
+
+        var pageTemplateDialog, newPage,
+            ptNames = ['JQM',
+            'blank'];
+
+        $("#page-dialog").remove();
+        pageTemplateDialog= $('<div id="page-dialog">' +
+                              '<p>please select page Template you want to create:' +
+                              '</p></div>');
+        // Create the selection form
+        pageTemplateDialog.append('<form><fieldset>' +
+                                  '<label for="picker">Page Template</label>' +
+                                  '<select name="ptpicker" id="ptpicker"></select>' +
+                                  '</fieldset></form>')
+                          .appendTo('body');
+
+        // Insert the list of templates
+        for (var t in ptNames) {
+            var id = ptNames[t];
+            $('<option id="'+ id +'" value="' + id + '">'+ id + '</option>')
+                .appendTo('#ptpicker',pageTemplateDialog);
+        }
+
+        // Now turn this into a jq-ui dialog
+        pageTemplateDialog.dialog({
+            autoOpen: false,
+            modal: true,
+            title: 'Page Template Picker',
+            buttons: {
+                "OK": function() {
+                    //get selected value
+                    var pageType=$("#ptpicker").find("option:selected").text();
+                    newPage = createNewPage(design, pageType);
+                    if (!newPage) {
+                        console.log("Warning: create new page failed");
+                    }
+                    ADM.setActivePage(newPage);
+                    $(this).dialog("close");
+                },
+                Cancel: function() {
+                    $(this).dialog("close");
+                }
+            }
+        });
+        pageTemplateDialog.dialog("open");
     },
 
     initThemePicker = function () {
