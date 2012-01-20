@@ -68,6 +68,10 @@ function loadOutline(container) {
             $(currentNode).show();
             currentNode = currentNode.parent();
         }
+        // Make sure selected node is visible on show
+        $('#outline-panel').find('.ui-selected:first').each(function (){
+            this.scrollIntoViewIfNeeded();
+        });
     }
 
     function admActivePageChangedCallback(event) {

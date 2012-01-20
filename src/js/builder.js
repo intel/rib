@@ -316,7 +316,6 @@ $(function() {
             // Make sure to keep the property panel height sized
             // appropriately and updated after every window resize
             fixPropertyPanelSize();
-            $(window).resize( function() { fixPropertyPanelSize(); });
 
             $.ajax({
                 type: 'GET',
@@ -718,6 +717,11 @@ $(function() {
        $propertiesPanel.height(($controlsPanel.height()*0.4));
     },
 
+    fixOutlinePanelSize = function () {
+       // Nasty hack to ensure the Outline Panel maintains 100% height
+       $('#outline-panel').height(($controlsPanel.height()));
+    },
+
     loadTemplate = function (view) {
         var page, doc, contents;
 
@@ -1093,6 +1097,10 @@ $(function() {
         // Populate outline panel of the builder UI    //
         // -------------------------------------------- //
         loadOutline($outlinePanel);
+
+        // Make sure to keep the outline panel height sized
+        // appropriately and updated after every window resize
+        fixOutlinePanelSize();
     },
 
     paletteLoadDoneCallback = function () {
@@ -1615,5 +1623,9 @@ $(function() {
     init();
     // Force window to "resize" to ensure the property and palette panes
     // get correctly positioned and sized after layout completes
+    $(window).resize( function() {
+        fixPropertyPanelSize();
+        fixOutlinePanelSize();
+    });
     $(window).trigger('resize');
 });
