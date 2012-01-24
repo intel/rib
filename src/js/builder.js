@@ -546,7 +546,7 @@ $(function() {
             $exportNoticeDialog = $("#exportNoticeDialog"),
             saveAndExportFile = function () {
                 fsUtils.write(fileName, content, function(fileEntry){
-                    fsUtils.exportToBlank(fileEntry.fullPath);
+                    fsUtils.exportToTarget(fileEntry.fullPath);
                 }, _onError, false, binary);
             };
 

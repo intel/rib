@@ -245,7 +245,7 @@ $(function() {
             text = JSON.stringify(JSObjectForADM);
 
             fsUtils.write(path, text, function(fileEntry) {
-                fsUtils.exportToBlank(fileEntry.fullPath, "Design");
+                fsUtils.exportToTarget(fileEntry.fullPath);
             }, _onError);
             return true;
         } else {

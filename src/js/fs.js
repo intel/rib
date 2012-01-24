@@ -84,6 +84,8 @@ function _onError(err) {
  */
 fsUtils = {
 
+    defaultTarget: 'export-target',
+
     /**
      * Init the sandbox file system .
      *
@@ -98,6 +100,15 @@ fsUtils = {
                         _fs = filesystem;
                         console.log("A sandbox filesystem: "+ _fs.name + " is created;");
                         console.log(_fs.name + " type: " + type + ", size: " + size );
+                        // Create a default target window and append it
+                        // to the document.body
+                        if (!$('iframe#'+fsUtils.defaultTarget).length) {
+                            $('<iframe></iframe>')
+                                .attr('id', fsUtils.defaultTarget)
+                                .css('display', 'none')
+                                .appendTo('body');
+                        }
+
                         if(success) {
                             success();
                         }
@@ -450,6 +461,33 @@ fsUtils = {
                         options = "height=200, width=500, top=10, left=10, resizable=yes";
                     try {
                         exportWindow = window.open(url, "_blank", options);
+                        if (!exportWindow) {
+                            blocked = true;
+                        }
+                    } catch(e) {
+                        blocked = true;
+                    }
+                    if (blocked) {
+                        alert("Export window was blocked!");
+                    }
+            },
+
+    /**
+     * Export file to specified target window: open the URL of the file in
+     * target window, or new, blank one, if it does not exists
+     * @param {string} target window to load the file into.
+     * @param {string} path of the exporting file.
+     *
+     */
+    exportToTarget: function (path, target) {
+                    var url = fsUtils.pathToUrl(path),
+                        blocked = false, exportWindow;
+
+                    // Allow unspecified targets by using our defaultTarget
+                    target = target || fsUtils.defaultTarget;
+
+                    try {
+                        exportWindow = window.open(url, target);
                         if (!exportWindow) {
                             blocked = true;
                         }
