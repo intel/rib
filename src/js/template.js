@@ -9,6 +9,9 @@
  */
 "use strict";
 
+// Fixes PTSDK-130: Block right-click context menu in design-view iframe
+$(document).bind('contextmenu', function(e) { e.preventDefault(); });
+
 // In order to get the very first instance of page change events,
 // the bind must occur in the jQM mobileinit event handler
 $(document).bind('mobileinit', function() {
