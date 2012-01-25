@@ -52,25 +52,37 @@ jQuery.ui.ddmanager.prepareOffsets = function (t, event) {
             return node.ownerDocument.defaultView || node.parentWindow;
         };
         var getOffsetInWindow = function (node, win) {
-            var myWin = getOwnerWindow(node);
+            var myWin = getOwnerWindow(node),
+                offset = $(node).offset(),
+                winOffSet, frameOffset, parentOffset, parentFrames = [];
             if ( myWin === win)
-                return $(node).offset();
+                return offset;
             else if (myWin === top) {
-                // win is a child of myWin(top), so we caculate the offset of win
-                //in related to myWin and substract it.
-                var offset = $(node).offset();
-                var winOffSet = getOffsetInWindow(win.document.documentElement, myWin);
-                return { left: offset.left - winOffSet.left, top: offset.top - winOffSet.top};
+                // win is a child of myWin(top), so we caculate the offset
+                // of win in related to myWin and substract it.
+                winOffSet = getOffsetInWindow(win.document.documentElement,
+                                              myWin);
+                offset.left -= winOffSet.left;
+                offset.top -= winOffSet.top;
+                return offset;
             }
             else {
-                //find myWin in its parent as an frame element and get the offset
-                var parentFrames = $('iframe, frame', myWin.parent.document);
+                // find myWin in its parent as an frame element and get the
+                // offset
+                parentFrames = $('iframe, frame', myWin.parent.document);
                 for ( var frame in parentFrames) {
                     if (parentFrames[frame].contentWindow === myWin) {
-                        var offset = $(node).offset();
-                        var frameTagOffset = $(parentFrames[frame]).offset();
-                        var parentOffsetInWindow = getOffsetInWindow(myWin.parent.document.documentElement, win);
-                        return { left: offset.left + frameTagOffset.left + parentOffsetInWindow.left, top: offset.top + frameTagOffset.top + parentOffsetInWindow.top };
+                        offset = $(node).offset(),
+                        frameOffset = $(parentFrames[frame]).offset(),
+                        parentOffset = getOffsetInWindow(
+                                       myWin.parent.document.documentElement,
+                                       win);
+
+                        offset.left += frameOffset.left + parentOffset.left;
+                        offset.top += frameOffset.top + parentOffset.top;
+                        offset.left -= myWin.scrollX;
+                        offset.top -= myWin.scrollY;
+                        return offset;
                     }
                 }
             }
