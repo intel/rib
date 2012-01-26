@@ -1,7 +1,10 @@
 {
-   "HVGA":   { "width": "320",  "height": "480" },
-   "QVGA":   { "width": "240",  "height": "320" },
-   "WQVGA":  { "width": "240",  "height": "480" },
-   "WSVGA":  { "width": "1024", "height": "600" },
-   "WVGA":   { "width": "480",  "height": "800" }
+   "DVGA Landscape":  { "width": "960",  "height": "640" },
+   "DVGA Portrait":   { "width": "640",  "height": "960" },
+   "HVGA Landscape":  { "width": "480",  "height": "320" },
+   "HVGA Portrait":   { "width": "320",  "height": "480" },
+   "WSVGA Landscape": { "width": "1024", "height": "600" },
+   "WSVGA Portrait":  { "width": "600", "height": "1024" },
+   "WVGA Landscape":  { "width": "800",  "height": "480" },
+   "WVGA Portrait":   { "width": "480",  "height": "800" }
 }
