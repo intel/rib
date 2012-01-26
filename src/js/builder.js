@@ -337,7 +337,8 @@ $(function() {
                     var $devicesMenu = $("#devices-sub-menu").next();
                     $.each(data, function (key, val) {
                         var li = $('<li>');
-                        var a = $('<a id="'+ key + '">' + key + '(' + val.width + 'x' + val.height + ')</a>');
+                        var a = $('<a id="'+ key + '">' + key + ' (' +
+                                  val.width + 'x' + val.height + ')</a>');
                         li.append(a);
                         $devicesMenu.append(li);
                         a.data("device-data", val);
