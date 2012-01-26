@@ -496,6 +496,11 @@ $(function() {
             // ---------------------------------------------------- //
             window.addEventListener('message', designViewMessageHandler, false);
 
+            // Fixes PTSDK-130: Block right-click context menu in code and
+            // preview div wrappers
+            $("#preview-frame-wrapper, #code-area")
+                .bind('contextmenu', function(e) { e.preventDefault(); });
+
             // ------------------------------------------- //
             // Style and activate the control or outline   //
             // panel handle for hiding/showing the palette,//
@@ -1091,6 +1096,8 @@ $(function() {
             if (ADM.getActivePage())
                 setPreviewPage(ADM.getActivePage().getProperty('id'));
         });
+        // Fixes PTSDK-130: Block right-click context menu in preview iframe
+        $(doc).bind('contextmenu', function(e) { e.preventDefault(); });
     },
 
     isInDesignView = function (el) {
