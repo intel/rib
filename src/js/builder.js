@@ -334,19 +334,37 @@ $(function() {
                 url: "src/assets/devices.json",
                 dataType: 'json',
                 success: function(data) {
-                    var $devicesMenu = $("#devices-sub-menu").next();
+                    var $devicesMenu = $("#devices-sub-menu").next(),
+                        first = true;
                     $.each(data, function (key, val) {
-                        var li = $('<li>');
-                        var a = $('<a id="'+ key + '">' + key + ' (' +
-                                  val.width + 'x' + val.height + ')</a>');
+                        var li, a, bullet = "&nbsp;";
+                        if (first) {
+                            // set initial default
+                            console.log("DATA: ", val);
+                            $designView.attr(val);
+                            $("#preview-frame").attr(val);
+                            bullet = "&#x2022;";
+                            first = false;
+                        }
+                        li = $('<li>');
+                        a = $('<a id="'+ key + '">' + 
+                              '<span class="space">' + bullet + '</span>' +
+                              key + ' (' +
+                              val.width + 'x' + val.height + ')</a>');
                         li.append(a);
                         $devicesMenu.append(li);
                         a.data("device-data", val);
                         a.click( function () {
-                           var data = $(this).data("device-data");
-                           var $previewFrame = $("#preview-frame");
-                           $designView.attr(data);
-                           $previewFrame.attr(data);
+                            var data = $(this).data("device-data");
+                            var $previewFrame = $("#preview-frame");
+                            $designView.attr(data);
+                            $previewFrame.attr(data);
+                            $(this).closest("ul")
+                                .find("span.space")
+                                .html("&nbsp;");
+                            $(this).find("span.space")
+                                .html("&#x2022;");
+
                         });
                     });
                 },
