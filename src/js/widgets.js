@@ -761,7 +761,50 @@ var BWidgetRegistry = {
                 htmlAttribute: "data-theme"
             }
         },
-        template: '<input type="radio"><label for="%ID%">%LABEL%</label>',
+        template: function (node) {
+            //var prop, code = $('<div data-role="header"><h1></h1></div>');
+            var prop, label, code = $('<input type="radio"><label></label>');
+
+            // always include id property on input
+            code.filter('input').attr("id", node.getProperty("id"));
+
+            // don't write value if it's using the default
+            prop = node.getProperty("value");
+            if (prop !== node.getPropertyDefault("value")) {
+                code.filter('input').attr("value", prop);
+            }
+
+            // don't write checked if it's using the default
+            prop = node.getProperty("checked");
+            if (prop !== node.getPropertyDefault("checked")) {
+                code.filter('input').attr("checked", prop);
+            }
+
+            // don't write data-theme if it's using the default
+            prop = node.getProperty("theme");
+            if (prop !== node.getPropertyDefault("theme")) {
+                code.filter('input').attr("data-theme", prop);
+            }
+
+            // generate a "name" property for first child of ControlGroup
+            if (!node.getParent().getChildrenCount()) {
+                code.filter('input').attr("name", node.getProperty("id"));
+            } else {
+                code.filter('input').attr("name",
+                          node.getParent().getChildren()[0].getProperty("id"));
+            }
+
+            // apply props to associated label
+            label = code.next();
+
+            // always add "for" attribute to label
+            label.attr('for', node.getProperty("id"));
+
+            // always include label property as inner text
+            label.text(node.getProperty("label"));
+
+            return code;
+        },
     },
 
     /**
