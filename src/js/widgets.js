@@ -1041,7 +1041,7 @@ var BWidgetRegistry = {
         properties: {
             subtype: {
                 type: "string",
-                options: [ "a", "b", "c", "d" ],
+                options: [ "a", "b", "c", "d", "e" ],
                 defaultValue: "a",
             },
         },
