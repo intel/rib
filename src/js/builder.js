@@ -340,8 +340,6 @@ $(function() {
                         var li, a, bullet = "&nbsp;";
                         if (first) {
                             // set initial default
-                            console.log("DATA: ", val);
-                            $designView.attr(val);
                             $("#preview-frame").attr(val);
                             bullet = "&#x2022;";
                             first = false;
@@ -357,7 +355,6 @@ $(function() {
                         a.click( function () {
                             var data = $(this).data("device-data");
                             var $previewFrame = $("#preview-frame");
-                            $designView.attr(data);
                             $previewFrame.attr(data);
                             $(this).closest("ul")
                                 .find("span.space")
@@ -547,6 +544,9 @@ $(function() {
                                          ADM.setActivePage(node);
                                      }
                                  });
+
+            // Ensure DesignView is show initially
+            showDesignView();
         },
 
 /*
@@ -1268,12 +1268,13 @@ $(function() {
     },
 
     showDesignView = function () {
-        $('#design-view').show('_default', toggleControlsEnabled);
+        $('#design-view').show(0, toggleControlsEnabled);
         $('#code-area').hide();
         $('#preview-frame-wrapper').hide();
         $("#designView").find("span").html("&#x2022;");
         $("#codeView").find("span").html("&nbsp;");
         $("#preView").find("span").html("&nbsp;");
+        $("#devices-sub-menu").hide();
 
         // Make sure selected node is visible on show
         $designContentDocument.find('.ui-selected:first').each(function () {
@@ -1283,22 +1284,24 @@ $(function() {
 
     showCodeView = function () {
         $('#code-area').height($('#content-panel').height());
-        $('#design-view').hide('_default', toggleControlsEnabled);
+        $('#design-view').hide(0, toggleControlsEnabled);
         $('#code-area').show();
         $('#preview-frame-wrapper').hide();
         $("#designView").find("span").html("&nbsp;");
         $("#codeView").find("span").html("&#x2022;");
         $("#preView").find("span").html("&nbsp;");
+        $("#devices-sub-menu").hide();
     },
 
     showPreView = function () {
         $('#preview-frame-wrapper').height($('#content-panel').height());
-        $('#design-view').hide('_default', toggleControlsEnabled);
+        $('#design-view').hide(0, toggleControlsEnabled);
         $('#code-area').hide();
         $('#preview-frame-wrapper').show();
         $("#designView").find("span").html("&nbsp;");
         $("#codeView").find("span").html("&nbsp;");
         $("#preView").find("span").html("&#x2022;");
+        $("#devices-sub-menu").show();
     },
 
     toggleOutlineView = function() {

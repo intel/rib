@@ -237,6 +237,7 @@ hr.menu-separator {
     min-width: 100%;
 }
 #preview-frame-wrapper {
+    overflow: auto;
     width: 100%;
     border: 0px;
     margin: 0px;
