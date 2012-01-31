@@ -12,103 +12,38 @@ PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
  *
 -->
 <html>
-<head>
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-<meta http-equiv="cache-control" content="no-cache">
-<meta http-equiv="Origin" content="*">
-<title>NRC Gui Builder</title>
-<link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/base/jquery-ui.css" />
-<link rel="stylesheet" type="text/css" href="src/css/builder.css" />
-</head>
-<body class="fullsize">
-  <div id="screen" class="vbox fullsize">
-    <div id="toolbar-panel" class="flex0 bar">
-      <ul id="main-menu" class="hmenu">
-        <li>
-          <a id="file-sub-menu">File</a>
-          <ul class="sub-menu">
-            <li><a id="loadDesign">Import</a></li>
-            <li><a id="exportToLocal">Export</a>
-              <ul id="exportFiles" class="sub-menu">
-                <li><a id="exportDesign">Design (JSON)</a></li>
-                <li><a id="exportHTML">Code (HTML)</a></li>
-                <li><a id="exportPackage">Package(zip)</a></li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-        <li>
-          <a id="view-sub-menu">View</a>
-          <ul class="sub-menu">
-            <li><a id="designView"><span class="space">&#x2022;</span>Design View</a></li>
-            <li><a id="codeView"><span class="space">&nbsp;</span>Code View</a></li>
-            <li><a id="preView"><span class="space">&nbsp;</span>Preview</a></li>
-            <li><div class='menu-separator'/></li>
-            <li><a id="outlineView"><span class="space">&#x2713;</span>Outline View</a></li>
-          </ul>
-        </li>
-        <li>
-          <a id="page-sub-menu">Page</a>
-          <ul class="sub-menu" id="pages-menu">
-            <li><a><span class="space">&nbsp;</span><label></label></a></li>
-            <li id="page-divider"><div class='menu-separator'/></li>
-            <li><a id="newpage"><span class="space">&nbsp;</span>Add Page</a></li>
-            <li><a id="removepage"><span class="space">&nbsp;</span>Delete Current Page</a></li>
-          </ul>
-        </li>
-        <li>
-          <a id="devices-sub-menu">Devices</a>
-          <ul class="sub-menu">
-          </ul>
-        </li>
-        <li>
-          <a id="debug-sub-menu">Debug</a>
-          <ul class="sub-menu">
-            <li><a id="showADMTree">ADM Tree</a></li>
-            <li><a id="reloadDesign">Reload Design View</a></li>
-            <li><a id="theme">Set Theme</a></li>
-          </ul>
-        </li>
-      </ul>
-    </div>
-    <div id="workspace-panel" class="flex1 hbox">
-      <div id="controls-panel" class="flex0 vbox">
-        <div id="palette-panel" class="flex1"></div>
-        <div style="overflow:auto;" id="properties-panel" class="flex0"></div>
-      </div>
-      <div id="controls-handle" class="flex0"><div id="handle-grip"></div></div>
-      <div id="content-panel" class="flex1 vbox">
-        <iframe id="design-view" width="100%" height="100%" class="flex1 vbox"></iframe>
-        <div id="code-area" width="100%" height="100%" class="flex1 vbox">
-            <textarea id="text-code" readonly="readonly" class="ui-helper-reset ui-widget"></textarea>
-        </div>
-        <div id="preview-frame-wrapper" align="center" width="100%" height="100%" class="ui-widget-content flex1">
-            <iframe id="preview-frame" align="middle"  width="480" height="640" class="flex0"></iframe>
-        </div>
-      </div>
-      <div id="outline-handle" class="flex0"><div id="outline-grip"></div></div>
-      <div style= "overflow:auto;"  id="outline-panel" class="flex0 vbox"></div>
-    </div>
-    <div id="status-panel" class="flex0 bar">
-      <div id="status-message"></div>
-    </div>
-  </div>
-  <input type="file" id="importFile" style="visibility:hidden" />
-<script type="text/javascript" src="lib/jquery-1.6.4.min.js"></script>
-<script type="text/javascript" src="lib/jquery-ui-1.8.16.custom.min.js"></script>
-<script type="text/javascript" src="lib/jquery.lame.js"></script>
-<script type="text/javascript" src="lib/json2.js"></script>
-<script type="text/javascript" src="src/js/widgets.js"></script>
-<script type="text/javascript" src="src/js/adm.js"></script>
-<script type="text/javascript" src="src/js/palette.js"></script>
-<script type="text/javascript" src="src/js/pageTemplate.js"></script>
-<script type="text/javascript" src="src/js/properties.js"></script>
-<script type="text/javascript" src="src/js/outline.js"></script>
-<script type="text/javascript" src="src/js/fs.js"></script>
-<script type="text/javascript" src="src/js/serialize.js"></script>
-<script type="text/javascript" src="src/js/builder.js"></script>
-<script type="text/javascript" src="lib/beautify.js"></script>
-<script type="text/javascript" src="lib/beautify-html.js"></script>
-<script type="text/javascript" src="lib/jszip.js"></script>
-</body>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+        <meta http-equiv="cache-control" content="no-cache">
+        <meta http-equiv="Origin" content="*">
+        <link rel="stylesheet" type="text/css" href="src/css/jquery-ui.css" />
+        <link rel="stylesheet" type="text/css" href="src/css/builder.css" />
+        <link rel="stylesheet" type="text/css" href="src/css/panel.css" />
+    </head>
+    <body class="vbox fullsize">
+        <input type="file" id="importFile" style="visibility:hidden" />
+        <script src="lib/jquery-1.6.4.min.js"></script>
+        <script src="lib/jquery-ui-1.8.16.custom.min.js"></script>
+        <script src="lib/json2.js"></script>
+        <script src="src/js/widgets.js"></script>
+        <script src="src/js/adm.js"></script>
+        <script src="src/js/palette.js"></script>
+        <script src="src/js/pageTemplate.js"></script>
+        <script src="src/js/properties.js"></script>
+        <script src="src/js/fs.js"></script>
+        <script src="src/js/serialize.js"></script>
+<!-- New stuff from here ... -->
+        <script src="src/js/jquery-workarounds.js"></script>
+        <script src="src/js/views/project.js"></script>
+        <script src="src/js/views/layout.js"></script>
+        <script src="src/js/views/code.js"></script>
+        <script src="src/js/views/live.js"></script>
+        <script src="src/js/views/outline.js"></script>
+        <script src="src/js/panel.js"></script>
+        <script src="src/js/main.js"></script>
+<!-- ... to here -->
+        <script src="lib/beautify.js"></script>
+        <script src="lib/beautify-html.js"></script>
+        <script src="lib/jszip.js"></script>
+    </body>
 </html>
