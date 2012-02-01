@@ -19,16 +19,10 @@ P2 - consider validating widget registry entries on startup
 
 [Design View]
 =============
-
-P1 - When you drag a new item from the palette, it should be displayed in the
-     canvas as you drag around. Worst case, maybe insert one and pick it up
-     and use it as the draggable? (PTSDK-108)
-
 P2 - Make tools/panels movable to "dock" positions
-
-P3 - Add visual page picker (not a separate dialog).
-  * Could be in the toolbar, or a vertical "palette" on the right of
-    the screen
+     - Not necessarily true flexible docking, but Shane is working on a scheme
+       to at least give us flexibility in fixed pane layouts, resizable in one
+       dimension
 
 P2 - Make all DOM interactions into a "framework" class with well
   defined APIs for things like:
@@ -46,16 +40,15 @@ P2 - Make all DOM interactions into a "framework" class with well
   * Flip toggle switch widget in the design view cannot be selected.
     - Update 1/3/12: Selectable but ugly and clicks fall through to it
   * The option widget within a select menu does not show correctly in the design view.
+    - New design is to make options a property of select
 
 [FileIO]
 ========
-
-P2 - Implement File view/browser for HTML5 localstorage contents
-   * In file-manager branch, on hold pending UX feedback
+- See new project management features in UX design, and PTSDK-222 thru PTSDK-232,
+  especially PTSDK-224
 
 [General]
 =========
-
 P2 - Rename template.js to something more appropriate for what it actually
   does, which is handling the embedded design view contents styling and
   behaviors in the framework context as opposed to the GUI Builder JS/CSS
@@ -65,11 +58,6 @@ P1 - Separate "controller" and "design view" logic in js/builder.js.  For
   example, split it into two files... and make them more object oriented
 
 P2 - Start saving context for UI states, preferences, current design, etc...
-
-P3 - Menu should perhaps be dismissed when we click an option
-
-P2 - Make a "developer" setting somewhere
-   - Show Debug menu only when developer mode is on
 
 P3 - App title is currently always "title" which can't be changed; perhaps
      this can just be removed, or made blank -- or it should be exposed as a
@@ -91,9 +79,6 @@ P1 - Convert palette.json and palette.js to be usable for BWidget objects
     in widgets.js
   * Button, TextInput and others should migrate to a JSON format
 
-P1 - Start adding Tizen "win set" framework widgets to the palette JSON
-  * Work has begun in a web-ui-fw branch
-
 P2 - Add additional jQM widgets to the palette JSON:
   * Password Input
   * Validated Inputs (number, email, url, telephone, etc.)
@@ -103,16 +88,8 @@ P2 - Convert the palette to a "palette.d" format, where new, custom palettes
   can be added by simply adding new files into that dir.  Needs some high
   level design documentation.
 
-P1 - Visual cleanup, try making the widget boxes constant width, maybe two wide
-  with a smaller font so they'll fit? Ask UX team for a better default icon,
-  and maybe a set of icons.
-
 [Properties]
 ============
-P2 - Properties pane header text should have some margin from palette
-     - Apparently the "jQuery Mobile Widgets" button is covering part of it
-
-P2 - Only display the (uid=92) when in "developer mode" (see [General])
 
 [Serialize]
 ===========
@@ -129,9 +106,6 @@ P2 - Add a "template picker" at startup and pre-populate the content area with
 P1 - Provide real UX icons for widgets
 P2 - Perhaps display placeholder text in TextInput to guide user
      (e.g. Enter hint text here) -- but only in design canvas
-P2 - Very uncommon to actual set TextInput's "value" to a hard-coded initial
-     state; we should consider removing the property (for now I've at least
-     moved it to the bottom of the TextInput properties)
 P3 - Someday we might want to distinguish between the order properties are
      listed in properties pane and the order they are written in codegen
 P3 - Could make form elements based on a common FormElement to inherit
@@ -146,7 +120,6 @@ P2 - Add the ability to insert simple HTML at any point in the design:
 
 [Code View]
 ===========
-P2 - Color syntax highlighting would be highly desirable (PTSDK-121)
 
 [Preview]
 =========
