@@ -285,6 +285,12 @@
                 });
             }
 
+            $('#property_content').children().last()
+                .append('<button id="delete">Delete</button>');
+            $('#delete').click(function() {
+                window.parent.ADM.removeChild(node.getUid());
+            });
+
             $('table','#property_content').attr({ 'cellspacing': '0' });
             $('th:odd, td:odd','#property_content')
                 .css({ 'border-top': '1px solid black',
