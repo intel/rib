@@ -1299,13 +1299,3 @@ ADMNode.prototype.setProperty = function (property, value) {
     }
     return true;
 };
-
-/**
- * Gets the template defined for this object. Currently this is based only on
- * the widget type, not specific to this instance.
- *
- * @return {String} The template defined for this widget type.
- */
-ADMNode.prototype.getTemplate = function () {
-    return BWidget.getTemplate(this.getType());
-};
