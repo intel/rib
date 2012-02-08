@@ -18,7 +18,272 @@
 /*******************************************************
  * General functions for two directions
  ******************************************************/
-var DEBUG = true;
+var DEBUG = true,
+    blockModelUpdated = false,
+    blockActivePageChanged = false,
+    xmlserializer = new XMLSerializer(),
+    generateHTML = function () {
+        var doc = constructNewDocument(getDefaultHeaders());
+
+        serializeADMSubtreeToDOM(ADM.getDesignRoot(),
+                                 $(doc).find('body'),
+                                 null); // No renderer used here
+        return style_html(xmlserializer.serializeToString(doc),
+                          {
+                              'max_char': 80,
+                              'unformatted': ['a', 'h1', 'script', 'title']
+                          });
+    },
+
+    serializeADMNodeToDOM = function (node, domParent) {
+        var uid, type, pid, selector,
+            parentSelector = 'body',
+            parentNode = null,
+            template, props, id,
+            selMap = {},  // maps selectors to attribute maps
+            attrName, attrValue, propDefault,
+            widget, regEx, wrapper;
+
+        // Check for valid node
+        if (node === null || node === undefined ||
+            !(node instanceof ADMNode)) {
+            return null;
+        }
+
+        template = BWidget.getTemplate(node.getType());
+
+        // 1. Regenerating the entire Design, re-create entire document
+        if (node.instanceOf('Design')) {
+            return null;
+        }
+
+        uid = node.getUid();
+        type = node.getType();
+        selector = '.adm-node[data-uid=\''+uid+'\']';
+
+        if (!node.instanceOf('Page') && !node.instanceOf('Design')) {
+            pid = node.getParent().getUid();
+            parentSelector = '.adm-node[data-uid=\''+pid+'\']';
+        }
+
+        // Find the parent element in the DOM tree
+        if (domParent) {
+            parentNode = $(domParent);
+        } else {
+            parentNode = $designContentDocument.find(parentSelector);
+        }
+
+        // Find the parent element of this node in the DOM tree
+        if (parentNode === undefined || parentNode === null ||
+            parentNode.length < 1) {
+            // No sense adding it to the DOM if we can't find it's parent
+            console.info(parentSelector+' not found in Design View');
+        }
+
+        // 2. Remove this node in existing document, if it exists
+        $(selector,parentNode).remove();
+
+        // Ensure we have at least something to use as HTML for this item
+        if (template === undefined || template === '') {
+            console.warn('Missing template for ADMNode type: '+type+
+                            '.  Trying defaults...');
+            template = defaultTemplates[type];
+            // If no default exists, we must error out
+            if (template === undefined || template === '') {
+                console.error('No template exists for ADMNode type: '+type);
+                return null;
+            }
+        }
+
+        // The ADMNode.getProperties() call will trigger a modelUpdated
+        // event due to any property being set to autogenerate
+        node.suppressEvents(true);
+        node.getDesign().suppressEvents(true);
+
+        blockModelUpdated = true;
+        props = node.getProperties();
+        id = node.getProperty('id');
+        blockModelUpdated = false;
+
+        if (typeof template === "function") {
+            widget = template(node);
+        }
+        else {
+            if (typeof template === "object") {
+                template = template[props["type"]];
+            }
+
+            // Apply any special ADMNode properties to the template before we
+            // create the DOM Element instance
+            for (var p in props) {
+                attrValue = node.getProperty(p);
+
+                switch (p) {
+                case "type":
+                    break;
+                default:
+                    attrName = BWidget.getPropertyHTMLAttribute(type, p);
+                    if (attrName) {
+                        propDefault = BWidget.getPropertyDefault(type, p);
+
+                        if (attrValue !== propDefault ||
+                            BWidget.getPropertyForceAttribute(type, p)) {
+                            selector = BWidget.getPropertyHTMLSelector(type, p);
+                            if (!selector) {
+                                // by default apply attributes to first element
+                                selector = ":first";
+                            }
+
+                            if (!selMap[selector]) {
+                                // create a new select map entry
+                                selMap[selector] = {};
+                            }
+
+                            // add attribute mapping to corresponding selector
+                            selMap[selector][attrName] = attrValue;
+                        }
+                    }
+                    break;
+                }
+
+                if (typeof attrValue === "string" ||
+                    typeof attrValue === "number") {
+                    // reasonable value to substitute in template
+                    regEx = new RegExp('%' + p.toUpperCase() + '%', 'g');
+                    if(typeof attrValue === "string") {
+                        attrValue = attrValue.replace(/&/g, "&amp;");
+                        attrValue = attrValue.replace(/"/g, "&quot;");
+                        attrValue = attrValue.replace(/'/g, "&#39;");
+                        attrValue = attrValue.replace(/</g, "&lt;");
+                        attrValue = attrValue.replace(/>/g, "&gt;");
+                    }
+                    template = template.replace(regEx, attrValue);
+                }
+            }
+
+            // Turn the template into an element instance, via jQuery
+            widget = $(template);
+
+            // apply the HTML attributes
+            wrapper = $("<div>").append(widget);
+            for (selector in selMap) {
+                wrapper.find(selector)
+                    .attr(selMap[selector]);
+            }
+        }
+
+        $(parentNode).append(widget);
+
+        node.getDesign().suppressEvents(false);
+        node.suppressEvents(false);
+
+        return widget;
+    },
+
+    serializeADMSubtreeToDOM = function (node, domParent, renderer) {
+        var isContainer = false,
+            domElement;
+
+        // 1. Only handle ADMNodes
+        if (!(node instanceof ADMNode)) {
+            return;
+        }
+
+        isContainer = (node.getChildrenCount() !== 0);
+
+        // 2. Do something with this node
+        domElement = serializeADMNodeToDOM(node, domParent);
+        if (renderer !== null && domElement !== null) {
+            renderer(node, domElement);
+        }
+
+        domElement = domElement || domParent;
+
+        // 3. Recurse over any children
+        if (isContainer) {
+            var children = node.getChildren();
+            for (var i=0; i<children.length; i++) {
+                serializeADMSubtreeToDOM(children[i], domElement, renderer);
+            }
+        }
+
+        // 4. Return (anything?)
+        return;
+    };
+function constructNewDocument(headers) {
+    var doc = document.implementation.createHTMLDocument('title'),
+        head = $(doc.head),
+        tmpHead = '', i;
+
+    if (headers && headers.length > 0) {
+        for (i=0; i < headers.length; i++) {
+            if (headers[i].match('<script ')) {
+                // Need this workaround since appendTo() causes the script
+                // to get parsed and then removed from the DOM tree, meaning
+                // it will not be in any subsequent Serialization output later
+                tmpHead = head[0].innerHTML;
+                head[0].innerHTML = tmpHead+headers[i];
+            } else {
+                $(headers[i]).appendTo(head);
+            }
+        }
+    }
+
+    return doc;
+}
+function getDefaultHeaders() {
+    var $defaultHeaders = [],
+        i, props, el;
+    if ($defaultHeaders.length > 0)
+        return $defaultHeaders;
+
+    props = ADM.getDesignRoot().getProperty('metas');
+    for (i in props) {
+        // Skip design only header properties
+        if (props[i].hasOwnProperty('designOnly') && props[i].designOnly) {
+            continue;
+        }
+        el = '<meta ';
+        if (props[i].hasOwnProperty('key')) {
+            el = el + props[i].key;
+        }
+        if (props[i].hasOwnProperty('value')) {
+            el = el + '="' + props[i].value + '"';
+        }
+        if (props[i].hasOwnProperty('content')) {
+            el = el + ' content="' + props[i].content + '"';
+        }
+        el = el + '>';
+        $defaultHeaders.push(el);
+    }
+    props = ADM.getDesignRoot().getProperty('libs');
+    for (i in props) {
+        // Skip design only header properties
+        if (props[i].hasOwnProperty('designOnly') && props[i].designOnly) {
+            continue;
+        }
+        el = '<script ';
+        if (props[i].hasOwnProperty('value')) {
+            el = el + 'src="' + props[i].value + '"';
+        }
+        el = el + '></script>';
+        $defaultHeaders.push(el);
+    }
+    props = ADM.getDesignRoot().getProperty('css');
+    for (i in props) {
+        // Skip design only header properties
+        if (props[i].hasOwnProperty('designOnly') && props[i].designOnly) {
+            continue;
+        }
+        el = '<link ';
+        if (props[i].hasOwnProperty('value')) {
+            el = el + 'href="' + props[i].value + '"';
+        }
+        el = el + ' rel="stylesheet">';
+        $defaultHeaders.push(el);
+    }
+    return $defaultHeaders;
+}
 
 function dumplog(loginfo){
     if (DEBUG && (typeof loginfo === "string")){

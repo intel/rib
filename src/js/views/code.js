@@ -69,7 +69,32 @@
         },
 
         refresh: function(event, widget) {
+            var self = this, textCode;
+
             widget = widget || this;
+            self.resultHTML = generateHTML();
+            textCode = $(self.element).find('#text-code');
+
+            if (textCode.length === 0) {
+                self.element.find('*').remove();
+                textCode = $('<textarea></textarea>')
+                    .attr({'id': 'text-code',
+                           'readonly': 'readonly'})
+                    .css({ 'overflow': 'auto',
+                           'resize':  'none',
+                           'min-height': '100%',
+                           'width': '100%',
+                           'border': 0,
+                           'margin': 0,
+                           'padding': 0 });
+                self.element.append(textCode);
+                self.element.css('overflow','visible');
+                $(window).resize(function() {
+                    self.element.height($(self.element.parent()).height());
+                });
+            }
+
+            textCode.val(self.resultHTML);
         },
 
         // Private functions
@@ -104,18 +129,22 @@
 
         _designResetHandler: function(event, widget) {
             widget = widget || this;
+            widget.refresh();
         },
 
         _selectionChangedHandler: function(event, widget) {
             widget = widget || this;
+            widget.refresh();
         },
 
         _activePageChangedHandler: function(event, widget) {
             widget = widget || this;
+            widget.refresh();
         },
 
         _modelUpdatedHandler: function(event, widget) {
             widget = widget || this;
+            widget.refresh();
         },
     });
 })(jQuery);

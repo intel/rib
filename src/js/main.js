@@ -171,7 +171,7 @@
             // TODO: Get starting tab from session cookie
             container.tabs({
                 selected: 0,
-                select: $.proxy(this._tabChanged, this),
+                show: $.proxy(this._tabChanged, this),
             });
 
             // Create the navbar
@@ -219,6 +219,10 @@
                 // Show the default secondary tools (if any)
                 $('.tools-secondary .default-tools').show();
             }
+            // Ensure height of the view are the same as its parent.
+            // Also, allows child elements to expand to fill the div,
+            // necessary for proper scrolling overflowing content.
+            el.height(el.parent().height());
         },
 
         _syncViewNames: function() {
