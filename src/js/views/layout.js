@@ -195,12 +195,39 @@
         },
 
         _createPrimaryTools: function() {
-            return $('<div/>').addClass('hbox').hide()
-                .append('<button class="ui-state-default">undo</button>')
-                .append('<button class="ui-state-default">redo</button>')
-                .append('<button class="ui-state-default">cut</button>')
-                .append('<button class="ui-state-default">copy</button>')
-                .append('<button class="ui-state-default">paste</button>');
+            var doc, html, classes, selector;
+            classes = 'class="primary-tools ui-state-default"';
+            html = $('<div/>').addClass('hbox').hide()
+                .append('<button id="undo" '  + classes + '>undo</button>')
+                .append('<button id="redo" '  + classes + '>redo</button>')
+                .append('<button id="cut" '   + classes + '>cut</button>')
+                .append('<button id="copy" '  + classes + '>copy</button>')
+                .append('<button id="paste" ' + classes + '>paste</button>');
+
+            doc = $((this.element)[0].ownerDocument);
+            selector = "button.primary-tools"
+            doc.delegate(selector, "click", jQuery.proxy(function (event) {
+                var model = this.options.model;
+                if (model) {
+                    switch (event.currentTarget.id) {
+                    case "undo":
+                        model.undo();
+                        break;
+
+                    case "redo":
+                        model.redo();
+                        break;
+                    default:
+                        console.warn("Unhandled click on primary tool");
+                        break;
+                    }
+                }
+                else {
+                    console.warn("No model while attempting undo");
+                }
+            }, this));
+
+            return html;
         },
 
         _createSecondaryTools: function() {

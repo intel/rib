@@ -279,7 +279,7 @@
                         default:
                             break;
                     }
-                    node.setProperty(updated, value);
+                    ADM.setProperty(node, updated, value);
                 });
             }
 

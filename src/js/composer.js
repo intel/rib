@@ -202,7 +202,8 @@ $(function() {
                                       zones[0].cardinality!=='1') ||
                             (newParent && newParent.getType() === 'Header')) {
                             if (!node ||
-                                !node.moveNode(newParent, zones[0], idx)) {
+                                !adm.moveNode(node, newParent, zones[0],
+                                              idx)) {
                                 console.warn('Move node failed');
                             } else {
                                 debug && console.log('Moved node');

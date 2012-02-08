@@ -153,6 +153,8 @@ var ADM = {
     _design: null,
     _activePage: null,
     _selection: null,
+    _undoStack: [],
+    _redoStack: [],
 
     init: function () {
         // copy event functions from ADMEventSource
@@ -253,6 +255,9 @@ ADM.setDesignRoot = function (design) {
             ADM._design.addChild(new ADMNode("Page"));
         }
 
+        ADM._undoStack = [];
+        ADM._redoStack = [];
+
         ADM.fireEvent("designReset", { design: design });
         return true;
     }
@@ -333,7 +338,9 @@ ADM.setSelected = function (uid) {
 };
 
 /**
- * Add a child of the given type to parent
+ * Add a child of the given type to parent.
+ * Using this high-level API records the action as user-visible and part of the
+ * undo/redo stacks.
  *
  * @param {Number} parentUid The UID of the parent object in the tree.
  * @param {String} childType The widget type string for the child to add.
@@ -361,6 +368,11 @@ ADM.addChild = function (parentUid, childType, dryrun) {
         if (dryrun) {
             return true;
         }
+        ADM.transaction({
+            type: "add",
+            parent: parent,
+            child: child
+        });
         return child;
     }
     return null;
@@ -402,6 +414,12 @@ ADM.insertChildRelative = function (siblingUid, childType, offset, dryrun) {
     }
 
     if (sibling.insertChildRelative(child, offset, dryrun)) {
+        ADM.transaction({
+            type: "insertRelative",
+            sibling: sibling,
+            child: child,
+            offset: offset
+        });
         return child;
     }
     return null;
@@ -410,6 +428,8 @@ ADM.insertChildRelative = function (siblingUid, childType, offset, dryrun) {
 /**
  * Inserts new widget of childType immediately before the widget with
  * siblingUid, if found.
+ * Using this high-level API records the action as user-visible and part of the
+ * undo/redo stacks.
  *
  * @param {Number} siblingUid The UID of the existing sibling.
  * @param {String} childType The widget type of the new widget to create.
@@ -423,6 +443,8 @@ ADM.insertChildBefore = function (siblingUid, childType, dryrun) {
 /**
  * Inserts new widget of childType immediately after the widget with
  * siblingUid, if found.
+ * Using this high-level API records the action as user-visible and part of the
+ * undo/redo stacks.
  *
  * @param {Number} siblingUid The UID of the existing sibling.
  * @param {String} childType The widget type of the new widget to create.
@@ -434,13 +456,15 @@ ADM.insertChildAfter = function (siblingUid, childType, dryrun) {
 
 /**
  * Removes the child with the given UID from the design.
+ * Using this high-level API records the action as user-visible and part of the
+ * undo/redo stacks.
  *
  * @param {Number} uid The unique ID of the child to remove.
  * @param {Boolean} dryrun [Optional] True if the call should be a dry run.
  * @return {ADMNode} The removed child, or null it or its parent is not found.
  */
 ADM.removeChild = function (uid, dryrun) {
-    var design, child, parent, pageIndex, page, pages;
+    var design, child, parent, pageIndex, page, pages, rval, zone, zoneIndex;
     design = ADM.getDesignRoot();
     child = design.findNodeByUid(uid);
     if (!child) {
@@ -472,7 +496,168 @@ ADM.removeChild = function (uid, dryrun) {
             return null;
         }
     }
-    return parent.removeChild(child, dryrun);
+
+    zone = child.getZone();
+    zoneIndex = child.getZoneIndex();
+    rval = parent.removeChild(child, dryrun);
+    if (rval) {
+        ADM.transaction({
+            type: "remove",
+            parent: parent,
+            child: child,
+            zone: zone,
+            zoneIndex: zoneIndex
+        });
+    }
+    return rval;
+};
+
+/**
+ * Moves a node from its current parent to a new parent within the same design.
+ * Using this high-level API records the action as user-visible and part of the
+ * undo/redo stacks.
+ *
+ * @param {ADMNode} node The node to be moved.
+ * @param {ADMNode} newParent The new parent for this node.
+ * @param {String} zoneName The new zone for this child in the parent.
+ * @param {Number} zoneIndex [Optional] The index at which to insert the child,
+ *                           or if undefined, the default (end) location will
+ *                           be used.
+ * @param {Boolean} dryrun [Optional] True if the call should be a dry run.
+ * @return {Boolean} True if the child was moved successfully, false otherwise,
+ *                   or undefined on invalid input.
+ */
+ADM.moveNode = function (node, newParent, zoneName, zoneIndex, dryrun) {
+    var oldParent, oldZone, oldZoneIndex, rval;
+    oldParent = node.getParent();
+    oldZone = node.getZone();
+    oldZoneIndex = node.getZoneIndex();
+    rval = node.moveNode(newParent, zoneName, zoneIndex, dryrun);
+    if (rval) {
+        ADM.transaction({
+            type: "move",
+            node: node,
+            oldParent: oldParent,
+            newParent: newParent,
+            oldZone: oldZone,
+            newZone: zoneName,
+            oldZoneIndex: oldZoneIndex,
+            newZoneIndex: zoneIndex
+        });
+    }
+    return rval;
+}
+
+/**
+ * Sets the named property on the node to the given value.
+ * Using this high-level API records the action as user-visible and part of the
+ * undo/redo stacks.
+ *
+ * @param {ADMNode} node The node on which to set the property.
+ * @param {String} property The name of the property to be set.
+ * @param {Any} value The value to set for the property.
+ * @return {Boolean} True if the property was set, false if it was the wrong
+ *                   type, or undefined if the property is invalid for this
+ *                   object.
+ */
+ADM.setProperty = function (node, property, value) {
+    var rval, oldValue;
+    oldValue = node.getProperty(property);
+    rval = node.setProperty(property, value);
+    if (rval) {
+        ADM.transaction({
+            type: "propertyChange",
+            node: node,
+            property: property,
+            oldValue: oldValue,
+            value: value
+        });
+    }
+    return rval;
+}
+
+/**
+ * Saves the given transaction object at the top of the undo stack, and clears
+ * the redo stack. Such a transaction should be saved every time the content
+ * of the design tree changes. The transactions should be atomic user-level
+ * transactions, so reverting one returns the tree to a user-presentable state.
+ * If you create a new transaction object, give it a type property with a
+ * unique string, and then handle the objects in the undo() and redo()
+ * functions below.
+ *
+ * @param {Object} obj The transaction object with all the information needed
+ *                     to either revert or replay this transaction.
+ */
+ADM.transaction = function (obj) {
+    var maxUndoStack = 128;
+    if (ADM._undoStack.push(obj) > maxUndoStack) {
+        ADM._undoStack.shift();
+    }
+    ADM._redoStack = [];
+}
+
+/**
+ * Revert the last transaction recorded in the undo stack, if any. The
+ * transaction is then added to the redo stack.
+ */
+ADM.undo = function () {
+    var obj;
+    if (ADM._undoStack.length > 0) {
+        obj = ADM._undoStack.pop();
+        if (obj.type === "add") {
+            obj.parent.removeChild(obj.child);
+        }
+        else if (obj.type === "remove") {
+            obj.parent.insertChildInZone(obj.child, obj.zone, obj.zoneIndex);
+        }
+        else if (obj.type === "move") {
+            obj.node.moveNode(obj.oldParent, obj.oldZone, obj.oldZoneIndex);
+        }
+        else if (obj.type === "insertRelative") {
+            obj.sibling.getParent().removeChild(obj.child);
+        }
+        else if (obj.type === "propertyChange") {
+            // TODO: this could require deeper copy of complex properties
+            obj.node.setProperty(obj.property, obj.oldValue);
+        }
+        else {
+            console.log("Warning: Unexpected UNDO transaction");
+            return;
+        }
+        ADM._redoStack.push(obj);
+    }
+};
+
+/**
+ * Replay the last transaction recorded in the redo stack, if any. The
+ * transaction is then added to the undo stack.
+ */
+ADM.redo = function () {
+    var obj;
+    if (ADM._redoStack.length > 0) {
+        obj = ADM._redoStack.pop();
+        if (obj.type === "add") {
+            obj.parent.addChild(obj.child);
+        }
+        else if (obj.type === "remove") {
+            obj.parent.removeChild(obj.child);
+        }
+        else if (obj.type === "move") {
+            obj.node.moveNode(obj.newParent, obj.newZone, obj.newZoneIndex);
+        }
+        else if (obj.type === "insertRelative") {
+            obj.sibling.insertChildRelative(obj.child, obj.offset);
+        }
+        else if (obj.type === "propertyChange") {
+            // TODO: this could require deeper copy of complex properties
+            obj.node.setProperty(obj.property, obj.value);
+        }
+        else {
+            console.log("Warning: Unexpected REDO transaction");
+            return;
+        }
+        ADM._undoStack.push(obj);
+    }
 };
 
 /**
@@ -988,7 +1173,7 @@ ADMNode.prototype.insertChildInZone = function (child, zoneName, index,
  *                           or if undefined, the default (end) location will
  *                           be used.
  * @param {Boolean} dryrun [Optional] True if the call should be a dry run.
- * @return {Boolean} True if the child was added successfully, false otherwise,
+ * @return {Boolean} True if the child was moved successfully, false otherwise,
  *                   or undefined on invalid input.
  */
 ADMNode.prototype.moveNode = function (newParent, zoneName, zoneIndex, dryrun) {
@@ -1112,7 +1297,7 @@ ADMNode.prototype.removeChildFromZone = function (zoneName, index, dryrun) {
  * @param {Function(ADMNode)} The function to call, which takes an ADMNode.
  */
 ADMNode.prototype.foreach = function (func) {
-    var children = this.getChildren(), length, i;
+    var i, length, children = this.getChildren();
     func(this);
     if (children) {
         length = children.length;
