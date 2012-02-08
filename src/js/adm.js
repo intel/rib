@@ -1123,12 +1123,14 @@ ADMNode.prototype.foreach = function (func) {
 };
 
 /**
+ * Not intended as a public API.
  * Auto-generate this property if it is so configured in the widget registry.
  * Takes the autoGenerate prefix and appends the integer one higher than any
  * already-defined properties on widgets of the same type in this tree.
  * 
  * @param {String} The name of the property.
  * @return {String} The generated property value.
+ * @private
  */
 ADMNode.prototype.generateUniqueProperty = function (property) {
     var generate, design, myType, length, i, genLength, max, num, existing = [];
@@ -1214,11 +1216,11 @@ ADMNode.prototype.getProperty = function (property) {
  * Gets the options for the named property for this widget type.
  *
  * @param {String} The name of the requested property.
- * @return {Any} The options of the property, or undefined if the
- *               property is invalid for this object. The type returned depends
- *               on the property.
+ * @return {Any} The options of the property, or undefined if the property is
+ *               invalid for this object. The type returned depends on the
+ *               property.
  */
-ADMNode.prototype.getPropertyOptions= function (property) {
+ADMNode.prototype.getPropertyOptions = function (property) {
     return BWidget.getPropertyOptions(this.getType(), property);
 };
 
