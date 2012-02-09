@@ -65,11 +65,15 @@
         destroy: function() {
             // TODO: unbind any ADM event handlers
             $(this.element).find('.'+this.widgetName).remove();
-            this.options.tools.remove();
+            this.options.primaryTools.remove();
+            this.options.secondaryTools.remove();
         },
 
         refresh: function(event, widget) {
             widget = widget || this;
+
+            // Update the UI here...
+
         },
 
         // Private functions
@@ -101,18 +105,24 @@
 
         _designResetHandler: function(event, widget) {
             widget = widget || this;
+            widget._unbindADMEvents(this.options.model);
+            widget._bindADMEvents(ADM.getDesignRoot());
+            widget.refresh(event, widget);
         },
 
         _selectionChangedHandler: function(event, widget) {
             widget = widget || this;
+            widget.refresh(event, widget);
         },
 
         _activePageChangedHandler: function(event, widget) {
             widget = widget || this;
+            widget.refresh(event, widget);
         },
 
         _modelUpdatedHandler: function(event, widget) {
             widget = widget || this;
+            widget.refresh(event, widget);
         },
     });
 })(jQuery);
