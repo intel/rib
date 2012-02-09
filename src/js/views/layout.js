@@ -105,18 +105,22 @@
 
         _designResetHandler: function(event, widget) {
             widget = widget || this;
+            widget.refresh(event, widget);
         },
 
         _selectionChangedHandler: function(event, widget) {
             widget = widget || this;
+            widget.refresh(event, widget);
         },
 
         _activePageChangedHandler: function(event, widget) {
             widget = widget || this;
+            widget.refresh(event, widget);
         },
 
         _modelUpdatedHandler: function(event, widget) {
             widget = widget || this;
+            widget.refresh(event, widget);
         },
 
     });
