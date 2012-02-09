@@ -155,6 +155,7 @@ html, body {
     margin-bottom: 0px;
     padding-bottom: 0px;
 }
+.view { overflow: hidden; }
 .view.ui-tabs-panel { display: -webkit-box; padding: 0px; margin: 0px; }
 .view.ui-tabs-panel.ui-tabs-hide { display: none !important; }
 .view.project { }
@@ -164,7 +165,7 @@ html, body {
 .panel {
     background-color: #e4e5df;
     width: 300px;
-    min-width: 300px;
+    min-width: 10px;
 }
 .left { border-right: 1px solid rgba(0,0,0,0.3); }
 .right { border-left: 1px solid rgba(0,0,0,0.3); }

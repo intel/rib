@@ -114,10 +114,10 @@
             this.ui.projectView.find('.panel.left')
                 .panel({
                     position: 'left',
-                    maxSize: '500',
+                    maxSize: '320',
                     minSize: '160',
                 })
-                .append('<div class="tagFilterView flex1"></div>');
+                .append('<div class="tagFilterView flex1 vbox"></div>');
 
             this.ui.layoutView = $('<div/>').appendTo(container)
                 .attr('id', 'layoutView')
@@ -128,20 +128,20 @@
             this.ui.layoutView.find('.panel.left')
                 .panel({
                     position: 'left',
-                    maxSize: '500',
+                    maxSize: '320',
                     minSize: '160',
                 })
-                .append('<div class="outlineView flex1"></div>')
-                .append('<div class="propertyView flex1"></div>');
+                .append('<div class="outlineView flex1 vbox"></div>')
+                .append('<div class="propertyView flex1 vbox"></div>');
 
             this.ui.layoutView.find('.panel.right')
                 .panel({
                     position: 'right',
-                    maxSize: '500',
+                    maxSize: '320',
                     minSize: '160',
                 })
-                .append('<div class="widgetView flex1"></div>')
-                .append('<div class="paletteView flex1"></div>');
+                .append('<div class="widgetView flex1 vbox"></div>')
+                .append('<div class="paletteView flex1 vbox"></div>');
 
             this.ui.codeView = $('<div/>').appendTo(container)
                 .attr('id', 'codeView')
@@ -151,11 +151,11 @@
             this.ui.codeViewLeftPanel = this.ui.codeView.find('.panel.left')
                 .panel({
                     position: 'left',
-                    maxSize: '500',
+                    maxSize: '320',
                     minSize: '160',
                 })
-                .append('<div class="outlineView flex1"></div>')
-                .append('<div class="propertyView flex1"></div>');
+                .append('<div class="outlineView flex1 vbox"></div>')
+                .append('<div class="propertyView flex1 vbox"></div>');
 
             this.ui.liveView = $('<div/>').appendTo(container)
                 .attr('id', 'liveView')

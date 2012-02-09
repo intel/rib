@@ -1,11 +1,6 @@
 (function($, undefined) {
 
-    // My custom panel widget
-    //
-    // TODO:
-    //    1. Add "close/open" feature that hides all but the handle on closing
-    //       and restores to last position/size upon opening
-
+    // Custom panel widget
     $.widget('ui.panel', $.ui.resizable, {
         options: {
             position: 'left',    // Determines anchoring edge
@@ -16,10 +11,7 @@
 
         // constructor
         _create: function() {
-            var self = this,
-                e = self.element,
-                o = self.options,
-                p = o.position;
+            var self = this;
 
             self.posMap = {
                 'left':   'e',
@@ -28,161 +20,220 @@
                 'bottom': 'n',
             };
 
-            e.addClass('ui-panel vbox')
-             .css({ 'position': 'relative',
-                    'overflow': 'hidden' });
-            e.children().addClass('ui-panel-contents');
+            self.element.addClass('ui-panel vbox')
+                .css({'position': 'relative',
+                      'overflow': 'hidden',
+                      'top': '0px',
+                      'margin': '0px',
+                      'padding': '0px'});
 
-            // Make additional elements used to decorate and manipulate
-            // the panel with
-            self.grip = $('<div></div>')
-                .addClass('ui-panel-handle ui-panel-grip ui-icon')
-                .css('position', 'absolute');
+            self.element.children().addClass('ui-panel-contents');
 
-            // Set resizable handle based on position option
-            self._setResizeOptions(p);
+            // Create additional elements to decorate and control the panel
+            self.bg = $('<div></div>')
+                .addClass('ui-state-default ui-panel-bg')
+                .css({'position': 'absolute',
+                      'top': 'auto',
+                      'left': '1px',
+                      'right': '1px',
+                      'bottom': '1px',
+                      'width': 'auto',
+                      'height': '16px'});
+
+            self.closeToggle = $('<div></div>')
+                .addClass('ui-panel-close ui-resizable-handle ui-icon')
+                .css({'position': 'absolute',
+                      'z-index': 'auto',
+                      'cursor': 'pointer',
+                      'top': 'auto',
+                      'bottom': '1px',
+                      'height': '16px',
+                      'width': '16px'});
+
+            self.openHandle = $('<div></div>').hide()
+                .addClass('ui-panel-open-bg')
+                .css({'position': 'absolute',
+                      'z-index': 'auto',
+                      'cursor': 'pointer',
+                      'top': '1px',
+                      'bottom': '1px',
+                      'height': 'auto',
+                      'width': '16px',
+                      'background': '-webkit-linear-gradient(0, #fff, #eee)'});
+
+            self.openToggle = $('<div></div>')
+                .addClass('ui-panel-open ui-resizable-handle ui-icon')
+                .css({'position': 'absolute',
+                      'z-index': 'auto',
+                      'cursor': 'pointer',
+                      'top': '50%',
+                      'bottom': '50%',
+                      'height': '16px',
+                      'width': '16px'})
+                .appendTo(self.openHandle);
+
+            // Convert 'position' into corresponding 'handles' option
+            self.options.handles = self.posMap[self.options.position];
+
+            // Convert '*Size' into corresponding *'Width' option
+            self.options.maxWidth = self.options.maxSize;
+            self.options.minWidth = self.options.minSize;
+            self.options.maxHeight = null;
+            self.options.minHeight = 10;
 
             // Chaining up to our super class 'ui.resizable'
             $.ui.resizable.prototype._create.call(self);
 
-            // Add our class to the handle for CSS sizing control
-            e.find('.ui-resizable-handle')
-                .addClass('ui-panel-handle')
-                .css({ 'position': 'absolute',
-                       'display': 'block',
-                       'overflow': 'hidden',
-                       'font-size': '0px',
-                       'text-indent': '-99999px',
-                     });
+            // Cache and add our class to the handle for resize control
+            self.grip = self.element.find('.ui-resizable-handle')
+                .addClass('ui-panel-grip ui-icon ui-icon-grip-solid-vertical')
+                .css({'position': 'absolute',
+                      'z-index': 'auto',
+                      'top': 'auto',
+                      'bottom': '1px',
+                      'height': '16px',
+                      'width': '16px'});
 
-            // Add our "grip" to the resizable handle
-            self.grip.insertBefore(e.find('.ui-resizable-handle'));
+            // Insert our additional elements
+            self.bg.insertBefore(self.grip);
+            self.closeToggle.insertBefore(self.grip);
+            self.openHandle.insertBefore(self.grip);
 
-            var h = e.find('.ui-resizable-handle.ui-panel-handle');
-            if (/left|right/.test(p)) {
-                e.css({'top': '0px',
-                       'margin': '0px',
-                       'padding': '0px'})
-                 .css(''+p+'', '0px');
-                h.css({'cursor': ''+self.posMap[p]+'-resize',
-                       'top': '0px',
-                       'height': '100%',
-                       'width': '7px'});
-                if (p=== 'left') {
-                    e.css('padding-right', '2mm');
-                    h.css('right', '0px');
-                } else {
-                    e.css('padding-left', '2mm');
-                    h.css('left', '0px');
-                }
-            } else {
-                e.css({'left': '0px',
-                       'margin': '0px',
-                       'padding': '0px'})
-                 .css(''+p+'', '0px');
-                h.css({'cursor': ''+self.posMap[p]+'-resize',
-                       'left': '0px',
-                       'width': '100%',
-                       'height': '7px'});
-                if (p === 'top') {
-                    e.css('padding-bottom', '2mm');
-                    h.css('bottom', '0px');
-                } else {
-                    e.css('padding-top', '2mm');
-                    h.css('top', '0px');
-                }
+            // Bind click handlers to open/close the panel
+            self.closeToggle.add(self.openHandle)
+                .click({ widget: self }, self._togglePanel);
+
+            self.refresh();
+
+            // Be sure to refresh sized if the document resizes
+            if ($(document).hasOwnProperty('resize')) {
+                $(document).resize( function() { this.refresh(); });
             }
-
-            $(document).resize( function() { this.refresh(); });
         },
 
         // refresh any time options change (and on create)
         refresh: function() {
             var self = this;
-            $.ui.resizable.prototype._destroy.call(self);
-            $.ui.resizable.prototype._create.call(self);
+
+            // Adjust controls based on position option
+            // NOTE: can only be called AFTER we call the resizable widgets
+            //       _create() function and have cached self.grip
+            self._adjustPositions();
+
             self.element.resizable('option', self.options);
         },
 
         // unbind from events and remove any modifications
-        _destroy: function() {
+        destroy: function() {
             var self = this;
 
             // Chaining up to our super class 'ui.resizable'
             $.ui.resizable.prototype.destroy.call(self);
 
+            // Remove our class(es) added to this element
             self.element.find('.ui-panel-contents')
                 .removeClass('ui-panel-contents');
 
-            self.grip.remove();
+            // Remove elements this widget added to the DOM
+            self.bg.remove();
+            self.closeToggle.remove();
+            self.openHandle.remove();
         },
 
-        // called for each option being changed, calls _refresh
+        // called for each option being changed, calls refresh
         _setOption: function(k,v) {
             var self = this;
 
             switch (k) {
                 case 'position':
+                    self.options.handles = self.posMap[self.options.position];
+                    break;
                 case 'maxSize':
+                    self.options.maxWidth = self.options.maxSize;
+                    self.options.maxHeight = null;
+                    break;
                 case 'minSize':
-                    self._setResizeOptions();
+                    self.options.minWidth = self.options.minSize;
+                    self.options.minHeight = 10;
                     break;
                 case 'layout':
                     console.warn('Layout option not yet implemented');
                     break;
                 default:
-                    $.resizable.prototype._setOption.apply( self, k, v );
+                    $.ui.resizable.prototype._setOption.call( self, k, v );
                     break;
             }
 
-            self._refresh();
+            self.refresh();
         },
 
         // called with a list of options to change, calls _setOption
         _setOptions: function() {
             var self = this;
-            $.Widget.prototype._setOption.apply( self, arguments );
-            self._refresh();
+            $.Widget.prototype._setOptions.call( self, arguments );
         },
 
-        _setResizeOptions: function(pos) {
+        _adjustPositions: function() {
             var self = this,
-                pos = pos||self.options.position,
+                pos = self.options.position,
                 dir = self.posMap[pos];
 
-            if (/left|right/.test(pos)) {
-                self.grip.removeClass('ui-icon-grip-solid-vertical');
-                self.grip.addClass('ui-icon-grip-solid-vertical');
-                self.grip.css({ 'background-position': '-37px -224px',
-                                'width': '7px',
-                                'height': '16px',
-                                'top': '50%'})
-                    .css((pos === 'left')?'right':'left', '0px');
-                self.options.maxWidth = self.options.maxSize;
-                self.options.minWidth = self.options.minSize;
-                self.options.maxHeight = null;
-                self.options.minHeight = 10;
+            self.element.css(''+pos+'', '0px');
+            self.grip
+                .css('cursor', ''+dir+'-resize')
+                .css((pos === 'left')?'right':'left', '1px');
+            self.closeToggle
+                .css(''+pos+'', '1px');
+            self.openHandle
+                .css((pos === 'left')?'right':'left', '1px');
+            self.openToggle
+                .css((pos === 'left')?'right':'left', '1px');
 
-                if (/right/.test(pos)) {
-                    self.options.resize = function(event, ui) {
-                        ui.position.left = ui.originalPosition.left;
-                    };
-                }
+            if (/left/.test(pos)) {
+                self.closeToggle
+                    .addClass('ui-resizable-sw ui-icon-triangle-1-w')
+                self.openToggle
+                    .addClass('ui-resizable-e ui-icon-triangle-1-e')
             } else {
-                self.grip.removeClass('ui-icon-grip-solid-horizontal');
-                self.grip.addClass('ui-icon-grip-solid-horizontal');
-                self.grip.css({ 'background-position': '-48px -229px',
-                                'width': '16px',
-                                'height': '7px',
-                                'left': '50%'})
-                    .css((pos === 'top')?'bottom':'top', '0px');
-                self.options.maxWidth = null;
-                self.options.minWidth = 10;
-                self.options.maxHeight = self.options.maxSize;
-                self.options.minHeight = self.options.minSize;
+                self.closeToggle
+                    .addClass('ui-resizable-se ui-icon-triangle-1-e')
+                self.openToggle
+                    .addClass('ui-resizable-w ui-icon-triangle-1-w')
+                self.options.resize = function(event, ui) {
+                    ui.position.left = ui.originalPosition.left;
+                };
+            }
+        },
+
+        _togglePanel: function(event) {
+            var self = event.data.widget,
+                currentWidth = self.element.width()
+                lastWidth = self.element.data('last-width');
+
+            // Open panel
+            if (currentWidth < self.options.minSize) {
+                self.element.animate({width: lastWidth}, function() {
+                    self.closeToggle
+                        .add(self.bg)
+                        .add(self.grip)
+                        .fadeToggle();
+                });
+                self.openHandle
+                    .fadeToggle('fast');
             }
 
-            self.options.handles = dir;
+            // Close panel
+            else {
+                self.element.data('last-width', currentWidth);
+                self.element.animate({width: '16px'}, function() {
+                    self.openHandle
+                        .fadeToggle('fast');
+                });
+                self.closeToggle
+                    .add(self.bg)
+                    .add(self.grip)
+                    .fadeToggle();
+            }
         }
     });
 })(jQuery);
