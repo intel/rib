@@ -69,7 +69,44 @@
         },
 
         refresh: function(event, widget) {
+            var stage = $('#liveView > .stage'),
+                deviceScreen = $('#deviceScreen'),
+                deviceImage = $('<img src= "src/css/images/phone.png"/>'),
+                deviceWrapper,
+                imageWidth = 421,
+                imageHeight = 572,
+                liveDoc;
+
             widget = widget || this;
+            if (deviceScreen.length === 0)
+            {
+                stage.find('*').remove();
+                deviceScreen = $('<iframe id="deviceScreen"/>')
+                    .css({
+                        position: 'absolute',
+                        left: 50,
+                        top: 43,
+                        width:320,
+                        height:480
+                    });
+                deviceWrapper = $('<div id="deviceWrapper" align="center"/>')
+                    .append(deviceImage)
+                    .append(deviceScreen)
+                    .appendTo(stage)
+                    .css({
+                        width: imageWidth,
+                        height: imageHeight,
+                        padding:0,
+                        overflow:'hidden',
+                        position: 'absolute',
+                        left: ($(document).width() - imageWidth)/2,
+                        top: ($(document).height() - imageHeight)/2
+                    });
+            }
+            liveDoc = deviceScreen.contents()[0];
+            liveDoc.open();
+            liveDoc.writeln(generateHTML());
+            liveDoc.close();
         },
 
         // Private functions
@@ -99,18 +136,22 @@
 
         _designResetHandler: function(event, widget) {
             widget = widget || this;
+            widget.refresh();
         },
 
         _selectionChangedHandler: function(event, widget) {
             widget = widget || this;
+            widget.refresh();
         },
 
         _activePageChangedHandler: function(event, widget) {
             widget = widget || this;
+            widget.refresh();
         },
 
         _modelUpdatedHandler: function(event, widget) {
             widget = widget || this;
+            widget.refresh();
         },
     });
 })(jQuery);
