@@ -330,11 +330,11 @@ $(function() {
     //        model of coding...
     var design, page, child;
     design = new ADMNode('Design');
-    ADM.setDesignRoot(design);
     page = new ADMNode('Page');
     design.addChild(page);
     child =  new ADMNode('Button');
     page.addChild(child);
+    ADM.setDesignRoot(design);
 
     // Actually invoke the plugin that sets up our app UI
     $(document).guibuilder({debugMode: true, model: ADM});
