@@ -36,8 +36,7 @@
                 this._bindADMEvents(o.model);
             }
 
-            c = $('<div/>').addClass(this.widgetName)
-                .appendTo(this.element);
+            c = $('<div/>').appendTo(this.element);
 
             // Load ADM into initial outline view
             c.append('<p id="outline_header" class="ui-helper-reset ui-widget ui-widget-header">Outline</p>')
@@ -119,13 +118,13 @@
             }
 
             // Deactive state of selected before
-            $('#outline-panel').find('.ui-state-active')
+            $('#outline-panel', this.element).find('.ui-state-active')
                 .removeClass('ui-state-active');
-            $('#outline-panel').find('.ui-selected')
+            $('#outline-panel', this.element).find('.ui-selected')
                 .removeClass('ui-selected');
 
             // Find this node in outline pane
-            rootNode = $("#pageList");
+            rootNode = $("#pageList", this.element);
             nodeInOutline = $(rootNode).find("#Outline-"+node.getUid()+" > a");
             $(nodeInOutline).addClass('ui-state-active')
                 .addClass('ui-selected');
@@ -138,7 +137,7 @@
             }
 
             // Make sure selected node is visible on show
-            $('#outline-panel').find('.ui-selected:first').each(function (){
+            $('#outline-panel', this.element).find('.ui-selected:first').each(function (){
                 this.scrollIntoViewIfNeeded();
             });
         },
@@ -165,7 +164,7 @@
 
         _renderOutlineView: function() {
             var page, selected,
-                $tree = $("#outline_content");
+                $tree = this.element.find("#outline_content");
 
             function  setSelected(item) {
                 var UID = $(item).attr('adm-uid');
@@ -261,7 +260,7 @@
             $('<ul id="pageList"></ul>').appendTo($tree);
             for ( var i = 0; i < ADM.getDesignRoot().getChildrenCount(); i++) {
                 page = ADM.getDesignRoot().getChildren()[i];
-                render_sub(page, $("#pageList"));
+                render_sub(page, $("#pageList", this.element));
             }
 
             // Now make sure the selected node is properly identified
