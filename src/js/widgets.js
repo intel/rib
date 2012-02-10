@@ -664,6 +664,7 @@ var BWidgetRegistry = {
      */
     Option: {
         parent: "Base",
+        allowIn: "SelectMenu",
         properties: {
             text: {
                 type: "string",
