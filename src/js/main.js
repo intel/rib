@@ -167,6 +167,16 @@
                 $(this).outlineView('option', 'model', ADM);
             });
 
+            $('.propertyView').each( function () {
+                $(this).propertyView();
+                $(this).propertyView('option', 'model', ADM);
+            });
+
+            $('.paletteView').each( function () {
+                $(this).paletteView();
+                $(this).paletteView('option', 'model', ADM);
+            });
+
             // Turn the body into a jQuery-UI "tabs" widget
             // TODO: Get starting tab from session cookie
             container.tabs({

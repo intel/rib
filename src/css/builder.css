@@ -271,9 +271,6 @@ background-attachment: fixed;
 .propertyView {
     border: 1px solid rgba(0,0,0,0.6);
 }
-.propertyView:after {
-    content: 'propertyView';
-}
 .widgetView {
     border: 1px solid rgba(0,0,0,0.6);
 }
@@ -282,9 +279,6 @@ background-attachment: fixed;
 }
 .paletteView {
     border: 1px solid rgba(0,0,0,0.6);
-}
-.paletteView:after {
-    content: 'paletteView';
 }
 
 .ui-accordion .ui-accordion-header {
