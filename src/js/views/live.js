@@ -68,14 +68,6 @@
             this.options.tools.remove();
         },
 
-        _setPreviewPage: function (pageId, widget) {
-            widget = widget || this;
-            var deviceScreen = $('#deviceScreen', widget.element),
-                previewWindow = deviceScreen[0].contentWindow;
-            if (previewWindow.$ && previewWindow.$.mobile)
-                previewWindow.$.mobile.changePage("#" + pageId, {transition: "none"});
-        },
-
         refresh: function(event, widget) {
             var stage = $('#liveView > .stage'),
                 deviceScreen = $('#deviceScreen'),
@@ -160,6 +152,19 @@
         _modelUpdatedHandler: function(event, widget) {
             widget = widget || this;
             widget.refresh();
+        },
+
+        _setPreviewPage: function (pageId, widget) {
+            var deviceScreen, previewWindow;
+            widget = widget || this;
+
+            deviceScreen = $('#deviceScreen', widget.element);
+            previewWindow = deviceScreen[0].contentWindow;
+
+            if (previewWindow.$ && previewWindow.$.mobile) {
+                previewWindow.$.mobile.changePage("#" + pageId,
+                                                  {transition: "none"});
+            }
         },
     });
 })(jQuery);
