@@ -39,9 +39,11 @@
             c = $('<div/>').appendTo(this.element);
 
             // Load ADM into initial outline view
-            c.append('<p id="outline_header" class="ui-helper-reset ui-widget ui-widget-header">Outline</p>')
-               .addClass('ui-widget-content')
-               .append('<div id="outline_content"></div>');
+            c.append('<p id="outline_header" ' +
+                     'class="ui-helper-reset ui-widget ui-widget-header">' +
+                     'Outline</p>')
+                .addClass('ui-widget-content')
+                .append('<div id="outline_content"></div>');
 
             this._renderOutlineView();
 
@@ -137,9 +139,10 @@
             }
 
             // Make sure selected node is visible on show
-            $('#outline-panel', this.element).find('.ui-selected:first').each(function (){
-                this.scrollIntoViewIfNeeded();
-            });
+            $('#outline-panel', this.element).find('.ui-selected:first')
+                .each(function (){
+                    this.scrollIntoViewIfNeeded();
+                });
         },
 
         _activePageChangedHandler: function(event, widget) {
@@ -168,15 +171,14 @@
 
             function  setSelected(item) {
                 var UID = $(item).attr('adm-uid');
-                dumplog("Outline.js: setSelected is called. UID is " + UID);
 
                 // find whether selected widget in current active page
                 var currentNode = ADM.getDesignRoot().findNodeByUid(UID);
-                while (currentNode.getType() !== "Page" && currentNode.getType() !=="Design") {
+                while (currentNode.getType() !== "Page" &&
+                       currentNode.getType() !=="Design") {
                     currentNode = currentNode.getParent();
                 }
                 if (currentNode.getType() !== "Page") {
-                    dumplog("error: can't find select node's Page");
                     return;
                 }
                 if (ADM.getActivePage() !== currentNode) {
@@ -220,7 +222,6 @@
                         if ((node.getChildrenCount() == 1) &&
                             (node.getChildren()[0].getType() === "Content") &&
                             (node.getChildren()[0].getChildrenCount() === 0)) {
-                                 dumplog("only content in page");
                                 newItem.toggleClass('folder')
                                        .remove('ul');
                         }
