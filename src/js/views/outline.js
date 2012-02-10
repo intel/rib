@@ -21,7 +21,7 @@
 
         _create: function() {
             var o = this.options,
-                e = this.element, c;
+                e = this.element;
 
             o.designReset = this._designResetHander;
             o.selectionChanged = this._selectionChangedHander;
@@ -36,16 +36,15 @@
                 this._bindADMEvents(o.model);
             }
 
-            c = $('<div/>').appendTo(this.element);
-
-            // Load ADM into initial outline view
-            c.append('<p id="outline_header" ' +
-                     'class="ui-helper-reset ui-widget ui-widget-header">' +
-                     'Outline</p>')
+            $('<div/>')
                 .addClass('ui-widget-content')
-                .append('<div id="outline_content"></div>');
+                .append('<p id="outline_header">Outline</p>')
+                .children('p:first')
+                    .addClass('ui-helper-reset ui-widget ui-widget-header')
+                    .end()
+                .append('<div id="outline_content"></div>')
+                .appendTo(this.element);
 
-            this._renderOutlineView();
 
             this.refresh(null, this);
 
@@ -73,6 +72,7 @@
 
         refresh: function(event, widget) {
             widget = widget || this;
+            widget._renderOutlineView();
         },
 
         // Private functions
@@ -100,17 +100,24 @@
             widget = widget || this;
             widget._unbindADMEvents(this.options.model);
             widget._bindADMEvents(ADM.getDesignRoot());
-            widget._renderOutlineView();
+            widget.refresh(event, widget);
         },
 
         _selectionChangedHandler: function(event, widget) {
             var node, rootNode, nodeInOutline, currentNode;
+
             widget = widget || this;
+
+            if (!widget.options.model) {
+                return;
+            }
+
             // Make sure we show the page as selected if no node is selected
             if (event === null || event.node === null) {
-                node = ADM.getDesignRoot().findNodeByUid(ADM.getSelected());
+                node = widget.options.model.getDesignRoot()
+                             .findNodeByUid(widget.options.model.getSelected());
                 if (node === null || node === undefined) {
-                    node = ADM.getActivePage();
+                    node = widget.options.model.getActivePage();
                     if (node === null || node === undefined) {
                         return false;
                     }
@@ -148,32 +155,40 @@
         _activePageChangedHandler: function(event, widget) {
             widget = widget || this;
 
-            if (!event.page || event.page === undefined) {
+            if (!event.page || event.page === undefined ||
+                !widget.options.model) {
                 return;
             }
 
-            if (event.page.getUid() === ADM.getActivePage()) {
+            if (event.page.getUid() === widget.options.model.getActivePage()) {
                 return;
             }
 
-            widget._renderOutlineView();
+            widget.refresh(event, widget);
         },
 
         _modelUpdatedHandler: function(event, widget) {
             widget = widget || this;
-
-            widget._renderOutlineView();
+            widget.refresh(event, widget);
         },
 
         _renderOutlineView: function() {
             var page, selected,
-                $tree = this.element.find("#outline_content");
+                self = this,
+                model = self.options.model, root,
+                $tree = self.element.find("#outline_content");
+
+            if (!model) {
+                return false;
+            } else {
+                root = model.getDesignRoot();
+            }
 
             function  setSelected(item) {
                 var UID = $(item).attr('adm-uid');
 
                 // find whether selected widget in current active page
-                var currentNode = ADM.getDesignRoot().findNodeByUid(UID);
+                var currentNode = root.findNodeByUid(UID);
                 while (currentNode.getType() !== "Page" &&
                        currentNode.getType() !=="Design") {
                     currentNode = currentNode.getParent();
@@ -181,11 +196,11 @@
                 if (currentNode.getType() !== "Page") {
                     return;
                 }
-                if (ADM.getActivePage() !== currentNode) {
-                    ADM.setActivePage(currentNode);
+                if (model.getActivePage() !== currentNode) {
+                    model.setActivePage(currentNode);
                 }
 
-                window.ADM.setSelected(UID);
+                model.setSelected(UID);
             }
 
             function render_sub(node, $container) {
@@ -259,14 +274,14 @@
 
             $tree.empty();
             $('<ul id="pageList"></ul>').appendTo($tree);
-            for ( var i = 0; i < ADM.getDesignRoot().getChildrenCount(); i++) {
-                page = ADM.getDesignRoot().getChildren()[i];
-                render_sub(page, $("#pageList", this.element));
+            for (var i = 0; i < root.getChildrenCount(); i++) {
+                page = root.getChildren()[i];
+                render_sub(page, $("#pageList", self.element));
             }
 
             // Now make sure the selected node is properly identified
-            selected = ADM.getDesignRoot().findNodeByUid(ADM.getSelected()) ||
-                ADM.getActivePage();
+            selected = root.findNodeByUid(model.getSelected()) ||
+                       model.getActivePage();
             if (selected) {
                 $tree.find("#Outline-"+selected.getUid()+" > a")
                     .addClass('ui-state-active')
