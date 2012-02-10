@@ -24,7 +24,7 @@
                 e = this.element;
 
             o.designReset = this._designResetHander;
-            o.selectionChanged = this._selectionChangedHander;
+            o.selectionChanged = null;
             o.activePageChanged = this._activePageChangedHander;
             o.modelChanged = this._modelChangedHander;
 
@@ -116,9 +116,10 @@
             liveDoc.writeln(generateHTML());
             liveDoc.close();
             deviceScreen.load( function () {
-                if (widget.options.model.getActivePage())
-                    widget._setPreviewPage(widget.options.model.getActivePage().
-                        getProperty('id'), widget);
+                var page = widget.options.model.getActivePage() || null;
+                if (page) {
+                    widget._setPreviewPage(page.getProperty('id'), widget);
+                }
             });
         },
 
@@ -134,7 +135,6 @@
         _bindADMEvents: function(a) {
             var d = a && a.getDesignRoot();
             a.bind("designReset", this._designResetHandler, this);
-            a.bind("selectionChanged", this._selectionChangedHandler, this);
             a.bind("activePageChanged", this._activePageChangedHandler, this);
             d.bind("modelUpdated", this._modelUpdatedHandler, this);
         },
@@ -142,7 +142,6 @@
         _unbindADMEvents: function(a) {
             var d = a && a.getDesignRoot();
             a.unbind("designReset", this._designResetHandler, this);
-            a.unbind("selectionChanged", this._selectionChangedHandler, this);
             a.unbind("activePageChanged", this._activePageChangedHandler, this);
             d.unbind("modelUpdated", this._modelUpdatedHandler, this);
         },
@@ -150,10 +149,6 @@
         _designResetHandler: function(event, widget) {
             widget = widget || this;
             widget.refresh();
-        },
-
-        _selectionChangedHandler: function(event, widget) {
-            widget = widget || this;
         },
 
         _activePageChangedHandler: function(event, widget) {
