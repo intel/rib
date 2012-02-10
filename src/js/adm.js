@@ -57,15 +57,18 @@ var ADMEventSource = {
     },
 
     /**
-     * Removes the specified handler from being called on named event occurs,
-     * or if handler is undefined, removes all handlers for the named event.
+     * Removes binding to handler function. If handler is undefined, removes
+     * all handlers for the named event. If handler is defined but data is
+     * undefined, removes any bindings to that handler regardless of data. If
+     * data is also specified, removes only the bindings with that data.
      *
      * @param {String} name The name of the event.
      * @param {Function} handler Handler function previously passed to bind().
+     * @param {Any} data Any data or object previously passed to the handler.
      * @return {Number} The number of event handlers that were removed.
      * @see ADMEventSource.bind
      */
-    unbind: function (name, handler) {
+    unbind: function (name, handler, data) {
         var removed = 0, listeners, i;
         if (typeof name !== "string") {
             console.log("Error: called unbind with a non-string event name");
@@ -74,7 +77,9 @@ var ADMEventSource = {
         listeners = this._admEvents[name];
         if (listeners) {
             for (i = listeners.length - 1; i >= 0; i--) {
-                if (handler === undefined || listeners[i].handler === handler) {
+                if (handler === undefined ||
+                    (listeners[i].handler === handler &&
+                     (data === undefined) || (listeners[i].data === data))) {
                     listeners.splice(i, 1);
                     removed++;
                 }
