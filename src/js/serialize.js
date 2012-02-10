@@ -545,5 +545,9 @@ $(function() {
     }
 
     // init the sandbox file system
-    fsUtils.initFS(fsDefaults.type, fsDefaults.size, fsInitSuccess, fsInitFailed);
+    window.webkitStorageInfo.requestQuota(fsDefaults.type, fsDefaults.size, function(grantedBytes){
+        fsUtils.initFS(fsDefaults.type, grantedBytes, fsInitSuccess, fsInitFailed);
+    }, function(e){
+        console.error("Error: request storage Quota failed.");
+    });
 });

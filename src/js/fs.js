@@ -14,8 +14,8 @@ window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileS
 window.resolveLocalFileSystemURL = window.resolveLocalFileSystemURL || window.webkitResolveLocalFileSystemURL;
 
 var fsDefaults = {
-    type: window.TEMPORARY,
-    size: 4*1024*1024,
+    type: window.PERSISTENT,
+    size: 20*1024*1024,
     files:{
         ADMDesign: "design.json",
         generatedCode: "proj.html",
