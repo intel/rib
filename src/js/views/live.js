@@ -65,7 +65,8 @@
         destroy: function() {
             // TODO: unbind any ADM event handlers
             $(this.element).find('.'+this.widgetName).remove();
-            this.options.tools.remove();
+            this.options.primaryTools.remove();
+            this.options.secondaryTools.remove();
         },
 
         refresh: function(event, widget) {
