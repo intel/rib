@@ -342,6 +342,7 @@ $(function() {
     design = new ADMNode('Design');
     page = new ADMNode('Page');
     design.addChild(page);
+    design.addChild(new ADMNode('Page'));
     child =  new ADMNode('Button');
     page.addChild(child);
     ADM.setDesignRoot(design);

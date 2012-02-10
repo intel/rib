@@ -68,6 +68,14 @@
             this.options.tools.remove();
         },
 
+        _setPreviewPage: function (pageId, widget) {
+            widget = widget || this;
+            var deviceScreen = $('#deviceScreen', widget.element),
+                previewWindow = deviceScreen[0].contentWindow;
+            if (previewWindow.$ && previewWindow.$.mobile)
+                previewWindow.$.mobile.changePage("#" + pageId, {transition: "none"});
+        },
+
         refresh: function(event, widget) {
             var stage = $('#liveView > .stage'),
                 deviceScreen = $('#deviceScreen'),
@@ -107,6 +115,11 @@
             liveDoc.open();
             liveDoc.writeln(generateHTML());
             liveDoc.close();
+            deviceScreen.load( function () {
+                if (widget.options.model.getActivePage())
+                    widget._setPreviewPage(widget.options.model.getActivePage().
+                        getProperty('id'), widget);
+            });
         },
 
         // Private functions
@@ -141,12 +154,12 @@
 
         _selectionChangedHandler: function(event, widget) {
             widget = widget || this;
-            widget.refresh();
         },
 
         _activePageChangedHandler: function(event, widget) {
             widget = widget || this;
-            widget.refresh();
+            widget._setPreviewPage(widget.options.model.getActivePage().
+                getProperty('id'), widget);
         },
 
         _modelUpdatedHandler: function(event, widget) {
