@@ -1276,13 +1276,14 @@ ADMNode.prototype.setProperty = function (property, value) {
             return false;
         }
     }
-    // HTML id Naming rules:
+
+    // HTML id naming rules:
     // Must begin with a letter A-Z or a-z
     // Can be followed by: letters (A-Za-z), digits (0-9), hyphens ("-"), and underscores ("_")
     // In HTML, all values are case-insensitive
     if (property == "id") {
         var pattern = /^[a-zA-Z]([\w-]*)$/;
-        if (!pattern.test(value)) {
+        if (value && !pattern.test(value)) {
             console.log("Error: attempted to set invalid id");
             return false;
         }
