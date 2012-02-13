@@ -246,7 +246,7 @@
                 // Only add plugins who's function name ends with 'View'
                 if (!/.*View$/.test(key)) return;
                 // Only add plugins not already indexed
-                if (ns.views.indexOf(key) !== 0) ns.views.push(key);
+                if (ns.views.indexOf(key) < 0) ns.views.push(key);
             });
         },
 
