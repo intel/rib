@@ -13,78 +13,17 @@ window.BlobBuilder = window.BlobBuilder || window.MozBlobBuilder || window.WebKi
 window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
 window.resolveLocalFileSystemURL = window.resolveLocalFileSystemURL || window.webkitResolveLocalFileSystemURL;
 
-var fsDefaults = {
-    type: window.PERSISTENT,
-    size: 20*1024*1024,
-    files:{
-        ADMDesign: "design.json",
-        generatedCode: "proj.html",
-    }
-},
-    _fs, fsUtils, cookieUtils;
-
-
-/**
- * Error event callback.
- *
- * NOTE: "Using the HTML5 Filesystem API" by Eric Bidelman (O’Reilly).
- *       Copyright 2011 Eric Bidelman, 978-1-449-30945-9
- *
- * @param {FileError} err The error event.
- */
-function _onError(err) {
-    var msg = 'Error: ';
-    switch (err.code) {
-        case FileError.NOT_FOUND_ERR:
-            msg += 'File or directory not found';
-            break;
-        case FileError.SECURITY_ERR:
-            msg += 'Insecure or disallowed operation';
-            break;
-        case FileError.ABORT_ERR:
-            msg += 'Operation aborted';
-            break;
-        case FileError.NOT_READABLE_ERR:
-            msg += 'File or directory not readable';
-            break;
-        case FileError.ENCODING_ERR:
-            msg += 'Invalid encoding';
-            break;
-        case FileError.NO_MODIFICATION_ALLOWED_ERR:
-            msg += 'Cannot modify file or directory';
-            break;
-        case FileError.INVALID_STATE_ERR:
-            msg += 'Invalid state';
-            break;
-        case FileError.SYNTAX_ERR:
-            msg += 'Invalid line-ending specifier';
-            break;
-        case FileError.INVALID_MODIFICATION_ERR:
-            msg += 'Invalid modification';
-            break;
-        case FileError.QUOTA_EXCEEDED_ERR:
-            msg += 'Storage quota exceeded';
-            break;
-        case FileError.TYPE_MISMATCH_ERR:
-            msg += 'Invalid filetype';
-            break;
-        case FileError.PATH_EXISTS_ERR:
-            msg += 'File or directory already exists at specified path';
-            break;
-        default:
-            msg += 'Unknown Error';
-            break;
-    }
-    console.log(msg);
-}
 
 /**
  * Global object to access File System utils.
  *
  */
-fsUtils = {
-
+$(function() {
+    var fsUtils = {
     defaultTarget: 'export-target',
+    fsType: window.PERSISTENT,
+    fsSize: 20*1024*1024,
+    fs:null,
 
     /**
      * Init the sandbox file system .
@@ -93,30 +32,84 @@ fsUtils = {
      * @param {number} size The required size for the file system.
      */
     initFS: function (type, size, success, error) {
-               var onError = error || _onError;
-                // Create a temporary sandbox filesystem
-                if (requestFileSystem) {
-                    requestFileSystem(type, size, function(filesystem) {
-                        _fs = filesystem;
-                        console.log("A sandbox filesystem: "+ _fs.name + " is created;");
-                        console.log(_fs.name + " type: " + type + ", size: " + size );
-                        // Create a default target window and append it
-                        // to the document.body
-                        if (!$('iframe#'+fsUtils.defaultTarget).length) {
-                            $('<iframe></iframe>')
-                                .attr('id', fsUtils.defaultTarget)
-                                .css('display', 'none')
-                                .appendTo('body');
-                        }
-
-                        if(success) {
-                            success();
-                        }
-                    }, onError);
-                }else{
-                    console.log("File System Not Available");
+        var onError = error || fsUtils.onError;
+        // Create a temporary sandbox filesystem
+        if (requestFileSystem) {
+            requestFileSystem(type, size, function(filesystem) {
+                fsUtils.fs = filesystem;
+                console.log("A sandbox filesystem: "+ fsUtils.fs.name + " is created;");
+                console.log(fsUtils.fs.name + " type: " + type + ", size: " + size );
+                // Create a default target window and append it
+                // to the document.body
+                if (!$('iframe#'+fsUtils.defaultTarget).length) {
+                    $('<iframe></iframe>')
+                .attr('id', fsUtils.defaultTarget)
+                .css('display', 'none')
+                .appendTo('body');
                 }
-            },
+
+                if(success) {
+                    success();
+                }
+            }, onError);
+        }else{
+            console.log("File System Not Available");
+        }
+    },
+
+    /**
+     * Error event callback.
+     *
+     * NOTE: "Using the HTML5 Filesystem API" by Eric Bidelman (O’Reilly).
+     *       Copyright 2011 Eric Bidelman, 978-1-449-30945-9
+     *
+     * @param {FileError} err The error event.
+     */
+    onError: function (err) {
+                 var msg = 'Error: ';
+                 switch (err.code) {
+                     case FileError.NOT_FOUND_ERR:
+                         msg += 'File or directory not found';
+                         break;
+                     case FileError.SECURITY_ERR:
+                         msg += 'Insecure or disallowed operation';
+                         break;
+                     case FileError.ABORT_ERR:
+                         msg += 'Operation aborted';
+                         break;
+                     case FileError.NOT_READABLE_ERR:
+                         msg += 'File or directory not readable';
+                         break;
+                     case FileError.ENCODING_ERR:
+                         msg += 'Invalid encoding';
+                         break;
+                     case FileError.NO_MODIFICATION_ALLOWED_ERR:
+                         msg += 'Cannot modify file or directory';
+                         break;
+                     case FileError.INVALID_STATE_ERR:
+                         msg += 'Invalid state';
+                         break;
+                     case FileError.SYNTAX_ERR:
+                         msg += 'Invalid line-ending specifier';
+                         break;
+                     case FileError.INVALID_MODIFICATION_ERR:
+                         msg += 'Invalid modification';
+                         break;
+                     case FileError.QUOTA_EXCEEDED_ERR:
+                         msg += 'Storage quota exceeded';
+                         break;
+                     case FileError.TYPE_MISMATCH_ERR:
+                         msg += 'Invalid filetype';
+                         break;
+                     case FileError.PATH_EXISTS_ERR:
+                         msg += 'File or directory already exists at specified path';
+                         break;
+                     default:
+                         msg += 'Unknown Error';
+                         break;
+                 }
+                 console.log(msg);
+             },
 
     /**
      * Transfer string path to URL.
@@ -130,7 +123,7 @@ fsUtils = {
                        console.log("String type is needed for file which is to be read.");
                        return false;
                    }
-                   var url = _fs.root.toURL() + path;
+                   var url = fsUtils.fs.root.toURL() + path;
                    return url;
                },
 
@@ -146,7 +139,7 @@ fsUtils = {
      */
     pathToEntry: function (path, success, error) {
                      var url = fsUtils.pathToUrl(path);
-                     var onError = error || _onError;
+                     var onError = error || fsUtils.onError;
                      resolveLocalFileSystemURL(url, function (entry) {
                          success(entry);
                      }, onError);
@@ -164,9 +157,9 @@ fsUtils = {
      */
     ls: function (path, success, error) {
             var dstPath = path || "/",
-                onError = error || _onError;
+            onError = error || fsUtils.onError;
 
-            _fs.root.getDirectory(dstPath, {}, function (dirEntry) {
+            fsUtils.fs.root.getDirectory(dstPath, {}, function (dirEntry) {
                 var dirReader = dirEntry.createReader();
                 dirReader.readEntries(function (entries) {
                     success(entries);
@@ -185,8 +178,8 @@ fsUtils = {
      * error callback passed the generated error.
      */
     touch: function (filePath, success, error){
-               var onError = error || _onError;
-               _fs.root.getFile(filePath, {create: true, exclusive: true}, function(fileEntry) {
+               var onError = error || fsUtils.onError;
+               fsUtils.fs.root.getFile(filePath, {create: true, exclusive: true}, function(fileEntry) {
                    console.log(fileEntry.fullPath + " is created.");
                    // pass the fileEntry to the success handler
                    if(success){
@@ -206,7 +199,7 @@ fsUtils = {
      * error callback passed the generated error.
      */
     read: function (path, success, error){
-              var onError = error || _onError;
+              var onError = error || fsUtils.onError;
               fsUtils.pathToEntry(path, function(fileEntry) {
                   // Obtain the File object representing the FileEntry.
                   // Use FileReader to read its contents.
@@ -241,7 +234,7 @@ fsUtils = {
      */
     write: function (path, contents, success, error, opt_append, binary){
 
-               var onError = error || _onError;
+               var onError = error || fsUtils.onError;
                function write(fileEntry) {
                    fileEntry.createWriter(function (fileWriter) {
                        var bb = new BlobBuilder(); // Create a new Blob on-the-fly.
@@ -292,10 +285,10 @@ fsUtils = {
            },
 
     /**
-     * Copy a file to another one.
+     * Copy a file or directory to another one.
      *
-     * @param {string} from Srting path for the original file.
-     * @param {string} to The destination file.
+     * @param {string} from Srting path for the original full path.
+     * @param {string} to The destination full path.
      * @param {function(DirectoryEntry)=} opt_successCallback An optional
      * @param {function(FileError)=} opt_errorCallback An optional
      *
@@ -303,7 +296,7 @@ fsUtils = {
      * error callback passed the generated error.
      */
     cp: function (from, to, success, error) {
-            var onError = error || _onError;
+            var onError = error || fsUtils.onError;
             var path = to.replace(/^\//, "").split("/"),
                 fileName = path.splice(path.length - 1, 1).toString();
 
@@ -331,7 +324,7 @@ fsUtils = {
      * error callback passed the generated error.
      */
     mv: function (from, to, success, error) {
-            var onError = error || _onError;
+            var onError = error || fsUtils.onError;
             var path = to.replace(/^\//, "").split("/"),
                 newName = path.splice(path.length - 1, 1).toString();
 
@@ -358,8 +351,8 @@ fsUtils = {
      * error callback passed the generated error.
      */
     rm: function (path, success, error, opt_recursive) {
-            var onError = error || _onError;
-            _fs.root[opt_recursive ? "getDirectory" : "getFile"](path, {create: false}, function (entry) {
+            var onError = error || fsUtils.onError;
+            fsUtils.fs.root[opt_recursive ? "getDirectory" : "getFile"](path, {create: false}, function (entry) {
                 entry[opt_recursive ? "removeRecursively" : "remove"](function () {
                     console.log(path + ' is removed.');
                     if(success){
@@ -380,8 +373,8 @@ fsUtils = {
      * error callback passed the generated error.
      */
     mkdir: function (path, success, error) {
-               var onError = error || _onError;
-               _fs.root.getDirectory(path, {create: true}, function (dirEntry) {
+               var onError = error || fsUtils.onError;
+               fsUtils.fs.root.getDirectory(path, {create: true}, function (dirEntry) {
                    console.log(path + ' is created.');
                    if(success){
                        success(dirEntry);
@@ -403,7 +396,7 @@ fsUtils = {
      * error callback passed the generated error.
      */
     cpLocalFile: function (localFileEntry, dest, success, error){
-                     var onError = error || _onError;
+                     var onError = error || fsUtils.onError;
                      var path;
                      if(!localFileEntry){
                          console.log("There is no local file to be copied.");
@@ -416,7 +409,7 @@ fsUtils = {
                          destFileName = path.splice(path.length - 1, 1).toString();
                          path = path.length > 0 ? path.join("/") : "/";
                      }
-                    path = path || "/";
+                     path = path || "/";
                      // write the contents to the new fileEntry
                      function write(fileEntry) {
                          fileEntry.createWriter(function(fileWriter) {
@@ -456,21 +449,21 @@ fsUtils = {
      *
      */
     exportToBlank: function (path) {
-                    var url = fsUtils.pathToUrl(path),
-                        blocked = false, exportWindow,
-                        options = "height=200, width=500, top=10, left=10, resizable=yes";
-                    try {
-                        exportWindow = window.open(url, "_blank", options);
-                        if (!exportWindow) {
-                            blocked = true;
-                        }
-                    } catch(e) {
-                        blocked = true;
-                    }
-                    if (blocked) {
-                        alert("Export window was blocked!");
-                    }
-            },
+                       var url = fsUtils.pathToUrl(path),
+                       blocked = false, exportWindow,
+                       options = "height=200, width=500, top=10, left=10, resizable=yes";
+                       try {
+                           exportWindow = window.open(url, "_blank", options);
+                           if (!exportWindow) {
+                               blocked = true;
+                           }
+                       } catch(e) {
+                           blocked = true;
+                       }
+                       if (blocked) {
+                           alert("Export window was blocked!");
+                       }
+                   },
 
     /**
      * Export file to specified target window: open the URL of the file in
@@ -480,88 +473,94 @@ fsUtils = {
      *
      */
     exportToTarget: function (path, target) {
-                    var url = fsUtils.pathToUrl(path),
+                        var url = fsUtils.pathToUrl(path),
                         blocked = false, exportWindow;
 
-                    // Allow unspecified targets by using our defaultTarget
-                    target = target || fsUtils.defaultTarget;
+                        // Allow unspecified targets by using our defaultTarget
+                        target = target || fsUtils.defaultTarget;
 
-                    try {
-                        exportWindow = window.open(url, target);
-                        if (!exportWindow) {
+                        try {
+                            exportWindow = window.open(url, target);
+                            if (!exportWindow) {
+                                blocked = true;
+                            }
+                        } catch(e) {
                             blocked = true;
                         }
-                    } catch(e) {
-                        blocked = true;
-                    }
-                    if (blocked) {
-                        alert("Export window was blocked!");
-                    }
-            },
-},
+                        if (blocked) {
+                            alert("Export window was blocked!");
+                        }
+                    },
+    },
 
-/**
- * Global object to add and set cookies.
- *
- */
-cookieUtils = {
-    /**
-     * Get value of the given name cookie record
-     *
-     * @param {string} name The string name of the cookie record.
-     *
-     * @return {string} value The value of the cookie record or null if failed.
-     */
-    get:function (name) {
-            var cookies, record, value = null, i;
-            if(typeof name !== "string") {
-                alert("Invalid cookie name.");
-                return value;
-            }
-            if(document.cookie && document.cookie !== "") {
-                // split cookie records
-                cookies = document.cookie.split(';');
-
-                for(i = 0; i < cookies.length; i++) {
-                    record = $.trim(cookies[i]);
-                    // find the record matchs the name
-                    if(record.substring(0, name.length + 1) === (name + '=')) {
-                        // get the value
-                        value = decodeURIComponent(record.substring(name.length + 1));
-                        break;
+        /**
+         * Global object to add and set cookies.
+         *
+         */
+        cookieUtils = {
+            /**
+             * Get value of the given name cookie record
+             *
+             * @param {string} name The string name of the cookie record.
+             *
+             * @return {string} value The value of the cookie record or null if failed.
+             */
+            get:function (name) {
+                    var cookies, record, value = null, i;
+                    if(typeof name !== "string") {
+                        alert("Invalid cookie name.");
+                        return value;
                     }
-                }
-            } else {
-                console.warn("Don't support cookie or empty cookie.");
-            }
-            return value;
-        },
+                    if(document.cookie && document.cookie !== "") {
+                        // split cookie records
+                        cookies = document.cookie.split(';');
 
-    /**
-     * Set a pair of name-value into document.cookie
-     *
-     * @param {string} name The string name of the cookie record.
-     * @param {string} value The string value of the cookie record.
-     *
-     * @return {bool} set cooke success or not.
-     */
-    set: function (name, value, expires) {
-             var text;
-             if(typeof name !== "string" || typeof value !== "string") {
-                 alert("Invalid cookie name or name.");
-                 return false;
-             }
-             text = encodeURIComponent(name) + "=" + encodeURIComponent(value);
-             if(expires instanceof Date) {
-                 text += "; expires=" + expires.toGMTString();
-             }
-             document.cookie = text;
-             if(document.cookie && document.cookie !== "") {
-                 return true;
-             } else {
-                 alert("Open Chrome with '--enable-file-cookies' please." +
-                         "\nClose the browser if you have already opened it before.");
-                 return false;
-             }
-         }
-};
+                        for(i = 0; i < cookies.length; i++) {
+                            record = $.trim(cookies[i]);
+                            // find the record matchs the name
+                            if(record.substring(0, name.length + 1) === (name + '=')) {
+                                // get the value
+                                value = decodeURIComponent(record.substring(name.length + 1));
+                                break;
+                            }
+                        }
+                    } else {
+                        console.warn("Don't support cookie or empty cookie.");
+                    }
+                    return value;
+                },
+
+            /**
+             * Set a pair of name-value into document.cookie
+             *
+             * @param {string} name The string name of the cookie record.
+             * @param {string} value The string value of the cookie record.
+             *
+             * @return {bool} set cooke success or not.
+             */
+            set: function (name, value, expires) {
+                     var text;
+                     if(typeof name !== "string" || typeof value !== "string") {
+                         alert("Invalid cookie name or name.");
+                         return false;
+                     }
+                     text = encodeURIComponent(name) + "=" + encodeURIComponent(value);
+                     if(expires instanceof Date) {
+                         text += "; expires=" + expires.toGMTString();
+                     }
+                     document.cookie = text;
+                     if(document.cookie && document.cookie !== "") {
+                         return true;
+                     } else {
+                         alert("Open Chrome with '--enable-file-cookies' please." +
+                                 "\nClose the browser if you have already opened it before.");
+                         return false;
+                     }
+                 }
+        };
+
+    /*******************  export fsUtils and cookieUtils to $.gb **********************/
+    $.gb = $.gb || {};
+    $.gb.fsUtils = fsUtils;
+    $.gb.cookieUtils = cookieUtils;
+});

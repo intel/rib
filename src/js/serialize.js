@@ -326,7 +326,7 @@ $(function() {
 
     function importFileChangedCallback (e) {
         if (e.currentTarget.files.length === 1) {
-            fsUtils.cpLocalFile(e.currentTarget.files[0],
+            $.gb.fsUtils.cpLocalFile(e.currentTarget.files[0],
                                 fsDefaults.files.ADMDesign,
                                 buildDesignFromJson);
             return true;
@@ -457,7 +457,7 @@ $(function() {
         // Set a fixed JSON file
         if (fileEntry && fileEntry.isFile) {
             var parsedObject;
-            fsUtils.read(fileEntry.fullPath, function(result) {
+            $.gb.fsUtils.read(fileEntry.fullPath, function(result) {
                 try {
                     parsedObject = $.parseJSON(result);
                     return loadFromJsonObj(parsedObject);
@@ -465,7 +465,7 @@ $(function() {
                     alert("Invalid design file.");
                     return false;
                 }
-            }, _onError);
+            });
         } else {
             console.error("invalid fileEntry to load");
         }
@@ -509,9 +509,9 @@ $(function() {
         if (typeof JSObjectForADM === "object") {
             text = JSON.stringify(JSObjectForADM);
 
-            fsUtils.write(path, text, function(fileEntry) {
-                fsUtils.exportToTarget(fileEntry.fullPath);
-            }, _onError);
+            $.gb.fsUtils.write(path, text, function(fileEntry) {
+                $.gb.fsUtils.exportToTarget(fileEntry.fullPath);
+            });
             return true;
         } else {
             console.log("error: invalid serialized Object for ADM tree");
@@ -521,6 +521,7 @@ $(function() {
     /********************* Functions definition End **************************/
 
     function fsInitSuccess() {
+        var cookieUtils = $.gb.cookieUtils;
         // if can't get the cookie(no this record), then add exportNotice cookie
         if (!cookieUtils.get("exportNotice")) {
             if(!cookieUtils.set("exportNotice", "true", cookieExpires)) {
@@ -529,7 +530,6 @@ $(function() {
         }
 
         // Export serialization functions into $.gb namespace
-        $.gb = $.gb || {};
         $.gb.ADMToJSON = serializeADMToJSON;
         $.gb.JSONToADM = buildDesignFromJson;
 
@@ -550,8 +550,8 @@ $(function() {
     }
 
     // init the sandbox file system
-    window.webkitStorageInfo.requestQuota(fsDefaults.type, fsDefaults.size, function(grantedBytes){
-        fsUtils.initFS(fsDefaults.type, grantedBytes, fsInitSuccess, fsInitFailed);
+    window.webkitStorageInfo.requestQuota($.gb.fsUtils.fsType, $.gb.fsUtils.fsSize, function(grantedBytes){
+        $.gb.fsUtils.initFS($.gb.fsUtils.fsType, grantedBytes, fsInitSuccess, fsInitFailed);
     }, function(e){
         console.error("Error: request storage Quota failed.");
     });
