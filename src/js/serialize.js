@@ -528,8 +528,13 @@ $(function() {
             }
         }
 
-        // create a notice Dialog for user to configure the browser,
-        // so that a native dialog can be shown when exporting design or HTML code
+        // Export serialization functions into $.gb namespace
+        $.gb = $.gb || {};
+        $.gb.ADMToJSON = serializeADMToJSON;
+        $.gb.JSONToADM = buildDesignFromJson;
+
+        // create a notice Dialog for user to configure the browser, so that
+        // a native dialog can be shown when exporting design or HTML code
         createExportNoticeDialog();
 
         // bind handlers for sub-menu
