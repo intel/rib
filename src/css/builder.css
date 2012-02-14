@@ -357,3 +357,16 @@ html, body {
     padding-left: 0;
 }
 
+.pageIcon.pageActive {
+    background-image: url("images/pageIcon_on.png")
+}
+.pageIcon {
+    background-image: url("images/pageIcon_off.png");
+    min-width: 20px;
+    min-height: 24px;
+    text-align: center;
+    float: left
+}
+.pageIcon:hover {
+    background-image: url("images/pageIcon_hover.png");
+}
