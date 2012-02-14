@@ -247,37 +247,39 @@
                     $('#'+valueId).val(valueVal);
                 }
                 $('#' + valueId).change(node, function (event) {
-                    var updated = event.srcElement.id.replace(/-value/,''),
-                        node = event.data,
-                        value = null,
-                        element = $('#'+event.srcElement.id);
+                    var updated, node, element, type, value;
+                    updated = event.srcElement.id.replace(/-value/,''),
+                    node = event.data;
 
                     if (node === null || node === undefined) {
-                        console.error('Missing node, property change failed!');
+                        throw new Error("Missing node, prop change failed!");
                         return;
                     }
 
-                    switch (BWidget.getPropertyType(node.getType(), updated)) {
-                        case 'boolean':
-                            value = Boolean(element.val());
-                            break;
-                        case 'float':
-                            value = parseFloat(element.val());
-                            break;
-                        case 'integer':
-                            value = parseInt(element.val(), 10);
-                            break;
-                        case 'number':
-                            value = Number(element.val());
-                            break;
-                        case 'object':
-                            value = Object(elementval());
-                            break;
-                        case 'string':
-                            value = String(element.val());
-                            break;
-                        default:
-                            break;
+                    element = $('#' + event.srcElement.id);
+                    type = BWidget.getPropertyType(node.getType(), updated);
+                    switch (type) {
+                    case 'boolean':
+                        value = Boolean(element.val());
+                        break;
+                    case 'float':
+                        value = parseFloat(element.val());
+                        break;
+                    case 'integer':
+                        value = parseInt(element.val(), 10);
+                        break;
+                    case 'number':
+                        value = Number(element.val());
+                        break;
+                    case 'object':
+                        value = Object(element.val());
+                        break;
+                    case 'string':
+                        value = String(element.val());
+                        break;
+                    default:
+                        throw new Error("Unexpected property type: " + type);
+                        break;
                     }
                     ADM.setProperty(node, updated, value);
                 });
