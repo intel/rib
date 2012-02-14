@@ -24,10 +24,10 @@
             var o = this.options,
                 e = this.element;
 
-            o.designReset = this._designResetHander;
-            o.selectionChanged = this._selectionChangedHander;
-            o.activePageChanged = this._activePageChangedHander;
-            o.modelChanged = this._modelChangedHander;
+            o.designReset = this._designResetHandler;
+            o.selectionChanged = this._selectionChangedHandler;
+            o.activePageChanged = this._activePageChangedHandler;
+            o.modelUpdated = this._modelUpdatedHandler;
 
             // FIXME: This should work, but $.extend of options seems to be
             //        creating a copy of the ADM, which will not containt the

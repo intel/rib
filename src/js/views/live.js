@@ -30,10 +30,10 @@
                 deviceSelect,
                 widget = this;
 
-            o.designReset = this._designResetHander;
+            o.designReset = this._designResetHandler;
             o.selectionChanged = null;
-            o.activePageChanged = this._activePageChangedHander;
-            o.modelChanged = this._modelChangedHander;
+            o.activePageChanged = this._activePageChangedHandler;
+            o.modelUpdated = this._modelUpdatedHandler;
 
             // FIXME: This should work, but $.extend of options seems to be
             //        creating a copy of the ADM, which will not containt the

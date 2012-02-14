@@ -285,7 +285,7 @@
                     // TODO: Bind plugin ADMEvent handlers here directly
                     //       rather than w/in each plugin, to ensure consitant
                     //       binding/unbinding proceedures
-                    // OR  : Do the binding in our own designReset hander (?)
+                    // OR  : Do the binding in our own designReset handler (?)
 
                     // Attach any per-view tools to the navbar
                     tools = $(el)[val]('option', 'primaryTools');
