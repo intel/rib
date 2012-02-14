@@ -1,10 +1,61 @@
 {
-   "DVGA Landscape":  { "width": "960",  "height": "640" },
-   "DVGA Portrait":   { "width": "640",  "height": "960" },
-   "HVGA Landscape":  { "width": "480",  "height": "320" },
-   "HVGA Portrait":   { "width": "320",  "height": "480" },
-   "WSVGA Landscape": { "width": "1024", "height": "600" },
-   "WSVGA Portrait":  { "width": "600", "height": "1024" },
-   "WVGA Landscape":  { "width": "800",  "height": "480" },
-   "WVGA Portrait":   { "width": "480",  "height": "800" }
+   "Phones": {
+       "Default": {
+           "skin": {
+               "href": "src/css/images/skins/phone.png",
+               "width": "420px",
+               "height": "623px"
+           },
+           "screen": {
+               "offset": {
+                   "top": "46px",
+                   "right": "47px",
+                   "bottom": "99px",
+                   "left": "53px"
+               },
+               "width": "320px",
+               "height": "480px"
+           }
+       }
+   },
+
+   "Tablets": {
+       "Default": {
+           "skin": {
+               "href": "src/css/images/skins/tablet.png",
+               "width": "1200px",
+               "height": "767px"
+           },
+           "screen": {
+               "offset": {
+                   "top": "85px",
+                   "right": "100px",
+                   "bottom": "88px",
+                   "left": "100px"
+               },
+               "width": "1000px",
+               "height": "600px"
+           }
+       }
+   },
+
+   "Netbooks": {
+       "Default": {
+           "skin": {
+               "href": "src/css/images/skins/netbook.png",
+               "width": "1246px",
+               "height": "920px"
+           },
+           "screen": {
+               "offset": {
+                   "top": "58px",
+                   "right": "174px",
+                   "bottom": "357px",
+                   "left": "174px"
+               },
+               "width": "895px",
+               "height": "508px"
+           }
+       }
+   }
 }
