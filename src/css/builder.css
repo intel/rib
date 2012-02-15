@@ -160,6 +160,19 @@ html, body {
 .view.ui-tabs-panel.ui-tabs-hide { display: none !important; }
 .view.project { }
 .view.layout { }
+.view.layout .stage div {
+    overflow-y: auto;
+}
+.view.layout iframe {
+    display: block;
+    overflow: hidden;
+    padding: 10px;
+    margin: 25px 50px 25px 50px;
+    background-color: #fff;
+    border: 1px solid #a1a1a1;
+    -webkit-border-radius: 14px;
+    -webkit-box-shadow: 2px 2px 3px #595b55;
+}
 .view.code { }
 .view.live { }
 .panel {
