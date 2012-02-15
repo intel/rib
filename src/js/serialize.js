@@ -352,7 +352,7 @@ $(function() {
                 childType = node.type;
                 zone = node.zone;
                 properties = node.properties;
-                child =  ADM.createNode(childType);
+                child =  ADM.createNode(childType, true);
                 // set properties of child
                 for (item in properties) {
                     // parser the properties and set the value to the node

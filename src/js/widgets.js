@@ -14,20 +14,74 @@
  *
  * Top-level object with properties representing all known widgets
  * Each property should be an object with:
- *   i) parent, string name of inherited parent object
- *   ii) showInPalette, boolean for user-exposed widgets (default true)
- *   iii) properties, an object with property name keys and type string values
- *   iv) template, a string for code to generate for this widget
- *   v) zones, an array of places where the widget can contain children
- *   vi) admConstructor: function that creates corresponding ADM widget
+ *   1)        parent: string name of inherited parent object
+ *   2) showInPalette: boolean for user-exposed widgets (default true)
+ *   3)    properties: an object with property name keys and type string values,
+ *                     (see details below)
+ *   4)      template: a string for code to generate for this widget, or a
+ *                     function to be called to generate code
+ *   5)         zones: an array of places where the widget can contain children,
+ *                     (see details below)
+ *   6)       allowIn: a string or array of strings - the widgets that are
+ *                     allowed to contain this widget (e.g. a Block should only
+ *                     go in a Grid, even though Page Content allows any child)
+ *   7)    selectable: boolean, currently poorly named, seemingly means whether
+ *                     to show it in the outline view or not (default: true)
+ *   8)      moveable: boolean, whether it should be draggable in the design
+ *                     canvas (default: true)
+ *   9)      redirect: an object containing zone string and type string; if a
+ *                     widget is attempted to be added to this widget, instead
+ *                     add it to the given zone, inside the widget type
+ *                     (first creating that widget if it doesn't exist)
+ *  10)      newGroup: [DEPRECATED] boolean, indicating that this is the first
+ *                     widget in a conceptual group of widgets (default: false),
+ *                     this should go away soon in favor of a better system for
+ *                     classifying/presenting widgets
+ *  11)  newAccordion: [DEPRECATED] boolean, indicating that this is the first
+ *                     widget within a new high-level widget set (default:
+ *                     false), should go away soon (see newGroup above)
+ *  12)  displayLabel: the name to be displayed to the user for this widget, if
+ *                     different from the raw name (eventually this should be
+ *                     overwritten by localized values)
+ *  13)      delegate: [FIXME] something to do with which node in the generated
+ *                     template is used for event handling (string or function)
+ *  14)        events: [FIXME] something to do with handling events
+ *  15)          init: function to be called after a new widget is created with
+ *                     default properties, e.g. when dragged onto the canvas
+ *                     from the palette (i.e. Grid uses this to generate its
+ *                     two default child Blocks)
+ *
  * Each zone description in the array should be an object with:
- *   i) name identifying the zone point
- *   ii) cardinality, either "1" or "N" representing number of contained items
- *   iii) allow: string or array of string names of allowable widgets
+ *   1) name identifying the zone point
+ *   2) cardinality, either "1" or "N" representing number of contained items
+ *   3) allow: string or array of string names of allowable widgets
  *               (all others will be denied)
- *   iv) deny: string or array of string names of disallowed widgets
+ *   4) deny: string or array of string names of disallowed widgets
  *             (all others will be allowed)
  *   Only one of allow or deny should be set, if neither than all are allowed.
+ *
+ * The "properties" of each widget definition is an object, each property of
+ * which names a property of the widget. These are objects with the following
+ * fields:
+ *   1)            type: one of "boolean", "integer", "string", or "array" for
+ *                       now
+ *   2)    defaultValue: optional default value for the property, of the type
+ *                       specified above
+ *   3)   htmlAttribute: optional string with an HTML attribute name that this
+ *                       property should be written to
+ *   4)  forceAttribute: if true, always write out the HTML attribute even when
+ *                       it is equal to the default value (default: false)
+ *   5)    htmlSelector: optional selector to find the DOM nodes on which to
+ *                       apply the HTML attribute (default: root node returned
+ *                       by the template for this widget)
+ *   6)    autoGenerate: "string" prefix for automatically assigning unique
+ *                       values (only valid for string type)
+ *   7)         options: An array of the only valid values for this property,
+ *                       to be selected from a dropdown rather than freely
+ *                       entered
+ *   8) setPropertyHook: optional function to be called when a property is
+ *                       about to change, giving the widget an opportunity to
+ *                       modify its children (e.g. grid rows or columns change)
  *
  * @class
  */
@@ -1017,13 +1071,89 @@ var BWidgetRegistry = {
         parent: "Base",
         newGroup: true,
         properties: {
-            subtype: {
-                type: "string",
-                options: [ "a", "b", "c", "d" ],
-                defaultValue: "a",
+            rows: {
+                type: "integer",
+                defaultValue: 1,
+                setPropertyHook: function (node, value) {
+                    var rows, columns, i, block, map, children;
+                    rows = node.getProperty("rows");
+                    columns = node.getProperty("columns");
+
+                    // FIXME: really this should be enforced in the property
+                    //        pane, or elsewhere; this won't really work
+                    if (value < 1) {
+                        value = 1;
+                    }
+
+                    // add rows if necessary
+                    map = [ "a", "b", "c", "d", "e" ];
+                    while (rows < value) {
+                        for (i=0; i<columns; i++) {
+                            block = new ADMNode("Block");
+                            block.setProperty("subtype", map[i]);
+                            node.addChild(block);
+                        }
+                        rows++;
+                    }
+
+                    // remove rows if necessary
+                    if (rows > value) {
+                        children = node.getChildren();
+                        while (rows > value) {
+                            for (i=0; i<columns; i++) {
+                                node.removeChild(children.pop());
+                            }
+                            rows--;
+                        }
+                    }
+                }
             },
+            columns: {
+                type: "integer",
+                options: [ 2, 3, 4, 5 ],
+                defaultValue: 2,
+                setPropertyHook: function (node, value) {
+                    var rows, columns, i, block, map, children, index;
+                    rows = node.getProperty("rows");
+                    columns = node.getProperty("columns");
+
+                    // we should be able to trust that columns is valid (2-5)
+                    if (columns < 2 || columns > 5) {
+                        throw new Error("invalid value found for grid columns");
+                    }
+
+                    // add columns if necessary
+                    map = [ "", "", "c", "d", "e" ];
+                    while (columns < value) {
+                        index = columns;
+                        for (i=0; i<rows; i++) {
+                            block = new ADMNode("Block");
+                            block.setProperty("subtype", map[columns]);
+                            node.insertChildInZone(block, "default", index);
+                            index += columns + 1;
+                        }
+                        columns++;
+                    }
+
+                    // remove columns if necessary
+                    if (columns > value) {
+                        while (columns > value) {
+                            children = node.getChildren();
+                            for (i = children.length - 1; i > 0; i -= columns) {
+                                node.removeChild(children[i]);
+                            }
+                            columns--;
+                        }
+                    }
+                }
+            },
+            theme: {
+                type: "string",
+                options: [ "default", "a", "b", "c", "d", "e" ],
+                defaultValue: "default",
+                htmlAttribute: "data-theme"
+            }
         },
-        template: '<div class="ui-grid-%SUBTYPE%"></div>',
         zones: [
             {
                 name: "default",
@@ -1031,6 +1161,38 @@ var BWidgetRegistry = {
                 allow: "Block"
             }
         ],
+        template: function (node) {
+            var prop, classname, code = $('<div>');
+            code = BWidgetRegistry.Base.applyProperties(node, code);
+
+            // determine class attribute
+            classname = "ui-grid-";
+            prop = node.getProperty("columns");
+            switch (prop) {
+            case 5:  classname += "d"; break;
+            case 4:  classname += "c"; break;
+            case 3:  classname += "b"; break;
+            default: classname += "a"; break;
+            }
+            code.attr("class", classname);
+
+            // don't write data-theme if it's using the default
+            prop = node.getProperty("theme");
+            if (prop !== node.getPropertyDefault("theme")) {
+                code.attr("data-theme", prop);
+            }
+
+            return code;
+        },
+        init: function (node) {
+            // initial state is one row with two columns, i.e. two blocks
+            var block = new ADMNode("Block");
+            node.addChild(block);
+
+            block = new ADMNode("Block");
+            block.setProperty("subtype", "b");
+            node.addChild(block);
+        }
     },
 
     /**
@@ -1038,6 +1200,7 @@ var BWidgetRegistry = {
      */
     Block: {
         parent: "Base",
+        showInPalette: false,
         allowIn: "Grid",
         properties: {
             subtype: {
@@ -1353,6 +1516,17 @@ var BWidget = {
     },
 
     /**
+     * Gets the initialization function for the given widget type.
+     *
+     * @return {Function(ADMNode)} The initialization function, or undefined if
+     *                             there is none.
+     */
+    getInitializationFunction: function (widgetType) {
+        var widget = BWidgetRegistry[widgetType];
+        return widget.init;
+    },
+
+    /**
      * Gets the available instance property types for a given widget type.
      * Follows parent chain to find inherited property types.
      * Note: Type strings still in definition, currently also using "integer"
@@ -1581,14 +1755,14 @@ var BWidget = {
         return schema;
     },
 
-     /**
+    /**
      * Gets the auto-generate prefix for a given instance property. For now,
      * this only makes sense for string properties. The auto-generate string is
      * a prefix to which will be appended a unique serial number across this
      * widget type in the design.
      *
      * @param {String} widgetType The type of the widget.
-     * @param {String} property The name of the requested property.
+     * @param {String} property The name of the property.
      * @return {Boolean} Auto-generation string prefix, or undefined if there
      *                   is none or it is invalid.
      * @throws {Error} If widgetType is invalid, or property not found.
@@ -1598,6 +1772,31 @@ var BWidget = {
         if (schema) {
             if (typeof schema.autoGenerate === "string") {
                 return schema.autoGenerate;
+            } else {
+                return undefined;
+            }
+        }
+        return schema;
+    },
+
+
+    /**
+     * Gets the hook function provided for setting the given property, if it
+     * exists. This function should be called just before a property is set, to
+     * give the widget a chance to make any modifications to its children.
+     *
+     * @param {String} widgetType The type of the widget.
+     * @param {String} property The name of the property.
+     * @return {Function(ADMNode, Any)} Override setter function for this
+     *                                  property, or undefined if there
+     *                                  is none.
+     * @throws {Error} If widgetType is invalid, or property not found.
+     */
+    getPropertyHookFunction: function (widgetType, property) {
+        var schema = BWidget.getPropertySchema(widgetType, property);
+        if (schema) {
+            if (typeof schema.setPropertyHook === "function") {
+                return schema.setPropertyHook;
             } else {
                 return undefined;
             }

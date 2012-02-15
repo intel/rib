@@ -661,14 +661,21 @@ ADM.redo = function () {
 };
 
 /**
- * Creates an ADM node with the given widget type.
+ * Creates an ADM node with the given widget type. The skipInit parameter
+ * skips any initalization function for the widget, for instance if reading
+ * the design from a file, where the properties will be specifically set.
  *
  * @param {String} widgetType The widget type from the widget registry.
+ * @param {Boolean} skipInit [Optional] True if widget creation should skip
+ *                           initialization.
  * @return {ADMNode} The node, or null if the widget type was invalid.
  */
-ADM.createNode = function (widgetType) {
-    var node = new ADMNode(widgetType);
+ADM.createNode = function (widgetType, skipInit) {
+    var func, node = new ADMNode(widgetType);
     if (node.isValid()) {
+        func = BWidget.getInitializationFunction(widgetType);
+        if (func && !skipInit)
+            func(node);
         return node;
     }
     return null;
@@ -684,7 +691,7 @@ ADM.createNode = function (widgetType) {
  * @param {String} widgetType The name of the widget type being created.
  */
 function ADMNode(widgetType) {
-    var currentType = widgetType, widget, zones, length, i;
+    var currentType = widgetType, widget, zones, length, i, func;
 
     this._valid = false;
     this._inheritance = [];
@@ -1449,7 +1456,8 @@ ADMNode.prototype.isPropertyExplicit = function (property) {
  *                   object.
  */
 ADMNode.prototype.setProperty = function (property, value) {
-    var orig, type = BWidget.getPropertyType(this.getType(), property);
+    var orig, func, changed, type;
+    type = BWidget.getPropertyType(this.getType(), property);
     if (!type) {
         console.log("Error: attempted to set non-existent property: " +
                     property);
@@ -1477,6 +1485,9 @@ ADMNode.prototype.setProperty = function (property, value) {
     }
 
     if (this._properties[property] !== value) {
+        func = BWidget.getPropertyHookFunction(this.getType(), property);
+        if (func)
+            func(this, value);
         orig = this._properties[property];
         this._properties[property] = value;
         this.fireModelEvent("modelUpdated",
