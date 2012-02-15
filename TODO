@@ -115,6 +115,9 @@ P3 - Whether or not to wrap widget and label with a fieldcontain could be
 P2 - Add the ability to insert simple HTML at any point in the design:
        text, <p> and <br> tags, <h?> tags, <b>, <i>, character entities, ...
 
+- Might make sense to expose "class" property on everything
+- Could make sense to expose Block elements so their ids could be set
+
 [Code Gen]
 ==========
 
