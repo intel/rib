@@ -23,7 +23,7 @@ var DEBUG = true,
     blockActivePageChanged = false,
     xmlserializer = new XMLSerializer(),
     generateHTML = function () {
-        var doc = constructNewDocument(getDefaultHeaders());
+        var doc = constructNewDocument($.gb.getDefaultHeaders());
 
         serializeADMSubtreeToDOM(ADM.getDesignRoot(),
                                  $(doc).find('body'),
@@ -70,7 +70,8 @@ var DEBUG = true,
         if (domParent) {
             parentNode = $(domParent);
         } else {
-            parentNode = $designContentDocument.find(parentSelector);
+            parentNode = $(':gb-layoutView')
+                .layoutView('option','contentDocument').find(parentSelector);
         }
 
         // Find the parent element of this node in the DOM tree
@@ -193,7 +194,7 @@ var DEBUG = true,
 
         // 2. Do something with this node
         domElement = serializeADMNodeToDOM(node, domParent);
-        if (renderer !== null && domElement !== null) {
+        if (renderer && domElement) {
             renderer(node, domElement);
         }
 
@@ -230,59 +231,6 @@ function constructNewDocument(headers) {
     }
 
     return doc;
-}
-function getDefaultHeaders() {
-    var $defaultHeaders = [],
-        i, props, el;
-    if ($defaultHeaders.length > 0)
-        return $defaultHeaders;
-
-    props = ADM.getDesignRoot().getProperty('metas');
-    for (i in props) {
-        // Skip design only header properties
-        if (props[i].hasOwnProperty('designOnly') && props[i].designOnly) {
-            continue;
-        }
-        el = '<meta ';
-        if (props[i].hasOwnProperty('key')) {
-            el = el + props[i].key;
-        }
-        if (props[i].hasOwnProperty('value')) {
-            el = el + '="' + props[i].value + '"';
-        }
-        if (props[i].hasOwnProperty('content')) {
-            el = el + ' content="' + props[i].content + '"';
-        }
-        el = el + '>';
-        $defaultHeaders.push(el);
-    }
-    props = ADM.getDesignRoot().getProperty('libs');
-    for (i in props) {
-        // Skip design only header properties
-        if (props[i].hasOwnProperty('designOnly') && props[i].designOnly) {
-            continue;
-        }
-        el = '<script ';
-        if (props[i].hasOwnProperty('value')) {
-            el = el + 'src="' + props[i].value + '"';
-        }
-        el = el + '></script>';
-        $defaultHeaders.push(el);
-    }
-    props = ADM.getDesignRoot().getProperty('css');
-    for (i in props) {
-        // Skip design only header properties
-        if (props[i].hasOwnProperty('designOnly') && props[i].designOnly) {
-            continue;
-        }
-        el = '<link ';
-        if (props[i].hasOwnProperty('value')) {
-            el = el + 'href="' + props[i].value + '"';
-        }
-        el = el + ' rel="stylesheet">';
-        $defaultHeaders.push(el);
-    }
-    return $defaultHeaders;
 }
 
 function dumplog(loginfo){
@@ -548,6 +496,108 @@ $(function() {
     function fsInitFailed() {
         alert('File system initiation failed."Import" and "Export" feature can not work.');
     }
+
+    function getDefaultHeaders() {
+        var i, props, el;
+
+        $.gb.defaultHeaders = $.gb.defaultHeaders || [];
+
+        if ($.gb.defaultHeaders.length > 0)
+            return $.gb.defaultHeaders;
+
+        props = ADM.getDesignRoot().getProperty('metas');
+        for (i in props) {
+            // Skip design only header properties
+            if (props[i].hasOwnProperty('designOnly') && props[i].designOnly) {
+                continue;
+            }
+            el = '<meta ';
+            if (props[i].hasOwnProperty('key')) {
+                el = el + props[i].key;
+            }
+            if (props[i].hasOwnProperty('value')) {
+                el = el + '="' + props[i].value + '"';
+            }
+            if (props[i].hasOwnProperty('content')) {
+                el = el + ' content="' + props[i].content + '"';
+            }
+            el = el + '>';
+            $.gb.defaultHeaders.push(el);
+        }
+        props = ADM.getDesignRoot().getProperty('libs');
+        for (i in props) {
+            // Skip design only header properties
+            if (props[i].hasOwnProperty('designOnly') && props[i].designOnly) {
+                continue;
+            }
+            el = '<script ';
+            if (props[i].hasOwnProperty('value')) {
+                el = el + 'src="' + props[i].value + '"';
+            }
+            el = el + '></script>';
+            $.gb.defaultHeaders.push(el);
+        }
+        props = ADM.getDesignRoot().getProperty('css');
+        for (i in props) {
+            // Skip design only header properties
+            if (props[i].hasOwnProperty('designOnly') && props[i].designOnly) {
+                continue;
+            }
+            el = '<link ';
+            if (props[i].hasOwnProperty('value')) {
+                el = el + 'href="' + props[i].value + '"';
+            }
+            el = el + ' rel="stylesheet">';
+            $.gb.defaultHeaders.push(el);
+        }
+        return $.gb.defaultHeaders;
+    }
+
+    function getDesignHeaders() {
+        var i, props, el;
+
+        $.gb.designHeaders = $.gb.designHeaders || [];
+        if ($.gb.designHeaders.length > 0)
+            return $.gb.designHeaders;
+
+        props = ADM.getDesignRoot().getProperty('metas');
+        for (i in props) {
+            el = '<meta ';
+            if (props[i].hasOwnProperty('key')) {
+                el = el + props[i].key;
+            }
+            if (props[i].hasOwnProperty('value')) {
+                el = el + '="' + props[i].value + '"';
+            }
+            if (props[i].hasOwnProperty('content')) {
+                el = el + ' content="' + props[i].content + '"';
+            }
+            el = el + '>';
+            $.gb.designHeaders.push(el);
+        }
+        props = ADM.getDesignRoot().getProperty('libs');
+        for (i in props) {
+            el = '<script ';
+            if (props[i].hasOwnProperty('value')) {
+                el = el + 'src="' + props[i].value + '"';
+            }
+            el = el + '></script>';
+            $.gb.designHeaders.push(el);
+        }
+        props = ADM.getDesignRoot().getProperty('css');
+        for (i in props) {
+            el = '<link ';
+            if (props[i].hasOwnProperty('value')) {
+                el = el + 'href="' + props[i].value + '"';
+            }
+            el = el + ' rel="stylesheet">';
+            $.gb.designHeaders.push(el);
+        }
+        return $.gb.designHeaders;
+    }
+
+    $.gb.getDefaultHeaders = getDefaultHeaders;
+    $.gb.getDesignHeaders = getDesignHeaders;
 
     // init the sandbox file system
     window.webkitStorageInfo.requestQuota($.gb.fsUtils.fsType, $.gb.fsUtils.fsSize, function(grantedBytes){
