@@ -15,7 +15,7 @@ body.ui-tabs.ui-widget {
     cursor: default;
     padding: 0px;
     -webkit-user-select: none;
-    background: -webkit-radial-gradient(50% 0%, circle closest-corner, #0d7a95, #677784);
+    background: -webkit-radial-gradient(50% -15%, circle closest-corner, #3a6172, #43515d);
     -webkit-box-shadow: .5em .5em 1em -5px rgba(0,0,0,0.8);
     -webkit-border-top-left-radius: 0px;
     -webkit-border-top-right-radius: 0px;
@@ -183,17 +183,17 @@ html, body {
 .left { border-right: 1px solid rgba(0,0,0,0.3); }
 .right { border-left: 1px solid rgba(0,0,0,0.3); }
 .stage {
-background-size: 10px 10px;
-background-color: lightgray;
-background-image: -webkit-repeating-linear-gradient(left,
+    background-size: 11px 11px;
+    background-color: rgb(215,217,211);
+    background-image: -webkit-repeating-linear-gradient(left,
                           rgba(128,128,128,0.1),
                           transparent 1px,
-                          transparent 10px),
+                          transparent 12px),
                   -webkit-repeating-linear-gradient(top,
                           rgba(128,128,128,0.1),
                           transparent 1px,
-                          transparent 10px);
-background-attachment: fixed;
+                          transparent 12px);
+    background-attachment: fixed;
 }
 
 /*
@@ -249,11 +249,12 @@ background-attachment: fixed;
 }
 .tools-secondary input {
     margin: 0px;
-    padding: .5em;
-    -webkit-border-top-left-radius: 1.25em;
-    -webkit-border-top-right-radius: 1.25em;
-    -webkit-border-bottom-left-radius: 1.25em;
-    -webkit-border-bottom-right-radius: 1.25em;
+    padding: 2px 5px;
+    border: none;
+    -webkit-border-radius: 10px;
+    -webkit-box-shadow: inset 0 4px 2px -3px #999;
+    color:#9ca2a8;
+    font-style:italic;
 }
 .tools-secondary a {
     display: inline-block;
