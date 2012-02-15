@@ -242,7 +242,8 @@ function dumplog(loginfo){
 
 
 $(function() {
-    var $toolbarPanel = $('#toolbar-panel'),
+    var fsUtils = $.gb.fsUtils,
+        cookieUtils = $.gb.cookieUtils,
         cookieExpires = new Date("January 1, 2022");
 
     /*******************************************************
@@ -275,7 +276,7 @@ $(function() {
     function importFileChangedCallback (e) {
         if (e.currentTarget.files.length === 1) {
             $.gb.fsUtils.cpLocalFile(e.currentTarget.files[0],
-                                fsDefaults.files.ADMDesign,
+                                "design.json",
                                 buildDesignFromJson);
             return true;
         } else {
@@ -386,7 +387,12 @@ $(function() {
         var result, design = new ADMNode("Design");
 
         // add children in ADM
-        result = add_child(design, obj.children);
+        try {
+            result = add_child(design, obj.children);
+        } catch(e) {
+            alert("Invalid design file.");
+            return false;
+        }
 
         if (result) {
             result = ADM.setDesignRoot(design);
@@ -408,11 +414,11 @@ $(function() {
             $.gb.fsUtils.read(fileEntry.fullPath, function(result) {
                 try {
                     parsedObject = $.parseJSON(result);
-                    return loadFromJsonObj(parsedObject);
                 } catch(e) {
                     alert("Invalid design file.");
                     return false;
                 }
+                return loadFromJsonObj(parsedObject);
             });
         } else {
             console.error("invalid fileEntry to load");
@@ -448,7 +454,7 @@ $(function() {
 
     function serializeADMToJSON(ADMTreeNode, outPath) {
         // Set a fixed position to  the output file
-        var path = outPath || fsDefaults.files.ADMDesign,
+        var path = outPath || "design.json",
             root = ADMTreeNode || ADM.getDesignRoot(),
             JSObjectForADM = JSObjectFromADMTree(root),
             text;
@@ -468,8 +474,7 @@ $(function() {
     }
     /********************* Functions definition End **************************/
 
-    function fsInitSuccess() {
-        var cookieUtils = $.gb.cookieUtils;
+    function fsInitSuccess(fs) {
         // if can't get the cookie(no this record), then add exportNotice cookie
         if (!cookieUtils.get("exportNotice")) {
             if(!cookieUtils.set("exportNotice", "true", cookieExpires)) {
@@ -485,9 +490,9 @@ $(function() {
         // a native dialog can be shown when exporting design or HTML code
         createExportNoticeDialog();
 
-        // bind handlers for sub-menu
-        $toolbarPanel.find('#loadDesign').click(triggerImportFileSelection);
-        $toolbarPanel.find('#exportDesign').click(triggerExportDesign);
+        // bind handlers for import and export buttons
+        $(document).delegate('#importProj', "click", triggerImportFileSelection);
+        $(document).delegate('#exportProj', "click", triggerExportDesign);
 
         // Import file selection change handler //
         $('#importFile').change(importFileChangedCallback);
@@ -600,9 +605,5 @@ $(function() {
     $.gb.getDesignHeaders = getDesignHeaders;
 
     // init the sandbox file system
-    window.webkitStorageInfo.requestQuota($.gb.fsUtils.fsType, $.gb.fsUtils.fsSize, function(grantedBytes){
-        $.gb.fsUtils.initFS($.gb.fsUtils.fsType, grantedBytes, fsInitSuccess, fsInitFailed);
-    }, function(e){
-        console.error("Error: request storage Quota failed.");
-    });
+    fsUtils.initFS(fsUtils.fsType, fsUtils.fsSize, fsInitSuccess, fsInitFailed);
 });

@@ -45,7 +45,7 @@
             document.title = 'GUI Builder';
 
             // Make sure the body is empty
-            $(document.body).empty();
+            $(document.body).empty().append('<input type="file" id="importFile" style="visibility:hidden" />');
 
             this._constructApp($(document.body));
 
@@ -202,7 +202,7 @@
             $('<div/>').addClass('default-tools hbox').show()
                 .append('<a>settings</a>')
                 .append('<hr align=vertical>')
-                .append('<a>export</a>')
+                .append('<a id="exportProj">export</a>')
                 .appendTo(this.ui.extras);
         },
 

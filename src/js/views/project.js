@@ -76,7 +76,7 @@
         _createPrimaryTools: function() {
             var tools = $('<div/>').addClass('hbox').hide()
                 .append('<button>New Project</button>')
-                .append('<button>Import Project</button>');
+                .append('<button id="importProj">Import Project</button>');
             tools.children().addClass('ui-state-default');
             return tools;
         },

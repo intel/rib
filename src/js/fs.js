@@ -12,6 +12,7 @@
 window.BlobBuilder = window.BlobBuilder || window.MozBlobBuilder || window.WebKitBlobBuilder;
 window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
 window.resolveLocalFileSystemURL = window.resolveLocalFileSystemURL || window.webkitResolveLocalFileSystemURL;
+window.storageInfo = window.storageInfo || window.webkitStorageInfo;
 
 
 /**
@@ -34,23 +35,24 @@ $(function() {
     initFS: function (type, size, success, error) {
         var onError = error || fsUtils.onError;
         // Create a temporary sandbox filesystem
-        if (requestFileSystem) {
-            requestFileSystem(type, size, function(filesystem) {
-                fsUtils.fs = filesystem;
-                console.log("A sandbox filesystem: "+ fsUtils.fs.name + " is created;");
-                console.log(fsUtils.fs.name + " type: " + type + ", size: " + size );
-                // Create a default target window and append it
-                // to the document.body
-                if (!$('iframe#'+fsUtils.defaultTarget).length) {
-                    $('<iframe></iframe>')
-                .attr('id', fsUtils.defaultTarget)
-                .css('display', 'none')
-                .appendTo('body');
-                }
-
-                if(success) {
-                    success();
-                }
+        if (storageInfo && requestFileSystem) {
+            storageInfo.requestQuota(type, size, function(grantedBytes){
+                requestFileSystem(type, grantedBytes, function(filesystem) {
+                    fsUtils.fs = filesystem;
+                    console.log("A sandbox filesystem: "+ fsUtils.fs.name + " is created;");
+                    console.log(fsUtils.fs.name + " type: " + type + ", size: " + size );
+                    // Create a default target window and append it
+                    // to the document.body
+                    if (!$('iframe#'+fsUtils.defaultTarget).length) {
+                        $('<iframe></iframe>')
+                    .attr('id', fsUtils.defaultTarget)
+                    .css('display', 'none')
+                    .appendTo('body');
+                    }
+                    if(success) {
+                        success(filesystem);
+                    }
+                }, onError);
             }, onError);
         }else{
             console.log("File System Not Available");
@@ -379,7 +381,6 @@ $(function() {
                    if(success){
                        success(dirEntry);
                    }
-                   success(dirEntry);
                }, onError);
            },
 
