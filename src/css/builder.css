@@ -175,6 +175,61 @@ html, body {
 }
 .view.code { }
 .view.live { }
+.view.live .stage {
+    background-color: white;
+    background-image: none;
+    background-attachment: fixed;
+    -webkit-box-pack: center;
+    -webkit-box-align: center;
+}
+.view.live iframe {
+    display: block;
+    overflow: hidden;
+    border: 0px none;
+    background-origin: border-box;
+    background-repeat: no-repeat;
+}
+.view.live iframe.phone {
+    /* device 'screen' dimensions */
+    width: 320px;
+    min-width: 320px;
+    max-width: 320px;
+    height: 480px;
+    min-height: 480px;
+    max-height: 480px;
+    /* device 'frame' dimensions */
+    padding: 46px 47px 99px 53px;
+    background-size: 420px 623px;
+    background-image: url('images/skins/phone.png');
+}
+.view.live iframe.tablet {
+    /* device 'screen' dimensions */
+    width: 1000px;
+    min-width: 1000px;
+    max-width: 1000px;
+    height: 600px;
+    min-height: 600px;
+    max-height: 600px;
+    /* device 'frame' dimensions */
+    padding: 85px 100px 80px 100px;
+    background-size: 1200px 767px;
+    background-image: url('images/skins/tablet.png');
+}
+
+.view.live iframe.netbook {
+    /* device 'screen' dimensions */
+    width: 895px;
+    min-width: 895px;
+    max-width: 895px;
+    height: 508px;
+    min-height: 508px;
+    max-height: 508px;
+    /* device 'frame' dimensions */
+    padding: 58px 174px 357px 174px;
+    background-size: 1246px 920px;
+    background-image: url('images/skins/netbook.png');
+}
+
 .panel {
     background-color: #e4e5df;
     width: 300px;

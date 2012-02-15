@@ -72,37 +72,17 @@
         refresh: function(event, widget) {
             var stage = $('#liveView > .stage'),
                 deviceScreen = $('#deviceScreen'),
-                deviceImage = $('<img src= "src/css/images/phone.png"/>'),
-                deviceWrapper,
-                imageWidth = 421,
-                imageHeight = 572,
                 liveDoc;
 
             widget = widget || this;
             if (deviceScreen.length === 0)
             {
-                stage.find('*').remove();
-                deviceScreen = $('<iframe id="deviceScreen"/>')
-                    .css({
-                        position: 'absolute',
-                        left: 50,
-                        top: 43,
-                        width:320,
-                        height:480
-                    });
-                deviceWrapper = $('<div id="deviceWrapper" align="center"/>')
-                    .append(deviceImage)
-                    .append(deviceScreen)
-                    .appendTo(stage)
-                    .css({
-                        width: imageWidth,
-                        height: imageHeight,
-                        padding:0,
-                        overflow:'hidden',
-                        position: 'absolute',
-                        left: ($(document).width() - imageWidth)/2,
-                        top: ($(document).height() - imageHeight)/2
-                    });
+                stage.empty();
+                deviceScreen = $('<iframe/>')
+                    .attr({id:'deviceScreen'})
+                    .addClass('phone')  // Default to phone skin
+                    .addClass('flex1')
+                    .appendTo(stage);
             }
             liveDoc = deviceScreen.contents()[0];
             liveDoc.open();
