@@ -50,6 +50,8 @@
  *                     default properties, e.g. when dragged onto the canvas
  *                     from the palette (i.e. Grid uses this to generate its
  *                     two default child Blocks)
+ *  16)  outlineLabel: optional function(ADMNode) that returns a label to show
+ *                     (intended even for widgets w/ showInPalette false)
  *
  * Each zone description in the array should be an object with:
  *   1) name identifying the zone point
@@ -1201,6 +1203,21 @@ var BWidgetRegistry = {
     Block: {
         parent: "Base",
         showInPalette: false,
+        selectable: false,
+        outlineLabel: function (node) {
+            var columns, row, col, children, map;
+
+            if (node.getChildren().length == 0) {
+                return "";
+            }
+
+            columns = node.getParent().getProperty("columns");
+            row = Math.floor(node.getZoneIndex() / columns);
+
+            map = { a: 1, b: 2, c: 3, d: 4, e: 5 };
+            col = map[node.getProperty("subtype")];
+            return "Row " + (row + 1) + ", Column " + col;
+        },
         allowIn: "Grid",
         properties: {
             subtype: {
@@ -1484,8 +1501,25 @@ var BWidget = {
     },
 
     /**
+     * Tests whether this widget type should be shown in the palette or
+     * otherwise exposed to the user (e.g. in the outline view).
+     *
+     * @param {String} widgetType The type of the widget.
+     * @return {Boolean} true if this widget is to be shown in the palette,
+     *                   false if not or it is undefined.
+     */
+    isPaletteWidget: function (widgetType) {
+        var widget = BWidgetRegistry[widgetType];
+        if (typeof widget === "object" && widget.showInPalette !== false) {
+            return true;
+        }
+        return false;
+    },
+
+    /**
      * Gets the display label for the given widget type.
      *
+     * @param {String} widgetType The type of the widget.
      * @return {String} Display label.
      */
     getDisplayLabel: function (widgetType) {
@@ -1499,6 +1533,7 @@ var BWidget = {
     /**
      * Gets the icon id for the given widget type.
      *
+     * @param {String} widgetType The type of the widget.
      * @return {String} Icon id.
      */
     getIcon: function (widgetType) {
@@ -1518,6 +1553,7 @@ var BWidget = {
     /**
      * Gets the initialization function for the given widget type.
      *
+     * @param {String} widgetType The type of the widget.
      * @return {Function(ADMNode)} The initialization function, or undefined if
      *                             there is none.
      */
@@ -1834,9 +1870,10 @@ var BWidget = {
      * Gets the template for a given widget type.
      *
      * @param {String} widgetType The type of the widget.
-     * @return {String} The template string for this widget type, or empty
-     *                  string if the template is not a string or does not
-     *                  exist.
+     * @return {Various} The template string for this widget type, or an
+     *                   object (FIXME: explain), or a function(ADMNode) that
+     *                   provides a template, or undefined if the template does
+     *                   not exist.
      * @throws {Error} If widgetType is invalid.
      */
     getTemplate: function (widgetType) {
@@ -1853,6 +1890,29 @@ var BWidget = {
             return "";
         }
         return template;
+    },
+
+    /**
+     * Gets the outline label function for a given widget type.
+     *
+     * @param {String} widgetType The type of the widget.
+     * @return {Function} The function(ADMNode) provided for this widget to
+     *                    generate a label, or undefined if it does not exist.
+     * @throws {Error} If widgetType is invalid.
+     */
+    getOutlineLabelFunction: function (widgetType) {
+        var widget, func;
+        widget = BWidgetRegistry[widgetType];
+        if (typeof widget !== "object") {
+            throw new Error("undefined widget type in getOutlineLabelFunction: "
+                            + widgetType);
+        }
+
+        func = widget.outlineLabel;
+        if (typeof func !== "function") {
+            return undefined;
+        }
+        return func;
     },
 
     /**

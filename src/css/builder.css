@@ -599,6 +599,13 @@ body.ui-tabs.ui-widget {
     background-image: url("images/pageIcon_on.png");
     font: 10px bold #333333;
 }
+#pageList li.label {
+    list-style: none inside;
+    position: relative;
+    font-style: italic;
+    font-size: small;
+    color: #e0e0e0;
+}
 .pageIcon:hover {
     background-image: url("images/pageIcon_hover.png");
 }

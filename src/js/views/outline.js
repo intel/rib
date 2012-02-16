@@ -255,8 +255,8 @@
             }
 
             function render_sub(node, $container) {
-                var newItem, children, i, type, UID, isShowInOutline, widgetID,
-                    label, id, $subContainer;
+                var newItem, children, i, type, UID, showInOutline, widgetID,
+                    label, id, $subContainer, labelFunc;
 
                 if (!(node instanceof ADMNode)) {
                     return;
@@ -264,18 +264,28 @@
 
                 type = node.getType();
                 UID = node.getUid();
-                isShowInOutline = node.isSelectable();
+                showInOutline = node.isSelectable();
                 widgetID = type + '-' + UID;
-                label = BWidget.getDisplayLabel(type);
                 $subContainer = $container;
 
+                labelFunc = BWidget.getOutlineLabelFunction(type);
+                if (labelFunc) {
+                    label = labelFunc(node);
+                    if (label) {
+                        $container.append($('<li class="label">' +
+                                            labelFunc(node) + '<li>'));
+                    }
+                }
+
+                label = BWidget.getDisplayLabel(type);
+
                 // check current node whether can ben shown in outline pane
-                if (isShowInOutline) {
+                if (showInOutline) {
                     newItem = $('<li><a>' + label + '</a></li>')
                         .attr('id', 'Outline-' + UID)
                         .appendTo($container);
 
-                    if (node.getChildrenCount() > 0) {
+                    if (node.hasUserVisibleChildren()) {
                         newItem.addClass('folder')
                             .append('<ul id="' + widgetID + '"></ul>');
                     }
@@ -293,13 +303,13 @@
                         }
                     }
 
-                    newItem.attr('adm-uid',UID);
+                    newItem.attr('adm-uid', UID);
 
                     // add click handler
                     newItem.click(function(e) {
                         $(this).toggleClass("close")
                         .children("ul").toggle();
-                    e.stopPropagation();
+                        e.stopPropagation();
                     });
 
                     newItem.find("a").click(function(e) {
