@@ -413,6 +413,13 @@ var BWidgetRegistry = {
                 defaultValue: "vertical",
                 htmlAttribute: "data-type"
             }
+        },
+        init: function (node) {
+            // initial state is three buttons
+            var i;
+            for (i = 0; i < 3; i++) {
+                node.addChild(new ADMNode("Button"));
+            }
         }
     },
 
@@ -741,13 +748,12 @@ var BWidgetRegistry = {
     },
 
     /**
-     * Represents a Control Group object. Includes an "data-type" property
-     * that should be "vertical" or "horizontal"
+     * Represents a Radio Group object.
      */
-    ControlGroup: {
-        parent: "Base",
+    RadioGroup: {
+        parent: "ButtonGroup",
         newGroup: true,
-        displayLabel: "Control Group",
+        displayLabel: "Radio Group",
         properties: {
             // FIXME: Put fieldcontain back in here, but will require
             //        support for selector on HTML attribute for data-type
@@ -758,12 +764,6 @@ var BWidgetRegistry = {
             //        commit. But it seems to work fine with a blank
             //        legend, so maybe it makes sense to always write to
             //        guide the user as they edit the HTML.
-            orientation: {
-                type: "string",
-                options: [ "vertical", "horizontal" ],
-                defaultValue: "vertical",
-                htmlAttribute: "data-type"
-            },
             legend: {
                type: "string",
                defaultValue: ""
@@ -773,12 +773,21 @@ var BWidgetRegistry = {
             {
                 name: "default",
                 cardinality: "N",
-                // TODO: probably only a single type should be allowed, that
-                //       would take more work to enforce
-                allow: [ "RadioButton", "Checkbox" ]
+                allow: [ "RadioButton" ]
             }
         ],
         template: '<fieldset data-role="controlgroup"><legend>%LEGEND%</legend></fieldset>',
+        init: function (node) {
+            // initial state is three radio buttons
+            var i, button;
+            for (i = 0; i < 3; i++) {
+                button = new ADMNode("RadioButton");
+                node.addChild(button);
+                if (i == 0) {
+                    button.setProperty("checked", true);
+                }
+            }
+        }
     },
 
     /**
@@ -787,7 +796,7 @@ var BWidgetRegistry = {
     RadioButton: {
         parent: "Base",
         displayLabel: "Radio Button",
-        allowIn: "ControlGroup",
+        allowIn: "RadioGroup",
         properties: {
             // FIXME: All the radio buttons in a group need to have a common
             //        "name" field in order to work correctly
@@ -865,11 +874,49 @@ var BWidgetRegistry = {
     },
 
     /**
+     * Represents a Checkbox Group object.
+     */
+    CheckboxGroup: {
+        parent: "ButtonGroup",
+        newGroup: true,
+        displayLabel: "Checkbox Group",
+        properties: {
+            // FIXME: Put fieldcontain back in here, but will require
+            //        support for selector on HTML attribute for data-type
+
+            // FIXME: Before the legend was not written if with-legend was
+            //        "no" -- instead, we could just check for empty legend
+            //        in a template function, like I did in Slider in this
+            //        commit. But it seems to work fine with a blank
+            //        legend, so maybe it makes sense to always write to
+            //        guide the user as they edit the HTML.
+            legend: {
+               type: "string",
+               defaultValue: ""
+            },
+        },
+        zones: [
+            {
+                name: "default",
+                cardinality: "N",
+                allow: [ "Checkbox" ]
+            }
+        ],
+        template: '<fieldset data-role="controlgroup"><legend>%LEGEND%</legend></fieldset>',
+        init: function (node) {
+            // initial state is three checkboxes
+            var i;
+            for (i = 0; i < 3; i++) {
+                node.addChild(new ADMNode("Checkbox"));
+            }
+        }
+    },
+
+    /**
      * Represents an checkbox element.
      */
     Checkbox: {
         parent: "Base",
-        allowIn: "ControlGroup",
         properties: {
             id: {
                 type: "string",
