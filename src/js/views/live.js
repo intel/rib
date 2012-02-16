@@ -24,8 +24,8 @@
         _create: function() {
             var o = this.options,
                 controlPanel,
-                pageView,
-                devices,
+                pagePanel,
+                devicePanel,
                 deviceToolbar,
                 deviceSelect,
                 widget = this;
@@ -44,28 +44,35 @@
             }
 
             controlPanel = $('<div/>')
+                .addClass('tools')
                 .addClass('hbox')
                 .addClass('flex0');
 
-            pageView = $('<div/>')
+            pagePanel = $('<div/>')
+                .addClass('panel-section')
                 .addClass('vbox')
                 .addClass('flex0')
                 .css({ "min-width": 300, })  // FIXME: do this in CSS
                 .pageView();
-            pageView.pageView('option', 'model', ADM);
+            pagePanel.pageView('option', 'model', ADM);
 
-            devices = $('<div/>')
+            devicePanel = $('<div/>')
+                .addClass('panel-section')
                 .addClass('vbox')
-                .addClass('flex1')
-                .append('<div><span>DEVICES</span></div>');
+                .addClass('flex1');
+
+            $('<div>devices</div>')
+                .addClass('panel-section-header')
+                .appendTo(devicePanel);
 
             deviceToolbar = $('<div/>')
+                .addClass('panel-section-contents')
                 .css({
                     backgroundColor: "#e4e5df",       // FIXME: do this in CSS
                     borderLeft:"1px solid #8c8d8d",   // FIXME: do this in CSS
                     borderBottom: "1px solid #b9b9b9" // FIXME: do this in CSS
                  })
-                .appendTo(devices);
+                .appendTo(devicePanel);
 
             deviceSelect = $('<select></select>')
                 .appendTo(deviceToolbar)
@@ -84,8 +91,8 @@
                 deviceSelect.trigger('change');
             });
 
-            controlPanel.append(pageView)
-                .append(devices)
+            controlPanel.append(pagePanel)
+                .append(devicePanel)
                 .appendTo(this.element);
 
             this.options.iframe = $('<iframe/>')

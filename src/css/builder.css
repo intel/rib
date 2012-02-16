@@ -179,8 +179,34 @@ html, body {
     background-color: white;
     background-image: none;
     background-attachment: fixed;
-    -webkit-box-pack: center;
+    -webkit-box-pack: top;
     -webkit-box-align: center;
+}
+.view.live .stage .panel-section-header {
+    background-image: url('images/devicesTitleBarBackground.png');
+    height: 25px;
+    min-height: 25px;
+    max-height: 25px;
+}
+.view.live .stage .panel-section-contents {
+    border-left: 1px solid #8c8d8d;
+    border-bottom: 1px solid #b9b9b9;
+    height: 41px;
+    min-height: 41px;
+    max-height: 41px;
+}
+.view.live .stage .pageView .panel-section-contents {
+    background-color: #B6BEC0;
+}
+.view.live .stage > div {
+    position: relative;
+    width: 100%;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    height: 66px;
+    min-height: 66px;
+    max-height: 66px;
 }
 .view.live iframe {
     display: block;
@@ -234,6 +260,13 @@ html, body {
     background-color: #e4e5df;
     width: 300px;
     min-width: 10px;
+}
+.panel-section-header {
+    text-transform: uppercase;
+    background-image: url('images/pagesTitleBarBackground28px.png');
+}
+.panel-section-contents {
+    background-color: #E4E5DF;
 }
 .left { border-right: 1px solid rgba(0,0,0,0.3); }
 .right { border-left: 1px solid rgba(0,0,0,0.3); }
@@ -358,14 +391,17 @@ html, body {
 }
 
 .pageIcon.pageActive {
-    background-image: url("images/pageIcon_on.png")
+    background-image: url("images/pageIcon_on.png");
+    font: 10px bold #333333;
 }
 .pageIcon {
     background-image: url("images/pageIcon_off.png");
     min-width: 20px;
     min-height: 24px;
     text-align: center;
-    float: left
+    float: left;
+    margin: 10px 5px 10px 5px;
+    font: 10px normal #ffffff;
 }
 .pageIcon:hover {
     background-image: url("images/pageIcon_hover.png");

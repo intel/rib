@@ -37,10 +37,16 @@
             }
 
             this.element
-                .append('<div><span>PAGES</span></div>')
+                .addClass(this.widgetName)
+                .append('<div>pages</div>')
                 .append('<div/>')
+                .children(':first')
+                    .addClass('panel-section-header')
+                    .end()
                 .children(':last')
-                    .attr({id: 'pages'});
+                    .attr({id: 'pages'})
+                    .addClass('panel-section-contents')
+                    .end();
 
             this.options.primaryTools = this._createPrimaryTools();
             this.options.secondaryTools = this._createSecondaryTools();
