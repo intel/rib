@@ -40,6 +40,14 @@
                 .text(this.widgetName)
                 .appendTo(this.element);
 
+            // Add a hidden file input element, used to trigger the browsers
+            // native file browse/find dialog when user wants to import a new
+            // project file into the GUI Builder application
+            $('<input type="file"/>')
+                .attr({id:'importFile'})
+                .addClass('hidden-accessible')
+                .appendTo(this.element[0].ownerDocument.body);
+
             this.options.primaryTools = this._createPrimaryTools();
             this.options.secondaryTools = this._createSecondaryTools();
 

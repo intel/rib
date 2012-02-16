@@ -45,7 +45,7 @@
             document.title = 'GUI Builder';
 
             // Make sure the body is empty
-            $(document.body).empty().append('<input type="file" id="importFile" style="visibility:hidden" />');
+            $(document.body).empty();
 
             this._constructApp($(document.body));
 
