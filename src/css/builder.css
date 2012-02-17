@@ -1064,3 +1064,31 @@ ul {
     background-image: url("images/deleteButton_down.png");
     background-repeat: no-repeat;
 }
+
+.addDevice {
+    cursor: pointer;
+    padding: 20px;
+    background: url("images/addDevice_up.png") no-repeat center;
+}
+.addDevice:active {
+    background-image: url("images/addDevice_down.png");
+}
+label
+{
+    width: 8em;
+    float: left;
+    text-align: right;
+    margin-right: 0.5em;
+    display: block;
+    margin-top: 2em
+}
+input {
+    margin-top: 2em
+}
+
+input.submit
+{
+    margin-left: 4.5em;
+    margin-right: 0.5em;
+    min-width: 10em;
+}

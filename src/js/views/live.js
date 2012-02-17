@@ -28,7 +28,11 @@
                 devicePanel,
                 deviceToolbar,
                 deviceSelect,
-                widget = this;
+                widget = this,
+                addDeviceButton;
+
+            widget._sysDevices = {};
+            widget._userDevices = {};
 
             o.designReset = this._designResetHandler;
             o.selectionChanged = null;
@@ -83,12 +87,61 @@
             });
 
             $.getJSON("src/assets/devices.json", function (data) {
-                $.each(data, function (key, val) {
-                    $('<option/>').append( key )
-                        .data('deviceInfo', val.Default)
-                        .appendTo(deviceSelect);
+                widget._sysDevices = data;
+                widget._refreshDeviceList(deviceSelect);
+                $.gb.fsUtils.read("devices.json", function(result) {
+                    try {
+                        widget._userDevices = $.parseJSON(result);
+                        widget._refreshDeviceList(deviceSelect);
+                    } catch(e) {
+                        alert(e);
+                        return false;
+                    }
                 });
-                deviceSelect.trigger('change');
+            });
+            addDeviceButton = $('<a class="addDevice"/>').appendTo(deviceToolbar)
+                .click( function () {
+                    $("<form/>")
+                        .append('<label for="name">Device Name</label>')
+                        .append('<input required name="name"/>')
+                        .append('<label for="screenWidth">Screen</label>')
+                        .append('<input name="screenWidth" type="number" max="10000"  style="width:4em" required size="4"/>').append('x')
+                        .append('<input name="screenHeight" type="number" max="10000" style="width:4em" required size="4"/>')
+                        .append('<br/>')
+                        .append('<input type="submit" class="submit" value="Done"></input>')
+                        .append($('<a href="javascript:void(0)">Cancel</a>').click( function() { $(this).parent().dialog("close"); }))
+                        .submit( function () {
+                            var values = {},
+                                form = this;
+                            try{
+                                $.each($(this).serializeArray(), function(i, field) {
+                                        values[field.name] = field.value;
+                                });
+                                widget._userDevices[values.name] = $.extend(true, {}, widget._sysDevices.Phones.Default,
+                                    {
+                                        "screen": {
+                                            width: values.screenWidth + 'px',
+                                            height: values.screenHeight + 'px'
+                                        },
+                                        "skin": {
+                                            width: new Number(values.screenWidth) + 100 + 'px',
+                                            height: new Number(values.screenHeight) + 100 + 'px'
+                                        }
+                                    });
+                                widget._refreshDeviceList(deviceSelect);
+                                $.gb.fsUtils.write("devices.json", JSON.stringify(widget._userDevices), function(fileEntry){
+                                    alert("New device " + values.name + " sucessfully created!");
+                                    $(form).dialog('close');
+                                });
+                            }catch (e){
+                               alert(e);
+                            }
+                            return false;
+                        })
+                        .dialog({title:"Add Device", modal:true, width: 400, height: 285, resizable:false });
+                });
+            $('<a href="javascript:void(0)">Add Device</a>').appendTo(deviceToolbar).click(function () {
+                addDeviceButton.trigger('click');
             });
 
             controlPanel.append(pagePanel)
@@ -153,6 +206,21 @@
         },
 
         // Private functions
+        _refreshDeviceList: function (deviceSelect) {
+            deviceSelect.empty();
+            $.each(this._sysDevices, function (key, val) {
+                $('<option/>').append( key )
+                    .data('deviceInfo', val.Default)
+                    .appendTo(deviceSelect);
+            });
+            $.each(this._userDevices, function (name, info) {
+                    $('<option/>').append( name )
+                        .data('deviceInfo', info)
+                        .appendTo(deviceSelect);
+            });
+            deviceSelect.trigger('change');
+        },
+
         _setDevice: function (info) {
 
             // TODO: This may be better managed by reading and applying
