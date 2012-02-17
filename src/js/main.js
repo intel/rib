@@ -355,7 +355,7 @@ $(function() {
     ADM.setActivePage(page);
 
     // XXX: Hackish trick to dynamically add nodes to the DOM for now
-    $(document).click( function(event) {
+    $(':gb-paletteView').click( function(event) {
         var node = new ADMNode('Button');
         ADM.getActivePage().addChild(node);
         ADM.setSelected(node.getUid());
