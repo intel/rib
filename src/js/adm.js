@@ -564,13 +564,14 @@ ADM.setProperty = function (node, property, value) {
     var rval, oldValue;
     oldValue = node.getProperty(property);
     rval = node.setProperty(property, value);
-    if (rval) {
+    if (rval.result) {
         ADM.transaction({
             type: "propertyChange",
             node: node,
             property: property,
             oldValue: oldValue,
-            value: value
+            value: value,
+            data: rval.transactionData
         });
     }
     return rval;
@@ -618,7 +619,7 @@ ADM.undo = function () {
         }
         else if (obj.type === "propertyChange") {
             // TODO: this could require deeper copy of complex properties
-            obj.node.setProperty(obj.property, obj.oldValue);
+            obj.node.setProperty(obj.property, obj.oldValue, obj.data);
         }
         else {
             console.log("Warning: Unexpected UNDO transaction");
@@ -650,7 +651,7 @@ ADM.redo = function () {
         }
         else if (obj.type === "propertyChange") {
             // TODO: this could require deeper copy of complex properties
-            obj.node.setProperty(obj.property, obj.value);
+            obj.node.setProperty(obj.property, obj.value, obj.data);
         }
         else {
             console.log("Warning: Unexpected REDO transaction");
@@ -1480,24 +1481,32 @@ ADMNode.prototype.isPropertyExplicit = function (property) {
  *
  * @param {String} property The name of the property to be set.
  * @param {Any} value The value to set for the property.
- * @return {Boolean} True if the property was set, false if it was the wrong
- *                   type, or undefined if the property is invalid for this
- *                   object.
+ * @param {Any} data [Optional] Only used when this setProperty call is in
+ *                   response to an undo/redo operation, and the given data was
+ *                   provided by an earlier call to the property hook function
+ *                   for this widget.
+ * @return {Object} Object with result property true if the property was set,
+ *                  false if it was the wrong type, or undefined if the
+ *                  property is invalid for this object. If true, then the
+ *                  object may also contain a transactionData property with
+ *                  relevant info for performing an undo of this operation.
  */
-ADMNode.prototype.setProperty = function (property, value) {
-    var orig, func, changed, type;
+ADMNode.prototype.setProperty = function (property, value, data) {
+    var orig, func, changed, type, rval = { };
     type = BWidget.getPropertyType(this.getType(), property);
     if (!type) {
         console.log("Error: attempted to set non-existent property: " +
                     property);
         return undefined;
     }
+    rval.result = false;
+
     if (typeof value !== type) {
         var numberTypes = {float:0,integer:0,number:0};
         if ((type in numberTypes) && isNaN(value)) {
             console.log("Error: attempted to set property " + property +
                         " (" + type + ") with wrong type (" + typeof value + ")");
-            return false;
+            return rval;
         }
     }
 
@@ -1509,20 +1518,21 @@ ADMNode.prototype.setProperty = function (property, value) {
         var pattern = /^[a-zA-Z]([\w-]*)$/;
         if (value && !pattern.test(value)) {
             console.log("Error: attempted to set invalid id");
-            return false;
+            return rval;
         }
     }
 
     if (this._properties[property] !== value) {
         func = BWidget.getPropertyHookFunction(this.getType(), property);
         if (func)
-            func(this, value);
+            rval.transactionData = func(this, value, data);
         orig = this._properties[property];
         this._properties[property] = value;
         this.fireModelEvent("modelUpdated",
                             { type: "propertyChanged", node: this,
                               property: property, oldValue: orig,
                               newValue: value });
+        rval.result = true;
     }
-    return true;
+    return rval;
 };
