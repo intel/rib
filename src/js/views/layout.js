@@ -80,11 +80,10 @@
                 // Should this REALLY be done here, or plugin registration in
                 // the "host"... using the functions mapped in widget options?
                 case 'model':
-                    this._unbindADMEvents(value);
-                    this.options.model = value;
+                    this._unbindADMEvents();
+                    this._bindADMEvents(value);
                     this._createDocument();
                     this.options.iframe.load(this, function(event) {
-                        event.data._bindADMEvents(event.data.options.model);
                         event.data.loaded = true;
                         event.data.refresh(null, event.data);
                     });
@@ -149,27 +148,80 @@
         },
 
         _bindADMEvents: function(a) {
-            this.designRoot = a && a.getDesignRoot();
-            a.bind("designReset", this._designResetHandler, this);
-            a.bind("selectionChanged", this._selectionChangedHandler, this);
-            a.bind("activePageChanged", this._activePageChangedHandler, this);
-            this.designRoot.bind("modelUpdated",
-                                 this._modelUpdatedHandler, this);
+            var o = this.options,
+                d = this.designRoot;
+
+            if (a) {
+                o.model = a;
+
+                if (o.designReset) {
+                    a.bind("designReset", o.designReset, this);
+                }
+                if (o.selectionChanged) {
+                    a.bind("selectionChanged", o.selectionChanged, this);
+                }
+                if (o.activePageChanged) {
+                    a.bind("activePageChanged", o.activePageChanged, this);
+                }
+
+                // Since model changed, need to call our designReset hander
+                // to sync up the ADMDesign modelUpdated event handler
+                if (o.designReset) {
+                    o.designReset({design: a.getDesignRoot()}, this);
+                }
+            }
         },
 
-        _unbindADMEvents: function(a) {
-            this.designRoot = a && a.getDesignRoot();
-            a.unbind("designReset", this._designResetHandler, this);
-            a.unbind("selectionChanged", this._selectionChangedHandler, this);
-            a.unbind("activePageChanged", this._activePageChangedHandler, this);
-            this.designRoot.unbind("modelUpdated",
-                                   this._modelUpdatedHandler, this);
+        _unbindADMEvents: function() {
+            var o = this.options,
+                a = this.options.model,
+                d = this.designRoot;
+
+            // First unbind our ADMDesign modelUpdated handler, if any...
+            if (d && o.modelUpdated) {
+                d.designRoot.unbind("modelUpdated", o.modelUpdated, this);
+            }
+
+            // Now unbind all ADM model event handlers, if any...
+            if (a) {
+                if (o.designReset) {
+                    a.unbind("designReset", o.designReset, this);
+                }
+                if (o.selectionChanged) {
+                    a.unbind("selectionChanged", o.selectionChanged, this);
+                }
+                if (o.activePageChanged) {
+                    a.unbind("activePageChanged", o.activePageChanged, this);
+                }
+            }
         },
 
         _designResetHandler: function(event, widget) {
+            var d = event && event.design, o;
+
             widget = widget || this;
-            this.designRoot = event.design ||
-                              widget.options.model.getDesignRoot();
+            o = widget.options;
+            d = d || o.model.getDesignRoot();
+
+            // Do nothing if the new ADMDesign equals our currently cached one
+            if (d === widget.designRoot) {
+                return;
+            }
+
+            // First, unbind existing modelUpdated hander, if any...
+            if (widget.designRoot && o.modelUpdated) {
+                widget.designRoot.unbind("modelUpdated", o.modelUpdated,widget);
+            }
+
+            // Next, bind to modelUpdated events from new ADMDesign, if any...
+            if (d && o.modelUpdated) {
+                d.bind("modelUpdated", o.modelUpdated, widget);
+            }
+
+            // Then, cache the new ADMDesign reference with this instance
+            widget.designRoot = d;
+
+            // Finally, redraw our view since the ADMDesign root has changed
             widget.refresh(event, widget);
         },
 
@@ -207,13 +259,13 @@
                 newPage = event && event.page, curPage;
 
             widget = widget || this;
-            curPage = widget.options.model.getActivePage();
 
             // Only change if new page is valid
             if (!newPage) {
                 return;
             }
             id = newPage.getProperty('id');
+            curPage = widget.options.model.getActivePage();
 
             // Only change if new page not the current page
             if (curPage && curPage.getUid() === id) {
@@ -223,7 +275,7 @@
             win = widget.options.contentDocument[0].defaultView;
 
             if (win && win.$ && win.$.mobile) {
-                win.$.mobile.changePage('#'+id);
+                win.$.mobile.changePage("#"+id, {transition: "none"});
             }
         },
 
