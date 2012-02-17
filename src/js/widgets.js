@@ -84,6 +84,20 @@
  *   8) setPropertyHook: optional function to be called when a property is
  *                       about to change, giving the widget an opportunity to
  *                       modify its children (e.g. grid rows or columns change)
+ *                       Takes the ADM node, the new property value, and a
+ *                       transactionData object. The function returns a
+ *                       transactionData object, if necessary, to track what
+ *                       additional info would be needed to undo/redo this
+ *                       transaction. If later the hook is passed this data
+ *                       back, it should make use of it to undo/redo the
+ *                       property change appropriately. (E.g. when grid rows
+ *                       is lowered, it saves the removed Blocks in an array
+ *                       by returning this data, then if called again with
+ *                       that same data, it restores them. If rows went from
+ *                       5 to 3 originally and you returned data X, you're
+ *                       guaranteed that if you see data X again, you will be
+ *                       going from 3 to 5 rows, and can make sense of the
+ *                       data.)
  *
  * @class
  */
@@ -1123,8 +1137,9 @@ var BWidgetRegistry = {
             rows: {
                 type: "integer",
                 defaultValue: 1,
-                setPropertyHook: function (node, value) {
-                    var rows, columns, i, block, map, children;
+                setPropertyHook: function (node, value, transactionData) {
+                    var rows, columns, i, block, map, children, blocks, count,
+                        blockIndex;
                     rows = node.getProperty("rows");
                     columns = node.getProperty("columns");
 
@@ -1135,25 +1150,48 @@ var BWidgetRegistry = {
                     }
 
                     // add rows if necessary
-                    map = [ "a", "b", "c", "d", "e" ];
-                    while (rows < value) {
-                        for (i=0; i<columns; i++) {
-                            block = new ADMNode("Block");
-                            block.setProperty("subtype", map[i]);
-                            node.addChild(block);
+                    if (rows < value) {
+                        if (transactionData) {
+                            // use the array of blocks stored in transaction
+                            blocks = transactionData;
                         }
-                        rows++;
+                        else {
+                            // create a new array of blocks
+                            map = [ "a", "b", "c", "d", "e" ];
+                            blocks = [];
+                            count = rows;
+                            while (count < value) {
+                                for (i=0; i<columns; i++) {
+                                    block = new ADMNode("Block");
+                                    block.setProperty("subtype", map[i]);
+                                    blocks.push(block);
+                                }
+                                count++;
+                            }
+                        }
+
+                        // NOTE: be sure not to modify transactionData, so don't
+                        //       modify blocks, which may point to it
+
+                        // add blocks from this array to the new rows
+                        blockIndex = 0;
+                        while (rows < value) {
+                            for (i=0; i<columns; i++) {
+                                node.addChild(blocks[blockIndex++]);
+                            }
+                            rows++;
+                        }
                     }
 
                     // remove rows if necessary
                     if (rows > value) {
+                        count = (rows - value) * columns;
                         children = node.getChildren();
-                        while (rows > value) {
-                            for (i=0; i<columns; i++) {
-                                node.removeChild(children.pop());
-                            }
-                            rows--;
+                        blocks = children.slice(children.length - count);
+                        for (i=0; i<count; i++) {
+                            node.removeChild(children.pop());
                         }
+                        return blocks;
                     }
                 }
             },
@@ -1161,8 +1199,9 @@ var BWidgetRegistry = {
                 type: "integer",
                 options: [ 2, 3, 4, 5 ],
                 defaultValue: 2,
-                setPropertyHook: function (node, value) {
-                    var rows, columns, i, block, map, children, index;
+                setPropertyHook: function (node, value, transactionData) {
+                    var rows, columns, i, block, map, children, blocks, count,
+                        index, blockIndex;
                     rows = node.getProperty("rows");
                     columns = node.getProperty("columns");
 
@@ -1172,27 +1211,56 @@ var BWidgetRegistry = {
                     }
 
                     // add columns if necessary
-                    map = [ "", "", "c", "d", "e" ];
-                    while (columns < value) {
-                        index = columns;
-                        for (i=0; i<rows; i++) {
-                            block = new ADMNode("Block");
-                            block.setProperty("subtype", map[columns]);
-                            node.insertChildInZone(block, "default", index);
-                            index += columns + 1;
+                    if (columns < value) {
+                        if (transactionData) {
+                            // use the array of blocks stored in transaction
+                            blocks = transactionData;
                         }
-                        columns++;
+                        else {
+                            // create a new array of blocks
+                            map = [ "", "", "c", "d", "e" ];
+                            blocks = [];
+                            count = columns;
+
+                            while (count < value) {
+                                for (i=0; i<rows; i++) {
+                                    block = new ADMNode("Block");
+                                    block.setProperty("subtype", map[count]);
+                                    blocks.push(block);
+                                }
+                                count++;
+                            }
+                        }
+
+                        // NOTE: be sure not to modify transactionData, so don't
+                        //       modify blocks, which may point to it
+
+                        // add blocks from this array to the new columns
+                        blockIndex = 0;
+                        while (columns < value) {
+                            index = columns;
+                            for (i=0; i<rows; i++) {
+                                block = blocks[blockIndex++];
+                                node.insertChildInZone(block, "default", index);
+                                index += columns + 1;
+                            }
+                            columns++;
+                        }
                     }
 
                     // remove columns if necessary
                     if (columns > value) {
-                        while (columns > value) {
-                            children = node.getChildren();
-                            for (i = children.length - 1; i > 0; i -= columns) {
+                        blocks = [];
+                        children = node.getChildren();
+                        count = children.length;
+                        while (value < columns) {
+                            for (i = value; i < count; i += columns) {
+                                blocks.push(children[i])
                                 node.removeChild(children[i]);
                             }
-                            columns--;
+                            value++;
                         }
+                        return blocks;
                     }
                 }
             },
