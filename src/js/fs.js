@@ -25,6 +25,7 @@ $(function() {
     fsType: window.PERSISTENT,
     fsSize: 20*1024*1024,
     fs:null,
+    deferredOperations:[],
 
     /**
      * Init the sandbox file system .
@@ -51,6 +52,10 @@ $(function() {
                     }
                     if(success) {
                         success(filesystem);
+                    }
+                    while (fsUtils.deferredOperations.length > 0) {
+                        var op = fsUtils.deferredOperations.shift();
+                        op.op.apply(this, op.arg);
                     }
                 }, onError);
             }, onError);
@@ -202,6 +207,7 @@ $(function() {
      */
     read: function (path, success, error){
               var onError = error || fsUtils.onError;
+
               fsUtils.pathToEntry(path, function(fileEntry) {
                   // Obtain the File object representing the FileEntry.
                   // Use FileReader to read its contents.
@@ -562,6 +568,18 @@ $(function() {
 
     /*******************  export fsUtils and cookieUtils to $.gb **********************/
     $.gb = $.gb || {};
+    $.each(["ls", "touch","rm","mkdir", "read", "write"], function (i, opName) {
+        var oldOp = fsUtils[opName];
+        fsUtils[opName] = function () {
+            if (fsUtils.fs === null)
+            {
+                fsUtils.deferredOperations.push({op:oldOp, arg:arguments});
+                return;
+            }
+            else
+                return oldOp.apply(this, arguments);
+        };
+    });
     $.gb.fsUtils = fsUtils;
     $.gb.cookieUtils = cookieUtils;
 });
