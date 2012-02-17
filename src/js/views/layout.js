@@ -19,6 +19,18 @@
             model: null,
             iframe: null,
             contentDocument: null,
+            customHeaders: {
+                'meta': [
+                    '<meta http-equiv="cache-control" content="no-cache">'
+                ],
+                'script': [
+                    '<script src="lib/jquery-ui-1.8.16.custom.js"></script>',
+                    '<script src="src/js/template.js"></script>'
+                ],
+                'link': [
+                    '<link href="src/css/template.css" rel="stylesheet">'
+                ]
+            }
         },
 
         _create: function() {
@@ -311,7 +323,7 @@
         _serializeFramework: function() {
             var start, end, ret, headers;
 
-            headers = $.gb.getDesignHeaders();
+            headers = this._getCustomHeaders();
 
             start = '<!DOCTYPE html>\n <html><head><title>Page Title</title>\n';
             end = "</head>\n<body>\n</body>\n</html>";
@@ -323,6 +335,32 @@
             }
 
             return ret;
+        },
+
+        // Great assumptions are being made here that the incoming default
+        // headers are already "sorted" and in the order in which they should
+        // be inserted into the <head/> node of the document being created...
+        _getCustomHeaders: function() {
+            var dh = $.gb.getDefaultHeaders(),   // default headers
+                ch = this.options.customHeaders, // our custom headers
+                m, s;
+
+            $.each(dh, function(idx) {
+                if (/<meta/.test(this)) {
+                    m = idx+1; // Insert our Meta after LAST one
+                    return;
+                }
+                if (/<script.*jquery-[0-9]*\.[0-9]*\.[0-9]*\.js/.test(this)) {
+                    s = s || idx+1; // Insert our Script after FIRST one
+                    return;
+                }
+                // No need to handle "<link/>" entries, as we just append
+                // our <link> at the end of all the headers
+            });
+
+            return [].concat(dh.slice(0,m), ch.meta,
+                             dh.slice(m,s), ch.script,
+                             dh.slice(s),   ch.link);
         },
 
         _serializeADMDesignToDOM: function() {
