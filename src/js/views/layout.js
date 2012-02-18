@@ -25,10 +25,10 @@
                 ],
                 'script': [
                     '<script src="lib/jquery-ui-1.8.16.custom.js"></script>',
-                    '<script src="src/js/template.js"></script>'
+                    '<script src="src/js/composer.js"></script>'
                 ],
                 'link': [
-                    '<link href="src/css/template.css" rel="stylesheet">'
+                    '<link href="src/css/composer.css" rel="stylesheet">'
                 ]
             }
         },
