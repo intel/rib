@@ -62,6 +62,13 @@ lib/web-ui-fw-libs.js                   MIT             Intel
 src/css/web-ui-fw-theme.css             MIT             Intel
 src/css/web-ui-fw-widgets.css           MIT             Intel
 lib/jszip.js				MIT or GPLv3	Stuart Knightley[5]
+lib/CodeMirror-2.21/LICENSE                         BSD-like   Marijn Haverbeke
+lib/CodeMirror-2.21/lib/codemirror.css              BSD-like   Marijn Haverbeke
+lib/CodeMirror-2.21/lib/codemirror.js               BSD-like   Marijn Haverbeke
+lib/CodeMirror-2.21/mode/css/css.js                 BSD-like   Marijn Haverbeke
+lib/CodeMirror-2.21/mode/htmlmixed/htmlmixed.js     BSD-like   Marijn Haverbeke
+lib/CodeMirror-2.21/mode/javascript/javascript.js   BSD-like   Marijn Haverbeke
+lib/CodeMirror-2.21/mode/xml/xml.js                 BSD-like   Marijn Haverbeke
 
 The following files were copied into this project from upstream and are
 only included as development tools (build, debugging, reporting).  They

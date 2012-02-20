@@ -391,6 +391,9 @@
             // Also, allows child elements to expand to fill the div,
             // necessary for proper scrolling overflowing content.
             el.height(el.parent().height());
+            //Some view (such as code view) may need to adjust its
+            //size when the height of the stage is set
+            $(el)[type]('resize');
         },
 
         _syncViewNames: function() {

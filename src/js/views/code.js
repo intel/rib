@@ -68,11 +68,23 @@
             this.options.tools.remove();
         },
 
+        resize: function(event, widget) {
+            widget = widget || this;
+            widget.element.height(widget.element.parent().height());
+            $(widget._editor.getScrollerElement())
+                .css('height', widget.element.height());
+            widget._editor.refresh();
+            widget._selectCode(widget._htmlDoc.doc,
+                    widget.options.model.getSelected()?
+                    widget.options.model.getSelected():
+                    widget.options.model.getActivePage().getUid());
+        },
+
         refresh: function(event, widget) {
             var self = this, textCode;
 
             widget = widget || this;
-            self.resultHTML = generateHTML();
+            self._htmlDoc = generateHTML();
             textCode = $(self.element).find('#text-code');
 
             if (textCode.length === 0) {
@@ -89,12 +101,14 @@
                            'padding': 0 });
                 self.element.append(textCode);
                 self.element.css('overflow','visible');
+                widget._editor = CodeMirror.fromTextArea(textCode[0],
+                        {mode: "text/gbsrc", tabMode: "indent", readOnly: true});
                 $(window).resize(function() {
-                    self.element.height($(self.element.parent()).height());
+                    widget.resize();
                 });
             }
 
-            textCode.val(self.resultHTML);
+            widget._editor.setValue(self._htmlDoc.html);
         },
 
         // Private functions
@@ -195,17 +209,70 @@
 
         _selectionChangedHandler: function(event, widget) {
             widget = widget || this;
-            widget.refresh();
+            widget._selectCode(widget._htmlDoc.doc, event.uid);
         },
 
         _activePageChangedHandler: function(event, widget) {
             widget = widget || this;
             widget.refresh();
+            if (widget._editor)
+                widget._editor.setValue(widget._htmlDoc.html);
+            widget._selectCode(widget._htmlDoc.doc, event.page.getUid());
         },
 
         _modelUpdatedHandler: function(event, widget) {
             widget = widget || this;
             widget.refresh();
+        },
+
+        _selectCode: function (resultDoc, selectedUid) {
+            var widget = this;
+            $(resultDoc).find(':data(uid)').each(function () {
+                if ($(this).data('uid') === selectedUid) {
+                    var findNodesByHTML = function (node, html) {
+                        var nodes = [];
+                        if (node.outerHTML === html) {
+                            nodes.push(node);
+                        }
+                        else $.each($(node).children(), function () {
+                            $.merge(nodes, findNodesByHTML(this, html));
+                        });
+                        return nodes;
+                     },
+                        selectedHTML =
+                            formatHTML(xmlserializer.serializeToString(this)),
+                        similarNodes =
+                            findNodesByHTML(this.ownerDocument.documentElement,
+                                    this.outerHTML),
+                        index = $.inArray(this, similarNodes),
+                        //Sometimes, jQM use multiple nodes to define a widget,
+                        //so we have to search for the combined html
+                        nextNode = $(this),
+                        regNode, matched, matchedIndex = 0;
+                     while ((nextNode = nextNode.next())[0]){
+                        if (nextNode.data('uid') === selectedUid)
+                            selectedHTML += ("\n" +
+                                    formatHTML(xmlserializer
+                                        .serializeToString(nextNode[0])));
+                     }
+                     regNode =
+                         new RegExp(selectedHTML.split(/ *\n */).join("\\s*"),'mg');
+
+                     while (matched = regNode.exec(widget._htmlDoc.html)){
+                         if (matchedIndex ++ === index ) {
+                             var textCode = widget._editor.getScrollerElement();
+                             widget._editor.setSelection
+                                 (widget._editor.posFromIndex(matched.index),
+                                  widget._editor.posFromIndex(regNode.lastIndex));
+                             textCode.scrollTop =
+                                 textCode.scrollHeight/widget._htmlDoc.html.length
+                                 * matched.index - textCode.clientHeight/2;
+                             break;
+                         }
+                     }
+                     return false;
+               }
+            });
         },
     });
 })(jQuery);

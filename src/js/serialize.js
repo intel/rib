@@ -22,17 +22,23 @@ var DEBUG = true,
     blockModelUpdated = false,
     blockActivePageChanged = false,
     xmlserializer = new XMLSerializer(),
-    generateHTML = function () {
-        var doc = constructNewDocument($.gb.getDefaultHeaders());
-
-        serializeADMSubtreeToDOM(ADM.getDesignRoot(),
-                                 $(doc).find('body'),
-                                 null); // No renderer used here
-        return style_html(xmlserializer.serializeToString(doc),
-                          {
+    formatHTML  = function (rawHTML) {
+        return style_html(rawHTML, {
                               'max_char': 80,
                               'unformatted': ['a', 'h1', 'script', 'title']
                           });
+    },
+
+    generateHTML = function () {
+        var doc = constructNewDocument($.gb.getDefaultHeaders());
+
+        serializeADMSubtreeToDOM(ADM.getDesignRoot(), $(doc).find('body'),
+                                 function (admNode, domNode) {
+                                    $(domNode).data('uid', admNode.getUid());
+                                 });
+        return { doc: doc,
+                 html: formatHTML(xmlserializer.serializeToString(doc))
+        };
     },
 
     serializeADMNodeToDOM = function (node, domParent) {

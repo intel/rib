@@ -1,0 +1,55 @@
+/*
+ * gui-builder - A simple WYSIWYG HTML5 app creator
+ * Copyright (c) 2011, Intel Corporation.
+ *
+ * This program is licensed under the terms and conditions of the
+ * Apache License, version 2.0.  The full text of the Apache License is at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ */
+CodeMirror.defineMode("gbsrc", function(config, parserConfig) {
+
+    var htmlMixedMode, regActivePage;
+
+    return {
+        startState: function() {
+            var activePage = ADM.getActivePage();
+            regActivePage =  new RegExp('data-role="page".*id="' + (activePage ? activePage.getProperty('id'):'*') + '"');
+            htmlMixedMode = htmlMixedMode || CodeMirror.getMode(config, "htmlmixed");
+            return { htmlState : htmlMixedMode.startState() };
+        },
+
+        token: function(stream, state) {
+            if (stream.match(regActivePage, false))
+                state.activePage = true;
+            if (state.activePage) {
+                if (stream.match('<div', false))
+                    state.divs? state.divs ++:state.divs = 1;
+                if (stream.match('</div>', false))
+                    state.divs --;
+                if (state.divs === 0)
+                    state.activePage = false;
+                return htmlMixedMode.token(stream, state.htmlState);
+            }
+            else {
+                stream.next();
+                return "inactive";
+            }
+        },
+
+        indent: function(state, textAfter) {
+            return htmlMixedMode.indent(state.htmlState, textAfter);
+        },
+
+        copyState: function(state) {
+            return {
+                htmlState : CodeMirror.copyState(htmlMixedMode, state.htmlState),
+           }
+        },
+
+
+        electricChars: "/{}:"
+    }
+});
+
+CodeMirror.defineMIME("text/gbsrc", "gbsrc");

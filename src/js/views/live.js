@@ -141,7 +141,7 @@
             if (iframe.length) {
                 liveDoc = widget.options.contentDocument[0];
                 liveDoc.open();
-                liveDoc.writeln(generateHTML());
+                liveDoc.writeln(generateHTML().html);
                 liveDoc.close();
                 iframe.load( function () {
                     var page = widget.options.model.getActivePage() || null;

@@ -36,6 +36,21 @@ Intel     src/css/web-ui-fw-theme.css          MIT            [14]
 Intel     src/css/web-ui-fw-widgets.css        MIT            [14]
 Stuart    lib/jszip.js                         MIT or GPLv3   [15]
 Knightley
+Marijn    lib/CodeMirror-2.21/LICENSE                         BSD-like    [16]
+Haverbeke
+Marijn    lib/CodeMirror-2.21/lib/codemirror.css              BSD-like    [16]
+Haverbeke
+Marijn    lib/CodeMirror-2.21/lib/codemirror.js               BSD-like    [16]
+Haverbeke
+Marijn    lib/CodeMirror-2.21/mode/css/css.js                 BSD-like    [16]
+Haverbeke
+Marijn    lib/CodeMirror-2.21/mode/htmlmixed/htmlmixed.js     BSD-like    [16]
+Haverbeke
+Marijn    lib/CodeMirror-2.21/mode/javascript/javascript.js   BSD-like    [16]
+Haverbeke
+Marijn    lib/CodeMirror-2.21/mode/xml/xml.js                 BSD-like    [16]
+Haverbeke
+Intel     src/js/codeview-mode.js                             APLV2       N/A
 
 Unreleased/Unpackaged Files (build/debug/development)
 =====================================================
@@ -68,3 +83,4 @@ Notes:
 [13] https://github.com/einars/js-beautify
 [14] https://github.com/web-ui-fw/web-ui-fw
 [15] http://jszip.stuartk.co.uk
+[16] http://codemirror.net
