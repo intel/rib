@@ -107,6 +107,20 @@
         },
 
         _createSecondaryTools: function() {
+           var settingButton = $(this.element[0].ownerDocument.body).find('#setProj');
+           var projectDialog = this.options.projectDialog;
+           settingButton.click(function(e){
+                projectDialog.dialog('option', 'title', "Project Setting")
+                    .find(".buttonStyle")
+                    .text("Done")
+                    .click(function (e) {
+                            //call project API to create a new project
+                            e.stopPropagation();
+                    })
+                    .end()
+                    .dialog("open");
+                    e.stopPropagation();
+                })
             return $('<div/>').addClass('hbox').hide()
                 .append('<input type="search" />')
                 .children().attr({

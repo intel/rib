@@ -357,7 +357,7 @@
             this.ui.extras = $('<div/>').appendTo(this.ui.navbar)
                 .addClass('tools-secondary flex1 hbox');
             $('<div/>').addClass('default-tools hbox').show()
-                .append('<a>settings</a>')
+                .append('<a id="setProj">settings</a>')
                 .append('<hr align=vertical>')
                 .append('<a id="exportProj">export</a>')
                 .appendTo(this.ui.extras);
