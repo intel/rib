@@ -70,7 +70,6 @@
 
         resize: function(event, widget) {
             widget = widget || this;
-            widget.element.height(widget.element.parent().height());
             $(widget._editor.getScrollerElement())
                 .css('height', widget.element.height());
             widget._editor.refresh();

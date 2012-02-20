@@ -387,13 +387,7 @@
                 // Show the default secondary tools (if any)
                 $('.tools-secondary .default-tools').show();
             }
-            // Ensure height of the view are the same as its parent.
-            // Also, allows child elements to expand to fill the div,
-            // necessary for proper scrolling overflowing content.
-            el.height(el.parent().height());
-            //Some view (such as code view) may need to adjust its
-            //size when the height of the stage is set
-            $(el)[type]('resize');
+            this._resizeView(el, type);
         },
 
         _syncViewNames: function() {
@@ -426,7 +420,8 @@
         },
 
         _bindViewPlugins: function() {
-            var ns = $[this.namespace];
+            var ns = $[this.namespace],
+                widget = this;
 
             this._syncInterfaceCache();
 
@@ -442,6 +437,11 @@
 
                     // Add the ADM as the plugin's model option...
                     $(el)[val]('option', 'model', ADM);
+
+                    //Bind resize event for each view
+                    $(window).resize(function () {
+                        widget._resizeView($(el), val);
+                    });
 
                     // TODO: Bind plugin ADMEvent handlers here directly
                     //       rather than w/in each plugin, to ensure consitant
@@ -491,6 +491,17 @@
 
         _modelUpdated: function(event, widget) {
         },
+
+        _resizeView:  function(el, viewName) {
+            // Ensure height of the view are the same as its parent.
+            // Also, allows child elements to expand to fill the div,
+            // necessary for proper scrolling overflowing content.
+            el.height(el.parent().height());
+            //Some view (such as code view) may need to do more job
+            //when window resizing
+            $(el)[viewName]('resize');
+        }
+
     });
 })(jQuery);
 
