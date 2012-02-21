@@ -284,7 +284,7 @@
                 })
                 .append('<div class="pageView flex0 vbox"></div>')
                 .append('<div class="outlineView flex1 vbox"></div>')
-                .append('<div class="propertyView flex1 vbox"></div>');
+                .append('<div class="propertyView flex0 vbox"></div>');
 
             this.ui.layoutView.find('.panel.right')
                 .panel({

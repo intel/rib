@@ -74,9 +74,6 @@ function copyProperties(dest, src) {
                 this._bindADMEvents(o.model);
             }
 
-            $('<div/>').addClass(this.widgetName)
-                .appendTo(this.element);
-
             $('<div id="property_content"></div>').appendTo(this.element);
 
             this.options.primaryTools = this._createPrimaryTools();
