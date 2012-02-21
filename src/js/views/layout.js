@@ -195,14 +195,16 @@
         },
 
         _createPrimaryTools: function() {
-            var doc, html, classes, selector;
-            classes = 'class="primary-tools ui-state-default"';
-            html = $('<div/>').addClass('hbox').hide()
-                .append('<button id="undo" '  + classes + '>undo</button>')
-                .append('<button id="redo" '  + classes + '>redo</button>')
-                .append('<button id="cut" '   + classes + '>cut</button>')
-                .append('<button id="copy" '  + classes + '>copy</button>')
-                .append('<button id="paste" ' + classes + '>paste</button>');
+            var doc, html, classes, selector,
+                commands = ['undo', 'redo', 'cut', 'copy', 'paste'];
+
+            classes = "buttonStyle primary-tools ui-state-default";
+            html = $('<div/>').addClass('hbox').hide();
+            $.each(commands, function (index, command) {
+                $('<button/>').addClass(classes)
+                    .attr('id', 'btn' + command)
+                    .appendTo(html);
+            });
 
             doc = $((this.element)[0].ownerDocument);
             selector = "button.primary-tools"
@@ -210,11 +212,11 @@
                 var model = this.options.model;
                 if (model) {
                     switch (event.currentTarget.id) {
-                    case "undo":  model.undo();  break;
-                    case "redo":  model.redo();  break;
-                    case "cut":   model.cut();   break;
-                    case "copy":  model.copy();  break;
-                    case "paste": model.paste(); break;
+                    case "btnundo":  model.undo();  break;
+                    case "btnredo":  model.redo();  break;
+                    case "btncut":   model.cut();   break;
+                    case "btncopy":  model.copy();  break;
+                    case "btnpaste": model.paste(); break;
                     default:
                         console.warn("Unhandled click on primary tool");
                         break;

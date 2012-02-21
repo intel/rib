@@ -416,14 +416,17 @@ body.ui-tabs.ui-widget {
     -webkit-box-pack: center;
 
 }
-.tools-primary button {
+.tools-primary .buttonStyle {
     margin-left: 0px;
     margin-right: 0px;
     padding: .5em 1em;
-    background: none;
+    background: #6d8995;
     border: none;
     margin-bottom: 0px;
     color: #fefffa;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    height: 37px;
 }
 .tools-primary button:first-child {
     -webkit-border-top-left-radius: .5em !important;
@@ -432,6 +435,55 @@ body.ui-tabs.ui-widget {
 .tools-primary button:last-child {
     -webkit-border-top-right-radius: .5em !important;
     -webkit-border-bottom-right-radius: .5em !important;
+}
+.tools-primary #newProj {
+    background-image: url('images/newProjectButton_up.png');
+    width: 170px;
+}
+.tools-primary #newProj:active {
+    background-image: url('images/newProjectButton_down.png');
+}
+.tools-primary #importProj {
+    background-image: url('images/importProjectButton_up.png');
+    width: 170px;
+}
+.tools-primary #importProj:active {
+    background-image: url('images/importProjectButton_down.png');
+}
+.tools-primary #btnundo {
+    background-image: url('images/undoButton_up.png');
+    width: 74px;
+}
+.tools-primary #btnundo:active {
+    background-image: url('images/undoButton_down.png');
+}
+.tools-primary #btnredo {
+    background-image: url('images/redoButton_up.png');
+    width: 74px;
+}
+.tools-primary #btnredo:active {
+    background-image: url('images/redoButton_down.png');
+}
+.tools-primary #btncut {
+    background-image: url('images/cutButton_up.png');
+    width: 74px;
+}
+.tools-primary #btncut:active {
+    background-image: url('images/cutButton_down.png');
+}
+.tools-primary #btncopy {
+    background-image: url('images/copyButton_up.png');
+    width: 74px;
+}
+.tools-primary #btncopy:active {
+    background-image: url('images/copyButton_down.png');
+}
+.tools-primary #btnpaste {
+    background-image: url('images/pasteButton_up.png');
+    width: 74px;
+}
+.tools-primary #btnpaste:active {
+    background-image: url('images/pasteButton_down.png');
 }
 
 /*

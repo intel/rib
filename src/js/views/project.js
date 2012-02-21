@@ -84,9 +84,9 @@
         // Private functions
         _createPrimaryTools: function() {
             var tools = $('<div/>').addClass('hbox').hide()
-                .append('<button>New Project</button>')
-                .append('<button id="importProj">Import Project</button>');
-            tools.children().addClass('ui-state-default');
+                .append('<button id="newProj"></button>')
+                .append('<button id="importProj"></button>');
+            tools.children().addClass('buttonStyle ui-state-default');
             return tools;
         },
 
