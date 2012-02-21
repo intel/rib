@@ -478,6 +478,12 @@ var BWidgetRegistry = {
                 options: [ "true", "false" ],
                 defaultValue: "false",
                 htmlAttribute: "data-inline"
+            },
+            transition: {
+                type: "string",
+                options: [ "slide", "slideup", "slidedown", "pop", "fade", "flip" ],
+                defaultValue: "slide",
+                htmlAttribute: "data-transition"
             }
         },
         template: '<a data-role="button">%TEXT%</a>'
