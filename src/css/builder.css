@@ -37,6 +37,41 @@ html, body {
 }
 
 /*************************/
+/* ID specific tweaks */
+/*************************/
+#coord {
+    position: absolute;
+    top: -20px;
+    left: -20px;
+    background-color: rgba(0,0,0,0.5);
+    border: 1px solid black;
+    -webkit-box-shadow: .5em .5em 1em -5px rgba(0,0,0,0.8);
+}
+#coord > div {
+    padding-left: 0.25em;
+    padding-right: 0.25em;
+}
+#coord > div:last-child {
+    padding-bottom: 0.25em;
+}
+#coord div.gb-drag-handle {
+    display: block;
+    background-image: -webkit-linear-gradient(top, darkgray, lightgray, gray);
+    height: .75em;
+    padding: 0;
+    margin: 0;
+    border: none;
+    border-bottom: 1px solid black;
+}
+#coord > div > label {
+    font-weight: bold;
+    color: rgba(255,255,255,0.8);
+}
+#coord > div > span {
+    color: rgba(255,255,255,0.8);
+}
+
+/*************************/
 /* Class specific tweaks */
 /*************************/
 .hidden-accessible {

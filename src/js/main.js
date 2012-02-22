@@ -25,6 +25,8 @@
             var e = this.element,
                 o = this.options;
 
+            this._parseOptions();
+
             this.ui = this.ui || {};
 
             // Must have a valid data model
@@ -57,6 +59,10 @@
             this._bindViewPlugins();
 
             this.refresh();
+
+            if ($.gb.options && $.gb.options.debug) {
+                this._createMouseTracker($(document.body));
+            }
         },
 
         _setOption: function(key, value) {
@@ -98,6 +104,150 @@
         },
 
         // Private helper functions
+        _parseOptions: function() {
+            var validHTML = /^[a-zA-z0-9]([_-]*)$/,
+                validOptions = [
+                    // Flags or key/value pairs for various debug options
+                    'debug',
+                ];
+            // If option(s) are passed on URL, parse into a set of options
+            // objects in the '$.gb' namespace.  Parsing rules as follows:
+            //
+            // For Example, given the following URL,
+            //     http://hostname.org/?debug=foo=2,bar&whiz&bang=baz
+            //
+            // We would get the following object:
+            //
+            //     $.gb.options: {
+            //         debug: {
+            //             foo: '2',
+            //             bar: true
+            //         },
+            //         whiz: true,
+            //         bang: 'baz'
+            //     }
+            //
+            if (document.location.search.length) {
+                $.gb.options = $.gb.options || {};
+                // Iterate over array of options, for example, with the exmaple
+                // above, we would get the following array:
+                //
+                //     ["debug=foo=2,bar", "whiz", "bang=baz"]
+                //
+                $.each(document.location.search.replace(/^\?/,'').split('&'),
+                    function(index,value){
+                        var argIdx = value.indexOf('='),
+                            name, args, opts;
+
+                        name = (argIdx !== -1)?value.slice(0,argIdx):value;
+
+                        // Only permit explicit options...
+                        if ($.inArray(name, validOptions) === -1) {
+                            // TODO: Should it (can it?) be explicitly removed?
+                            console.error('Ignoring option "' + name +
+                                          '": unrecognized option name');
+                            return;
+                        }
+
+                        // getParameter returns everything following the first
+                        // '=' of each option substring in the URL
+                        args = document.location.getParameter(name);
+
+                        // If this option has sub args, parse them
+                        if (args.length && /=/.test(args)) {
+                            $.each(args.split(','), function(idx,val){
+                                var subOpts = val.split('=');
+                                opts = opts || {};
+                                if (subOpts.length > 1) {
+                                    if (validHTML.test(subOpts[1])) {
+                                        opts[subOpts[0]] = subOpts[1];
+                                    } else {
+                                        console.error('Ignoring option "' +
+                                            subOpts[0] +
+                                            '": value failed sanity check');
+                                    }
+                                } else {
+                                    opts[subOpts[0]] = true;
+                                }
+                            });
+                        // If this option a value, use it
+                        } else if (args.length) {
+                            opts = args;
+                        }
+                        // Assign this option its value, or make it true
+                        $.gb.options[name] = opts || true;
+                    }
+                );
+            }
+        },
+
+        _createMouseTracker: function(container) {
+            var coord, offset = {};
+            if (!$.gb.options || !$.gb.options.debug ||
+                ($.gb.options.debug !== 'mousetrack' &&
+                 !$.gb.options.debug.mousetrack))
+                return;
+
+            coord = $('<div/>')
+                .attr({id:'coord'})
+                .appendTo(container)
+                .append('<div class="gb-drag-handle"/>')
+                .draggable({
+                    handle: '.gb-drag-handle',
+                    scroll: false,
+                    stack: 'body',
+                });
+
+            $('<div/>').appendTo(coord)
+                .append('<label>Window: </label>')
+                .append('<span id="windowCoords"/>');
+            $(window).bind('mousemove', function (e) {
+                $('#windowCoords').text('x='+e.pageX+', y='+e.pageY);
+            });
+            coord.height($('#windowCoords').parent().outerHeight() +
+                         $('.gb-drag-handle').outerHeight());
+
+            if ($(':gb-layoutView').length) {
+                $('<div/>').appendTo(coord).hide(0)
+                    .append('<label>Layout: </label>')
+                    .append('<span id="layoutCoords"/>');
+                $(':gb-layoutView').layoutView('option','contentDocument')
+                    .bind('mousemove', function (e) {
+                        $('#layoutCoords').text('x='+e.pageX+', y='+e.pageY);
+                    })
+                    .bind('mouseenter', function (e) {
+                        $('#layoutCoords').parent().show();
+                        coord.height(coord.height() +
+                                      $('#layoutCoords').parent().height());
+                    })
+                    .bind('mouseleave', function (e) {
+                        $('#layoutCoords').parent().hide();
+                        coord.height(coord.height() -
+                                      $('#layoutCoords').parent().height());
+                    });
+            }
+
+            if ($(':gb-liveView').length) {
+                $('<div/>').appendTo(coord).hide(0)
+                    .append('<label>Live: </label>')
+                    .append('<span id="liveCoords"/>');
+                $(':gb-liveView').liveView('option','contentDocument')
+                    .bind('mousemove', function (e) {
+                        $('#liveCoords').text('x='+e.pageX+', y='+e.pageY);
+                    })
+                    .bind('mouseenter', function (e) {
+                        $('#liveCoords').parent().show();
+                        coord.height(coord.height() +
+                                      $('#liveCoords').parent().height());
+                    })
+                    .bind('mouseleave', function (e) {
+                        $('#liveCoords').parent().hide();
+                        coord.height(coord.height() -
+                                      $('#liveCoords').parent().height());
+                    });
+            }
+        },
+
         _constructApp: function(container) {
             $('<ul/>').appendTo(container)
                 .append('<li><a href="#projectView">Project</a></li>')
