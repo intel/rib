@@ -304,6 +304,15 @@ ADM.setActivePage = function (page) {
  * @return {Number} The UID of the selected widget, or null if none.
  */
 ADM.getSelected = function () {
+    return ADM._selection ? ADM._selection.getUid() : null;
+};
+
+/**
+ * Gets the primary selected widget node.
+ *
+ * @return {ADMNode} The selected widget node, or null if none.
+ */
+ADM.getSelectedNode = function () {
     return ADM._selection;
 };
 
@@ -311,26 +320,38 @@ ADM.getSelected = function () {
  * Sets the primary selected widget by UID. Sends a "selectionChanged"
  * event if the selection actually changes.
  *
- * @param {Number} The UID of the selected widget, or null if none.
+ * @param {Various} The UID of the selected widget (as a number or string), or
+ *                  the actual ADMNode, or null if no selection.
  * @return {Boolean} True if the selection was set successfully.
+ * @throws {Error} If node is invalid.
  */
-ADM.setSelected = function (uid) {
-    var node = null;
-    if (uid !== null) {
-        uid = Number(uid);
+ADM.setSelected = function (node) {
+    var uid;
+    if (typeof node === "number" || typeof node === "string") {
+        uid = Number(node);
         node = ADM.getDesignRoot().findNodeByUid(uid);
         if (!node) {
             console.log("Warning: new selected widget not found");
-            return;
+            return false;
         }
+    }
+    else if (node instanceof ADMNode) {
+        if (node.getDesign() !== ADM.getDesignRoot()) {
+            console.log("Warning: selected node not found in design");
+            return false;
+        }
+    }
+    else if (node !== null) {
+        throw new Error("unexpected argument to setSelected: " +
+                        typeof node);
     }
 
     if (node && !node.isSelectable()) {
         return false;
     }
 
-    if (ADM._selection !== uid) {
-        ADM._selection = uid;
+    if (ADM._selection !== node) {
+        ADM._selection = node;
         ADM.fireEvent("selectionChanged", { node: node, uid: uid });
         return true;
     }
