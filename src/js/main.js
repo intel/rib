@@ -281,6 +281,7 @@
                     maxSize: '320',
                     minSize: '160',
                 })
+                .append('<div class="pageView flex0 vbox"></div>')
                 .append('<div class="outlineView flex1 vbox"></div>')
                 .append('<div class="propertyView flex1 vbox"></div>');
 
@@ -304,6 +305,7 @@
                     maxSize: '320',
                     minSize: '160',
                 })
+                .append('<div class="pageView flex0 vbox"></div>')
                 .append('<div class="outlineView flex1 vbox"></div>')
                 .append('<div class="propertyView flex1 vbox"></div>');
 
@@ -311,6 +313,11 @@
                 .attr('id', 'liveView')
                 .addClass('view live flex1');
             this.ui.liveView.append('<div class="stage flex1 vbox">');
+
+            $('.pageView').each( function () {
+                $(this).pageView();
+                $(this).pageView('option', 'model', ADM);
+            });
 
             $('.outlineView').each( function () {
                 $(this).outlineView();
