@@ -235,14 +235,12 @@ html, body {
     max-height: 25px;
 }
 .view.live .stage .panel-section-contents {
+    background: #e4e5df;
     border-left: 1px solid #8c8d8d;
     border-bottom: 1px solid #b9b9b9;
     height: 41px;
     min-height: 41px;
     max-height: 41px;
-}
-.view.live .stage .pageView .panel-section-contents {
-    background-color: #B6BEC0;
 }
 .view.live .stage > div {
     position: relative;
@@ -307,12 +305,47 @@ html, body {
     width: 300px;
     min-width: 10px;
 }
-.panel-section-header {
-    text-transform: uppercase;
-    background-image: url('images/pagesTitleBarBackground28px.png');
+.view.live .stage .panel-section-header {
+    background-image: url('images/devicesTitleBarBackground.png');
+    height: 25px;
+    min-height: 25px;
+    max-height: 25px;
 }
+.panel-section-header {
+    margin: 0px;
+    padding: 4px 0px 4px 0px;
+    box-align: center;
+    -webkit-box-align: center;
+    line-height: 25px;
+    background-image: url('images/pagesTitleBarBackground28px.png');
+    color: #333333;
+    text-shadow: 1px 1px 1px #fff;
+}
+.panel-section-header .title {
+    font-size : 11px;
+    font-weight: Semi-Bold;
+    float: left;
+}
+.panel-section-header .tool {
+    font-size : 10px;
+    font-weight: Regular;
+    margin-right: 10px;
+    float: right;
+}
+.panel-section-header .divider {
+    background-image: url('images/addDuplicateDivider.png');
+    background-repeat: no-repeat;
+    margin-left: 12px;
+    margin-right: 12px;
+    border: none;
+    padding: 0px;
+}
+
 .panel-section-contents {
     background-color: #E4E5DF;
+}
+#pages.panel-section-contents {
+    background-image: url('images/pageSelectorBackground.png')
 }
 .left { border-right: 1px solid rgba(0,0,0,0.3); }
 .right { border-left: 1px solid rgba(0,0,0,0.3); }
