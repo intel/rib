@@ -7,7 +7,45 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  *
  */
-"use strict";
+
+var getOwnerWindow = function (node) {
+    return node.ownerDocument.defaultView || node.parentWindow;
+};
+
+(function( $ ){
+    var originDataMethod = $.data;
+    $.data = function (elem, name, data, pvt) {
+        if ( (name === "sortable") && !data)
+            return getOwnerWindow(elem).$.data(elem, name, data, pvt);
+        else
+            return originDataMethod(elem, name, data, pvt);
+    };
+})( jQuery );
+
+// Copied from blog post on 2012-01-11 by Anatoly Mironov,
+// http://sharepointkunskap.wordpress.com/2012/01/11/get-url-parameters-with-javascript/
+if (!window.location.getParameter ) {
+  window.location.getParameter = function(key) {
+    function parseParams() {
+        var params = {},
+            e,
+            a = /\+/g,  // Regex for replacing addition symbol with a space
+            r = /([^&=]+)=?([^&]*)/g,
+            d = function (s) { return decodeURIComponent(s.replace(a, " ")); },
+            q = window.location.search.substring(1);
+
+        while (e = r.exec(q))
+            params[d(e[1])] = d(e[2]);
+
+        return params;
+    }
+
+    if (!this.queryStringParams)
+        this.queryStringParams = parseParams();
+
+    return this.queryStringParams[key];
+  };
+}
 
 /*
  * FIXME: This is a desparate workaround for a flaw in jQuery-ui drag
@@ -38,9 +76,6 @@ jQuery.ui.ddmanager.prepareOffsets = function (t, event) {
 
         /////////////////////////////////////////////////////////////////
         // Start of our changes
-        var getOwnerWindow = function (node) {
-            return node.ownerDocument.defaultView || node.parentWindow;
-        };
         var getOffsetInWindow = function (node, win) {
             var myWin = getOwnerWindow(node),
                 offset = $(node).offset(),
