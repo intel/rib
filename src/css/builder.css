@@ -416,6 +416,27 @@ html, body {
 .outlineView {
     border: 1px solid rgba(0,0,0,0.6);
 }
+#outline_content li > a {
+    background: transparent;
+    height: 12px;
+    font-size: 12px;
+    font-weight: normal;
+    text-align: center;
+    color: #111111;
+    line-height: 26px;
+}
+#outline_content li > a.ui-selected {
+    background: #4ae57b;
+    color: #424242;
+    line-height: 12px;
+    padding: 5px 4px 6px 4px;
+    -webkit-border-radius: 4px;
+    -webkit-background-clip: padding-box;
+}
+#outline_content li > a:hover,
+#outline_content li > a.ui-selected:hover {
+    color: #2c7a94;
+}
 .propertyView {
     border: 1px solid rgba(0,0,0,0.6);
 }
@@ -451,4 +472,12 @@ html, body {
 }
 .pageIcon:hover {
     background-image: url("images/pageIcon_hover.png");
+}
+
+.nrc-palette-widget.ui-draggable-dragging,
+.nrc-palette-widget.ui-sortable-helper {
+    width: 128px !important;
+    height: 39px !important;
+    display: inline-block;
+    border: 1px solid #da1c2e !important;
 }

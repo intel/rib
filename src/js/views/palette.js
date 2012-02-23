@@ -221,24 +221,45 @@
             $('.'+this.widgetName).disableSelection();
 
             w.draggable({
-                revert: 'invalid',
-                zIndex: 1000,
+                revert: false,
                 appendTo: 'body',
-                scroll: false,
                 iframeFix: true,
                 containment: false,
-                // FIXME: Create/use an API to fetch these selector strings...
-                connectToSortable: '#design-view .nrc-sortable-container',
                 helper: 'clone',
-                opacity: 0.8,
+                refreshPositions: true,
+                stack: '.layoutView iframe',
+                revertDuration: 0,
                 start: function(event,ui){
-                    if (ui.helper[0].id == "") {
-                        ui.helper[0].id = this.id+'-helper';
+                    var layout = $(':gb-layoutView iframe'),
+                        ow = layout.outerWidth(), iw = layout.innerWidth(),
+                        ml = parseInt(layout.css('marginLeft'),10),
+                        pl = parseInt(layout.css('paddingLeft'),10),
+                        bl = (ow-iw)/2,
+                        oh = layout.outerHeight(), ih = layout.innerHeight(),
+                        mt = parseInt(layout.css('marginTop'),10),
+                        pt = parseInt(layout.css('paddingTop'),10),
+                        bt = (oh-ih)/2,
+                        ol = layout.position().left + ml + bl + pl,
+                        ot = layout.position().top + mt + bt + pt;
+
+                    // FIXME: See if we can fix the drag/sort helper and cursor
+                    //        offsets to line them up correctly.  May need to
+                    //        also experiment with 'cursorAt' option...
+                    //
+                    //$(this).data('draggable').offset.click.left -= -ol;
+                    //$(this).data('draggable').offset.click.top -= -ot;
+
+                    if (ui.helper) {
+                        // Attach data props
+                        ui.helper.data($(this).data());
+
+                        if (ui.helper[0].id == "") {
+                            ui.helper[0].id = this.id+'-helper';
+                        }
                     }
                 },
-            });
-
-            w.disableSelection();
+            })
+            .disableSelection();
         },
 
     });

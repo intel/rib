@@ -95,10 +95,7 @@
                     this._unbindADMEvents();
                     this._bindADMEvents(value);
                     this._createDocument();
-                    this.options.iframe.load(this, function(event) {
-                        event.data.loaded = true;
-                        event.data.refresh(null, event.data);
-                    });
+                    this.options.iframe.load(this, this._iframeLoaded);
                     break;
                 default:
                     break;
@@ -123,18 +120,40 @@
                 widget._serializeADMDesignToDOM();
             } else if (event.type === 'load') {
                 widget._serializeADMDesignToDOM();
-            } else {
-                switch (event.name) {
-                    case 'designReset':
-                        widget._serializeADMDesignToDOM();
+            } else if (event.name === 'designReset') {
+                widget._serializeADMDesignToDOM();
+            } else if (event.name === 'modelUpdated') {
+                widget._serializeADMDesignToDOM();
+/* FIXME: Calling serializeADMSubtreeToDom is not actually forcing the
+          the DOM to update, but it should work...
+
+                switch (event.type) {
+                    case 'nodeAdded':
+                    case 'nodeRemoved':
+                        serializeADMSubtreeToDOM(event.parent, null,
+                                                 widget._renderer);
+                        break;
+                    case 'nodeMoved':
+                        serializeADMSubtreeToDOM(event.oldParent, null,
+                                                 widget._renderer);
+                        serializeADMSubtreeToDOM(event.newParent, null,
+                                                 widget._renderer);
+                        break;
+                    case 'propertyChanged':
+                        serializeADMSubtreeToDOM(event.node, null,
+                                                 widget._renderer);
                         break;
                     default:
                         console.warn(widget.widgetName,
-                                     ':: Unexpected refresh request:',
-                                     event.name);
+                                     ':: Unexpected modelUpdate type:',
+                                     event.type);
                         return;
                         break;
                 }
+*/
+            } else {
+                console.warn(widget.widgetName,':: Unexpected event:',name);
+                return;
             }
 
             if (widget.options.contentDocument.length) {
@@ -143,9 +162,38 @@
             } else {
                 console.error(widget.widgetName, ':: Missing contentDocument');
             }
+
+            // Refresh our cache of iframe sortables
+            widget._refreshSortables();
         },
 
         // Private functions
+        _getSortables: function(update) {
+            if (update) {
+                this._sortables = this.options.contentDocument
+                                      .find('.nrc-sortable-container');
+            } else {
+                this._sortables = this._sortables||this.options.contentDocument
+                                      .find('.nrc-sortable-container');
+            }
+            return this._sortables;
+        },
+
+        _refreshSortables: function() {
+            // Force a re-search for sortables in the iframe doc
+            var s = this._getSortables(true);
+
+            // Associate the palette items with these sortables
+            $(':gb-paletteView .ui-draggable').draggable('option', {
+                connectToSortable: s,
+            });
+        },
+
+        _iframeLoaded: function(event) {
+            event.data.loaded = true;
+            event.data.refresh(null, event.data);
+        },
+
         _createPrimaryTools: function() {
             return $('<div/>').addClass('hbox').hide()
                 .append('<button class="ui-state-default">undo</button>')
@@ -296,10 +344,9 @@
 
             widget = widget || this;
 
-            serializeADMSubtreeToDOM(event.node, null, widget._renderer);
+            widget.refresh(event, widget);
 
             win = widget.options.contentDocument[0].defaultView;
-
             if (win && win.$ && win.$.mobile) {
                 win.$.mobile.activePage.page('destroy');
                 win.$.mobile.activePage.page();
