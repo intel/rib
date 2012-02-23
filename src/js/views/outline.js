@@ -178,9 +178,9 @@
             }
 
             // Deactive state of selected before
-            $('#outline-panel', this.element).find('.ui-state-active')
+            $('#outline_content', this.element).find('.ui-state-active')
                 .removeClass('ui-state-active');
-            $('#outline-panel', this.element).find('.ui-selected')
+            $('#outline_content', this.element).find('.ui-selected')
                 .removeClass('ui-selected');
 
             // Find this node in outline pane
@@ -197,7 +197,7 @@
             }
 
             // Make sure selected node is visible on show
-            $('#outline-panel', this.element).find('.ui-selected:first')
+            $('#outline_content', this.element).find('.ui-selected:first')
                 .each(function (){
                     this.scrollIntoViewIfNeeded();
                 });
