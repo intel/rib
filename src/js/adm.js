@@ -299,6 +299,38 @@ ADM.setActivePage = function (page) {
 };
 
 /**
+ * Not intended as a public API.
+ * Returns an ADMNode given various different inputs. Useful for handling a
+ * function argument and allowing it to be either a UID or an actual node.
+ * Note: If a UID is given, it will only be found if it is in the current ADM
+ * design root's tree, whereas if a node is given, it will be returned,
+ * regardless of whether it is even parented.
+ *
+ * @private
+ * @param {Various} nodeRef The UID of a widget (as a number or string), or the
+ *                          node itself.
+ * @return {ADMNode} The referenced node, or null if given null, or undefined
+ *                   if either node not found or invalid input given.
+ */
+ADM.toNode = function (nodeRef) {
+    var node = nodeRef;
+
+    if (node === null) {
+        return null;
+    }
+
+    if (typeof nodeRef === "number" || typeof nodeRef === "string") {
+        node = ADM.getDesignRoot().findNodeByUid(Number(nodeRef));
+    }
+
+    if (node instanceof ADMNode) {
+        return node;
+    }
+
+    return undefined;
+}
+
+/**
  * Gets the primary selected widget UID.
  *
  * @return {Number} The UID of the selected widget, or null if none.
@@ -317,37 +349,32 @@ ADM.getSelectedNode = function () {
 };
 
 /**
- * Sets the primary selected widget by UID. Sends a "selectionChanged"
- * event if the selection actually changes.
+ * Sets the primary selected widget. Sends a "selectionChanged" event if the
+ * selection actually changes.
  *
- * @param {Various} The UID of the selected widget (as a number or string), or
- *                  the actual ADMNode, or null if no selection.
+ * @param {Various} nodeRef The UID of the selected widget (as a number or
+ *                          string), or the actual ADMNode, or null if no
+ *                          selection.
  * @return {Boolean} True if the selection was set successfully.
  * @throws {Error} If node is invalid.
  */
-ADM.setSelected = function (node) {
-    var uid;
-    if (typeof node === "number" || typeof node === "string") {
-        uid = Number(node);
-        node = ADM.getDesignRoot().findNodeByUid(uid);
-        if (!node) {
-            console.log("Warning: new selected widget not found");
-            return false;
-        }
+ADM.setSelected = function (nodeRef) {
+    var uid = null, node = ADM.toNode(nodeRef);
+    if (node === undefined) {
+        console.log("Warning: new selected widget not found");
+        return false;
     }
-    else if (node instanceof ADMNode) {
+
+    if (node) {
         if (node.getDesign() !== ADM.getDesignRoot()) {
             console.log("Warning: selected node not found in design");
             return false;
         }
-    }
-    else if (node !== null) {
-        throw new Error("unexpected argument to setSelected: " +
-                        typeof node);
-    }
+        if (!node.isSelectable()) {
+            return false;
+        }
 
-    if (node && !node.isSelectable()) {
-        return false;
+        uid = node.getUid();
     }
 
     if (ADM._selection !== node) {
@@ -363,25 +390,31 @@ ADM.setSelected = function (node) {
  * Using this high-level API records the action as user-visible and part of the
  * undo/redo stacks.
  *
- * @param {Number} parentUid The UID of the parent object in the tree.
- * @param {String} childType The widget type string for the child to add.
+ * @param {Various} parentRef The UID of the parent widget (as a number or
+ *                            string), or the actual ADMNode.
+ * @param {ADMNode/String} childRef Either an ADMNode or a string type of a node
+ *                                  to create.
  * @param {Boolean} dryrun [Optional] True if the call should be a dry run.
  * @return {ADMNode} The child object, on success; null, on failure.
  */
-ADM.addChild = function (parentUid, childType, dryrun) {
-    var design, parent, child;
-    design = ADM.getDesignRoot();
-    parent = design.findNodeByUid(parentUid);
+ADM.addChild = function (parentRef, childRef, dryrun) {
+    var parent, child;
+
+    parent = ADM.toNode(parentRef);
     if (!parent) {
-        console.log("Warning: invalid parent uid while adding child: " +
-                    parentUid);
+        console.log("Warning: invalid parent while adding child: ", parentRef);
         return null;
     }
 
-    child = ADM.createNode(childType);
+    if (typeof childRef === "string") {
+        child = ADM.createNode(childRef);
+    }
+    else {
+        child = childRef;
+    }
+
     if (!child) {
-        console.log("Warning: could not create ADM object for type " +
-                    childType);
+        console.log("Warning: invalid widget while adding child: ", childRef);
         return null;
     }
 
@@ -396,18 +429,22 @@ ADM.addChild = function (parentUid, childType, dryrun) {
         });
         return child;
     }
+
+    console.log("Warning: failed to add child: ", childRef);
     return null;
 };
 
 /**
  * Find out whether a child of the given type can be added to parent
  *
- * @param {Number} parentUid The UID of the parent object in the tree.
- * @param {String} childType The widget type string for the child to add.
- * @return {ADMNode} True if adding the child would succeed, false otherwise.
+ * @param {Various} parentRef The UID of the parent widget (as a number or
+ *                            string), or the actual ADMNode.
+ * @param {ADMNode/String} childRef Either an ADMNode or a string type of a node
+ *                                  to create.
+ * @return {Boolean} True if adding the child would succeed, false otherwise.
  */
-ADM.canAddChild = function (parentUid, childType) {
-    if (ADM.addChild(parentUid, childType, true)) {
+ADM.canAddChild = function (parentRef, childRef) {
+    if (ADM.addChild(parent, child, true)) {
         return true;
     }
     return false;
@@ -417,21 +454,26 @@ ADM.canAddChild = function (parentUid, childType) {
  * Not intended as a public API.
  * @private
  */
-ADM.insertChildRelative = function (siblingUid, childType, offset, dryrun) {
-    var design, sibling, child;
-    design = ADM.getDesignRoot();
-    sibling = design.findNodeByUid(siblingUid);
+ADM.insertChildRelative = function (siblingRef, childRef, offset, dryrun) {
+    var sibling, child;
+
+    sibling = ADM.toNode(siblingRef);
     if (!sibling) {
-        console.log("Warning: invalid sibling id while inserted child: " +
-                    siblingUid);
+        console.log("Warning: invalid sibling while inserting child: ",
+                    siblingRef);
         return null;
     }
 
-    child = ADM.createNode(childType);
+    if (typeof childRef === "string") {
+        child = ADM.createNode(childRef);
+    }
+    else {
+        child = childRef;
+    }
+
     if (!child) {
-        console.log("Warning: could not create ADM object for type " +
-                    childType);
-        return null;
+        console.log("Warning: invalid widget while inserting child: ",
+                    childRef);
     }
 
     if (sibling.insertChildRelative(child, offset, dryrun)) {
@@ -443,59 +485,68 @@ ADM.insertChildRelative = function (siblingUid, childType, offset, dryrun) {
         });
         return child;
     }
+
+    console.log("Warning: failed to insert child: ", childRef);
     return null;
 };
 
 /**
- * Inserts new widget of childType immediately before the widget with
- * siblingUid, if found.
+ * Inserts child (or new widget of type child) immediately before the sibling
+ * widget, if found.
  * Using this high-level API records the action as user-visible and part of the
  * undo/redo stacks.
  *
- * @param {Number} siblingUid The UID of the existing sibling.
- * @param {String} childType The widget type of the new widget to create.
+ * @param {Various} siblingRef The UID of the sibling widget (as a number or
+ *                             string), or the actual ADMNode.
+ * @param {ADMNode/String} childRef Either an ADMNode or a string type of a node
+ *                                  to create.
  * @param {Boolean} dryrun [Optional] True if the call should be a dry run.
  * @return {ADMNode} The new child, or null on failure.
  */
-ADM.insertChildBefore = function (siblingUid, childType, dryrun) {
-    return ADM.insertChildRelative(siblingUid, childType, 0, dryrun);
+ADM.insertChildBefore = function (siblingRef, childRef, dryrun) {
+    return ADM.insertChildRelative(siblingRef, childRef, 0, dryrun);
 };
 
 /**
- * Inserts new widget of childType immediately after the widget with
- * siblingUid, if found.
+ * Inserts child (or new widget of type child) immediately after the sibling
+ * widget, if found.
  * Using this high-level API records the action as user-visible and part of the
  * undo/redo stacks.
  *
- * @param {Number} siblingUid The UID of the existing sibling.
- * @param {String} childType The widget type of the new widget to create.
+ * @param {Various} siblingRef The UID of the sibling widget (as a number or
+ *                             string), or the actual ADMNode.
+ * @param {ADMNode/String} childRef Either an ADMNode or a string type of a node
+ *                                  to create.
+ * @param {Boolean} dryrun [Optional] True if the call should be a dry run.
  * @return {ADMNode} The new child, or null on failure.
  */
-ADM.insertChildAfter = function (siblingUid, childType, dryrun) {
-    return ADM.insertChildRelative(siblingUid, childType, 1, dryrun);
+ADM.insertChildAfter = function (siblingRef, childRef, dryrun) {
+    return ADM.insertChildRelative(siblingRef, childRef, 1, dryrun);
 };
 
 /**
- * Removes the child with the given UID from the design.
+ * Removes the given child from the design.
  * Using this high-level API records the action as user-visible and part of the
  * undo/redo stacks.
  *
- * @param {Number} uid The unique ID of the child to remove.
+ * @param {Various} child The UID of the widget (as a number or string), or the
+ *                        actual ADMNode.
  * @param {Boolean} dryrun [Optional] True if the call should be a dry run.
  * @return {ADMNode} The removed child, or null it or its parent is not found.
  */
-ADM.removeChild = function (uid, dryrun) {
+ADM.removeChild = function (childRef, dryrun) {
     var design, child, parent, pageIndex, page, pages, rval, zone, zoneIndex;
     design = ADM.getDesignRoot();
-    child = design.findNodeByUid(uid);
+
+    child = ADM.toNode(childRef);
     if (!child) {
-        console.log("Warning: invalid uid while removing child: " + uid);
+        console.log("Warning: invalid widget while removing child: ", childRef);
         return null;
     }
 
     parent = child.getParent();
     if (!parent) {
-        console.log("Warning: invalid parent while removing child: " + uid);
+        console.log("Warning: invalid parent while removing child: ", childRef);
         return null;
     }
 
@@ -513,7 +564,8 @@ ADM.removeChild = function (uid, dryrun) {
         }
 
         if (ADM._activePage === child) {
-            console.log("Warning: attempted to remove the only page");
+            console.log("Warning: attempted to remove the only page: ",
+                        childRef);
             return null;
         }
     }
@@ -530,6 +582,10 @@ ADM.removeChild = function (uid, dryrun) {
             zoneIndex: zoneIndex
         });
     }
+
+    if (!rval) {
+        console.log("Warning: unable to remove child: ", childRef);
+    }
     return rval;
 };
 
@@ -538,18 +594,34 @@ ADM.removeChild = function (uid, dryrun) {
  * Using this high-level API records the action as user-visible and part of the
  * undo/redo stacks.
  *
- * @param {ADMNode} node The node to be moved.
- * @param {ADMNode} newParent The new parent for this node.
+ * @param {Various} nodeRef The UID of the node to be moved (as a number or
+ *                          string), or the actual ADMNode.
+ * @param {Various} newParentRef The UID of the new parent widget (as a number
+ *                               or string), or the actual ADMNode.
  * @param {String} zoneName The new zone for this child in the parent.
  * @param {Number} zoneIndex [Optional] The index at which to insert the child,
  *                           or if undefined, the default (end) location will
  *                           be used.
  * @param {Boolean} dryrun [Optional] True if the call should be a dry run.
  * @return {Boolean} True if the child was moved successfully, false otherwise,
- *                   or undefined on invalid input.
+ *                   or undefined on invalid input. (FIXME - incomplete)
  */
-ADM.moveNode = function (node, newParent, zoneName, zoneIndex, dryrun) {
-    var oldParent, oldZone, oldZoneIndex, rval;
+ADM.moveNode = function (nodeRef, newParentRef, zoneName, zoneIndex, dryrun) {
+    var node, newParent, oldParent, oldZone, oldZoneIndex, rval;
+
+    node = ADM.toNode(nodeRef);
+    if (!node) {
+        console.log("Warning: invalid widget while moving node: ", nodeRef);
+        return null;
+    }
+
+    newParent = ADM.toNode(newParentRef);
+    if (!newParent) {
+        console.log("Warning: invalid parent while moving node: ",
+                    newParentRef);
+        return null;
+    }
+
     oldParent = node.getParent();
     oldZone = node.getZone();
     oldZoneIndex = node.getZoneIndex();
@@ -574,15 +646,24 @@ ADM.moveNode = function (node, newParent, zoneName, zoneIndex, dryrun) {
  * Using this high-level API records the action as user-visible and part of the
  * undo/redo stacks.
  *
- * @param {ADMNode} node The node on which to set the property.
+ * @param {Various} nodeRef The UID of the node to be moved (as a number or
+ *                          string), or the actual ADMNode.
  * @param {String} property The name of the property to be set.
  * @param {Any} value The value to set for the property.
  * @return {Boolean} True if the property was set, false if it was the wrong
  *                   type, or undefined if the property is invalid for this
- *                   object.
+ *                   object. (FIXME - incomplete)
  */
-ADM.setProperty = function (node, property, value) {
-    var rval, oldValue;
+ADM.setProperty = function (nodeRef, property, value) {
+    var node, rval, oldValue;
+
+    node = ADM.toNode(nodeRef);
+    if (!node) {
+        console.log("Warning: invalid widget while setting property: ",
+                    nodeRef);
+        return null;
+    }
+
     oldValue = node.getProperty(property);
     rval = node.setProperty(property, value);
     if (rval.result) {
