@@ -423,9 +423,11 @@ ADM.addChild = function (parentRef, childRef, dryrun) {
         if (dryrun) {
             return true;
         }
+        // use getParent below in case the child was redirected to another
+        // node (as in the case of Page/Content)
         ADM.transaction({
             type: "add",
-            parent: parent,
+            parent: child.getParent(),
             child: child
         });
         return child;
