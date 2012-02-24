@@ -275,7 +275,7 @@
             if (!newPage) {
                 return;
             }
-            id = newPage.getProperty('id');
+            id = newPage.getUid();
             curPage = widget.options.model.getActivePage();
 
             // Only change if new page not the current page
