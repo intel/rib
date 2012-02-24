@@ -403,6 +403,8 @@ $(function() {
             $toolbarPanel.find('#codeView').click(showCodeView);
             $toolbarPanel.find('#preView').click(showPreView);
             $toolbarPanel.find('#outlineView').click(toggleOutlineView);
+            $toolbarPanel.find('#undo').click(undo);
+            $toolbarPanel.find('#redo').click(redo);
             $toolbarPanel.find('#showADMTree').click(showADMTree);
             $toolbarPanel.find('#reloadDesign').click(triggerDesignViewRefresh);
             $toolbarPanel.find('#exportHTML').click(triggerExportHTML);
@@ -1312,6 +1314,14 @@ $(function() {
             item.html("&#x2713;");
         }
         $outlinePanel.toggle();
+    },
+
+    undo = function () {
+        ADM.undo();
+    },
+
+    redo = function () {
+        ADM.redo();
     },
 
     showADMTree = function () {

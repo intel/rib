@@ -210,13 +210,11 @@
                 var model = this.options.model;
                 if (model) {
                     switch (event.currentTarget.id) {
-                    case "undo":
-                        model.undo();
-                        break;
-
-                    case "redo":
-                        model.redo();
-                        break;
+                    case "undo":  model.undo();  break;
+                    case "redo":  model.redo();  break;
+                    case "cut":   model.cut();   break;
+                    case "copy":  model.copy();  break;
+                    case "paste": model.paste(); break;
                     default:
                         console.warn("Unhandled click on primary tool");
                         break;
