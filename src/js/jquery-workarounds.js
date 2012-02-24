@@ -12,6 +12,150 @@ var getOwnerWindow = function (node) {
     return node.ownerDocument.defaultView || node.parentWindow;
 };
 
+var getOffsetInWindow = function (node, win) {
+    var myWin = getOwnerWindow(node),
+        offset = $(node).offset(),
+        winOffSet, frameOffset, parentOffset, parentFrames = [];
+    if ( myWin === win)
+        return offset;
+    else if (myWin === top) {
+        // win is a child of myWin(top), so we caculate the offset
+        // of win in related to myWin and substract it.
+        winOffSet = getOffsetInWindow(win.document.documentElement,
+                                      myWin);
+        offset.left -= winOffSet.left;
+        offset.top -= winOffSet.top;
+        return offset;
+    }
+    else {
+        // find myWin in its parent as an frame element and get the
+        // offset
+        parentFrames = $('iframe, frame', myWin.parent.document);
+        for ( var frame in parentFrames) {
+            if (parentFrames[frame].contentWindow === myWin) {
+                offset = $(node).offset(),
+                frameOffset = $(parentFrames[frame]).offset(),
+                parentOffset = getOffsetInWindow(
+                               myWin.parent.document.documentElement,
+                               win);
+
+                offset.left += frameOffset.left + parentOffset.left;
+                offset.top += frameOffset.top + parentOffset.top;
+                offset.left -= myWin.scrollX;
+                offset.top -= myWin.scrollY;
+                return offset;
+            }
+        }
+    }
+};
+
+
+/*
+ * FIXME: This is a workaround for a flaw in jQuery-ui connectToSortable plugin
+ *        for draggable widget not dealing with iframes
+ *
+ * We override the connectToSortable drag function so that it calculates offset
+ * correctly even if the draggable and sortable are in diffrent frames.
+ *
+ * Copied from jquery-ui version 1.8.16, ui/jquery.ui.draggable.js
+ */
+$.map($.ui['draggable'].prototype.plugins['drag'], function (elem, index) {
+    if (elem[0] === 'connectToSortable') {
+       elem[1] =  function (event, ui) {
+
+		var inst = $(this).data("draggable"), self = this;
+
+		var checkPos = function(o) {
+			var dyClick = this.offset.click.top, dxClick = this.offset.click.left;
+			var helperTop = this.positionAbs.top, helperLeft = this.positionAbs.left;
+			var itemHeight = o.height, itemWidth = o.width;
+			var itemTop = o.top, itemLeft = o.left;
+
+			return $.ui.isOver(helperTop + dyClick, helperLeft + dxClick, itemTop, itemLeft, itemHeight, itemWidth);
+		};
+
+		$.each(inst.sortables, function(i) {
+			
+			//Copy over some variables to allow calling the sortable's native _intersectsWith
+            /////////////////////////////////////////////////////////////////
+            // Start of our changes
+            var dragDocOffsetInSortWin = getOffsetInWindow(inst.element[0].ownerDocument.documentElement, getOwnerWindow(this.instance.element[0]));
+			this.instance.positionAbs = {top:inst.positionAbs.top + dragDocOffsetInSortWin.top, left: inst.positionAbs.left + dragDocOffsetInSortWin.left};
+            // End of our changes
+			this.instance.helperProportions = inst.helperProportions;
+			this.instance.offset.click = inst.offset.click;
+			
+			if(this.instance._intersectsWith(this.instance.containerCache)) {
+
+				//If it intersects, we use a little isOver variable and set it once, so our move-in stuff gets fired only once
+				if(!this.instance.isOver) {
+
+					this.instance.isOver = 1;
+					//Now we fake the start of dragging for the sortable instance,
+					//by cloning the list group item, appending it to the sortable and using it as inst.currentItem
+					//We can then fire the start event of the sortable with our passed browser event, and our own helper (so it doesn't create a new one)
+					this.instance.currentItem = $(self).clone().removeAttr('id').appendTo(this.instance.element).data("sortable-item", true);
+					this.instance.options._helper = this.instance.options.helper; //Store helper option to later restore it
+					this.instance.options.helper = function() { return ui.helper[0]; };
+
+					event.target = this.instance.currentItem[0];
+					this.instance._mouseCapture(event, true);
+					this.instance._mouseStart(event, true, true);
+
+					//Because the browser event is way off the new appended portlet, we modify a couple of variables to reflect the changes
+					this.instance.offset.click.top = inst.offset.click.top;
+					this.instance.offset.click.left = inst.offset.click.left;
+					this.instance.offset.parent.left -= inst.offset.parent.left - this.instance.offset.parent.left;
+					this.instance.offset.parent.top -= inst.offset.parent.top - this.instance.offset.parent.top;
+
+					inst._trigger("toSortable", event);
+					inst.dropped = this.instance.element; //draggable revert needs that
+					//hack so receive/update callbacks work (mostly)
+					inst.currentItem = inst.element;
+					this.instance.fromOutside = inst;
+
+				}
+
+				//Provided we did all the previous steps, we can fire the drag event of the sortable on every draggable drag, when it intersects with the sortable
+				if(this.instance.currentItem) this.instance._mouseDrag(event);
+
+			} else {
+
+				//If it doesn't intersect with the sortable, and it intersected before,
+				//we fake the drag stop of the sortable, but make sure it doesn't remove the helper by using cancelHelperRemoval
+				if(this.instance.isOver) {
+
+					this.instance.isOver = 0;
+					this.instance.cancelHelperRemoval = true;
+					
+					//Prevent reverting on this forced stop
+					this.instance.options.revert = false;
+					
+					// The out event needs to be triggered independently
+					this.instance._trigger('out', event, this.instance._uiHash(this.instance));
+					
+					this.instance._mouseStop(event, true);
+					this.instance.options.helper = this.instance.options._helper;
+
+					//Now we remove our currentItem, the list group clone again, and the placeholder, and animate the helper back to it's original size
+					this.instance.currentItem.remove();
+					if(this.instance.placeholder) this.instance.placeholder.remove();
+
+					inst._trigger("fromSortable", event);
+					inst.dropped = false; //draggable revert needs that
+				}
+
+			};
+
+		});
+
+	}
+    }
+    return elem;
+});
+
+
+
 (function( $ ){
     var originDataMethod = $.data;
     $.data = function (elem, name, data, pvt) {
@@ -76,42 +220,6 @@ jQuery.ui.ddmanager.prepareOffsets = function (t, event) {
 
         /////////////////////////////////////////////////////////////////
         // Start of our changes
-        var getOffsetInWindow = function (node, win) {
-            var myWin = getOwnerWindow(node),
-                offset = $(node).offset(),
-                winOffSet, frameOffset, parentOffset, parentFrames = [];
-            if ( myWin === win)
-                return offset;
-            else if (myWin === top) {
-                // win is a child of myWin(top), so we caculate the offset
-                // of win in related to myWin and substract it.
-                winOffSet = getOffsetInWindow(win.document.documentElement,
-                                              myWin);
-                offset.left -= winOffSet.left;
-                offset.top -= winOffSet.top;
-                return offset;
-            }
-            else {
-                // find myWin in its parent as an frame element and get the
-                // offset
-                parentFrames = $('iframe, frame', myWin.parent.document);
-                for ( var frame in parentFrames) {
-                    if (parentFrames[frame].contentWindow === myWin) {
-                        offset = $(node).offset(),
-                        frameOffset = $(parentFrames[frame]).offset(),
-                        parentOffset = getOffsetInWindow(
-                                       myWin.parent.document.documentElement,
-                                       win);
-
-                        offset.left += frameOffset.left + parentOffset.left;
-                        offset.top += frameOffset.top + parentOffset.top;
-                        offset.left -= myWin.scrollX;
-                        offset.top -= myWin.scrollY;
-                        return offset;
-                    }
-                }
-            }
-        };
         m[i].offset = getOffsetInWindow(m[i].element[0], getOwnerWindow((t.currentItem || t.element)[0]));
         /////////////////////////////////////////////////////////////////
         // End of our changes
