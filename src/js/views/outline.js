@@ -21,12 +21,12 @@
 
         _create: function() {
             var o = this.options,
-                e = this.element;
+                e = this.element, c;
 
-            o.designReset = this._designResetHandler;
-            o.selectionChanged = this._selectionChangedHandler;
-            o.activePageChanged = this._activePageChangedHandler;
-            o.modelUpdated = this._modelUpdatedHandler;
+            o.designReset = this._designResetHander;
+            o.selectionChanged = this._selectionChangedHander;
+            o.activePageChanged = this._activePageChangedHander;
+            o.modelChanged = this._modelChangedHander;
 
             // FIXME: This should work, but $.extend of options seems to be
             //        creating a copy of the ADM, which will not containt the
@@ -36,15 +36,14 @@
                 this._bindADMEvents(o.model);
             }
 
-            $('<div/>')
-                .addClass('ui-widget-content')
-                .append('<p id="outline_header">Outline</p>')
-                .children('p:first')
-                    .addClass('ui-helper-reset ui-widget ui-widget-header')
-                    .end()
-                .append('<div id="outline_content"></div>')
-                .appendTo(this.element);
+            c = $('<div/>').appendTo(this.element);
 
+            // Load ADM into initial outline view
+            c.append('<p id="outline_header" class="ui-helper-reset ui-widget ui-widget-header">Outline</p>')
+               .addClass('ui-widget-content')
+               .append('<div id="outline_content"></div>');
+
+            this._renderOutlineView();
 
             this.refresh(null, this);
 
@@ -56,9 +55,9 @@
                 // Should this REALLY be done here, or plugin registration in
                 // the "host"... using the functions mapped in widget options?
                 case 'model':
-                    this._unbindADMEvents();
+                  //  this._unbindADMEvents(this.options.model);
                     this._bindADMEvents(value);
-                    this.refresh(null, this);
+                    this.options.model = value;
                     break;
                 default:
                     break;
@@ -72,103 +71,44 @@
 
         refresh: function(event, widget) {
             widget = widget || this;
-            widget._renderOutlineView();
         },
 
         // Private functions
         _bindADMEvents: function(a) {
-            var o = this.options,
-                d = this.designRoot;
-
-            if (a) {
-                o.model = a;
-
-                if (o.designReset) {
-                    a.bind("designReset", o.designReset, this);
-                }
-                if (o.selectionChanged) {
-                    a.bind("selectionChanged", o.selectionChanged, this);
-                }
-                if (o.activePageChanged) {
-                    a.bind("activePageChanged", o.activePageChanged, this);
-                }
-
-                // Since model changed, need to call our designReset hander
-                // to sync up the ADMDesign modelUpdated event handler
-                if (o.designReset) {
-                    o.designReset({design: a.getDesignRoot()}, this);
-                }
-            }
+            var d;
+            a = a || ADM;
+            d = a && a.getDesignRoot();
+            a.bind("designReset", this._designResetHandler, this);
+            a.bind("selectionChanged", this._selectionChangedHandler, this);
+            a.bind("activePageChanged", this._activePageChangedHandler, this);
+            d.bind("modelUpdated", this._modelUpdatedHandler, this);
         },
 
         _unbindADMEvents: function(a) {
-            var o = this.options,
-                a = this.options.model,
-                d = this.designRoot;
-
-            // First unbind our ADMDesign modelUpdated handler, if any...
-            if (d && o.modelUpdated) {
-                d.designRoot.unbind("modelUpdated", o.modelUpdated, this);
-            }
-
-            // Now unbind all ADM model event handlers, if any...
-            if (a) {
-                if (o.designReset) {
-                    a.unbind("designReset", o.designReset, this);
-                }
-                if (o.selectionChanged) {
-                    a.unbind("selectionChanged", o.selectionChanged, this);
-                }
-                if (o.activePageChanged) {
-                    a.unbind("activePageChanged", o.activePageChanged, this);
-                }
-            }
+            var d;
+            a = a || ADM;
+            d = a && a.getDesignRoot();
+            a.unbind("designReset", this._designResetHandler, this);
+            a.unbind("selectionChanged", this._selectionChangedHandler, this);
+            a.unbind("activePageChanged", this._activePageChangedHandler, this);
+            d.unbind("modelUpdated", this._modelUpdatedHandler, this);
         },
 
         _designResetHandler: function(event, widget) {
-            var d = event && event.design, o;
-
             widget = widget || this;
-            o = widget.options;
-            d = d || o.model.getDesignRoot();
-
-            // Do nothing if the new ADMDesign equals our currently cached one
-            if (d === widget.designRoot) {
-                return;
-            }
-
-            // First, unbind existing modelUpdated hander, if any...
-            if (widget.designRoot && o.modelUpdated) {
-                widget.designRoot.unbind("modelUpdated", o.modelUpdated,widget);
-            }
-
-            // Next, bind to modelUpdated events from new ADMDesign, if any...
-            if (d && o.modelUpdated) {
-                d.bind("modelUpdated", o.modelUpdated, widget);
-            }
-
-            // Then, cache the new ADMDesign reference with this instance
-            widget.designRoot = d;
-
-            // Finally, redraw our view since the ADMDesign root has changed
-            widget.refresh(event, widget);
+            widget._unbindADMEvents(this.options.model);
+            widget._bindADMEvents(ADM.getDesignRoot());
+            widget._renderOutlineView();
         },
 
         _selectionChangedHandler: function(event, widget) {
             var node, rootNode, nodeInOutline, currentNode;
-
             widget = widget || this;
-
-            if (!widget.options.model) {
-                return;
-            }
-
             // Make sure we show the page as selected if no node is selected
             if (event === null || event.node === null) {
-                node = widget.options.model.getDesignRoot()
-                             .findNodeByUid(widget.options.model.getSelected());
+                node = ADM.getDesignRoot().findNodeByUid(ADM.getSelected());
                 if (node === null || node === undefined) {
-                    node = widget.options.model.getActivePage();
+                    node = ADM.getActivePage();
                     if (node === null || node === undefined) {
                         return false;
                     }
@@ -178,9 +118,9 @@
             }
 
             // Deactive state of selected before
-            $('#outline_content', this.element).find('.ui-state-active')
+            $('#outline-panel', this.element).find('.ui-state-active')
                 .removeClass('ui-state-active');
-            $('#outline_content', this.element).find('.ui-selected')
+            $('#outline-panel', this.element).find('.ui-selected')
                 .removeClass('ui-selected');
 
             // Find this node in outline pane
@@ -197,61 +137,53 @@
             }
 
             // Make sure selected node is visible on show
-            $('#outline_content', this.element).find('.ui-selected:first')
-                .each(function (){
-                    this.scrollIntoViewIfNeeded();
-                });
+            $('#outline-panel', this.element).find('.ui-selected:first').each(function (){
+                this.scrollIntoViewIfNeeded();
+            });
         },
 
         _activePageChangedHandler: function(event, widget) {
             widget = widget || this;
 
-            if (!event.page || event.page === undefined ||
-                !widget.options.model) {
+            if (!event.page || event.page === undefined) {
                 return;
             }
 
-            if (event.page.getUid() === widget.options.model.getActivePage()) {
+            if (event.page.getUid() === ADM.getActivePage()) {
                 return;
             }
 
-            widget.refresh(event, widget);
+            widget._renderOutlineView();
         },
 
         _modelUpdatedHandler: function(event, widget) {
             widget = widget || this;
-            widget.refresh(event, widget);
+
+            widget._renderOutlineView();
         },
 
         _renderOutlineView: function() {
             var page, selected,
-                self = this,
-                model = self.options.model, root,
-                $tree = self.element.find("#outline_content");
-
-            if (!model) {
-                return false;
-            } else {
-                root = model.getDesignRoot();
-            }
+                $tree = this.element.find("#outline_content");
 
             function  setSelected(item) {
                 var UID = $(item).attr('adm-uid');
+                dumplog("Outline.js: setSelected is called. UID is " + UID);
 
                 // find whether selected widget in current active page
-                var currentNode = root.findNodeByUid(UID);
-                while (currentNode.getType() !== "Page" &&
-                       currentNode.getType() !=="Design") {
+                var currentNode = ADM.getDesignRoot().findNodeByUid(UID);
+                while (currentNode.getType() !== "Page" && currentNode.getType() !=="Design") {
                     currentNode = currentNode.getParent();
                 }
                 if (currentNode.getType() !== "Page") {
+                    dumplog("error: can't find select node's Page");
                     return;
                 }
-                if (model.getActivePage() !== currentNode) {
-                    model.setActivePage(currentNode);
+                if (ADM.getActivePage() !== currentNode) {
+                    ADM.setActivePage(currentNode);
                 }
 
-                model.setSelected(UID);
+                window.ADM.setSelected(UID);
             }
 
             function render_sub(node, $container) {
@@ -300,6 +232,7 @@
                         if ((node.getChildrenCount() == 1) &&
                             (node.getChildren()[0].getType() === "Content") &&
                             (node.getChildren()[0].getChildrenCount() === 0)) {
+                                 dumplog("only content in page");
                                 newItem.toggleClass('folder')
                                        .remove('ul');
                         }
@@ -333,14 +266,14 @@
 
             $tree.empty();
             $('<ul id="pageList"></ul>').appendTo($tree);
-            for (var i = 0; i < root.getChildrenCount(); i++) {
-                page = root.getChildren()[i];
-                render_sub(page, $("#pageList", self.element));
+            for ( var i = 0; i < ADM.getDesignRoot().getChildrenCount(); i++) {
+                page = ADM.getDesignRoot().getChildren()[i];
+                render_sub(page, $("#pageList", this.element));
             }
 
             // Now make sure the selected node is properly identified
-            selected = root.findNodeByUid(model.getSelected()) ||
-                       model.getActivePage();
+            selected = ADM.getDesignRoot().findNodeByUid(ADM.getSelected()) ||
+                ADM.getActivePage();
             if (selected) {
                 $tree.find("#Outline-"+selected.getUid()+" > a")
                     .addClass('ui-state-active')

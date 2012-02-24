@@ -15,6 +15,12 @@
  */
 $(function() {
     var pageUtils = {
+        options :{
+            design: null,
+            pageTemplate: "Blank Page",
+            pageTitle: "Default",
+            layout: ['Content']
+        },
         /**
          * Creates an new page according to page configure.
          *
@@ -23,67 +29,41 @@ $(function() {
          */
         createNewPage: function(config) {
             var design = config.design || ADM.getDesignRoot(),
-                pageTemplate = config.pageTemplate || "Blank Page",
-                pageTitle = config.pageTemplate || "Default",
-                layout = config.layout || {Header: true, Footer: true},
-                newPage, child, that, i, types, type;
+                pageTemplate = config.pageTemplate || this.options[pageTemplate],
+                pageTitle = config.pageTitle || this.options[pageTitle],
+                layout = this.options.layout.concat(config.layout),
+                newPage, result;
+
             if (!design.instanceOf("Design")) {
                 console.error("Error: wrong design root passed in");
                 return null;
             }
 
-            switch (pageTemplate) {
-                case "JQuery Mobile Page":
-                    // create New ADM page node
-                    newPage = addNode(design, 'Page');
-                    if (!newPage) {
-                        return null;
-                    }
-                    // set page title
-                    newPage.setProperty("id", pageTitle);
-                    //set page layout
-                    for (i in layout) {
-                        if (layout[p]) {
-                            types.push(p);
-                        }
-                    }
-                    types.push('Content');
-                    for (i in types) {
-                        that = addNode(newPage, types[i]);
-                        if (!that) {
-                            return null;
-                        }
-                    }
-                    break;
-                case "Recent Used Page":
-                    if (design.getChildrenCount() !== 1) {
-                        console.log("Warning: this isn't the last page");
-                        return null;
-                    }
-                    newPage = addNode(design,'Page');
-                    if (!newPage) {
-                        return null;
-                    }
-                    newPage.setProperty("id", pageTitle);
-                    //get the last page
-                    child = design.getChildren()[0];
-                    for (i in child.getChildren()) {
-                        type = child.getChildren()[i].getType();
-                        that = addNode(newPage,type);
-                    }
-                    break;
-                default:
-                    console.log("Warning: invalid page type while creating new page: " + pageTemplate);
-                    //return a blank page as default
-                    newPage = addNode(design,'Page');
-                    if (!newPage) {
-                        return null;
-                    }
-                    newPage.setProperty("id", pageTitle);
-                    that = addNode(newPage,'Content');
-                    break;
+            // create New ADM page node
+            newPage = creatPageNode();
+            if (!newPage) {
+                return null;
             }
-            return newPage;
+
+            //set page layout
+            result = setPageLayout(newPage, layout);
+            //TODO: if we have some specfic logic to handle with template,
+            //      use below code
+            /*
+            if (result) {
+                switch (pageTemplate) {
+                    case "JQuery Mobile Page":
+                        // TODO handle specific with JQM
+                        break;
+                    case "Recent Used Page":
+                        // TODO handle specific with Recent Used Page
+                        break;
+                    default:
+                        break;
+                }
+            }
+            */
+            return result? newPage: null;
 
             /**
              * Adds given child object to parent
@@ -103,7 +83,58 @@ $(function() {
                 design.suppressEvents(false);
                 return child;
             }
-        };
+
+            /*
+             * Create a page node and set it's id property
+             * @return {ADMNode} page node or null if add failed.
+             */
+            function creatPageNode() {
+                var pageNode = addNode(design, 'Page');
+                if (!pageNode) {
+                    return null;
+                }
+                // set page title
+                pageNode.setProperty("id", pageTitle);
+                return pageNode;
+            }
+
+            /*
+             * create  new page's child according to layout
+             * @param {ADMNode} pageNode new page node.
+             * @param {Array} layout which contains types of child type
+             *                       we want create
+             * @return {Boolean} true if nodes have been created successfully,
+             *                   otherwise return false
+             */
+            function setPageLayout(pageNode, layout) {
+                var t,that;
+                for (t in layout ){
+                     that = addNode(pageNode, layout[t]);
+                     if (that === null) {
+                         return false;
+                     }
+                }
+                return true;
+            }
+        },
+
+        /*
+         * Get active page's layout
+         * @return {Array} The array, which contais the page's child node type.
+         */
+        getActivePageLayout: function() {
+            var i, children, types = [], type,
+                pageNode = ADM.getActivePage();
+
+            children = pageNode.getChildren();
+            for (i in children) {
+                type = children[i].getType();
+                if (type !== 'Content') {
+                    types.push(type);
+                }
+            }
+            return types;
+        }
     };
 
     /*******************  export pageUtils to $.gb **********************/
