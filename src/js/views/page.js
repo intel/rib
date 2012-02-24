@@ -98,7 +98,7 @@
                 for ( var i = 0; i < pageWidgets.length; i ++) {
                     $('<div>'+(i+1)+'</div>')
                         .addClass('pageIcon')
-                        .toggleClass('pageActive',
+                        .toggleClass('ui-selected',
                             pageWidgets[i] === model.getActivePage())
                         .data('page', pageWidgets[i])
                         .click(function (e) {
@@ -199,7 +199,7 @@
         _activePageChangedHandler: function(event, widget) {
             widget = widget || this;
 
-            // FIXME: This should just toggle 'pageActive' class, not
+            // FIXME: This should just toggle 'ui-selected' class, not
             //        cause a complete re-creation of the page list
             widget.refresh();
         },
