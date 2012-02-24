@@ -61,17 +61,17 @@
                 .addClass('vbox')
                 .addClass('flex1');
 
-            $('<div>devices</div>')
+            $('<div/>')
                 .addClass('panel-section-header')
+                .append('<div>devices</div>')
+                .children().last()
+                    .addClass('title')
+                    .end()
+                .end()
                 .appendTo(devicePanel);
 
             deviceToolbar = $('<div/>')
                 .addClass('panel-section-contents')
-                .css({
-                    backgroundColor: "#e4e5df",       // FIXME: do this in CSS
-                    borderLeft:"1px solid #8c8d8d",   // FIXME: do this in CSS
-                    borderBottom: "1px solid #b9b9b9" // FIXME: do this in CSS
-                 })
                 .appendTo(devicePanel);
 
             deviceSelect = $('<select></select>')
