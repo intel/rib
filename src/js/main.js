@@ -510,19 +510,21 @@ $(function() {
     // FIXME: Remove all this fake ADM setup code once the remainder of
     //        the code for guibuilder has been merged with this new plugin
     //        model of coding...
-    var design, page, child;
+    var design, page, child,
+        config = {
+            pageTemplate: 'JQuery Mobile Page',
+            pageTitle: 'Home',
+            layout: ['Header', 'Footer'],
+        };
     design = new ADMNode('Design');
-    page = new ADMNode('Page');
-    design.addChild(page);
-    design.addChild(new ADMNode('Page'));
-    child =  new ADMNode('Button');
-    page.addChild(child);
+    config.design = design;
+    page = $.gb.pageUtils.createNewPage(config);
+
     ADM.setDesignRoot(design);
 
     // Actually invoke the plugin that sets up our app UI
     $(document).guibuilder({debugMode: true, model: ADM});
 
     // FIXME: Remove the following, as noted above
-    ADM.setSelected(child.getUid());
     ADM.setActivePage(page);
 });
