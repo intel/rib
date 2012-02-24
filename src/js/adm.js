@@ -454,6 +454,61 @@ ADM.canAddChild = function (parentRef, childRef) {
 }
 
 /**
+ * Add a child of the given type to given parent, or nearest ancestor that will
+ * accept it.
+ * Using this high-level API records the action as user-visible and part of the
+ * undo/redo stacks.
+ *
+ * @param {Various} parentRef The UID of the parent widget (as a number or
+ *                            string), or the actual ADMNode.
+ * @param {ADMNode/String} childRef Either an ADMNode or a string type of a node
+ *                                  to create.
+ * @param {Boolean} dryrun [Optional] True if the call should be a dry run.
+ * @return {ADMNode} The child object, on success; null, on failure.
+ */
+ADM.addChildRecursive = function (parentRef, childRef, dryrun) {
+    var parent, child;
+
+    parent = ADM.toNode(parentRef);
+    if (!parent) {
+        console.log("Warning: invalid parent while adding child: ", parentRef);
+        return null;
+    }
+
+    if (typeof childRef === "string") {
+        child = ADM.createNode(childRef);
+    }
+    else {
+        child = childRef;
+    }
+
+    if (!child) {
+        console.log("Warning: invalid widget while adding child: ", childRef);
+        return null;
+    }
+
+    while (parent) {
+        if (parent.addChild(child, dryrun)) {
+            if (dryrun) {
+                return true;
+            }
+            // use getParent below in case the child was redirected to another
+            // node (as in the case of Page/Content)
+            ADM.transaction({
+                type: "add",
+                parent: child.getParent(),
+                child: child
+            });
+            return child;
+        }
+        parent = parent.getParent();
+    }
+
+    console.log("Warning: failed to add child: ", childRef);
+    return null;
+};
+
+/**
  * Not intended as a public API.
  * @private
  */
@@ -870,7 +925,7 @@ ADM.paste = function () {
         node = ADM.copySubtree(ADM._clipboard);
     }
 
-    ADM.addChild(target, node);
+    ADM.addChildRecursive(target, node);
 }
 
 /**
