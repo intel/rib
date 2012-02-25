@@ -53,7 +53,8 @@
 
             // Fixes PTSDK-130: Block right-click context menu in code and
             // preview div wrappers
-            $('.stage').bind('contextmenu', function(e) {e.preventDefault();});
+            if (!$.gb.options || !$.gb.options.debug)
+                $('.stage').bind('contextmenu', function(e) {e.preventDefault();});
 
             // Now invoke any view plugins on appropriate elements
             this._bindViewPlugins();
