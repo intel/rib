@@ -18,6 +18,7 @@
 .nrc-sortable-container:not([data-role=footer]):not([data-role=header]) {
     border: 1px dotted #bbbdc0;
     padding: 10px;
+    box-sizing: border-box;
 }
 .nrc-sortable-container:not([data-role=footer]):not([data-role=header]).nrc-empty {
     padding: 1.5em;
