@@ -192,7 +192,7 @@ $(function() {
                             }
                         } else {
                             // Add 1st child into an empty container
-                            if (children.length <= 0) {
+                            if (children.length-1 <= 0) {
                                 if (adm.addChild(pid, type, true)) {
                                     node = adm.addChild(pid, type);
                                     debug && console.log('Added 1st node');
@@ -200,7 +200,7 @@ $(function() {
                                 } else {
                                     console.warn('Add 1st child failed');
                                 }
-                            // Insert 1st child into non-container
+                            // Insert 1st child into non-empty container
                             } else {
                                 sibling = $(this).children('.adm-node:first');
                                 sid = sibling.attr('data-uid');
