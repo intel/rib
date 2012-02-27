@@ -35,7 +35,7 @@ CodeMirror.defineMode("gbsrc", function(config, parserConfig) {
             }
             else {
                 stream.next();
-                return "inactive";
+                return null
             }
         },
 
