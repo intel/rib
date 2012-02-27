@@ -535,6 +535,9 @@ ADM.insertChildRelative = function (siblingRef, childRef, offset, dryrun) {
     }
 
     if (sibling.insertChildRelative(child, offset, dryrun)) {
+        if (dryrun) {
+            return true;
+        }
         ADM.transaction({
             type: "insertRelative",
             sibling: sibling,
@@ -632,6 +635,9 @@ ADM.removeChild = function (childRef, dryrun) {
     zoneIndex = child.getZoneIndex();
     rval = parent.removeChild(child, dryrun);
     if (rval) {
+        if (dryrun) {
+            return true;
+        }
         ADM.transaction({
             type: "remove",
             parent: parent,
@@ -685,6 +691,9 @@ ADM.moveNode = function (nodeRef, newParentRef, zoneName, zoneIndex, dryrun) {
     oldZoneIndex = node.getZoneIndex();
     rval = node.moveNode(newParent, zoneName, zoneIndex, dryrun);
     if (rval) {
+        if (dryrun) {
+            return true;
+        }
         ADM.transaction({
             type: "move",
             node: node,
