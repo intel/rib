@@ -570,14 +570,14 @@ body.ui-tabs.ui-widget {
 .outlineView li {
     list-style: none;
 }
-.outlineView li > a {
+.outlineView li > a, .widgetView li > a {
     background: transparent;
     font-weight: normal;
     text-align: center;
     /* match the padding-left below so text doesn't move when selected */
     margin-left: 5px;
 }
-.outlineView li > a.ui-selected {
+.outlineView li > a.ui-selected, .widgetView li > a.ui-selected {
     background: #4ae57b;
     color: #424242;
     border: transparent;
@@ -591,17 +591,20 @@ body.ui-tabs.ui-widget {
     margin-left: 0px;
 }
 .outlineView li > a:hover,
-.outlineView li > a.ui-selected:hover {
+.outlineView li > a.ui-selected:hover,
+.widgetView li > a:hover,
+.widgetView li > a.ui-selected:hover {
     color: #2c7a94;
 }
-.outlineView span.widgetType {
+.outlineView span.widgetType,
+.widgetView li > a {
     font-size: 12px;
-    font-color: #111111;
+    color: #111111;
     font-style: normal;
 }
 .outlineView span.pageTitle {
     font-size: 12px;
-    font-color: #aaaaaa;
+    color: #aaaaaa;
     font-style: italic;
 }
 .outlineView span.folder {
@@ -656,9 +659,13 @@ body.ui-tabs.ui-widget {
 */
 .widgetView {
     border: 1px solid rgba(0,0,0,0.6);
+    overflow: auto;
+    min-height: 150px;
 }
 .widgetView:after {
-    content: 'widgetView';
+}
+ul {
+    cursor: pointer
 }
 
 /*
@@ -666,6 +673,8 @@ body.ui-tabs.ui-widget {
 */
 .paletteView {
     border: 1px solid rgba(0,0,0,0.6);
+    padding-bottom: 20px;
+    overflow: auto;
 }
 
 .ui-accordion .ui-accordion-header {

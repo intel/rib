@@ -250,6 +250,7 @@
         },
 
         _constructApp: function(container) {
+            var widget = this;
             $('<ul/>').appendTo(container)
                 .append('<li><a href="#projectView">Project</a></li>')
                 .append('<li><a href="#layoutView">Layout</a></li>')
@@ -293,7 +294,7 @@
                     minSize: '160',
                 })
                 .append('<div class="widgetView flex1 vbox"></div>')
-                .append('<div class="paletteView flex1 vbox"></div>');
+                .append('<div class="paletteView flex0 vbox"></div>');
 
             this.ui.codeView = $('<div/>').appendTo(container)
                 .attr('id', 'codeView')
@@ -332,7 +333,13 @@
 
             $('.paletteView').each( function () {
                 $(this).paletteView();
-                $(this).paletteView('option', 'model', ADM);
+                widget._bindResizeEvent(this, 'paletteView');
+            });
+
+            $('.widgetView').each( function () {
+                $(this).widgetView();
+                $(this).widgetView('option', 'model', ADM);
+                widget._bindResizeEvent(this, 'widgetView');
             });
 
             // Turn the body into a jQuery-UI "tabs" widget
@@ -387,7 +394,7 @@
                 // Show the default secondary tools (if any)
                 $('.tools-secondary .default-tools').show();
             }
-            this._resizeView(el, type);
+            $(window).trigger('resize');
         },
 
         _syncViewNames: function() {
@@ -439,9 +446,7 @@
                     $(el)[val]('option', 'model', ADM);
 
                     //Bind resize event for each view
-                    $(window).resize(function () {
-                        widget._resizeView($(el), val);
-                    });
+                    widget._bindResizeEvent($(el), val);
 
                     // TODO: Bind plugin ADMEvent handlers here directly
                     //       rather than w/in each plugin, to ensure consitant
@@ -500,7 +505,14 @@
             //Some view (such as code view) may need to do more job
             //when window resizing
             $(el)[viewName]('resize');
+        },
+        _bindResizeEvent: function(el, viewName) {
+            var widget = this;
+            $(window).resize( function () {
+                widget._resizeView($(el), viewName);
+            });
         }
+
 
     });
 })(jQuery);
