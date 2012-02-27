@@ -231,9 +231,6 @@
                 revertDuration: 0,
                 start: function(event,ui){
                     if (ui.helper) {
-                        // Attach data props
-                        ui.helper.data($(this).data());
-
                         if (ui.helper[0].id == "") {
                             ui.helper[0].id = this.id+'-helper';
                         }
