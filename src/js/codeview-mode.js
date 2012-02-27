@@ -20,6 +20,7 @@ CodeMirror.defineMode("gbsrc", function(config, parserConfig) {
         },
 
         token: function(stream, state) {
+            var ret;
             if (stream.match(regActivePage, false))
                 state.activePage = true;
             if (state.activePage) {
@@ -29,7 +30,8 @@ CodeMirror.defineMode("gbsrc", function(config, parserConfig) {
                     state.divs --;
                 if (state.divs === 0)
                     state.activePage = false;
-                return htmlMixedMode.token(stream, state.htmlState);
+                ret = htmlMixedMode.token(stream, state.htmlState);
+                return ret && ret + ' active';
             }
             else {
                 stream.next();

@@ -810,8 +810,8 @@ body.ui-tabs.ui-widget {
     border-color:#424242;
     background-image: -webkit-linear-gradient(top, #cccccc, #777777);
 }
-.cm-inactive {
-  color: grey;
+.cm-active {
+    font-weight: bold;
 }
 .CodeMirror {
     background-color: white
