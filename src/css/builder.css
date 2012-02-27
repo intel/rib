@@ -675,3 +675,138 @@ body.ui-tabs.ui-widget {
     display: inline-block;
     border: 1px solid #da1c2e !important;
 }
+
+.projectSetting {
+    background-color: transparent;
+    background-color: rgba(21, 28, 34, 0.85);
+    padding: 0;
+    margin: 0;
+    display: block;
+    webkit-border-radius: 8px;
+    border-radius: 8px;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+}
+.ui-dialog {
+    padding: 0px;
+}
+.ui-dialog .ui-dialog-content{
+    padding: 0px;
+}
+
+.projectSetting > div {
+    -webkit-border-radius: 12px;
+    margin: 0px;
+    padding: 0px;
+    bolder: 0px;
+    border-radius: 12px;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    background-color: transparent;
+    zoom: 1;
+    position:absolute;
+    height:100%;
+    width: 100%;
+    overflow:hidden;
+}
+.projectSetting .wrap_left {
+    width: 385px;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+    background: #fff;
+}
+.projectSetting .wrap_right {
+    width: 385px;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+    background-color: #cbced0;
+    background-image: url('images/newProjectFPOgraphic.png');
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.projectSetting fieldset {
+    padding: 0px;
+    margin: 0px;
+    border: 0px;
+}
+.projectSetting legend {
+    height: 28px;
+}
+.projectSetting p {
+    margin-left: 0px;
+    margin-right: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
+    margin-top: 30px;
+    margin-bottom: 0px;
+    border: 0px;
+}
+.projectSetting label {
+    float: left;
+    font-size: 12px;
+    font-weight: Semi-Bold;
+    font-color: #333;
+    text-align: right;
+    width: 114px;
+    margin-left: 11px;
+    margin-right: 0px;
+    border: 0px;
+    padding: 0px;
+}
+.projectSetting input {
+    margin-left: 20px;
+    height: 23px;
+    width: 200px;
+}
+.projectSetting select {
+    margin-left: 20px;
+    font-size: 11px;
+    width: 200px;
+    background: #eaf1f4
+}
+.projectSetting span {
+    float: right;
+    display: inline;
+    margin-right: 40px;
+    text-align: right;
+}
+.projectSetting .uploadStyle {
+    text-decoration: underline;
+    font-size: 11px;
+    font-weight: Regular;
+    font-color: #555;
+}
+.mt15 {
+    margin-top: 15px;
+}
+.mt200 {
+    margin-top: 200px;
+}
+.projectSetting .buttonSytle {
+    display:block;
+    width:100px;
+    height:12px;
+    font-size: 0.8em;
+    text-align:right;
+    color:#424242;
+    border:1px solid #a1a1a1;
+    line-height:12px;
+    padding:8px 20px 7px 20px;
+    background-color: #fbfbfb;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#fbfbfb), to(#ececec));
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+    -moz-background-clip: padding;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    text-decoration:none;
+}
+.projectSetting .buttonStyle:hover {
+    color:#eee;
+    background-color: #cccccc;
+    border-color:#424242;
+    background-image: -webkit-linear-gradient(top, #cccccc, #777777);
+}

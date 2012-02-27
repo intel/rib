@@ -9,7 +9,7 @@
  */
 "use strict";
 
-// Layout view widget
+// Project view widget
 
 (function($, undefined) {
 
@@ -48,6 +48,10 @@
                 .addClass('hidden-accessible')
                 .appendTo(this.element[0].ownerDocument.body);
 
+            // Add a project setting dialog element, used to trigger to configure
+            // project setting when user want to create or modify project setting
+            this.options.projectDialog =  this._createSettingDialog();
+
             this.options.primaryTools = this._createPrimaryTools();
             this.options.secondaryTools = this._createSecondaryTools();
 
@@ -83,10 +87,22 @@
 
         // Private functions
         _createPrimaryTools: function() {
+            var projectDialog = this.options.projectDialog;
             var tools = $('<div/>').addClass('hbox').hide()
                 .append('<button id="newProj"></button>')
                 .append('<button id="importProj"></button>');
-            tools.children().addClass('buttonStyle ui-state-default');
+            tools.children().addClass('buttonStyle ui-state-default')
+                .first().click( function(e) {
+                    projectDialog.dialog('option', 'title', "New Project")
+                        .find(".buttonStyle", this)
+                        .text("Next")
+                        .click(function (e) {
+                            //call project API to create a new project
+                            e.stopPropagation();
+                        })
+                        .end()
+                        .dialog("open");
+            });
             return tools;
         },
 
@@ -188,5 +204,56 @@
         _modelUpdatedHandler: function(event, widget) {
             widget = widget || this;
         },
+
+        _createSettingDialog: function() {
+            var projectDialog = this.options.projectDialog,
+                themeNames = ['Project Defalut(Pink Martini)',
+                               'Purple People Eater',
+                               'CAstle Greyskull',
+                               'Blue Meanies',
+                               'Project Defalut(Pink Martini)',
+                               'Purple People Eater',
+                               'CAstle Greyskull',
+                               'Blue Meanies'];
+
+            projectDialog = $('<div/>')
+                .addClass('projectSetting')
+                .appendTo(this.element[0].ownerDocument.body);
+            $('<div/>').addClass('hbox')
+                .append('<div/>')
+                .children(':first')
+                .addClass('flex1 vbox wrap_left')
+                .append('<form><fieldset>' +
+                        '<legend></legend>' +
+                        '<p><label for="name">Project Name</label>' +
+                        '<input type ="text" id="projectName" value=""></p>' +
+                        '<p><label for="name">Theme</label>' +
+                        '<select id="themePicker" size="4"></select></p>' +
+                        '<span class="uploadStyle mt15"' +
+                        'id="uploadTheme">Upload a Theme</span>' +
+                        '<p><span class="mt200"><button class="buttonStyle">' +
+                        '</button></span></p></filedset></form>')
+                .end()
+                .append('<div/>')
+                .children(':last')
+                .addClass('flex1 wrap_right')
+                .end()
+                .appendTo(projectDialog, this);
+             // Insert the list of themes
+            for (var t in themeNames) {
+               var id = themeNames[t];
+               $('<option id="'+ id +'" value="' + id + '">'+ id + '</option>')
+                   .appendTo('#themePicker', projectDialog);
+            }
+
+            projectDialog.dialog({
+                autoOpen: false,
+                modal: true,
+                height: 489,
+                width: 770,
+                resizable: false,
+                });
+            return projectDialog;
+        }
     });
 })(jQuery);
