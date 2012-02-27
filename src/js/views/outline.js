@@ -264,7 +264,8 @@
 
                 type = node.getType();
                 UID = node.getUid();
-                showInOutline = node.isSelectable();
+                showInOutline = BWidget.isPaletteWidget(type) ||
+                    (type === "Page");
                 widgetID = type + '-' + UID;
                 $subContainer = $container;
 
@@ -273,21 +274,22 @@
                     label = labelFunc(node);
                     if (label) {
                         $container.append($('<li class="label">' +
-                                            labelFunc(node) + '<li>'));
+                                            labelFunc(node) + '</li>'));
                     }
                 }
 
                 label = BWidget.getDisplayLabel(type);
 
-                // check current node whether can ben shown in outline pane
+                // check whether current node should be shown in outline pane
                 if (showInOutline) {
-                    newItem = $('<li><a>' + label + '</a></li>')
-                        .attr('id', 'Outline-' + UID)
-                        .appendTo($container);
+                    newItem = $('<li><a>' + label + '</a></li>');
+                    newItem.attr('id', 'Outline-' + UID);
+                    $container.append(newItem);
 
-                    if (node.hasUserVisibleChildren()) {
+                    if (node.hasUserVisibleDescendants()) {
                         newItem.addClass('folder')
                             .append('<ul id="' + widgetID + '"></ul>');
+                        $subContainer = $container.find("#" + widgetID);
                     }
 
                     if (type === "Page") {
@@ -318,10 +320,6 @@
                         e.stopPropagation();
                         return false;  // Stop event bubbling
                     });
-
-                    if (node.getChildrenCount() > 0) {
-                        $subContainer = $container.find("#" + widgetID);
-                    }
                 }
 
                 if (node.getChildrenCount() > 0) {

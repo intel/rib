@@ -1242,12 +1242,12 @@ ADMNode.prototype.getChildrenCount = function () {
 };
 
 /**
- * Tests whether this node has user-visible children that will be displayed in
- * the outline view.
+ * Tests whether this node has user-visible descendants that will be displayed
+ * in the outline view.
  *
- * @return {Boolean} True if there is at least one visible child.
+ * @return {Boolean} True if there is at least one visible descendant.
  */
-ADMNode.prototype.hasUserVisibleChildren = function () {
+ADMNode.prototype.hasUserVisibleDescendants = function () {
     var func, i, length, child, childType, children = this.getChildren();
     length = children.length;
     for (i = 0; i < length; i++) {
@@ -1256,14 +1256,10 @@ ADMNode.prototype.hasUserVisibleChildren = function () {
         if (BWidget.isPaletteWidget(childType)) {
             return true;
         }
+    }
 
-        // NOTE: this is a bit of a hack that could go south; the idea is that
-        // besides genuine user-visible children, we should count any widgets
-        // that return an outline label, because they intend to be user-visible
-        // as well; currently this is only used by the Block widget to force
-        // Row/Column headings to show up in the outline view, so it works
-        func = BWidget.getOutlineLabelFunction(childType);
-        if (func && func(child)) {
+    for (i = 0; i < length; i++) {
+        if (children[i].hasUserVisibleDescendants()) {
             return true;
         }
     }
