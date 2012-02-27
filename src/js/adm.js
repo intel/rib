@@ -882,7 +882,7 @@ ADM.copy = function () {
  * @return {ADMNode} The new copy of the subtree, or null if invalid.
  */
 ADM.copySubtree = function (node) {
-    var newNode, prop, props, child, children, type, zoneName, zoneIndex;
+    var newNode, prop, props, i, child, children, type, zoneName, zoneIndex;
 
     if (!(node instanceof ADMNode)) {
         console.log("Warning: invalid argument to copySubtree: ", node);
@@ -901,7 +901,8 @@ ADM.copySubtree = function (node) {
     }
 
     children = node.getChildren();
-    for (child in children) {
+    for (i in children) {
+        child = children[i];
         zoneName = child.getZone();
         zoneIndex = child.getZoneIndex();
         newNode.insertChildInZone(ADM.copySubtree(child), zoneName,
