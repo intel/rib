@@ -106,7 +106,7 @@ $(function() {
         $(document).unbind('click vmousedown vmousecancel vmouseup'
                          + 'vmouseover focus vmouseout blur');
 
-        $('.adm-node:not(.delegation)').each ( function (index, node) {
+        $('.adm-node:not(.delegation),.orig-adm-node').each ( function (index, node) {
             var admNode, widgetType, delegate, events,
                 delegateNode,
                 adm = window.parent.ADM,
