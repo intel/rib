@@ -9,6 +9,44 @@
  */
 "use strict";
 
+function validValue(value, type) {
+    var ret = null;
+    switch (type) {
+        case 'boolean':
+            ret = Boolean(value);
+            break;
+        case 'float':
+            ret = parseFloat(value);
+            break;
+        case 'integer':
+            ret = parseInt(value, 10);
+            break;
+        case 'number':
+            ret = Number(value);
+            break;
+        case 'object':
+            ret = Object(value);
+            break;
+        case 'string':
+            ret = String(value);
+            break;
+        default:
+            ret = value;
+            break;
+    }
+    return ret;
+};
+
+function copyProperties(dest, src) {
+    var text, value;
+
+    text = src.getProperty("text");
+    dest.setProperty("text", text);
+
+    value = src.getProperty("value");
+    dest.setProperty("value", value);
+};
+
 // Property view widget
 
 (function($, undefined) {
@@ -70,8 +108,17 @@
 
         refresh: function(event, widget) {
             widget = widget || this;
-            if(event) {
-                widget._showProperties(event);
+            if (event && event.node) {
+                if (BWidget.isSelectable(event.node.getType())) {
+                    widget._showProperties(event);
+                }
+                else if (event.name === "modelUpdated" &&
+                         (event.type === "nodeRemoved" ||
+                          event.type === "nodeAdded") &&
+                         event.node.getType() === "Option") {
+                    event.node = event.parent;
+                    widget._showProperties(event);
+                }
             }
         },
 
@@ -180,7 +227,8 @@
         _showProperties: function(event) {
             var node = event.node,
                 showUid = false,
-                labelId, labelVal, valueId, valueVal;
+                labelId, labelVal, valueId, valueVal, count,
+                widget = this;
 
             // Clear the properties pane when nothing is selected
             if (node === null || node === undefined) {
@@ -203,21 +251,10 @@
             var props = node.getProperties();
             var options = node.getPropertyOptions();
             for (var p in props) {
-                if (p == "type_label" ||
-                    p == "conditional_label" ||
-                    p == "conditional_for") {
+                if (node.getType() === "SelectMenu" && p === "options") {
                     continue;
-                } else if (p == "type") {
-                    labelVal = node.getProperty("type_label");
-                } else if (p == "conditional") {
-                    if (node.getProperty("conditional_for") !=
-                        node.getProperty("type")) {
-                        continue;
-                    }
-                    labelVal = node.getProperty("conditional_label");
-                } else {
-                    labelVal = p.replace(/_/g,'-');
                 }
+                labelVal = p.replace(/_/g,'-');
                 labelId = p+'-label';
                 valueId = p+'-value';
                 valueVal = props[p];
@@ -256,32 +293,100 @@
                         return;
                     }
 
-                    element = $('#' + event.srcElement.id);
-                    type = BWidget.getPropertyType(node.getType(), updated);
-                    switch (type) {
-                    case 'boolean':
-                        value = Boolean(element.val());
-                        break;
-                    case 'float':
-                        value = parseFloat(element.val());
-                        break;
-                    case 'integer':
-                        value = parseInt(element.val(), 10);
-                        break;
-                    case 'number':
-                        value = Number(element.val());
-                        break;
-                    case 'object':
-                        value = Object(element.val());
-                        break;
-                    case 'string':
-                        value = String(element.val());
-                        break;
-                    default:
-                        throw new Error("Unexpected property type: " + type);
-                        break;
-                    }
+                    value = validValue(element.val(),
+                        BWidget.getPropertyType(node.getType(), updated));
                     ADM.setProperty(node, updated, value);
+                });
+            }
+
+            if (node.getType() === "SelectMenu") {
+                widget.currentNode = node;
+                var children = node.getChildren();
+                $('#property_content')
+                    .append('<table id="sortable">' +
+                            '</table>');
+                $('#sortable').sortable({
+                    items: 'tr:not(.sortable-title)',
+                    start: function(event, ui){
+                        widget.originalRowIndex = ui.item[0].rowIndex - 1;
+                    },
+                    stop: function(event, ui){
+                        var original = widget.originalRowIndex;
+                        widget.originalRowIndex = ui.item[0].rowIndex - 1;
+                        var current = widget.originalRowIndex;
+                        var node = widget.currentNode;
+                        var children = node.getChildren();
+                        var tmp = new ADMNode('Option');
+                        var i;
+                        if (current !== original) {
+                            if (current < original) {
+                                copyProperties(tmp, children[original]);
+                                for (i = original; i > current; i--) {
+                                    copyProperties(children[i], children[i-1]);
+                                }
+                                copyProperties(children[current], tmp);
+                            }
+                            else {
+                                copyProperties(tmp, children[original]);
+                                for (i = original + 1; i <= current; i++) {
+                                    copyProperties(children[i-1], children[i]);
+                                }
+                                copyProperties(children[current], tmp);
+                            }
+                        }
+                    },
+                });
+                $('#property_content').children().last()
+                    .append('<tr class="sortable-title"><td>Options: </td>' +
+                        '<td>Text</td><td>Value</td></tr>');
+                for (var i=0; i<children.length; i++) {
+                    var subnode = children[i];
+                    var subprops = subnode.getProperties();
+                    $('#property_content').children().last()
+                        .append('<tr id="' + i + '">' +
+                                '<td>' +
+                                '<img ' +
+                             'src="src/css/images/verticalDragger.png" />' +
+                                '</td>' +
+                                '<td>' +
+                                '<input id="option-text-' + i +
+                                '" size="5" />'+
+                                '</td>' +
+                                '<td>' +
+                                '<input id="option-value-' +i+ '" size="5" />' +
+                                '</td><td><button id="option-delete-' +
+                                i + '">-</button></td></tr>');
+                    $('#option-text-'+i).val(subprops["text"]);
+                    $('#option-value-'+i).val(subprops["value"]);
+                    $('#option-text-'+i).change(subnode, function(event) {
+                        var updated = event.srcElement.id,
+                            node = event.data,
+                            value,
+                            element = $('#' + updated);
+                        value = validValue(element.val(),
+                            BWidget.getPropertyType(node.getType(), "text"));
+                        ADM.setProperty(node, "text", value);
+                    });
+                    $('#option-value-'+i).change(subnode, function(event) {
+                        var updated = event.srcElement.id,
+                            node = event.data,
+                            value,
+                            element = $('#' + updated);
+                        value = validValue(element.val(),
+                            BWidget.getPropertyType(node.getType(), "value"));
+                        ADM.setProperty(node, "value", value);
+                    });
+                    $('#option-delete-'+i).click(subnode, function(event){
+                        var node = event.data;
+                        ADM.removeChild(node.getUid(), false);
+                    });
+                }
+                $('#property_content').children().last()
+                    .append('<button id="option-add">Add</button><br><br>');
+                $('#option-add').click(node, function(event){
+                    var node = event.data;
+                    var child = new ADMNode('Option');
+                    ADM.addChild(node, child);
                 });
             }
 

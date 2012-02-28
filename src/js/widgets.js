@@ -748,6 +748,9 @@ var BWidgetRegistry = {
     Option: {
         parent: "Base",
         allowIn: "SelectMenu",
+        showInPalette: false,
+        selectable: false,
+        moveable: false,
         properties: {
             text: {
                 type: "string",
