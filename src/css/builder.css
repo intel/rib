@@ -547,16 +547,27 @@ body.ui-tabs.ui-widget {
 .outlineView {
     border: 1px solid rgba(0,0,0,0.6);
 }
-#outline_content li > a {
-    background: transparent;
-    height: 12px;
-    font-size: 12px;
-    font-weight: normal;
-    text-align: center;
-    color: #111111;
+.outlineView .outline_content {
+    background:#fff;
+    padding:10px;
+    -webkit-border-radius: 14px;
+    -moz-border-radius: 14px;
+    border-radius: 14px;
+    -moz-background-clip: padding; -webkit-background-
+    clip: padding-box; background-clip: padding-box;
+    -webkit-box-shadow: 2px 2px 3px #595b55;
+    -moz-box-shadow: 2px 2px 3px #595b55;
+    box-shadow: 2px 2px 3px #595b55;
+}
+.outline_content li {
     line-height: 26px;
 }
-#outline_content li > a.ui-selected {
+.outline_content li > a {
+    background: transparent;
+    font-weight: normal;
+    text-align: center;
+}
+.outline_content li > a.ui-selected {
     background: #4ae57b;
     color: #424242;
     line-height: 12px;
@@ -564,9 +575,19 @@ body.ui-tabs.ui-widget {
     -webkit-border-radius: 4px;
     -webkit-background-clip: padding-box;
 }
-#outline_content li > a:hover,
-#outline_content li > a.ui-selected:hover {
+.outline_content li > a:hover,
+.outline_content li > a.ui-selected:hover {
     color: #2c7a94;
+}
+.outline_content span.widgetType {
+    font-size: 12px;
+    font-color: #111111;
+    font-style: normal;
+}
+.outline_content span.pageTitle {
+    font-size: 12px;
+    font-color: #aaaaaa;
+    font-style:italic;
 }
 
 /*

@@ -38,11 +38,7 @@
 
             $('<div/>')
                 .addClass('ui-widget-content')
-                .append('<p id="outline_header">Outline</p>')
-                .children('p:first')
-                    .addClass('ui-helper-reset ui-widget ui-widget-header')
-                    .end()
-                .append('<div id="outline_content"></div>')
+                .addClass('outline_content')
                 .appendTo(this.element);
 
 
@@ -178,13 +174,15 @@
             }
 
             // Deactive state of selected before
-            $('#outline_content', this.element).find('.ui-state-active')
-                .removeClass('ui-state-active');
-            $('#outline_content', this.element).find('.ui-selected')
+            widget.element.find($('.outline_content'))
+                .find('.ui-state-active')
+                .removeClass('ui-state-active')
+                .end()
+                .find('.ui-selected')
                 .removeClass('ui-selected');
 
             // Find this node in outline pane
-            rootNode = $("#pageList", this.element);
+            rootNode = widget.element.find(".pageList");
             nodeInOutline = $(rootNode).find("#Outline-"+node.getUid()+" > a");
             $(nodeInOutline).addClass('ui-state-active')
                 .addClass('ui-selected');
@@ -197,7 +195,8 @@
             }
 
             // Make sure selected node is visible on show
-            $('#outline_content', this.element).find('.ui-selected:first')
+            widget.element.find($('.outline_content'))
+                .find('.ui-selected:first', this)
                 .each(function (){
                     this.scrollIntoViewIfNeeded();
                 });
@@ -227,13 +226,32 @@
             var page, selected,
                 self = this,
                 model = self.options.model, root,
-                $tree = self.element.find("#outline_content");
+                $tree = self.element.find('.outline_content');
 
             if (!model) {
                 return false;
             } else {
                 root = model.getDesignRoot();
             }
+
+            $tree.empty();
+            $('<ul/>')
+                .addClass('pageList')
+                .appendTo($tree);
+            for (var i = 0; i < root.getChildrenCount(); i++) {
+                page = root.getChildren()[i];
+                render_sub(page, self.element.find('.pageList'));
+            }
+
+            // Now make sure the selected node is properly identified
+            selected = root.findNodeByUid(model.getSelected()) ||
+                       model.getActivePage();
+            if (selected) {
+                $tree.find("#Outline-"+selected.getUid()+" > a")
+                    .addClass('ui-state-active')
+                    .addClass('ui-selected');
+            }
+            return true;
 
             function  setSelected(item) {
                 var UID = $(item).attr('adm-uid');
@@ -282,9 +300,13 @@
 
                 // check whether current node should be shown in outline pane
                 if (showInOutline) {
-                    newItem = $('<li><a>' + label + '</a></li>');
-                    newItem.attr('id', 'Outline-' + UID);
-                    $container.append(newItem);
+                    newItem = $('<li><a><span/></a></li>')
+                       .find('span')
+                       .addClass('widgetType')
+                       .text(label)
+                       .end()
+                       .attr('id', 'Outline-' + UID)
+                       .appendTo($container);
 
                     if (node.hasUserVisibleDescendants()) {
                         newItem.addClass('folder')
@@ -295,14 +317,11 @@
                     if (type === "Page") {
                         //set page id
                         id = node.getProperty('id');
-                        newItem.find("a").text(label + ' (id: ' + id + ')');
-
-                        if ((node.getChildrenCount() == 1) &&
-                            (node.getChildren()[0].getType() === "Content") &&
-                            (node.getChildren()[0].getChildrenCount() === 0)) {
-                                newItem.toggleClass('folder')
-                                       .remove('ul');
-                        }
+                        newItem.find("a")
+                            .append('<span/>')
+                            .children(':last')
+                            .addClass('pageTitle')
+                            .text(' (' + id + ')');
                     }
 
                     newItem.attr('adm-uid', UID);
@@ -330,23 +349,6 @@
                 }
                 return;
             }
-
-            $tree.empty();
-            $('<ul id="pageList"></ul>').appendTo($tree);
-            for (var i = 0; i < root.getChildrenCount(); i++) {
-                page = root.getChildren()[i];
-                render_sub(page, $("#pageList", self.element));
-            }
-
-            // Now make sure the selected node is properly identified
-            selected = root.findNodeByUid(model.getSelected()) ||
-                       model.getActivePage();
-            if (selected) {
-                $tree.find("#Outline-"+selected.getUid()+" > a")
-                    .addClass('ui-state-active')
-                    .addClass('ui-selected');
-            }
-            return true;
         },
     });
 })(jQuery);
