@@ -48,7 +48,7 @@ var DEBUG = true,
             template, props, id,
             selMap = {},  // maps selectors to attribute maps
             attrName, attrValue, propDefault,
-            widget, regEx, wrapper;
+            widget, regEx, wrapper, domNodes;
 
         // Check for valid node
         if (node === null || node === undefined ||
@@ -90,9 +90,7 @@ var DEBUG = true,
             console.info(parentSelector+' not found in Design View');
         }
 
-        // 2. Remove this node in existing document, if it exists
-        $(selector,parentNode).remove();
-
+        domNodes = $(selector, parentNode);
         // Ensure we have at least something to use as HTML for this item
         if (template === undefined || template === '') {
             console.warn('Missing template for ADMNode type: '+type+
@@ -182,7 +180,23 @@ var DEBUG = true,
             }
         }
 
-        $(parentNode).append(widget);
+        if (domNodes.length === 0)
+            $(parentNode).append(widget);
+        else {
+            //The template of some widgets may have multiple root tags
+            //and there are also possible delegated nodes, we will remove all
+            //the extra nodes before replacing the last one.
+            //It's also possible that jQM generates nodes which are not
+            //delegating, we should also have a mechanism to handle this case,
+            //but till now we don't have such case, so we can defer this case
+            //to be handled in the delegate function of the corresponding widget
+            //e.g. To add a special class to these tags so that they can be selected
+            //to remove here.
+            for (var i = 1; i < domNodes.lenght; i ++)
+                $(domNodes[i]).remove();
+            $(domNodes[0]).replaceWith(widget);
+        }
+
 
         node.getDesign().suppressEvents(false);
         node.suppressEvents(false);
