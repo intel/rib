@@ -266,20 +266,14 @@
         },
 
         _activePageChangedHandler: function(event, widget) {
-            var id, win,
-                newPage = event && event.page, curPage;
+            var win,
+                newPage = event && event.page,
+                id = newPage && newPage.getProperty('id');
 
             widget = widget || this;
 
             // Only change if new page is valid
             if (!newPage) {
-                return;
-            }
-            id = newPage.getUid();
-            curPage = widget.options.model.getActivePage();
-
-            // Only change if new page not the current page
-            if (curPage && curPage.getUid() === id) {
                 return;
             }
 
