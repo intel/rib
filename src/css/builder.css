@@ -559,37 +559,59 @@ body.ui-tabs.ui-widget {
     -moz-box-shadow: 2px 2px 3px #595b55;
     box-shadow: 2px 2px 3px #595b55;
 }
-.outline_content li {
+.outlineView .pageList {
+    padding-left: 0px;
+}
+.outlineView .widgetGroup {
+    padding-left: 20px;
+}
+.outlineView li {
+    list-style: none;
     line-height: 26px;
 }
-.outline_content li > a {
+.outlineView li > a {
     background: transparent;
     font-weight: normal;
     text-align: center;
 }
-.outline_content li > a.ui-selected {
+.outlineView li > a.ui-selected {
     background: #4ae57b;
     color: #424242;
-    line-height: 12px;
-    padding: 5px 4px 6px 4px;
     -webkit-border-radius: 4px;
     -webkit-background-clip: padding-box;
 }
-.outline_content li > a:hover,
-.outline_content li > a.ui-selected:hover {
+.outlineView li > a:hover,
+.outlineView li > a.ui-selected:hover {
     color: #2c7a94;
 }
-.outline_content span.widgetType {
+.outlineView span.widgetType {
     font-size: 12px;
     font-color: #111111;
     font-style: normal;
+    margin-left: 10px;
+    line-height: 26px;
 }
-.outline_content span.pageTitle {
+.outlineView span.pageTitle {
     font-size: 12px;
     font-color: #aaaaaa;
     font-style:italic;
 }
-
+.outlineView span.folder {
+    float: left;
+    width: 10px;
+    height: 28px;
+    background-image: url("images/pageTreeArrowOpen.png");
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.outlineView span.folder.close {
+    background-image: url("images/pageTreeArrowClosed.png");
+    background-repeat: no-repeat;
+}
+.outlineView span.singleItem {
+    width: 10px;
+    height: 10px;
+}
 /*
   Property View widget styles
 */

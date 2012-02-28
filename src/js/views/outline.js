@@ -300,8 +300,8 @@
 
                 // check whether current node should be shown in outline pane
                 if (showInOutline) {
-                    newItem = $('<li><a><span/></a></li>')
-                       .find('span')
+                    newItem = $('<li><span/><a><span/></a></li>')
+                       .find('span:last')
                        .addClass('widgetType')
                        .text(label)
                        .end()
@@ -309,9 +309,18 @@
                        .appendTo($container);
 
                     if (node.hasUserVisibleDescendants()) {
-                        newItem.addClass('folder')
-                            .append('<ul id="' + widgetID + '"></ul>');
+                        newItem.find('span:first')
+                               .addClass('folder')
+                               .end()
+                               .append('<ul/>')
+                               .find('ul')
+                               .attr('id', widgetID)
+                               .addClass('widgetGroup');
                         $subContainer = $container.find("#" + widgetID);
+                    } else {
+                        newItem.find('span:first')
+                               .addClass('singleItem')
+                               .html("&#x2022;");
                     }
 
                     if (type === "Page") {
@@ -327,10 +336,12 @@
                     newItem.attr('adm-uid', UID);
 
                     // add click handler
-                    newItem.click(function(e) {
-                        $(this).toggleClass("close")
-                        .children("ul").toggle();
-                        e.stopPropagation();
+                    newItem.find('span:first')
+                        .click(function(e) {
+                            $(this).toggleClass("close")
+                                .parent()
+                                .children("ul").toggle();
+                            e.stopPropagation();
                     });
 
                     newItem.find("a").click(function(e) {
