@@ -106,6 +106,62 @@ $(function() {
         $(document).unbind('click vmousedown vmousecancel vmouseup'
                          + 'vmouseover focus vmouseout blur');
 
+        $('.adm-node:not(.delegation)').each ( function (index, node) {
+            var admNode, widgetType, delegate, events,
+                delegateNode,
+                adm = window.parent.ADM,
+                bw = window.parent.BWidget;
+
+            delegateNode = $(node);
+            if (adm && bw) {
+                admNode = adm.getDesignRoot()
+                    .findNodeByUid($(node).attr('data-uid')),
+                widgetType = admNode.getType(),
+                delegate = bw.getWidgetAttribute(widgetType, 'delegate'),
+                events = bw.getWidgetAttribute(widgetType, 'events');
+
+                if (delegate) {
+                    if (typeof delegate === "function") {
+                        delegateNode = delegate($(node), admNode);
+                    } else {
+                        switch (delegate){
+                        case "next":
+                            delegateNode =  $(node).next();
+                            break;
+                        case "grandparent":
+                            delegateNode =  $(node).parent().parent();
+                            break;
+                        case "parent":
+                            delegateNode =  $(node).parent();
+                            break;
+                        default:
+                            delegateNode = $(node);
+                        }
+                    }
+                }
+
+                // Move the adm-node class to the delegateNode and assign
+                // data-uid to it so that in sortable.stop we can always get
+                // it from ui.item.
+                if (node !== delegateNode[0]) {
+                    $(node).addClass('orig-adm-node');
+                    $(node).removeClass('adm-node');
+                    delegateNode.addClass('adm-node');
+                    delegateNode.addClass('delegation');
+                    delegateNode.attr('data-uid', $(node).attr('data-uid'));
+                }
+
+                // Configure "select" handler
+                delegateNode.click( function(e) {
+                    return handleSelect(e, this);
+                });
+
+                if (events) {
+                    $(node).bind(events);
+                }
+            }
+        });
+
         // Configure "sortable" behaviors
         targets = $('.nrc-sortable-container');
 
@@ -284,56 +340,6 @@ $(function() {
         $('.nrc-empty').each( function() {
             if ($('.nrc-hint-text', this).length === 0) {
                 $(this).append('<p class="nrc-hint-text">Drop target...</p>');
-            }
-        });
-        $('.adm-node').each ( function (index, node) {
-            var admNode, widgetType, delegate, events,
-                delegateNode = $(node),
-                adm = window.parent.ADM,
-                bw = window.parent.BWidget;
-
-            if (adm && bw) {
-                admNode = adm.getDesignRoot()
-                             .findNodeByUid($(node).attr('data-uid')),
-                widgetType = admNode.getType(),
-                delegate = bw.getWidgetAttribute(widgetType, 'delegate'),
-                events = bw.getWidgetAttribute(widgetType, 'events');
-
-                if (delegate) {
-                   if (typeof delegate === "function") {
-                      delegateNode = delegate($(node), admNode);
-                   } else {
-                       switch (delegate){
-                           case "next":
-                               delegateNode =  $(node).next();
-                               break;
-                           case "grandparent":
-                               delegateNode =  $(node).parent().parent();
-                               break;
-                           case "parent":
-                               delegateNode =  $(node).parent();
-                               break;
-                           default:
-                               delegateNode = $(node);
-                       }
-                   }
-               }
-
-               // Move the adm-node class to the delegateNode and assign
-               // data-uid to it so that in sortable.stop we can always get
-               // it from ui.item.
-               $(node).removeClass('adm-node');
-               delegateNode.addClass('adm-node');
-               delegateNode.attr('data-uid', $(node).attr('data-uid'));
-
-               // Configure "select" handler
-               delegateNode.click( function(e) {
-                   return handleSelect(e, this);
-               });
-
-               if (events) {
-                   $(node).bind(events);
-               }
             }
         });
     });

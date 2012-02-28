@@ -65,11 +65,13 @@ var DEBUG = true,
 
         uid = node.getUid();
         type = node.getType();
-        selector = '.adm-node[data-uid=\''+uid+'\']';
+        selector = '.adm-node[data-uid=\'' + uid + '\']';
+        selector += ',.orig-adm-node[data-uid=\'' + uid + '\']';
 
         if (!node.instanceOf('Page') && !node.instanceOf('Design')) {
             pid = node.getParent().getUid();
-            parentSelector = '.adm-node[data-uid=\''+pid+'\']';
+            parentSelector = '.adm-node[data-uid="' + pid +
+                '"]:not(.delegation),.orig-adm-node[data-uid=\'' + pid + '\']';
         }
 
         // Find the parent element in the DOM tree
@@ -77,7 +79,8 @@ var DEBUG = true,
             parentNode = $(domParent);
         } else {
             parentNode = $(':gb-layoutView')
-                .layoutView('option','contentDocument').find(parentSelector);
+                .layoutView('option','contentDocument').find(parentSelector)
+                .last();
         }
 
         // Find the parent element of this node in the DOM tree
