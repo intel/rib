@@ -276,7 +276,7 @@ $(function() {
      * @param {Object} obj The JSON object to parse
      * @return {Boolean} True if the design is loaded successfully.
      */
-    function loadFromJsonObj(obj, success, error) {
+    function JSONToADM(text) {
         function add_child(parent, nodes) {
             if (typeof(nodes) !== "object") {
                 return false;
@@ -322,28 +322,32 @@ $(function() {
             return true;
         }
 
-        if (obj === null || obj.type !== "Design") {
-            console.log("obj is null or is not a 'Design' Node in loadFromJSONObj");
+        var result, design, parsedObject;
+        try {
+            parsedObject = $.parseJSON(text);
+        } catch(e) {
+            alert("Invalid design file.");
+            return false;
+        }
+        if (parsedObject === null || parsedObject.type !== "Design") {
+            console.log("obj is null or is not a 'Design' Node");
             return false;
         }
 
-        var result, design = new ADMNode("Design");
+        design = new ADMNode("Design");
 
         // add children in ADM
         try {
-            result = add_child(design, obj.children);
+            result = add_child(design, parsedObject.children);
         } catch(e) {
-            error && error(e);
             alert("Invalid design file.");
             return false;
         }
 
         if (result) {
             result = ADM.setDesignRoot(design);
-            success && success();
         } else {
             console.log("Error while build design root.");
-            error && error();
             return false;
         }
         return result;
@@ -353,23 +357,14 @@ $(function() {
     /*
      * This function is loads a JSON template and creates a new ADM tree
      */
-    function buildDesignFromJson(fileEntry, success, error) {
-        // Set a fixed JSON file
-        if (fileEntry && fileEntry.isFile) {
-            var parsedObject;
-            $.gb.fsUtils.read(fileEntry.fullPath, function(result) {
-                try {
-                    parsedObject = $.parseJSON(result);
-                } catch(e) {
-                    error && error(e);
-                    alert("Invalid design file.");
-                    return false;
-                }
-                return loadFromJsonObj(parsedObject, success, error);
-            });
-        } else {
-            console.error("invalid fileEntry to load");
-        }
+    function asyncJSONToADM(filePath, success, error) {
+        $.gb.fsUtils.read(filePath, function(result) {
+            if (JSONToADM(result)) {
+                success && success();
+            } else {
+                error && error();
+            }
+        });
     }
 
     /*******************************************************
@@ -398,22 +393,30 @@ $(function() {
             return null;
         }
     }
-
-    function serializeADMToJSON(ADMTreeNode, outPath, success, error) {
+    function ADMToJSON(ADMTreeNode) {
         // Set a fixed position to  the output file
-        var path = outPath || "design.json",
-            root = ADMTreeNode || ADM.getDesignRoot(),
-            JSObjectForADM = JSObjectFromADMTree(root),
-            text;
+        var root = ADMTreeNode || ADM.getDesignRoot(),
+            JSObjectForADM = JSObjectFromADMTree(root);
 
         // Following is for the serializing part
         if (typeof JSObjectForADM === "object") {
-            text = JSON.stringify(JSObjectForADM);
+            return JSON.stringify(JSObjectForADM);
+        } else {
+            console.log("error: invalid serialized Object for ADM tree");
+            return null;
+        }
+    }
 
+    function asyncADMToJSON(ADMTreeNode, outPath, success, error) {
+        // Set a fixed position to  the output file
+        var path = outPath || "design.json",
+            root = ADMTreeNode || ADM.getDesignRoot(),
+            text = ADMToJSON(ADMTreeNode);
+
+        if (text) {
             $.gb.fsUtils.write(path, text, success, error);
             return true;
         } else {
-            console.log("error: invalid serialized Object for ADM tree");
             error && error();
             return false;
         }
@@ -640,8 +643,10 @@ $(function() {
 
     /***************** export functions out *********************/
     // Export serialization functions into $.gb namespace
-    $.gb.ADMToJSON = serializeADMToJSON;
-    $.gb.JSONToADM = buildDesignFromJson;
+    $.gb.ADMToJSON = ADMToJSON;
+    $.gb.asyncADMToJSON = asyncADMToJSON;
+    $.gb.JSONToADM = JSONToADM;
+    $.gb.asyncJSONToADM = asyncJSONToADM;
 
     $.gb.getDefaultHeaders = getDefaultHeaders;
     $.gb.getDesignHeaders = getDesignHeaders;

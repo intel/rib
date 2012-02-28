@@ -278,14 +278,10 @@ $(function () {
         // save current design
         if (oldPid) {
             pmUtils.syncProject(oldPid, ADM.getDesignRoot(), !pmUtils.designDirty, function() {
-                fsUtils.pathToEntry(designPath, function(entry){
-                    $.gb.JSONToADM(entry, successHandler, error);
-                });
+                $.gb.asyncJSONToADM(designPath, successHandler, error);
             });
         } else {
-            fsUtils.pathToEntry(designPath, function(entry){
-                $.gb.JSONToADM(entry, successHandler, error);
-            });
+            $.gb.asyncJSONToADM(designPath, successHandler, error);
         }
         return;
     };
@@ -474,7 +470,7 @@ $(function () {
         syncDesign = function (pid, design, successHandler, error) {
             var designPath;
             designPath = pmUtils.getDesignPath(pid);
-            return $.gb.ADMToJSON(design, designPath, successHandler, error);
+            return $.gb.asyncADMToJSON(design, designPath, successHandler, error);
         };
         syncInfo = function (pid, success, error) {
             var pInfo, metadataPath, successHandler;
