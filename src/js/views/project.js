@@ -270,22 +270,22 @@
                                'Blue Meanies'];
 
             projectDialog = $('<div/>')
-                .addClass('projectSetting')
+                .addClass('gbDialog')
                 .appendTo(this.element[0].ownerDocument.body);
             $('<div/>').addClass('hbox')
                 .append('<div/>')
                 .children(':first')
                 .addClass('flex1 vbox wrap_left')
-                .append('<form><fieldset>' +
-                        '<legend></legend>' +
-                        '<p><label for="name">Project Name</label>' +
-                        '<input type ="text" id="projectName" value=""></p>' +
-                        '<p><label for="name">Theme</label>' +
-                        '<select id="themePicker" size="4"></select></p>' +
-                        '<span class="uploadStyle mt15"' +
-                        'id="uploadTheme">Upload a Theme</span>' +
-                        '<p><span class="mt200"><button class="buttonStyle">' +
-                        '</button></span></p></filedset></form>')
+                .append('<form><legend/><ul>' +
+                        '<li class="mt23"><label for="name">Project Name</label>' +
+                        '<input type ="text" id="projectName" value=""></li>' +
+                        '<li class="mt23"><label for="name">Theme</label>' +
+                        '<select id="themePicker" size="4"></select></li>' +
+                        '<li class="mt50"><u id="uploadTheme" class="fr mr40">Upload Theme</u></li>' +
+                        '<li class="mt200"><input type="submit" value="Done" class="buttonStyle mr40 fr" />' +
+                        '</li></ul></form>')
+                        //'<li class="mt23"><span class="mt200"><button class="buttonStyle">' +
+                        //'</button></span></li></ul></form>')
                 .end()
                 .append('<div/>')
                 .children(':last')

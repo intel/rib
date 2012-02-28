@@ -738,7 +738,7 @@ body.ui-tabs.ui-widget {
     border: 1px solid #da1c2e !important;
 }
 
-.projectSetting {
+.gbDialog {
     background-color: transparent;
     background-color: rgba(21, 28, 34, 0.85);
     padding: 0;
@@ -756,7 +756,7 @@ body.ui-tabs.ui-widget {
     padding: 0px;
 }
 
-.projectSetting > div {
+.gbDialog > div {
     -webkit-border-radius: 12px;
     margin: 0px;
     padding: 0px;
@@ -771,14 +771,14 @@ body.ui-tabs.ui-widget {
     width: 100%;
     overflow:hidden;
 }
-.projectSetting .wrap_left {
+.gbDialog .wrap_left {
     width: 385px;
     height: 100%;
     margin: 0px;
     padding: 0px;
     background: #fff;
 }
-.projectSetting .wrap_right {
+.gbDialog .wrap_right {
     width: 385px;
     height: 100%;
     margin: 0px;
@@ -788,24 +788,15 @@ body.ui-tabs.ui-widget {
     background-position: center;
     background-repeat: no-repeat;
 }
-.projectSetting fieldset {
+.gbDialog fieldset {
     padding: 0px;
     margin: 0px;
     border: 0px;
 }
-.projectSetting legend {
-    height: 28px;
+.gbDialog legend {
+    height: 10px;
 }
-.projectSetting p {
-    margin-left: 0px;
-    margin-right: 0px;
-    padding-left: 0px;
-    padding-right: 0px;
-    margin-top: 30px;
-    margin-bottom: 0px;
-    border: 0px;
-}
-.projectSetting label {
+.gbDialog label {
     float: left;
     font-size: 12px;
     font-weight: Semi-Bold;
@@ -817,24 +808,24 @@ body.ui-tabs.ui-widget {
     border: 0px;
     padding: 0px;
 }
-.projectSetting input {
+.gbDialog input {
     margin-left: 20px;
     height: 23px;
     width: 200px;
 }
-.projectSetting select {
+.gbDialog select {
     margin-left: 20px;
     font-size: 11px;
     width: 200px;
     background: #eaf1f4
 }
-.projectSetting span {
+.gbDialog span {
     float: right;
     display: inline;
     margin-right: 40px;
     text-align: right;
 }
-.projectSetting .uploadStyle {
+.gbDialog .uploadStyle {
     text-decoration: underline;
     font-size: 11px;
     font-weight: Regular;
@@ -846,12 +837,36 @@ body.ui-tabs.ui-widget {
 .mt200 {
     margin-top: 200px;
 }
-.projectSetting .buttonSytle {
+.mt150 {
+    margin-top: 150px;
+}
+.mt50 {
+    margin-top: 50px;
+}
+.mt23 {
+    margin-top: 23px;
+}
+.mr40 {
+    margin-right: 40px;
+}
+.mr120 {
+    margin-right: 120px;
+}
+.mr_200 {
+    margin-right: -200px;
+}
+.fl {
+    float: left;
+}
+.fr {
+    float: right;
+}
+.gbDialog .buttonStyle {
     display:block;
     width:100px;
-    height:12px;
+    height:27px;
     font-size: 0.8em;
-    text-align:right;
+    text-align:center;
     color:#424242;
     border:1px solid #a1a1a1;
     line-height:12px;
@@ -866,11 +881,47 @@ body.ui-tabs.ui-widget {
     background-clip: padding-box;
     text-decoration:none;
 }
-.projectSetting .buttonStyle:hover {
+.gbDialog .buttonStyle:hover {
     color:#eee;
     background-color: #cccccc;
     border-color:#424242;
     background-image: -webkit-linear-gradient(top, #cccccc, #777777);
+}
+.gbDialog ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+.gbDialog ul li {
+    clear: both;
+    height: 23px;
+}
+.gbDialog fieldset {
+    display: inline;
+    width: 200px;
+}
+.gbDialog .fieldLi {
+    clear: both;
+    margin: 0px;
+    height: 23px;
+    margin-left:20px;
+    vertical-align:middle;
+    line-height: 23px;
+}
+.gbDialog .fieldLabel {
+    width: 100px;
+    float: left;
+    margin: 0px;
+    margin-left: 10px;
+    padding: 0px;
+    text-align: left;
+}
+.gbDialog .fieldInput {
+    float: left;
+    width: 10px;
+    margin: 0px;
+    padding: 0px;
+    border: 0px;
 }
 .cm-active {
     font-weight: bold;
