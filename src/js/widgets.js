@@ -733,13 +733,14 @@ var BWidgetRegistry = {
         //jQM generates two levels of divs for a select, the topmost one is what is clicked.
         delegate: "grandparent",
         events: {
-           click: function (e) {
-               e.stopPropagation();
-               if (Math.abs(e.offsetY) > this.offsetHeight)
-                  return this.ownerDocument.defaultView.handleSelect(e, this.options[this.selectedIndex]);
-           }
+            mousedown: function (e) {
+                e.preventDefault();
+            },
+            click: function (e) {
+                e.stopPropagation();
+                return this.ownerDocument.defaultView.handleSelect(e, $(this).parent().parent()[0]);
+            }
         }
-
     },
 
     /**
