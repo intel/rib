@@ -41,8 +41,6 @@ var getOffsetInWindow = function (node, win) {
 
                 offset.left += frameOffset.left + parentOffset.left;
                 offset.top += frameOffset.top + parentOffset.top;
-                offset.left -= myWin.scrollX;
-                offset.top -= myWin.scrollY;
                 return offset;
             }
         }
@@ -86,6 +84,11 @@ $.map($.ui['draggable'].prototype.plugins['drag'], function (elem, index) {
 			this.instance.offset.click = inst.offset.click;
 			
 			if(this.instance._intersectsWith(this.instance.containerCache)) {
+                /////////////////////////////////////////////////////////////////
+                // Start of our changes
+                event.pageX += dragDocOffsetInSortWin.left;
+                event.pageY += dragDocOffsetInSortWin.top;
+                // End of our changes
 
 				//If it intersects, we use a little isOver variable and set it once, so our move-in stuff gets fired only once
 				if(!this.instance.isOver) {
