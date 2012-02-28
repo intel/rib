@@ -634,6 +634,9 @@ body.ui-tabs.ui-widget {
 .propertyView #property_content {
     background: #c8ced0;
 }
+.propertyView input.PropertyCheckBox {
+    margin-left: 70%;
+}
 
 /*
   Widget View widget styles

@@ -474,8 +474,7 @@ var BWidgetRegistry = {
                 htmlAttribute: "data-theme"
             },
             inline: {
-                type: "string",
-                options: [ "true", "false" ],
+                type: "boolean",
                 defaultValue: "false",
                 htmlAttribute: "data-inline"
             },
@@ -980,8 +979,7 @@ var BWidgetRegistry = {
         newGroup: true,
         properties: {
             inset: {
-                type: "string",
-                options: [ "true", "false" ],
+                type: "boolean",
                 defaultValue: "true",
                 htmlAttribute: "data-inset",
                 // because data-inset="false" is the real default, do this:
@@ -991,8 +989,7 @@ var BWidgetRegistry = {
                 //        the user is most likely to want
             },
             filter: {
-                type: "string",
-                options: [ "true", "false" ],
+                type: "boolean",
                 defaultValue: "false",
                 htmlAttribute: "data-filter"
             },
@@ -1028,8 +1025,7 @@ var BWidgetRegistry = {
         displayLabel: "Ordered List",
         properties: {
             inset: {
-                type: "string",
-                options: [ "true", "false" ],
+                type: "boolean",
                 defaultValue: "true",
                 htmlAttribute: "data-inset",
                 // because data-inset="false" is the real default, do this:
@@ -1039,8 +1035,7 @@ var BWidgetRegistry = {
                 //        the user is most likely to want
             },
             filter: {
-                type: "string",
-                options: [ "true", "false" ],
+                type: "boolean",
                 defaultValue: "false",
                 htmlAttribute: "data-filter"
             },
@@ -1469,8 +1464,7 @@ var BWidgetRegistry = {
                 defaultValue: "#1a8039",
             },
             show_preview: {
-                type: "string",
-                options: [ "true", "false" ],
+                type: "boolean",
                 defaultValue: "false",
                 htmlAttribute: "data-show-preview"
             }

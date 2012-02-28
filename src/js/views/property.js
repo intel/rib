@@ -8,12 +8,11 @@
  *
  */
 "use strict";
-
-function validValue(value, type) {
-    var ret = null;
+function validValue(element, type) {
+    var ret = null, value = element.val();
     switch (type) {
         case 'boolean':
-            ret = Boolean(value);
+            ret = element.is(':checked');;
             break;
         case 'float':
             ret = parseFloat(value);
@@ -46,6 +45,7 @@ function copyProperties(dest, src) {
     value = src.getProperty("value");
     dest.setProperty("value", value);
 };
+
 
 // Property view widget
 
@@ -236,7 +236,8 @@ function copyProperties(dest, src) {
             var node = event.node,
                 showUid = false,
                 labelId, labelVal, valueId, valueVal, count,
-                widget = this;
+                widget = this,
+                p, props, options, code, o;
 
             // Clear the properties pane when nothing is selected
             if (node === null || node === undefined) {
@@ -255,9 +256,9 @@ function copyProperties(dest, src) {
             $('#property_content').empty()
                 .append('<table/>');
 
-            var props = node.getProperties();
-            var options = node.getPropertyOptions();
-            for (var p in props) {
+            props = node.getProperties();
+            options = node.getPropertyOptions();
+            for (p in props) {
                 if (node.getType() === "SelectMenu" && p === "options") {
                     continue;
                 }
@@ -266,10 +267,10 @@ function copyProperties(dest, src) {
                 valueId = p+'-value';
                 valueVal = props[p];
                 if (options[p]) {
-                    var code = '<tr><th id="' + labelId + '">' + labelVal +
+                    code = '<tr><th id="' + labelId + '">' + labelVal +
                                '</th>' + '<td width="100%">' +
                                '<select id="' + valueId + '">';
-                    for (var o in options[p]) {
+                    for (o in options[p]) {
                         if (options[p][o] == props[p]) {
                             code += '<option value="' + options[p][o] +
                                     '" selected=true>' + options[p][o] +
@@ -281,7 +282,18 @@ function copyProperties(dest, src) {
                     }
                     code += '</select>' + '</td></tr>';
                     $('#property_content').children().last().append(code);
-                } else {
+                } else if(BWidget.getPropertyType(node.getType(), p) === "boolean") {
+                    $('#property_content').children().last()
+                        .append('<tr><td><input type="checkbox" id="' + valueId +
+                                '" class="PropertyCheckBox"></td>' +
+                                '<td>' + labelVal + '</td>' +
+                                '</tr>');
+
+                    if(node.getProperty (p) === true) {
+                        $("#"+valueId).attr("checked", true);
+                    }
+                }
+                else {
                     $('#property_content').children().last()
                         .append('<tr><th id="' + labelId + '">' + labelVal +
                                 '</th>' +
@@ -299,10 +311,8 @@ function copyProperties(dest, src) {
                         throw new Error("Missing node, prop change failed!");
                         return;
                     }
-
-                    element = $('#' + event.srcElement.id);
-                    type = BWidget.getPropertyType(node.getType(), updated);
-                    value = validValue(element.val(), type);
+                    value = validValue($(this),
+                        BWidget.getPropertyType(node.getType(), updated));
                     ADM.setProperty(node, updated, value);
                 });
             }
@@ -371,7 +381,7 @@ function copyProperties(dest, src) {
                             node = event.data,
                             value,
                             element = $('#' + updated);
-                        value = validValue(element.val(),
+                        value = validValue($(this),
                             BWidget.getPropertyType(node.getType(), "text"));
                         ADM.setProperty(node, "text", value);
                     });
@@ -380,7 +390,7 @@ function copyProperties(dest, src) {
                             node = event.data,
                             value,
                             element = $('#' + updated);
-                        value = validValue(element.val(),
+                        value = validValue($(this),
                             BWidget.getPropertyType(node.getType(), "value"));
                         ADM.setProperty(node, "value", value);
                     });
