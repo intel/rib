@@ -181,7 +181,7 @@ $(function() {
                 tolerance: 'pointer',
                 appendTo: 'body',
                 connectWith: '.nrc-sortable-container',
-                cancel: '> :not(.adm-node),select',
+                cancel: '> :not(.adm-node)',
                 items: '> *.adm-node',
                 start: function(event, ui){
                     $(this).addClass('ui-state-active');
