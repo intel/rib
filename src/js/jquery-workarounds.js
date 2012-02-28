@@ -159,8 +159,8 @@ $.map($.ui['draggable'].prototype.plugins['drag'], function (elem, index) {
 (function( $ ){
     var originDataMethod = $.data;
     $.data = function (elem, name, data, pvt) {
-        if ( (name === "sortable") && !data)
-            return getOwnerWindow(elem).$.data(elem, name, data, pvt);
+        if ( (name === "sortable") && !data && getOwnerWindow(elem) !== window)
+            return getOwnerWindow(elem).jQuery.data(elem, name, data, pvt);
         else
             return originDataMethod(elem, name, data, pvt);
     };
