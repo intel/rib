@@ -47,15 +47,18 @@
                     .append('<span class="title">Pages</span>')
                     .append('<span class= "tool"></span>')
                     .children(':last')
-                        .append('<a>Add Page</a>')
+                        .append('<a id="addPage">Add Page</a>')
                         .append('<span class="divider">&nbsp;</span>')
-                        .append('<a>Duplicate Page</a>')
+                        .append('<a id="copyPage">Duplicate Page</a>')
                     .end()
                 .end()
                 .children(':last')
                     .attr({id: 'pages'})
                     .addClass('panel-section-contents')
                     .end();
+
+            $('#addPage').click(this, this._addPageHandler);
+            $('#copyPage').click(this, this._copyPageHandler);
 
             this.options.primaryTools = this._createPrimaryTools();
             this.options.secondaryTools = this._createSecondaryTools();
@@ -202,6 +205,42 @@
             // FIXME: This should just toggle 'ui-selected' class, not
             //        cause a complete re-creation of the page list
             widget.refresh();
+        },
+
+        _addPageHandler: function(event) {
+            var widget = event && event.data,
+                newPage;
+
+            if (!widget && !widget.options && !widgets.options.model) {
+                return;
+            }
+
+            newPage = new ADMNode('Page');
+            if (widget.options.model.getDesignRoot().addChild(newPage)) {
+                widget.options.model.setActivePage(newPage);
+            }
+
+            event.stopImmediatePropagation();
+            return false;
+        },
+
+        _copyPageHandler: function(event) {
+            var widget = event && event.data,
+                newPage, curPage;
+
+            if (!widget && !widget.options && !widgets.options.model) {
+                return;
+            }
+
+            curPage = widget.options.model.getActivePage();
+            newPage = widget.options.model.copySubtree(curPage);
+
+            if (widget.options.model.getDesignRoot().addChild(newPage)) {
+                widget.options.model.setActivePage(newPage);
+            }
+
+            event.stopImmediatePropagation();
+            return false;
         },
 
     });
