@@ -74,7 +74,17 @@ function copyProperties(dest, src) {
                 this._bindADMEvents(o.model);
             }
 
-            $('<div id="property_content"></div>').appendTo(this.element);
+            this.element
+                .addClass(this.widgetName)
+                .append('<div/>')
+                .append('<div/>')
+                .children(':first')
+                    .attr('id', 'property_title')
+                    .addClass('flex0')
+                    .end()
+                .children(':last')
+                    .attr('id', 'property_content')
+                    .addClass('flex1');
 
             this.options.primaryTools = this._createPrimaryTools();
             this.options.secondaryTools = this._createSecondaryTools();
@@ -238,13 +248,12 @@ function copyProperties(dest, src) {
                 }
             }
 
+            $('#property_title').empty()
+                .append('<span>')
+                .children(':first')
+                    .text(BWidget.getDisplayLabel(node.getType()));
             $('#property_content').empty()
-                .append('<table><tr><td colspan="2">' +
-                        '<span id="property_title">' +
-                        BWidget.getDisplayLabel(node.getType()) +
-                        '</span>' +
-                        (showUid ? ' (uid=' + node.getUid() + ')' : '') +
-                        '</td></tr></table>');
+                .append('<table/>');
 
             var props = node.getProperties();
             var options = node.getPropertyOptions();

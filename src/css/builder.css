@@ -624,6 +624,16 @@ body.ui-tabs.ui-widget {
     border: 1px solid rgba(0,0,0,0.6);
     padding-bottom: 20px;
 }
+.propertyView #property_title {
+    background-image: url('images/propertiesTitleBar.png');
+    background-repeat: repeat-x;
+    height: 24px;
+    font: 11px Semi-Bold #333333;
+    text-shadow: 1px 1px 1px #fff;
+}
+.propertyView #property_content {
+    background: #c8ced0;
+}
 
 /*
   Widget View widget styles
