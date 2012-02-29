@@ -213,6 +213,10 @@
 
         _activePageChangedHandler: function(event, widget) {
             widget = widget || this;
+            if (!event.page || event.page === undefined ||
+                !widget.options.model) {
+                return;
+            }
             widget.refresh();
             if (widget._editor)
                 widget._editor.setValue(widget._htmlDoc.html);
