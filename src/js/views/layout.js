@@ -465,7 +465,7 @@
             $(domNode).addClass('adm-node');
 
             // If this node is "selected", make sure it's class reflects this
-            if (admNode.isSelected()) {
+            if (admNode.isSelected() && !admNode.instanceOf('Page')) {
                 $(domNode).addClass('ui-selected');
             }
 
