@@ -108,8 +108,9 @@ function copyProperties(dest, src) {
 
         refresh: function(event, widget) {
             widget = widget || this;
-            if (event && event.node) {
-                if (BWidget.isSelectable(event.node.getType())) {
+            if (event) {
+                if (!event.node || event.node.isSelectable() ||
+                    event.node.instanceOf('Page')) {
                     widget._showProperties(event);
                 }
                 else if (event.name === "modelUpdated" &&
@@ -293,8 +294,9 @@ function copyProperties(dest, src) {
                         return;
                     }
 
-                    value = validValue(element.val(),
-                        BWidget.getPropertyType(node.getType(), updated));
+                    element = $('#' + event.srcElement.id);
+                    type = BWidget.getPropertyType(node.getType(), updated);
+                    value = validValue(element.val(), type);
                     ADM.setProperty(node, updated, value);
                 });
             }
