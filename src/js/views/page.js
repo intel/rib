@@ -218,12 +218,7 @@
             if (!widget && !widget.options && !widgets.options.model) {
                 return;
             }
-
-            newPage = new ADMNode('Page');
-            if (widget.options.model.getDesignRoot().addChild(newPage)) {
-                widget.options.model.setActivePage(newPage);
-            }
-
+            $('#pageDialog').dialog('open');
             event.stopImmediatePropagation();
             return false;
         },
