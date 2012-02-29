@@ -62,6 +62,10 @@
 
             this.options.primaryTools = this._createPrimaryTools();
             this.options.secondaryTools = this._createSecondaryTools();
+            this.options.newPageDialog = $('#pageDialog');
+            if (!this.options.newPageDialog.length) {
+                this.options.newPageDialog = this._initNewPageDialog();
+            }
 
             this.refresh(null, this);
 
@@ -243,5 +247,131 @@
             return false;
         },
 
+        _initNewPageDialog: function() {
+            var self = this,
+                model = self.model,
+                newPageDialog, t, id,
+                ptNames = ['JQuery Mobile Page',
+                           'Recently Used Page',
+                           'Blank Page'],
+                pageUtils = $.gb.pageUtils;
+            newPageDialog = $('<div/>')
+                .attr('id', 'pageDialog')
+                .addClass('gbDialog')
+                .appendTo(this.element[0].ownerDocument.body);
+            $('<div/>').addClass('hbox')
+                .append('<div/>')
+                .children(':first')
+                .addClass('flex1 vbox wrap_left')
+                .append('<form><legend/><ul>' +
+                        '<li class="mt23"> <label for="title">Page Title</label>' +
+                        '<input type ="text" id="pageTitle" value=""></li>' +
+                        '<li class="mt23"><label for="Template">page Template</label>' +
+                        '<select id="pagePicker" size="1"></select></li>' +
+                        '<li class="m150"><label for="Layout">Layout</label>' +
+                        '<fieldset><ul>' +
+                        '<li class="fieldLi">' +
+                        '<input class="fieldInput" type="radio" name="Layout"/>' +
+                        '<label class="fieldLabel" for="layout">Normal Page</label></li>' +
+                        '<li class="fieldLi">' +
+                        '<input class="fieldInput" type="radio" name="Layout"/>' +
+                        '<label class="fieldLabel" for="layout">Dialog</label></li>' +
+                        '<li class="fieldLi">' +
+                        '<input id="header_layout" class="fieldInput" type="checkbox" name="Header"/>' +
+                        '<label class="fieldLabel" for="layout">Header</label></li>' +
+                        '<li class="fieldLi">' +
+                        '<input id="footer_layout" class="fieldInput" type="checkbox" name="Footer"/>' +
+                        '<label class="fieldLabel" for="layout">Footer</label></li>' +
+                        '</ul></fieldset></li>' +
+                        '<li class="mt150"><input type="submit" value="Add Page" class="buttonStyle mr120 fr" />' +
+                        '<u id="pageCancel" class="mr_200 fr">Cancel</u></li>' +
+                        '</ul>' +
+                        '</form>')
+                .end()
+                .append('<div/>')
+                .children(':last')
+                .addClass('flex1 wrap_right')
+                .end()
+                .appendTo(newPageDialog, self);
+             // Insert the list of page templates
+             for (t in ptNames) {
+                 id = ptNames[t];
+                 $('<option id="'+ id +'" value="' + id + '">'+ id + '</option>')
+                     .appendTo('#pagePicker', self);
+             }
+             // initialize the value of checkbox
+             newPageDialog.find('#header_layout').attr("checked", true);
+             newPageDialog.find('#footer_layout').attr("checked", true);
+
+             //once user change the page Template, change the layout value
+             $('#pagePicker',newPageDialog).change( function(e) {
+                 var types, i;
+                 switch (e.currentTarget.value) {
+                     case ptNames[0]:
+                         newPageDialog.find('#header_layout').attr("checked", true);
+                         newPageDialog.find('#footer_layout').attr("checked", true);
+                         break;
+                     case ptNames[1]:
+                         types = pageUtils.getActivePageLayout();
+                         if ($.inArray('Header', types) !== -1) {
+                              newPageDialog.find('#header_layout').attr("checked", true);
+                         } else {
+                             newPageDialog.find('#header_layout').attr("checked", false);
+                         }
+                         if ($.inArray('Footer', types) !== -1) {
+                             newPageDialog.find('#footer_layout').attr("checked", true);
+                         } else {
+                             newPageDialog.find('#footer_layout').attr("checked", false);
+                         }
+                         break;
+                    default:
+                         newPageDialog.find('#header_layout').attr("checked", false);
+                         newPageDialog.find('#footer_layout').attr("checked", false);
+                         break;
+                 }
+             });
+
+             // bind event hanler to button
+             newPageDialog.find('.buttonStyle', self)
+                 .click(function(e){
+                     try {
+                         var options = {}, layout = [], newPage;
+                         options.pageTitle = newPageDialog.find("#pageTitle").val() || "NewPage";
+                         options.pageTemplate = newPageDialog.find("#pagePicker", self).val();
+                         //get checkbox value
+                         if (newPageDialog.find('#header_layout').is(":checked")) {
+                             layout.push('Header');
+                         }
+                         if (newPageDialog.find('#footer_layout').is(":checked")) {
+                             layout.push('Footer');
+                         }
+                         options.layout = layout;
+                         newPage = $.gb.pageUtils.createNewPage(options);
+                         ADM.setActivePage(newPage);
+                     }
+                     catch (err) {
+                         console.error(err.description);
+                     }
+                     $("#pageDialog").dialog("close");
+                     return false;
+              });
+
+              // bind event hanler to Cancel Link
+              newPageDialog.find('#pageCancel')
+                  .click(function(e){
+                      $("#pageDialog").dialog("close");
+                      return false;
+              });
+
+              newPageDialog.dialog({
+                  autoOpen: false,
+                  modal: true,
+                  height: 454,
+                  width: 770,
+                  resizable: false,
+                  title: 'New Page'
+             });
+             return newPageDialog;
+         },
     });
 })(jQuery);
