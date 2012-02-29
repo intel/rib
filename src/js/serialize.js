@@ -265,86 +265,6 @@ function dumplog(loginfo){
 
 
 $(function() {
-    var fsUtils = $.gb.fsUtils,
-        cookieUtils = $.gb.cookieUtils,
-        cookieExpires = new Date("January 1, 2022");
-
-    /*******************************************************
-     * define handlers
-     ******************************************************/
-    function triggerImportFileSelection () {
-        $('#importFile').click();
-    }
-
-    function triggerExportDesign () {
-        var cookieValue = cookieUtils.get("exportNotice"),
-            $exportNoticeDialog = $("#exportNoticeDialog");
-
-        if(cookieValue === "true" && $exportNoticeDialog.length > 0) {
-            // bind exporting design handler to OK button
-            $exportNoticeDialog.dialog("option", "buttons", {
-                "OK": function () {
-                    serializeADMToJSON();
-                    $("#exportNoticeDialog").dialog("close");
-                }
-            });
-            // open the dialog
-            $exportNoticeDialog.dialog("open");
-        } else {
-            // if cookieValue is not true, export design directly
-            serializeADMToJSON();
-        }
-    }
-
-    function importFileChangedCallback (e) {
-        if (e.currentTarget.files.length === 1) {
-            $.gb.fsUtils.cpLocalFile(e.currentTarget.files[0],
-                                "design.json",
-                                buildDesignFromJson);
-            return true;
-        } else {
-            if (e.currentTarget.files.length <= 1) {
-                console.warn("No files specified to import");
-            } else {
-                console.warn("Multiple file import not supported");
-            }
-            return false;
-        }
-    }
-
-    function createExportNoticeDialog () {
-        var dialogStr, dialogOpts, $exportNoticeDialog;
-        dialogStr = '<div id="exportNoticeDialog">';
-        dialogStr += 'Note: Files will be saved in the default download path of the Browser.';
-        dialogStr += '<p>To configure the Browser to ask you to where to save files, go to:<br>';
-        dialogStr += 'Preferences -> Under the Hood -> Download</p>';
-        dialogStr += '<p>Then check the box "Ask where to save each file before downloading"</p>';
-        dialogStr += '<p><input type="checkbox">Do not remind me again</p>';
-        dialogStr += '</div>';
-        dialogOpts = {
-            autoOpen: false,
-            modal: true,
-            width: 600,
-            resizable: false,
-            height: 400,
-            title: "Tizen GUI Builder",
-        };
-        $(dialogStr).dialog(dialogOpts);
-        $exportNoticeDialog = $("#exportNoticeDialog");
-        if($exportNoticeDialog.length <= 0) {
-            console.error("create saveAlertDialog failed.");
-            return false;
-        }
-
-        $exportNoticeDialog.find("input:checkbox").click(function () {
-            var notice = this.checked ? "false" : "true";
-            // set cookie
-            if(!cookieUtils.set("exportNotice", notice, cookieExpires)) {
-                console.error("Set exportNotice cookie failed.");
-            }
-        });
-        return true;
-    }
 
     /*******************************************************
      * JSON to ADM Direction
@@ -356,7 +276,7 @@ $(function() {
      * @param {Object} obj The JSON object to parse
      * @return {Boolean} True if the design is loaded successfully.
      */
-    function loadFromJsonObj(obj) {
+    function loadFromJsonObj(obj, success, error) {
         function add_child(parent, nodes) {
             if (typeof(nodes) !== "object") {
                 return false;
@@ -413,14 +333,17 @@ $(function() {
         try {
             result = add_child(design, obj.children);
         } catch(e) {
+            error && error(e);
             alert("Invalid design file.");
             return false;
         }
 
         if (result) {
             result = ADM.setDesignRoot(design);
+            success && success();
         } else {
-            alert("Error while build design root.");
+            console.log("Error while build design root.");
+            error && error();
             return false;
         }
         return result;
@@ -430,7 +353,7 @@ $(function() {
     /*
      * This function is loads a JSON template and creates a new ADM tree
      */
-    function buildDesignFromJson(fileEntry) {
+    function buildDesignFromJson(fileEntry, success, error) {
         // Set a fixed JSON file
         if (fileEntry && fileEntry.isFile) {
             var parsedObject;
@@ -438,10 +361,11 @@ $(function() {
                 try {
                     parsedObject = $.parseJSON(result);
                 } catch(e) {
+                    error && error(e);
                     alert("Invalid design file.");
                     return false;
                 }
-                return loadFromJsonObj(parsedObject);
+                return loadFromJsonObj(parsedObject, success, error);
             });
         } else {
             console.error("invalid fileEntry to load");
@@ -475,7 +399,7 @@ $(function() {
         }
     }
 
-    function serializeADMToJSON(ADMTreeNode, outPath) {
+    function serializeADMToJSON(ADMTreeNode, outPath, success, error) {
         // Set a fixed position to  the output file
         var path = outPath || "design.json",
             root = ADMTreeNode || ADM.getDesignRoot(),
@@ -486,43 +410,13 @@ $(function() {
         if (typeof JSObjectForADM === "object") {
             text = JSON.stringify(JSObjectForADM);
 
-            $.gb.fsUtils.write(path, text, function(fileEntry) {
-                $.gb.fsUtils.exportToTarget(fileEntry.fullPath);
-            });
+            $.gb.fsUtils.write(path, text, success, error);
             return true;
         } else {
             console.log("error: invalid serialized Object for ADM tree");
+            error && error();
             return false;
         }
-    }
-    /********************* Functions definition End **************************/
-
-    function fsInitSuccess(fs) {
-        // if can't get the cookie(no this record), then add exportNotice cookie
-        if (!cookieUtils.get("exportNotice")) {
-            if(!cookieUtils.set("exportNotice", "true", cookieExpires)) {
-                console.error("Set exportNotice cookie failed.");
-            }
-        }
-
-        // Export serialization functions into $.gb namespace
-        $.gb.ADMToJSON = serializeADMToJSON;
-        $.gb.JSONToADM = buildDesignFromJson;
-
-        // create a notice Dialog for user to configure the browser, so that
-        // a native dialog can be shown when exporting design or HTML code
-        createExportNoticeDialog();
-
-        // bind handlers for import and export buttons
-        $(document).delegate('#importProj', "click", triggerImportFileSelection);
-        $(document).delegate('#exportProj', "click", triggerExportDesign);
-
-        // Import file selection change handler //
-        $('#importFile').change(importFileChangedCallback);
-    }
-
-    function fsInitFailed() {
-        alert('File system initiation failed."Import" and "Export" feature can not work.');
     }
 
     function getDefaultHeaders() {
@@ -624,9 +518,11 @@ $(function() {
         return $.gb.designHeaders;
     }
 
+    /***************** export functions out *********************/
+    // Export serialization functions into $.gb namespace
+    $.gb.ADMToJSON = serializeADMToJSON;
+    $.gb.JSONToADM = buildDesignFromJson;
+
     $.gb.getDefaultHeaders = getDefaultHeaders;
     $.gb.getDesignHeaders = getDesignHeaders;
-
-    // init the sandbox file system
-    fsUtils.initFS(fsUtils.fsType, fsUtils.fsSize, fsInitSuccess, fsInitFailed);
 });

@@ -242,7 +242,7 @@ $(function() {
                        var bb = new BlobBuilder(); // Create a new Blob on-the-fly.
 
                        fileWriter.onwriteend = function (progressEvent) {
-                           success(fileEntry);
+                           success && success(fileEntry);
                        };
                        fileWriter.onerror = onError;
 

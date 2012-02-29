@@ -510,7 +510,7 @@ $(function() {
     // FIXME: Remove all this fake ADM setup code once the remainder of
     //        the code for guibuilder has been merged with this new plugin
     //        model of coding...
-    var design, page, child,
+    var design, page, child, fsUtils,
         config = {
             pageTemplate: 'JQuery Mobile Page',
             pageTitle: 'Home',
@@ -521,6 +521,93 @@ $(function() {
     page = $.gb.pageUtils.createNewPage(config);
 
     ADM.setDesignRoot(design);
+    /***************** handler functions ************************/
+
+    // create a notice Dialog for user to configure the browser, so that
+    // a native dialog can be shown when exporting design or HTML code
+    function  createExportNoticeDialog () {
+        var dialogStr, dialogOpts, $exportNoticeDialog;
+        dialogStr = '<div id="exportNoticeDialog">';
+        dialogStr += 'Note: Files will be saved in the default download path of the Browser.';
+        dialogStr += '<p>To configure the Browser to ask you to where to save files, go to:<br>';
+        dialogStr += 'Preferences -> Under the Hood -> Download</p>';
+        dialogStr += '<p>Then check the box "Ask where to save each file before downloading"</p>';
+        dialogStr += '<p><input type="checkbox">Do not remind me again</p>';
+        dialogStr += '</div>';
+        dialogOpts = {
+            autoOpen: false,
+            modal: true,
+            width: 500,
+            resizable: false,
+            height: 400,
+            title: "Tizen GUI Builder",
+        };
+        $(dialogStr).dialog(dialogOpts);
+        $exportNoticeDialog = $("#exportNoticeDialog");
+        if($exportNoticeDialog.length <= 0) {
+            console.error("create saveAlertDialog failed.");
+            return null;
+        }
+        $exportNoticeDialog.find("input:checkbox").click(function () {
+            var notice = this.checked ? "false" : "true";
+            // set cookie
+            if(!$.gb.cookieUtils.set("exportNotice", notice, cookieExpires)) {
+                console.error("Set exportNotice cookie failed.");
+            }
+        });
+        return $exportNoticeDialog;
+    }
+
+    function triggerExportDesign() {
+        var cookieValue = $.gb.cookieUtils.get("exportNotice"),
+            $exportNoticeDialog = createExportNoticeDialog();
+        if(cookieValue === "true" && $exportNoticeDialog.length > 0) {
+            // bind exporting design handler to OK button
+            $exportNoticeDialog.dialog("option", "buttons", {
+                "OK": function () {
+                    $.gb.ADMToJSON();
+                    $("#exportNoticeDialog").dialog("close");
+                }
+            });
+            // open the dialog
+            $exportNoticeDialog.dialog("open");
+        } else {
+            // if cookieValue is not true, export design directly
+            $.gb.ADMToJSON();
+        }
+    }
+
+    function fsInitSuccess(fs) {
+        var cookieUtils = $.gb.cookieUtils,
+            cookieExpires = new Date("January 1, 2042");
+        // if can't get the cookie(no this record), then add exportNotice cookie
+        if (!cookieUtils.get("exportNotice")) {
+            if(!cookieUtils.set("exportNotice", "true", cookieExpires)) {
+                console.error("Set exportNotice cookie failed.");
+            }
+        }
+        // bind handlers for import and export buttons
+        $(document).delegate('#importProj', "click", function () { $("#importFile").click(); });
+        $(document).delegate('#exportProj', "click", triggerExportDesign);
+
+        // init pmUtils
+        $.gb.pmUtils.init(function () {
+            var refreshProjectView = function () {
+                $(":gb-projectView")["projectView"]("refresh");
+            };
+            refreshProjectView();
+        });
+    }
+
+    function fsInitFailed() {
+        alert('File system initiation failed."Import" and "Export" feature can not work.');
+    }
+    /***************** handler functions end ************************/
+
+    // init the sandbox file system
+    fsUtils = $.gb.fsUtils;
+    fsUtils.initFS(fsUtils.fsType, fsUtils.fsSize, fsInitSuccess, fsInitFailed);
+
 
     // Actually invoke the plugin that sets up our app UI
     $(document).guibuilder({debugMode: true, model: ADM});

@@ -111,10 +111,17 @@ $(function () {
         var newPid, successHandler, buildDesign, errorHandler;
         newPid = pmUtils.getValidPid();
         buildDesign = function (newPid) {
-            var newDesign, newPage;
+            var newDesign, newPage, config;
             // build a new design
             newDesign = new ADMNode("Design");
-            newPage = createNewPage(newDesign, "JQM");
+            config = {
+                pageTemplate: 'JQuery Mobile Page',
+                pageTitle: 'Home',
+                layout: ['Header', 'Footer'],
+            };
+            config.design = newDesign;
+            // TODO: Will we need to show a default page here?
+            newPage = $.gb.pageUtils.createNewPage(config);
             if (!newPage) {
                 console.log("Warning: create new page failed");
             }

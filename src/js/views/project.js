@@ -21,7 +21,8 @@
 
         _create: function() {
             var o = this.options,
-                e = this.element;
+                e = this.element,
+                widget = this;
 
             o.designReset = null;
             o.selectionChanged = null;
@@ -46,6 +47,7 @@
             $('<input type="file"/>')
                 .attr({id:'importFile'})
                 .addClass('hidden-accessible')
+                .change(widget._importChangedCallback)
                 .appendTo(this.element[0].ownerDocument.body);
 
             // Add a project setting dialog element, used to trigger to configure
@@ -60,6 +62,21 @@
             return this;
         },
 
+        _importChangedCallback: function (e) {
+            if (e.currentTarget.files.length === 1) {
+                $.gb.fsUtils.cpLocalFile(e.currentTarget.files[0],
+                "design.json",
+                $.gb.JSONToADM);
+                return true;
+            } else {
+                if (e.currentTarget.files.length <= 1) {
+                    console.warn("No files specified to import");
+                } else {
+                    console.warn("Multiple file import not supported");
+                }
+                return false;
+            }
+        },
         _setOption: function(key, value) {
             switch (key) {
                 // Should this REALLY be done here, or plugin registration in
@@ -99,8 +116,10 @@
 
         // Private functions
         _createPrimaryTools: function() {
-            var projectDialog = this.options.projectDialog;
-            var tools = $('<div/>').addClass('hbox').hide()
+            var tools, widget, projectDialog;
+            widget = this;
+            projectDialog = this.options.projectDialog;
+            tools = $('<div/>').addClass('hbox').hide()
                 .append('<button id="newProj"></button>')
                 .append('<button id="importProj"></button>');
             tools.children().addClass('buttonStyle ui-state-default')
@@ -109,8 +128,16 @@
                         .find(".buttonStyle", this)
                         .text("Next")
                         .click(function (e) {
+                            var options = {};
+                            options.name = projectDialog.find("#projectName").val() || "New Project";
+                            options.theme = projectDialog.find("#themePicker").val();
                             //call project API to create a new project
+                            $.gb.pmUtils.createProject(options, function() {
+                                widget.refresh(widget);
+                            });
+                            projectDialog.dialog("close");
                             e.stopPropagation();
+                            return false;
                         })
                         .end()
                         .dialog("open");
