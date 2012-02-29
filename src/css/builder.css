@@ -403,6 +403,7 @@ body.ui-tabs.ui-widget {
                           transparent 1px,
                           transparent 12px);
     background-attachment: fixed;
+    overflow:auto;
 }
 
 /*
