@@ -579,6 +579,8 @@ body.ui-tabs.ui-widget {
     color: #424242;
     -webkit-border-radius: 4px;
     -webkit-background-clip: padding-box;
+    padding: 5px;
+    padding-top: 0px;
 }
 .outlineView li > a:hover,
 .outlineView li > a.ui-selected:hover {
@@ -588,18 +590,18 @@ body.ui-tabs.ui-widget {
     font-size: 12px;
     font-color: #111111;
     font-style: normal;
-    margin-left: 10px;
     line-height: 26px;
 }
 .outlineView span.pageTitle {
     font-size: 12px;
     font-color: #aaaaaa;
-    font-style:italic;
+    font-style: italic;
 }
 .outlineView span.folder {
     float: left;
     width: 10px;
-    height: 28px;
+    height: 26px;
+    margin-right: 10px;
     background-image: url("images/pageTreeArrowOpen.png");
     background-repeat: no-repeat;
     background-position: center;
@@ -611,6 +613,7 @@ body.ui-tabs.ui-widget {
 .outlineView span.singleItem {
     width: 10px;
     height: 10px;
+    margin-right: 10px;
 }
 /*
   Property View widget styles
