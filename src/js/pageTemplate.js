@@ -93,8 +93,6 @@ $(function() {
                 if (!pageNode) {
                     return null;
                 }
-                // set page title
-                pageNode.setProperty("id", pageTitle);
                 return pageNode;
             }
 
