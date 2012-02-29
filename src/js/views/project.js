@@ -82,7 +82,19 @@
         },
 
         refresh: function(event, widget) {
+            var pidArr, stage, container;
             widget = widget || this;
+            container = $('.projectView');
+            container.empty();
+            //get project counts from PM-API
+            pidArr = $.gb.pmUtils.listAllProject();
+            if(!pidArr){
+                console.error("Error: failed to list all projects.");
+            }
+            $.each(pidArr, function(index, value){
+                // value is an object contains {"pid":XX, "date":XXX}
+                widget._createProjectBox(container, value.pid, widget);
+            });
         },
 
         // Private functions
@@ -268,6 +280,46 @@
                 resizable: false,
                 });
             return projectDialog;
-        }
+        },
+
+        _createProjectBox: function(container, pid, widget) {
+            var box, title, content, thumbnail, rightSide, openHandler, cloneHandler, deleteHandler;
+            widget = widget || this;
+            openHandler = function () {
+                var success = function () {
+                    // show the layout tab
+                    $(document.body).tabs('select', 1);
+                };
+                $.gb.pmUtils.openProject(pid, success);
+            };
+            cloneHandler = function () {
+                var success = function (destPid) {
+                    widget.refresh();
+                };
+                $.gb.pmUtils.cloneProject(pid, success);
+            };
+            deleteHandler = function () {
+                var success = function (pid) {
+                    widget.refresh();
+                };
+                $.gb.pmUtils.deleteProject(pid, success);
+            };
+            // draw project box
+            box = $('<div/>').addClass('projectBox').appendTo(container);
+            title = $('<div />').addClass('titleBar')
+                        .append('<h1>' + $.gb.pmUtils.getName(pid) + '</h1>')
+                        .append($('<div class="openButton"></div>').click(openHandler))
+                        .appendTo(box);
+            thumbnail= $('<div />').addClass('thumbnail').appendTo(box);
+            //TODO: .attr('backgroundImage', pmUtils.getThumbnail(pid))
+            $('<div />').addClass("rightSide")
+                        .append('<b>LAST OPENED</b><br />')
+                        .append('<span>' + ($.gb.pmUtils.getAccessDate(pid)).toString().slice(4, 24) + '</span>')
+                        // apend clone button
+                        .append($('<div>Clone</div>').addClass("cloneButton").click(cloneHandler))
+                        // apend delete button
+                        .append($('<div>Delete</div>').addClass("deleteButton").click(deleteHandler))
+                        .appendTo(box);
+        },
     });
 })(jQuery);

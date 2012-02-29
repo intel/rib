@@ -862,3 +862,123 @@ body.ui-tabs.ui-widget {
 .CodeMirror {
     background-color: white
 }
+
+/*
+ * css for project box
+ */
+.projectView {
+    padding: .5em;
+}
+
+.projectBox {
+    float:left;
+	margin:20px;
+	width:225px;
+	height:170px;
+	border:3px solid #fff;
+	background:#fff;
+	position:relative;
+	overflow:hidden;
+	font-family:sans-serif;
+	-webkit-border-radius: 10px;
+	-webkit-box-shadow:  3px 3px 3px rgba(0,0,0,.15);
+}
+
+.titleBar {
+	width:225px;
+	height:31px;
+	position:relative;
+	background:#545f6a;
+	-webkit-border-radius: 10px 10px 0 0;
+}
+
+.titleBar h1 {
+	margin:0;
+	padding:0;
+	position:absolute;
+	top:9px;
+	left:13px;
+	overflow:hidden;
+	color:#fff;
+	font-size:0.8em;
+	font-family:sans-serif;
+	font-weight:bold;
+}
+
+.openButton {
+    background-image: url("images/openButton_up.png");
+    background-repeat: no-repeat;
+	position:absolute;
+	padding-top:8px;
+	top:1px;
+	right:1px;
+	height:22px;
+	min-width:71px;
+	cursor: pointer;
+}
+
+.openButton:hover, .openButton:focus{ opacity: 0.9;}
+
+.openButton:active {
+    background-image: url("images/openButton_down.png");
+    background-repeat: no-repeat;
+}
+
+.thumbnail {
+    background-image: url("images/emptyProjectThumbnail.png");
+    background-repeat: no-repeat;
+	position:absolute;
+    top: 40px;
+	left :10px;
+	width: 119px;
+	height: 122px;
+}
+.rightSide {
+	position:absolute;
+    top: 44px;
+	left :135px;
+	width: 80px;
+	height: 116px;
+	font-size: 0.6em;
+	color: #444444;
+    text-align:right;
+    line-height:125%;
+}
+.cloneButton{
+	position:absolute;
+    text-decoration:underline;
+    padding-top: 5px;
+    padding-left: 3px;
+    padding-right: 30px;
+    top: 60px;
+    right: 0;
+    height: 25px;
+    background-image: url("images/cloneButton_up.png");
+    background-repeat: no-repeat;
+    background-position: right top;
+}
+.cloneButton:hover, .cloneButton:focus{ opacity: 0.8;}
+
+.cloneButton:active {
+    background-image: url("images/cloneButton_down.png");
+    background-repeat: no-repeat;
+}
+
+.deleteButton{
+	position:absolute;
+    padding-right: 30px;
+    padding-top: 5px;
+    top: 93px;
+    right: 0;
+    height: 25px;
+    text-decoration:underline;
+    background-image: url("images/deleteButton_up.png");
+    background-repeat: no-repeat;
+    background-position: right top;
+}
+.deleteButton:hover, .deleteButton:focus{ opacity: 0.8;}
+
+.deleteButton:active {
+    background-image: url("images/deleteButton_down.png");
+    background-repeat: no-repeat;
+}
