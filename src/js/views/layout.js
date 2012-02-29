@@ -369,8 +369,12 @@
 
             win = widget.options.contentDocument[0].defaultView;
             if (win && win.$ && win.$.mobile) {
-                win.$.mobile.activePage.page('destroy');
-                win.$.mobile.activePage.page();
+                var aPage = widget.options.model.getActivePage();
+                if (aPage) {
+                    win.$.mobile.changePage(win.$('#' + aPage.getProperty('id')));
+                } else {
+                    win.$.mobile.initializePage();
+                }
             } else {
                 console.error(widget.widgetName, ':: Missing contentDocument');
             }
