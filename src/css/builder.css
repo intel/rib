@@ -1092,3 +1092,14 @@ ul {
     margin-right: 0.5em;
     min-width: 10em;
 }
+.rotateDevice {
+    cursor: pointer;
+    padding: 20px;
+    background: url("images/rotateDevice_up.png") no-repeat center;
+}
+.rotateDevice:active {
+    background-image: url("images/rotateDevice_down.png");
+}
+.screenCoordinate {
+    width: 4em;
+}

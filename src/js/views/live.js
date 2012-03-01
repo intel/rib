@@ -28,8 +28,10 @@
                 devicePanel,
                 deviceToolbar,
                 deviceSelect,
-                widget = this,
-                addDeviceButton;
+                addDeviceButton,
+                deviceWrapper,
+                rotateDeviceButton,
+                widget = this;
 
             widget._sysDevices = {};
             widget._userDevices = {};
@@ -78,21 +80,24 @@
                 .addClass('panel-section-contents')
                 .appendTo(devicePanel);
 
-            deviceSelect = $('<select></select>')
+            widget._deviceSelect = $('<select></select>')
                 .appendTo(deviceToolbar)
                 .change(function () {
                     $("option:selected", this).each(function () {
-                        widget._setDevice($(this).data('deviceInfo'));
+                        widget._screenHeight.val($(this).data('deviceInfo').screen.height);
+                        widget._screenWidth.val($(this).data('deviceInfo').screen.width);
+                        widget._rotating = false;
+                        widget._setDevice();
                     });
             });
 
             $.getJSON("src/assets/devices.json", function (data) {
                 widget._sysDevices = data;
-                widget._refreshDeviceList(deviceSelect);
+                widget._refreshDeviceList(widget._deviceSelect);
                 $.gb.fsUtils.read("devices.json", function(result) {
                     try {
                         widget._userDevices = $.parseJSON(result);
-                        widget._refreshDeviceList(deviceSelect);
+                        widget._refreshDeviceList(widget._deviceSelect);
                     } catch(e) {
                         alert(e);
                         return false;
@@ -129,7 +134,7 @@
                                             height: new Number(values.screenHeight) + 100 + 'px'
                                         }
                                     });
-                                widget._refreshDeviceList(deviceSelect);
+                                widget._refreshDeviceList(widget._deviceSelect);
                                 $.gb.fsUtils.write("devices.json", JSON.stringify(widget._userDevices), function(fileEntry){
                                     alert("New device " + values.name + " sucessfully created!");
                                     $(form).dialog('close');
@@ -145,14 +150,44 @@
                 addDeviceButton.trigger('click');
             });
 
+            rotateDeviceButton = $('<a class="rotateDevice"/>').appendTo(deviceToolbar)
+                .click( function () {
+                    var screenWidth = widget._screenWidth.val();
+                    widget._rotating = !widget._rotating;
+                    widget._screenWidth.val(widget._screenHeight.val());
+                    widget._screenHeight.val(screenWidth);
+                    widget._setDevice();
+                });
+            $('<a href="javascript:void(0)">Rotate</a>').appendTo(deviceToolbar).click(function () {
+                rotateDeviceButton.trigger('click');
+            });
+
+            $('<label for="screenWidth">  Screen:</label>').appendTo(deviceToolbar);
+            widget._screenWidth =
+                $('<input name="screenWidth" type="number" min="0" class="screenCoordinate"/>')
+                .change( function () {
+                    widget._setDevice();
+                })
+                .appendTo(deviceToolbar);
+            $('<label for="screenHeight"> x </label>').appendTo(deviceToolbar);
+            widget._screenHeight =
+                $('<input name="screenHeight" type="number" min="0" class="screenCoordinate"/>')
+                .change( function () {
+                    widget._screenWidth.trigger('change');
+                })
+                .appendTo(deviceToolbar);
+
+
             controlPanel.append(pagePanel)
                 .append(devicePanel)
                 .appendTo(this.element);
 
+            widget._deviceWrapper = $('<div>').appendTo(this.element)
+                .append('<img/>');
             this.options.iframe = $('<iframe/>')
                 .attr({id:'deviceScreen'})
                 .addClass('flex1')
-                .appendTo(this.element);
+                .appendTo(widget._deviceWrapper);
 
             this.options.contentDocument =
                 $(this.options.iframe[0].contentDocument);
@@ -222,7 +257,42 @@
             deviceSelect.trigger('change');
         },
 
-        _setDevice: function (info) {
+        _setDevice: function () {
+            var deviceInfo, deviceSkin, scaleW, scaleH,
+                info = this._deviceSelect.find("option:selected").data('deviceInfo');
+            //First, we clone a device info and change screen property if rotated
+            if (this._rotating) {
+                deviceInfo = $.extend(true, {}, info, {
+                    screen: {
+                        width: info.screen.height,
+                        height: info.screen.width,
+                        offset: {
+                            top: info.screen.offset.right,
+                            left: info.screen.offset.top,
+                            bottom: info.screen.offset.left,
+                            right: info.screen.offset.bottom,
+                        }
+                    },
+                });
+            }
+            else {
+                deviceInfo = $.extend(true, {}, info);
+            }
+
+            //If modified manully by user, scale screen offsets and recaculate skin size
+            scaleW =  this._screenWidth.val()/deviceInfo.screen.width,
+            scaleH =  this._screenHeight.val()/deviceInfo.screen.height;
+            deviceInfo.screen.width *= scaleW;
+            deviceInfo.screen.offset.left *= scaleW;
+            deviceInfo.screen.offset.right *= scaleW;
+            deviceInfo.screen.height *= scaleH;
+            deviceInfo.screen.offset.top *= scaleH;
+            deviceInfo.screen.offset.bottom *= scaleH;
+
+            deviceInfo.skin.width = deviceInfo.screen.width + deviceInfo.screen.offset.left
+                + deviceInfo.screen.offset.right ;
+            deviceInfo.skin.height = deviceInfo.screen.height + deviceInfo.screen.offset.top
+                + deviceInfo.screen.offset.bottom ;
 
             // TODO: This may be better managed by reading and applying
             //       per-device CSS files from the filesystem at run time.
@@ -233,19 +303,39 @@
             //       never require changes to devices.json or this code...
 
             this.options.iframe.css({
-                width: info.screen.width,
-                minWidth: info.screen.width,
-                maxWidth: info.screen.width,
-                height: info.screen.height,
-                minHeight: info.screen.height,
-                maxHeight: info.screen.height,
-                paddingTop: info.screen.offset.top,
-                paddingRight: info.screen.offset.right,
-                paddingBottom: info.screen.offset.bottom,
-                paddingLeft: info.screen.offset.left,
-                backgroundSize: info.skin.width+' '+info.skin.height,
-                backgroundImage: 'url('+info.skin.href+')',
+                width: deviceInfo.screen.width + 'px',
+                minWidth: deviceInfo.screen.width + 'px',
+                maxWidth: deviceInfo.screen.width + 'px',
+                height: deviceInfo.screen.height + 'px',
+                minHeight: deviceInfo.screen.height + 'px',
+                maxHeight: deviceInfo.screen.height + 'px',
+                position: 'absolute',
+                top: deviceInfo.screen.offset.top + 'px',
+                left: deviceInfo.screen.offset.left + 'px',
             });
+
+            this._deviceWrapper.css({
+                width: deviceInfo.skin.width + 'px',
+                minWidth: deviceInfo.skin.width + 'px',
+                maxWidth: deviceInfo.skin.width + 'px',
+                height: deviceInfo.skin.height + 'px',
+                minHeight: deviceInfo.skin.height + 'px',
+                maxHeight: deviceInfo.skin.height + 'px',
+            });
+            deviceSkin = this._deviceWrapper.find('img').attr('src', deviceInfo.skin.href);
+            if (this._rotating)
+                deviceSkin.css({
+                    height: deviceInfo.skin.width + 'px',
+                    width: deviceInfo.skin.height + 'px',
+                    '-webkit-transform': 'rotate(-90deg)',
+                    '-webkit-transform-origin': deviceInfo.skin.height/2 + 'px ' + deviceInfo.skin.height/2 + 'px',
+                });
+            else
+                deviceSkin.css({
+                    height: deviceInfo.skin.height + 'px',
+                    width: deviceInfo.skin.width + 'px',
+                    '-webkit-transform': 'rotate(0deg)',
+                });
         },
 
         _createPrimaryTools: function() {

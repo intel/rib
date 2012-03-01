@@ -3,18 +3,18 @@
        "Default": {
            "skin": {
                "href": "src/css/images/skins/phone.png",
-               "width": "420px",
-               "height": "623px"
+               "width": 420,
+               "height": 623
            },
            "screen": {
                "offset": {
-                   "top": "46px",
-                   "right": "47px",
-                   "bottom": "99px",
-                   "left": "53px"
+                   "top": 46,
+                   "right": 47,
+                   "bottom": 99,
+                   "left": 53
                },
-               "width": "320px",
-               "height": "480px"
+               "width": 320,
+               "height": 480
            }
        }
    },
@@ -23,18 +23,18 @@
        "Default": {
            "skin": {
                "href": "src/css/images/skins/tablet.png",
-               "width": "1200px",
-               "height": "767px"
+               "width": 1200,
+               "height": 767
            },
            "screen": {
                "offset": {
-                   "top": "85px",
-                   "right": "100px",
-                   "bottom": "88px",
-                   "left": "100px"
+                   "top": 85,
+                   "right": 100,
+                   "bottom": 88,
+                   "left": 100
                },
-               "width": "1000px",
-               "height": "600px"
+               "width": 1000,
+               "height": 600
            }
        }
    },
@@ -43,18 +43,18 @@
        "Default": {
            "skin": {
                "href": "src/css/images/skins/netbook.png",
-               "width": "1246px",
-               "height": "920px"
+               "width": 1246,
+               "height": 920
            },
            "screen": {
                "offset": {
-                   "top": "58px",
-                   "right": "174px",
-                   "bottom": "357px",
-                   "left": "174px"
+                   "top": 58,
+                   "right": 174,
+                   "bottom": 357,
+                   "left": 174
                },
-               "width": "895px",
-               "height": "508px"
+               "width": 895,
+               "height": 508
            }
        }
    }
