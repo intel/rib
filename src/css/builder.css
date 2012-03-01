@@ -569,20 +569,22 @@ body.ui-tabs.ui-widget {
 }
 .outlineView li {
     list-style: none;
-    line-height: 26px;
 }
 .outlineView li > a {
     background: transparent;
     font-weight: normal;
     text-align: center;
+    /* tuned to make the text not move when selected */
+    margin-left: 4px;
 }
 .outlineView li > a.ui-selected {
     background: #4ae57b;
     color: #424242;
     -webkit-border-radius: 4px;
     -webkit-background-clip: padding-box;
-    padding: 5px;
+    padding: 3px;
     padding-top: 0px;
+    margin-left: 0px;
 }
 .outlineView li > a:hover,
 .outlineView li > a.ui-selected:hover {
@@ -592,7 +594,6 @@ body.ui-tabs.ui-widget {
     font-size: 12px;
     font-color: #111111;
     font-style: normal;
-    line-height: 26px;
 }
 .outlineView span.pageTitle {
     font-size: 12px;
@@ -620,6 +621,8 @@ body.ui-tabs.ui-widget {
 .outlineView li.label {
     font-style: italic;
     font-size: 10px;
+    margin-top: 6px;
+    margin-bottom: 2px;
     color: #808080;
 }
 
