@@ -617,6 +617,12 @@ body.ui-tabs.ui-widget {
     height: 10px;
     margin-right: 10px;
 }
+.outlineView li.label {
+    font-style: italic;
+    font-size: 10px;
+    color: #808080;
+}
+
 /*
   Property View widget styles
 */
@@ -712,13 +718,6 @@ body.ui-tabs.ui-widget {
 .pageIcon.ui-selected {
     background-image: url("images/pageIcon_on.png");
     font: 10px bold #333333;
-}
-#pageList li.label {
-    list-style: none inside;
-    position: relative;
-    font-style: italic;
-    font-size: small;
-    color: #e0e0e0;
 }
 .pageIcon:hover {
     background-image: url("images/pageIcon_hover.png");
