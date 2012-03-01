@@ -574,16 +574,20 @@ body.ui-tabs.ui-widget {
     background: transparent;
     font-weight: normal;
     text-align: center;
-    /* tuned to make the text not move when selected */
-    margin-left: 4px;
+    /* match the padding-left below so text doesn't move when selected */
+    margin-left: 5px;
 }
 .outlineView li > a.ui-selected {
     background: #4ae57b;
     color: #424242;
+    border: transparent;
     -webkit-border-radius: 4px;
     -webkit-background-clip: padding-box;
-    padding: 3px;
     padding-top: 0px;
+    padding-bottom: 3px;
+    /* match the margin-left above so text doesn't move when selected */
+    padding-left: 5px;
+    padding-right: 5px;
     margin-left: 0px;
 }
 .outlineView li > a:hover,
