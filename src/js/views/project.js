@@ -63,11 +63,9 @@
         },
 
         _importChangedCallback: function (e) {
+            var file, reader;
             if (e.currentTarget.files.length === 1) {
-                $.gb.fsUtils.cpLocalFile(e.currentTarget.files[0],
-                "design.json",
-                $.gb.JSONToADM);
-                return true;
+                file = e.currentTarget.files[0];
             } else {
                 if (e.currentTarget.files.length <= 1) {
                     console.warn("No files specified to import");
@@ -76,6 +74,14 @@
                 }
                 return false;
             }
+            reader = new FileReader();
+            reader.onloadend = function(e) {
+                $.gb.JSONToADM(e.target.result);
+            };
+            reader.onError = function () {
+                console.error("Read imported file error.");
+            };
+            reader.readAsText(file); // Read the file as plaintext.
         },
         _setOption: function(key, value) {
             switch (key) {

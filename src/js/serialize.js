@@ -300,20 +300,22 @@ $(function() {
                 zone = node.zone;
                 properties = node.properties;
                 child =  ADM.createNode(childType, true);
+
+                // add child node to current node
+                if (!parent.addChildToZone(child, zone)) {
+                    dumplog("add child type "+ childType + " failed");
+                    return false;
+                }
+
                 // set properties of child
                 for (item in properties) {
                     // parser the properties and set the value to the node
                     val = properties[item];
                     // if we can't get value, we set item's value as default
-                    if (val === null){
+                    if (!val){
                         val = child.getPropertyDefault(item);
                     }
                     child.setProperty(item, properties[item]);
-                }
-                // add child node to current node
-                if (!parent.addChildToZone(child, zone)) {
-                    dumplog("add child type "+ childType + " failed");
-                    return false;
                 }
 
                 if (node.children.length !== 0) {
@@ -339,6 +341,7 @@ $(function() {
         }
 
         design = new ADMNode("Design");
+        design.suppressEvents(true);
 
         // add children in ADM
         try {
@@ -350,6 +353,7 @@ $(function() {
 
         if (result) {
             result = ADM.setDesignRoot(design);
+            design.suppressEvents(false);
         } else {
             console.log("Error while build design root.");
             return false;
