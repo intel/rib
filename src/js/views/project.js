@@ -130,7 +130,10 @@
                         .click(function (e) {
                             var options = {};
                             options.name = projectDialog.find("#projectName").val() || "New Project";
+                            //TODO add support for theme
+                            /*
                             options.theme = projectDialog.find("#themePicker").val();
+                            */
                             //call project API to create a new project
                             $.gb.pmUtils.createProject(options, function() {
                                 widget.refresh(widget);
@@ -279,25 +282,29 @@
                 .append('<form><legend/><ul>' +
                         '<li class="mt23"><label for="name">Project Name</label>' +
                         '<input type ="text" id="projectName" value=""></li>' +
+                        //TODO add support for theme
+                        /*
                         '<li class="mt23"><label for="name">Theme</label>' +
                         '<select id="themePicker" size="4"></select></li>' +
                         '<li class="mt50"><u id="uploadTheme" class="fr mr40">Upload Theme</u></li>' +
+                        */
                         '<li class="mt200"><input type="submit" value="Done" class="buttonStyle mr40 fr" />' +
                         '</li></ul></form>')
-                        //'<li class="mt23"><span class="mt200"><button class="buttonStyle">' +
-                        //'</button></span></li></ul></form>')
                 .end()
                 .append('<div/>')
                 .children(':last')
                 .addClass('flex1 wrap_right')
                 .end()
                 .appendTo(projectDialog, this);
-             // Insert the list of themes
+            //TODO: add support for theme
+            /*
+            // Insert the list of themes
             for (var t in themeNames) {
                var id = themeNames[t];
                $('<option id="'+ id +'" value="' + id + '">'+ id + '</option>')
                    .appendTo('#themePicker', projectDialog);
             }
+            */
 
             projectDialog.dialog({
                 autoOpen: false,
