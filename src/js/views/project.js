@@ -126,7 +126,7 @@
                 .first().click( function(e) {
                     projectDialog.dialog('option', 'title', "New Project")
                         .find(".buttonStyle", this)
-                        .text("Next")
+                        .val("Next")
                         .click(function (e) {
                             var options = {};
                             options.name = projectDialog.find("#projectName").val() || "New Project";
@@ -151,7 +151,7 @@
            settingButton.click(function(e){
                 projectDialog.dialog('option', 'title', "Project Setting")
                     .find(".buttonStyle")
-                    .text("Done")
+                    .val("Done")
                     .click(function (e) {
                             //call project API to create a new project
                             e.stopPropagation();
