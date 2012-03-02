@@ -123,17 +123,8 @@
                                 $.each($(this).serializeArray(), function(i, field) {
                                         values[field.name] = field.value;
                                 });
-                                widget._userDevices[values.name] = $.extend(true, {}, widget._sysDevices.Phones.Default,
-                                    {
-                                        "screen": {
-                                            width: values.screenWidth + 'px',
-                                            height: values.screenHeight + 'px'
-                                        },
-                                        "skin": {
-                                            width: new Number(values.screenWidth) + 100 + 'px',
-                                            height: new Number(values.screenHeight) + 100 + 'px'
-                                        }
-                                    });
+                                widget._userDevices[values.name] = widget._cloneSelectedDeviceInfo();
+                                widget._modifyScreenSize(widget._userDevices[values.name], values.screenWidth, values.screenHeight);
                                 widget._refreshDeviceList(widget._deviceSelect);
                                 $.gb.fsUtils.write("devices.json", JSON.stringify(widget._userDevices), function(fileEntry){
                                     alert("New device " + values.name + " sucessfully created!");
@@ -257,31 +248,13 @@
             deviceSelect.trigger('change');
         },
 
-        _setDevice: function () {
-            var deviceInfo, deviceSkin, scaleW, scaleH,
-                info = this._deviceSelect.find("option:selected").data('deviceInfo');
-            //First, we clone a device info and change screen property if rotated
-            if (this._rotating) {
-                deviceInfo = $.extend(true, {}, info, {
-                    screen: {
-                        width: info.screen.height,
-                        height: info.screen.width,
-                        offset: {
-                            top: info.screen.offset.right,
-                            left: info.screen.offset.top,
-                            bottom: info.screen.offset.left,
-                            right: info.screen.offset.bottom,
-                        }
-                    },
-                });
-            }
-            else {
-                deviceInfo = $.extend(true, {}, info);
-            }
+        _cloneSelectedDeviceInfo: function (deviceInfo, screenWidth, screenHeight) {
+            return $.extend(true, {}, this._deviceSelect.find("option:selected").data('deviceInfo'));
+        },
 
-            //If modified manully by user, scale screen offsets and recaculate skin size
-            scaleW =  this._screenWidth.val()/deviceInfo.screen.width,
-            scaleH =  this._screenHeight.val()/deviceInfo.screen.height;
+        _modifyScreenSize: function (deviceInfo, screenWidth, screenHeight) {
+            var scaleW =  screenWidth/deviceInfo.screen.width,
+            scaleH =  screenHeight/deviceInfo.screen.height;
             deviceInfo.screen.width *= scaleW;
             deviceInfo.screen.offset.left *= scaleW;
             deviceInfo.screen.offset.right *= scaleW;
@@ -293,6 +266,29 @@
                 + deviceInfo.screen.offset.right ;
             deviceInfo.skin.height = deviceInfo.screen.height + deviceInfo.screen.offset.top
                 + deviceInfo.screen.offset.bottom ;
+        },
+
+        _setDevice: function () {
+            var deviceSkin, scaleW, scaleH,
+            //First, we clone a device info and change screen property if rotated
+                deviceInfo = this._cloneSelectedDeviceInfo();
+            if (this._rotating) {
+                $.extend(true, deviceInfo, {
+                    screen: {
+                        width: deviceInfo.screen.height,
+                        height: deviceInfo.screen.width,
+                        offset: {
+                            top: deviceInfo.screen.offset.right,
+                            left: deviceInfo.screen.offset.top,
+                            bottom: deviceInfo.screen.offset.left,
+                            right: deviceInfo.screen.offset.bottom,
+                        }
+                    },
+                });
+            }
+
+            //If modified manully by user, scale screen offsets and recaculate skin size
+            this._modifyScreenSize(deviceInfo, this._screenWidth.val(), this._screenHeight.val());
 
             // TODO: This may be better managed by reading and applying
             //       per-device CSS files from the filesystem at run time.
