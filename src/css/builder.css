@@ -941,6 +941,10 @@ ul {
 .cm-active {
     font-weight: bold;
 }
+.cm-inactive {
+    color: #b3b3b3;
+}
+
 .CodeMirror {
     background-color: white
 }
