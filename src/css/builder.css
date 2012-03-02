@@ -1073,7 +1073,7 @@ ul {
 .addDevice:active {
     background-image: url("images/addDevice_down.png");
 }
-label
+.deviceSetting label
 {
     width: 8em;
     float: left;
@@ -1082,11 +1082,11 @@ label
     display: block;
     margin-top: 2em
 }
-input {
+.deviceSetting input {
     margin-top: 2em
 }
 
-input.submit
+.deviceSetting input.submit
 {
     margin-left: 4.5em;
     margin-right: 0.5em;

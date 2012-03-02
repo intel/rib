@@ -102,6 +102,7 @@
             addDeviceButton = $('<a class="addDevice"/>').appendTo(deviceToolbar)
                 .click( function () {
                     $("<form/>")
+                        .addClass("deviceSetting")
                         .append('<label for="name">Device Name</label>')
                         .append('<input required name="name"/>')
                         .append('<label for="screenWidth">Screen</label>')
