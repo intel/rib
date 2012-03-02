@@ -128,16 +128,21 @@
                         .find(".buttonStyle", this)
                         .val("Next")
                         .click(function (e) {
-                            var options = {};
-                            options.name = projectDialog.find("#projectName").val() || "New Project";
-                            //TODO add support for theme
-                            /*
-                            options.theme = projectDialog.find("#themePicker").val();
-                            */
-                            //call project API to create a new project
-                            $.gb.pmUtils.createProject(options, function() {
-                                widget.refresh(widget);
-                            });
+                            try {
+                                var options = {};
+                                options.name = projectDialog.find("#projectName").val() || "New Project";
+                                //TODO add support for theme
+                                /*
+                                   options.theme = projectDialog.find("#themePicker").val();
+                                   */
+                                //call project API to create a new project
+                                $.gb.pmUtils.createProject(options, function() {
+                                    widget.refresh(widget);
+                                });
+                            }
+                            catch (err) {
+                                console.error(err.description);
+                            }
                             projectDialog.dialog("close");
                             e.stopPropagation();
                             return false;
@@ -281,7 +286,7 @@
                 .addClass('flex1 vbox wrap_left')
                 .append('<form><legend/><ul>' +
                         '<li class="mt23"><label for="name">Project Name</label>' +
-                        '<input type ="text" id="projectName" value=""></li>' +
+                        '<input type ="text" id="projectName" value=""/></li>' +
                         //TODO add support for theme
                         /*
                         '<li class="mt23"><label for="name">Theme</label>' +
