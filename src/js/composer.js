@@ -77,13 +77,18 @@ $(function() {
                      window.top.$.gb.options &&
                      window.top.$.gb.options.debug),
 
+            debugOffsets = (window.top.$.gb &&
+                     window.top.$.gb.options &&
+                     window.top.$.gb.options.debug &&
+                     window.top.$.gb.options.debug.offsets),
+
             trackOffsets = function (msg, ui, data) {
                 var o = ui && ui.offset,
                     p = ui && ui.position,
                     d = data && data.offset,
                     c = d && d.click;
 
-                if (!debug) return;
+                if (!debugOffsets) return;
 
                 msg = msg || 'offsets:';
 
@@ -163,7 +168,7 @@ $(function() {
         });
 
         // Configure "sortable" behaviors
-        targets = $('.nrc-sortable-container');
+        targets = $('.nrc-sortable-container,[data-role="page"]');
 
         // Fixup "Collapsible" to make the content div jQM adds at runtime
         // be a "sortable" as well
@@ -181,7 +186,7 @@ $(function() {
                 tolerance: 'pointer',
                 appendTo: 'body',
                 connectWith: '.nrc-sortable-container',
-                cancel: '> :not(.adm-node)',
+                cancel: '> :not(.adm-node)',//,select',
                 items: '> *.adm-node',
                 start: function(event, ui){
                     $(this).addClass('ui-state-active');
@@ -199,7 +204,7 @@ $(function() {
                     // XXX: workaround for loss of $.data context when the
                     //      draggable connectToSortable plugin clones the
                     //      ui.item and places it into the sortable...
-                    $(this).data('recieved', ui.item.data());
+                    $(this).data('received', ui.item.data());
                     trackOffsets('receive: ',ui,$(this).data('sortable'));
                 },
                 stop: function(event, ui){
@@ -211,61 +216,107 @@ $(function() {
                         bw = window.parent.BWidget,
                         root = adm.getDesignRoot(),
                         node, zones, newParent,
-                        rdx, idx, cid, pid, sid, sibling, children;
+                        rdx, idx, cid, pid, sid,
+                        sibling, children, parent,
+                        role, received;
+
+                    role = $(this).attr('data-role') || '';
+
+                    function childIntersects(that) {
+                        var intersects = false,
+                            s = $(that).find(':data(sortable)')
+                                       .not('.ui-sortable-helper');
+                        s.each( function(i) {
+                            var inst = $.data(this, 'sortable');
+                            // Find contained sortables with isOver set
+                            if (inst.isOver) {
+                                intersects = true;
+                                return false;
+                            }
+                        });
+                        return intersects;
+                    };
 
                     $(this).removeClass('ui-state-active');
 
                     if (!ui.item) return;
 
                     isDrop = ui.item.hasClass('nrc-palette-widget');
+                    received = $(this).data('received');
+
+                    // Let child containers get the drop if they intersect
+                    if (childIntersects(this)) {
+                        if (isDrop && received) {
+                            //received.data('draggable').cancel();
+                            $(received.draggable).draggable('cancel');
+                        } else {
+                            $(this).sortable('cancel');
+                        }
+                        ui.item.remove();
+                        return false;
+                    }
 
                     // Drop from palette: add a node
                     if (isDrop) {
-                        if ($(this).data('recieved').admNode) {
-                            type = $(this).data('recieved').admNode.type;
+                        if (!received) {
+                            ui.item.remove();
+                            return false;
+                        }
+
+                        if (received.admNode) {
+                            type = received.admNode.type;
                         }
 
                         if (!type) {
                             console.warn('Drop failed: Missing node type');
                             ui.item.remove();
-                            return;
+                            return false;
                         }
 
                         children = $(this).children('.adm-node')
-                                          .add('.ui-draggable');
+                                          .add(ui.item);
                         idx = children.index(ui.item);
 
-                        // Insert nth child into this container
-                        if (idx > 0) {
+                        // Append first(only)/last child to this container
+                        if (idx >= children.length-1 || role === 'page') {
+                            if (adm.addChild(pid, type, true)) {
+                                node = adm.addChild(pid, type);
+                                debug && console.log('Appended node',role);
+                                if (node) adm.setSelected(node.getUid());
+                            } else {
+                                console.warn('Append child failed:',role);
+                            }
+                        } else if (idx > 0) {
+                            // Insert nth child into this container
                             sibling = $(ui.item, this).prev('.adm-node');
                             sid = sibling.attr('data-uid');
                             if (adm.insertChildAfter(sid, type, true)) {
                                 node = adm.insertChildAfter(sid, type);
-                                debug && console.log('Inserted nth node');
+                                debug && console.log('Inserted nth node',role);
                                 if (node) adm.setSelected(node.getUid());
                             } else {
-                                console.warn('Insert nth child failed');
+                                console.warn('Insert nth child failed:',role);
                             }
                         } else {
                             // Add 1st child into an empty container
                             if (children.length-1 <= 0) {
                                 if (adm.addChild(pid, type, true)) {
                                     node = adm.addChild(pid, type);
-                                    debug && console.log('Added 1st node');
+                                    debug && console.log('Added 1st node',role);
                                     if (node) adm.setSelected(node.getUid());
                                 } else {
-                                    console.warn('Add 1st child failed');
+                                    console.warn('Add 1st child failed:',role);
                                 }
-                            // Insert 1st child into non-empty container
                             } else {
+                                // Insert 1st child into non-empty container
                                 sibling = $(this).children('.adm-node:first');
                                 sid = sibling.attr('data-uid');
                                 if (adm.insertChildBefore(sid, type, true)) {
                                     node = adm.insertChildBefore(sid, type);
-                                    debug && console.log('Inserted 1st node');
+                                    debug && console.log('Inserted 1st node',role);
                                     if (node) adm.setSelected(node.getUid());
                                 } else {
-                                    console.warn('Insert 1st child failed');
+                                    console.warn('Insert 1st child failed:',role);
                                 }
                             }
                         }

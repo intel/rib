@@ -162,33 +162,9 @@
             } else {
                 console.error(widget.widgetName, ':: Missing contentDocument');
             }
-
-            // Refresh our cache of iframe sortables
-            widget._refreshSortables();
         },
 
         // Private functions
-        _getSortables: function(update) {
-            if (update) {
-                this._sortables = this.options.contentDocument
-                                      .find('.nrc-sortable-container');
-            } else {
-                this._sortables = this._sortables||this.options.contentDocument
-                                      .find('.nrc-sortable-container');
-            }
-            return this._sortables;
-        },
-
-        _refreshSortables: function() {
-            // Force a re-search for sortables in the iframe doc
-            var s = this._getSortables(true);
-
-            // Associate the palette items with these sortables
-            $(':gb-paletteView .ui-draggable').draggable('option', {
-                connectToSortable: s,
-            });
-        },
-
         _iframeLoaded: function(event) {
             event.data.loaded = true;
             event.data.refresh(null, event.data);

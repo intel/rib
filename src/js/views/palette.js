@@ -77,12 +77,35 @@
                     appendTo: 'body',
                     iframeFix: true,
                     containment: false,
-                    connectToSortable: $(':gb-layoutView').layoutView('option', 'contentDocument').find('.nrc-sortable-container'),
+                    connectToSortable: $(':gb-layoutView')
+                                       .layoutView('option', 'contentDocument')
+                                       .find('.nrc-sortable-container'),
                     helper: 'clone',
                     refreshPositions: true,
                     stack: '.layoutView iframe',
                     revertDuration: 0,
+                    filter: function() {
+                        var f=$(':gb-layoutView')
+                                    .layoutView('option','contentDocument'),
+                            a=$(':gb-layoutView').layoutView('option','model'),
+                            t=$(this).data('adm-node').type, s = [];
+
+                        // Find all sortables (and the page)
+                        s=f.find('.nrc-sortable-container,[data-role="page"]');
+
+                        // Filter out those that will not accept this widget
+                        return s.filter( function(index) {
+                            var id = $(this).attr('data-uid'), node, wt;
+                            node = a.getDesignRoot().findNodeByUid(id);
+                            wt = node.getType();
+                            return a.canAddChild(node, t);
+                        });
+                    },
                     start: function(event,ui){
+                        var d = $(this).draggable('option','connectToSortable');
+                        if (d.length <= 0) {
+                            return false;
+                        }
                         if (ui.helper) {
                             if (ui.helper[0].id == "") {
                                 ui.helper[0].id = this.id+'-helper';

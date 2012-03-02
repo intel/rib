@@ -57,6 +57,38 @@ var getOffsetInWindow = function (node, win) {
  *
  * Copied from jquery-ui version 1.8.16, ui/jquery.ui.draggable.js
  */
+$.map($.ui['draggable'].prototype.plugins['start'], function (elem, index) {
+    if (elem[0] === 'connectToSortable') {
+        elem[1] =  function (event, ui) {
+            var inst = $(this).data("draggable"), o = inst.options,
+                uiSortable = $.extend({}, ui, { item: inst.element });
+            inst.sortables = [];
+            if (o.filter && typeof o.filter === "function") {
+                o.connectToSortable = o.filter.call(inst.element[0]) || [];
+            }
+            if (!o.connectToSortable || o.connectToSortable.length <= 0) {
+                return;
+            }
+            $(o.connectToSortable).each(function() {
+                var sortable = $.data(this, 'sortable');
+                if (sortable && !sortable.options.disabled) {
+                    inst.sortables.push({ instance: sortable,
+                                          shouldRevert: sortable.options.revert
+                    });
+                    // Call the sortable's refreshPositions at drag start to
+                    // refresh the containerCache since the sortable container
+                    // cache is used in drag and needs to be up to date (this
+                    // will ensure it's initialised as well as being kept in
+                    // step with any changes that might have happened on the
+                    // page).
+                    sortable.refreshPositions();
+                    sortable._trigger("activate", event, uiSortable);
+                }
+            });
+        }
+    }
+    return elem;
+});
 $.map($.ui['draggable'].prototype.plugins['drag'], function (elem, index) {
     if (elem[0] === 'connectToSortable') {
        elem[1] =  function (event, ui) {
