@@ -268,7 +268,13 @@ body.ui-tabs.ui-widget {
 .view.live .stage .panel-section-contents:last {
     background: #e4e5df;
 }
+.view.live .stage .panel-section-contents > * {
+    font-size: 11px;
+    font-weight: normal;
+    color:  #4d4d4d;
+}
 .view.live .stage > div {
+
     position: relative;
     width: 100%;
     top: 0px;
@@ -1106,4 +1112,5 @@ ul {
 }
 .screenCoordinate {
     width: 4em;
+    margin-top: 0.9em
 }
