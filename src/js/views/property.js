@@ -324,6 +324,8 @@ function copyProperties(dest, src) {
                     .append('<table id="sortable">' +
                             '</table>');
                 $('#sortable').sortable({
+                    containment: 'parent',
+                    axis: 'y',
                     items: 'tr:not(.sortable-title)',
                     start: function(event, ui){
                         widget.originalRowIndex = ui.item[0].rowIndex - 1;
