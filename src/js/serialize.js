@@ -518,6 +518,126 @@ $(function() {
         return $.gb.designHeaders;
     }
 
+   function  exportFile (fileName, content, binary) {
+        var cookieValue = $.gb.cookieUtils.get("exportNotice"),
+            $exportNoticeDialog = createExportNoticeDialog(),
+            saveAndExportFile = function () {
+                $.gb.fsUtils.write(fileName, content, function(fileEntry){
+                    $.gb.fsUtils.exportToTarget(fileEntry.fullPath);
+                }, null, false, binary);
+            };
+
+        if(cookieValue === "true" && $exportNoticeDialog.length > 0) {
+            // bind exporting HTML code handler to OK button
+            $exportNoticeDialog.dialog("option", "buttons", {
+                "OK": function () {
+                    saveAndExportFile();
+                    $("#exportNoticeDialog").dialog("close");
+                }
+            });
+            // open the dialog
+            $exportNoticeDialog.dialog("open");
+        } else {
+            // if cookieValue is not true, export HTML code directly
+            saveAndExportFile();
+        }
+    }
+
+    // create a notice Dialog for user to configure the browser, so that
+    // a native dialog can be shown when exporting design or HTML code
+    function  createExportNoticeDialog () {
+        var dialogStr, dialogOpts, $exportNoticeDialog;
+        dialogStr = '<div id="exportNoticeDialog">';
+        dialogStr += 'Note: Files will be saved in the default download path of the Browser.';
+        dialogStr += '<p>To configure the Browser to ask you to where to save files, go to:<br>';
+        dialogStr += 'Preferences -> Under the Hood -> Download</p>';
+        dialogStr += '<p>Then check the box "Ask where to save each file before downloading"</p>';
+        dialogStr += '<p><input type="checkbox">Do not remind me again</p>';
+        dialogStr += '</div>';
+        dialogOpts = {
+            autoOpen: false,
+            modal: true,
+            width: 500,
+            resizable: false,
+            height: 400,
+            title: "GUI Builder",
+        };
+        $(dialogStr).dialog(dialogOpts);
+        $exportNoticeDialog = $("#exportNoticeDialog");
+        if($exportNoticeDialog.length <= 0) {
+            console.error("create saveAlertDialog failed.");
+            return null;
+        }
+        $exportNoticeDialog.find("input:checkbox").click(function () {
+            var notice = this.checked ? "false" : "true";
+            // set cookie
+            if(!$.gb.cookieUtils.set("exportNotice", notice, cookieExpires)) {
+                console.error("Set exportNotice cookie failed.");
+            }
+        });
+        return $exportNoticeDialog;
+    }
+
+    function exportPackage () {
+        var zip = new JSZip();
+        var resultHTML = generateHTML();
+        zip.add("index.html", resultHTML);
+        var files = [
+            'src/css/images/ajax-loader.png',
+            'src/css/images/icons-18-white.png',
+            'src/css/images/icons-36-white.png',
+            'src/css/images/icons-18-black.png',
+            'src/css/images/icons-36-black.png',
+            'src/css/images/icon-search-black.png',
+            'src/css/images/web-ui-fw_noContent.png',
+            'src/css/images/web-ui-fw_volume_icon.png'
+        ];
+        var getDefaultHeaderFiles = function (type) {
+            var files = [];
+            var headers = ADM.getDesignRoot().getProperty(type);
+            for ( var header in headers) {
+                // Skip design only header properties
+                if (headers[header].hasOwnProperty('designOnly') && headers[header].designOnly) {
+                    continue;
+                }
+                files.push(headers[header].value);
+            }
+            return files;
+        };
+        $.merge(files, $.merge(getDefaultHeaderFiles("libs"), getDefaultHeaderFiles("css")));
+
+        var i = 0;
+        var getFile = function () {
+            if (i < files.length)
+            {
+                // We have to do ajax request not using jquery as we can't get "arraybuffer" response from jquery
+                var req = window.ActiveXObject ? new window.ActiveXObject( "Microsoft.XMLHTTP" ): new XMLHttpRequest();
+                req.onload = function() {
+                    var uIntArray = new Uint8Array(this.response);
+                    var charArray = new Array(uIntArray.length);
+                    for (var j = 0; j < uIntArray.length; j ++)
+                        charArray[j] = String.fromCharCode(uIntArray[j]);
+                    zip.add(files[i],btoa(charArray.join('')), {base64:true});
+                    if (i === files.length - 1){
+                        var content = zip.generate(true);
+                        exportFile("design.zip", content, true);
+                    }
+                    i++;
+                    getFile();
+                }
+                try
+                {
+                    req.open("GET", files[i], true);
+                    req.responseType = 'arraybuffer';
+                } catch (e) {
+                    alert(e);
+                }
+                req.send(null);
+            }
+        }
+        getFile();
+    }
+
     /***************** export functions out *********************/
     // Export serialization functions into $.gb namespace
     $.gb.ADMToJSON = serializeADMToJSON;
@@ -525,4 +645,6 @@ $(function() {
 
     $.gb.getDefaultHeaders = getDefaultHeaders;
     $.gb.getDesignHeaders = getDesignHeaders;
+
+    $.gb.exportPackage = exportPackage;
 });
