@@ -447,7 +447,7 @@ ADM.addChild = function (parentRef, childRef, dryrun) {
  * @return {Boolean} True if adding the child would succeed, false otherwise.
  */
 ADM.canAddChild = function (parentRef, childRef) {
-    if (ADM.addChild(parent, child, true)) {
+    if (ADM.addChild(parentRef, childRef, true)) {
         return true;
     }
     return false;
