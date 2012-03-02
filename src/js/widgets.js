@@ -1144,7 +1144,7 @@ var BWidgetRegistry = {
                 defaultValue: 1,
                 setPropertyHook: function (node, value, transactionData) {
                     var rows, columns, i, block, map, children, blocks, count,
-                        blockIndex;
+                        blockIndex, root;
                     rows = node.getProperty("rows");
                     columns = node.getProperty("columns");
 
@@ -1153,6 +1153,9 @@ var BWidgetRegistry = {
                     if (value < 1) {
                         value = 1;
                     }
+
+                    root = node.getDesign();
+                    root.suppressEvents(true);
 
                     // add rows if necessary
                     if (rows < value) {
@@ -1196,8 +1199,10 @@ var BWidgetRegistry = {
                         for (i=0; i<count; i++) {
                             node.removeChild(children.pop());
                         }
+                        root.suppressEvents(false);
                         return blocks;
                     }
+                    root.suppressEvents(false);
                 }
             },
             columns: {
@@ -1206,7 +1211,7 @@ var BWidgetRegistry = {
                 defaultValue: 2,
                 setPropertyHook: function (node, value, transactionData) {
                     var rows, columns, i, block, map, children, blocks, count,
-                        index, blockIndex;
+                        index, blockIndex, root;
                     rows = node.getProperty("rows");
                     columns = node.getProperty("columns");
 
@@ -1214,6 +1219,9 @@ var BWidgetRegistry = {
                     if (columns < 2 || columns > 5) {
                         throw new Error("invalid value found for grid columns");
                     }
+
+                    root = node.getDesign();
+                    root.suppressEvents(true);
 
                     // add columns if necessary
                     if (columns < value) {
@@ -1265,8 +1273,10 @@ var BWidgetRegistry = {
                             }
                             value++;
                         }
+                        root.suppressEvents(false);
                         return blocks;
                     }
+                    root.suppressEvents(false);
                 }
             },
             theme: {
