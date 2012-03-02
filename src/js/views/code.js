@@ -69,14 +69,19 @@
         },
 
         resize: function(event, widget) {
+            var selected, activePage;
             widget = widget || this;
             $(widget._editor.getScrollerElement())
                 .css('height', widget.element.height());
             widget._editor.refresh();
-            widget._selectCode(widget._htmlDoc.doc,
-                    widget.options.model.getSelected()?
-                    widget.options.model.getSelected():
-                    widget.options.model.getActivePage().getUid());
+
+            selected = widget.options.model.getSelected();
+            if (!selected) {
+                activePage = widget.options.model.getActivePage();
+                if (activePage) {
+                    selected = activePage.getUid();
+                }
+            }
         },
 
         refresh: function(event, widget) {
