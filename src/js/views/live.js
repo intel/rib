@@ -81,6 +81,7 @@
                 .appendTo(devicePanel);
 
             widget._deviceSelect = $('<select></select>')
+                .addClass("separated")
                 .appendTo(deviceToolbar)
                 .change(function () {
                     $("option:selected", this).each(function () {
@@ -104,7 +105,9 @@
                     }
                 });
             });
-            addDeviceButton = $('<a class="addDevice"/>').appendTo(deviceToolbar)
+            addDeviceButton = $('<a/>')
+                .addClass("addDevice separated")
+                .appendTo(deviceToolbar)
                 .click( function () {
                     $("<form/>")
                         .addClass("deviceSetting")
@@ -141,7 +144,9 @@
                 addDeviceButton.trigger('click');
             });
 
-            rotateDeviceButton = $('<a class="rotateDevice"/>').appendTo(deviceToolbar)
+            rotateDeviceButton = $('<a/>')
+                .addClass("rotateDevice separated")
+                .appendTo(deviceToolbar)
                 .click( function () {
                     var screenWidth = widget._screenWidth.val();
                     widget._rotating = !widget._rotating;
@@ -153,7 +158,9 @@
                 rotateDeviceButton.trigger('click');
             });
 
-            $('<label for="screenWidth">  Screen:</label>').appendTo(deviceToolbar);
+            $('<label for="screenWidth">Screen:</label>')
+                .addClass("separated")
+                .appendTo(deviceToolbar);
             widget._screenWidth =
                 $('<input name="screenWidth" type="number" min="0" class="screenCoordinate"/>')
                 .change( function () {

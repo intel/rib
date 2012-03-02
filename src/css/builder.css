@@ -268,6 +268,9 @@ body.ui-tabs.ui-widget {
 .view.live .stage .panel-section-contents:last {
     background: #e4e5df;
 }
+.view.live .stage .panel-section-contents .separated {
+    margin-left: 15px;
+}
 .view.live .stage .panel-section-contents > * {
     font-size: 11px;
     font-weight: normal;
@@ -1113,4 +1116,7 @@ ul {
 .screenCoordinate {
     width: 4em;
     margin-top: 0.9em
+}
+input.screenCoordinate::-webkit-inner-spin-button {
+    -webkit-appearance: none
 }
