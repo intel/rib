@@ -110,7 +110,7 @@
             }
             $.each(pidArr, function(index, value){
                 // value is an object contains {"pid":XX, "date":XXX}
-                widget._createProjectBox(container, value.pid, widget);
+                widget.createProjectBox(value.pid, container, widget);
             });
         },
 
@@ -162,6 +162,7 @@
                     .val("Done")
                     .click(function (e) {
                             //call project API to create a new project
+                            $.gb.pmUtils.setProject(null, options);
                             e.stopPropagation();
                     })
                     .end()
@@ -321,9 +322,10 @@
             return projectDialog;
         },
 
-        _createProjectBox: function(container, pid, widget) {
+        createProjectBox: function(pid, container, widget) {
             var box, title, content, thumbnail, rightSide, openHandler, cloneHandler, deleteHandler;
             widget = widget || this;
+            container = container || $('.projectView');
             openHandler = function () {
                 var success = function () {
                     // show the layout tab

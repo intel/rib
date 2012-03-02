@@ -36,12 +36,11 @@ $(function () {
      * error callback passed the generated file error.
      *
      */
-    pmUtils.init = function (success, error) {
+    pmUtils.init = function (forEachProject, error) {
         var successReadData, errorCreateDir;
 
         // success handler for reading projects directory
         successReadData = function (entries) {
-            var count = 0;
             // return if there is no project
             if (entries.length === 0) {
                 // call projectView refresh
@@ -65,10 +64,12 @@ $(function () {
                     var dataObject = $.parseJSON(text);
                     // use the name of project folder as key, it's also PID
                     pmUtils._projectsInfo[e.name] = dataObject;
-                    if (++count === entries.length) {
-                        // call projectView refresh
-                        success && success(count);
-                    }
+                    // call projectView refresh
+                    forEachProject && forEachProject(e.name);
+                }, function () {
+                    console.error("Can't get design file for project: " + e.name);
+                    //TODO: may restore the project in autoSave feature
+                    error && error();
                 });
             });
             return;
@@ -190,7 +191,9 @@ $(function () {
      * @return
      */
     pmUtils.setProject = function (pid, options) {
-        var i, pInfo = pmUtils._projectsInfo[pid];
+        var i, pInfo;
+        pid = pid || $.gb.pmUtils._activeProject;
+        pInfo = pmUtils._projectsInfo[pid];
         pInfo = pInfo || {};
         // save setting info into design
         for (i in options) {

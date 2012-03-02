@@ -603,11 +603,9 @@ $(function() {
         $(document).delegate('#exportProj', "click", triggerExportDesign);
 
         // init pmUtils
-        $.gb.pmUtils.init(function () {
-            var refreshProjectView = function () {
-                $(":gb-projectView")["projectView"]("refresh");
-            };
-            refreshProjectView();
+        $.gb.pmUtils.init(function (pid) {
+            // add project box for each project
+            $(":gb-projectView")["projectView"]("createProjectBox", pid);
         });
     }
 
