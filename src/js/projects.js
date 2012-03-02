@@ -44,7 +44,7 @@ $(function () {
             // return if there is no project
             if (entries.length === 0) {
                 // call projectView refresh
-                success && success();
+                forEachProject && forEachProject();
                 return;
             }
             // get Max Pid from entries

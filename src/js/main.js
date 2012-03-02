@@ -550,6 +550,7 @@ $(function() {
 
         // init pmUtils
         $.gb.pmUtils.init(function (pid) {
+            if (!pid) return;
             // add project box for each project
             $(":gb-projectView")["projectView"]("createProjectBox", pid);
         });
