@@ -582,10 +582,13 @@ $(function() {
     }
 
     function exportPackage () {
-        var zip = new JSZip();
-        var resultHTML = generateHTML();
-        zip.add("index.html", resultHTML);
-        var files = [
+        var zip, resultHTML, resultDesign, files, i;
+        zip = new JSZip();
+        resultHTML = generateHTML();
+        resultDesign = $.gb.ADMToJSON();
+        resultHTML && zip.add("index.html", resultHTML);
+        resultDesign && zip.add("design.json", resultDesign);
+        files = [
             'src/css/images/ajax-loader.png',
             'src/css/images/icons-18-white.png',
             'src/css/images/icons-36-white.png',
@@ -595,9 +598,9 @@ $(function() {
             'src/css/images/web-ui-fw_noContent.png',
             'src/css/images/web-ui-fw_volume_icon.png'
         ];
-        var getDefaultHeaderFiles = function (type) {
-            var files = [];
-            var headers = ADM.getDesignRoot().getProperty(type);
+        function getDefaultHeaderFiles (type) {
+            var headers, files = [];
+            headers = ADM.getDesignRoot().getProperty(type);
             for ( var header in headers) {
                 // Skip design only header properties
                 if (headers[header].hasOwnProperty('designOnly') && headers[header].designOnly) {
@@ -606,11 +609,11 @@ $(function() {
                 files.push(headers[header].value);
             }
             return files;
-        };
+        }
         $.merge(files, $.merge(getDefaultHeaderFiles("libs"), getDefaultHeaderFiles("css")));
 
-        var i = 0;
-        var getFile = function () {
+        i = 0;
+        function getFile () {
             if (i < files.length)
             {
                 // We have to do ajax request not using jquery as we can't get "arraybuffer" response from jquery
