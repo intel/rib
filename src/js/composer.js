@@ -10,7 +10,7 @@
 "use strict";
 
 // Fixes PTSDK-130: Block right-click context menu in design-view iframe
-if (!top.$.gb.options || !top.$.gb.options.debug)
+if (!top.$.gb.debug())
     $(document).bind('contextmenu', function(e) { e.preventDefault(); });
 
 // In order to get the very first instance of page change events,
@@ -73,14 +73,9 @@ $(function() {
     window.handleSelect = handleSelect;
     $('div:jqmData(role="page")').live('pageinit', function(e) {
         var targets,
-            debug = (window.top.$.gb &&
-                     window.top.$.gb.options &&
-                     window.top.$.gb.options.debug),
+            debug = (window.top.$.gb && window.top.$.gb.debug()),
 
-            debugOffsets = (window.top.$.gb &&
-                     window.top.$.gb.options &&
-                     window.top.$.gb.options.debug &&
-                     window.top.$.gb.options.debug.offsets),
+            debugOffsets = (debug && window.top.$.gb.debug('offsets')),
 
             trackOffsets = function (msg, ui, data) {
                 var o = ui && ui.offset,

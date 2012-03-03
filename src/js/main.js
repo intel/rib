@@ -25,6 +25,10 @@
             var e = this.element,
                 o = this.options;
 
+            $.gb = $.gb || {};
+            $.gb.debug = (this.options.debugMode) ? this._debugEnabled :
+                function(){return false;};
+
             this._parseOptions();
 
             this.ui = this.ui || {};
@@ -53,15 +57,17 @@
 
             // Fixes PTSDK-130: Block right-click context menu in code and
             // preview div wrappers
-            if (!$.gb.options || !$.gb.options.debug)
-                $('.stage').bind('contextmenu', function(e) {e.preventDefault();});
+            if (!$.gb.debug())
+                $('.stage').bind('contextmenu', function(e) {
+                    e.preventDefault();
+                });
 
             // Now invoke any view plugins on appropriate elements
             this._bindViewPlugins();
 
             this.refresh();
 
-            if ($.gb.options && $.gb.options.debug) {
+            if ($.gb.debug('mousetrack')) {
                 this._createMouseTracker($(document.body));
             }
         },
@@ -184,9 +190,7 @@
 
         _createMouseTracker: function(container) {
             var coord, offset = {};
-            if (!$.gb.options || !$.gb.options.debug ||
-                ($.gb.options.debug !== 'mousetrack' &&
-                 !$.gb.options.debug.mousetrack))
+            if (!$.gb.debug('mousetrack'))
                 return;
 
             coord = $('<div/>')
@@ -511,9 +515,22 @@
             $(window).resize( function () {
                 widget._resizeView($(el), viewName);
             });
+        },
+        _debugEnabled: function(flag) {
+            if (!$.gb || !$.gb.options || !$.gb.options.debug) {
+                return false;
+            }
+            flag = flag && flag.toString();
+            if ($.gb.options.debug && !flag) {
+                return true;
+            } else {
+                if ($.gb.options.debug[flag]) {
+                    return $.gb.options.debug[flag];
+                } else {
+                    return ($.gb.options.debug === flag);
+                }
+            }
         }
-
-
     });
 })(jQuery);
 

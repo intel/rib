@@ -164,6 +164,10 @@ var DEBUG = true,
                         attrValue = attrValue.replace(/'/g, "&#39;");
                         attrValue = attrValue.replace(/</g, "&lt;");
                         attrValue = attrValue.replace(/>/g, "&gt;");
+                        // Append UID to assist with debugging
+                        if ($.gb.debug('showuid') && p === 'text') {
+                            attrValue += ' '+uid;
+                        }
                     }
                     template = template.replace(regEx, attrValue);
                 }
