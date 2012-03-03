@@ -45,12 +45,12 @@ var ADMEventSource = {
      */
     bind: function (name, handler, data) {
         if (typeof name !== "string") {
-            console.log("Error: called bind with a non-string event name");
+            console.error("Error: called bind with a non-string event name");
             return;
         }
         var eventType = this._admEvents[name];
         if (eventType === undefined) {
-            console.log("Error: bind did not find event type " + name);
+            console.error("Error: bind did not find event type " + name);
             return;
         }
         eventType.push({ handler: handler, data: data });
@@ -71,7 +71,7 @@ var ADMEventSource = {
     unbind: function (name, handler, data) {
         var removed = 0, listeners, i;
         if (typeof name !== "string") {
-            console.log("Error: called unbind with a non-string event name");
+            console.error("Error: called unbind with a non-string event name");
             return removed;
         }
         listeners = this._admEvents[name];
@@ -104,7 +104,7 @@ var ADMEventSource = {
 
         listeners = this._admEvents[name];
         if (listeners === undefined) {
-            console.log("Error: fireEvent did not find event type " + name);
+            console.error("Error: fireEvent did not find event type " + name);
             return;
         }
 
@@ -242,7 +242,7 @@ ADM.getDesignRoot = function () {
 ADM.setDesignRoot = function (design) {
     var children;
     if (!(design instanceof ADMNode) || design.getType() !== "Design") {
-        console.log("Warning: tried to set invalid design root");
+        console.warn("Warning: tried to set invalid design root");
         return false;
     }
 
@@ -285,7 +285,7 @@ ADM.setActivePage = function (page) {
     var oldPage;
     if (page !== null && (!(page instanceof ADMNode) ||
                           page.getType() !== "Page")) {
-        console.log("Warning: tried to set an invalid active page");
+        console.warn("Warning: tried to set an invalid active page");
         return false;
     }
 
@@ -362,13 +362,13 @@ ADM.getSelectedNode = function () {
 ADM.setSelected = function (nodeRef) {
     var uid = null, node = ADM.toNode(nodeRef);
     if (node === undefined) {
-        console.log("Warning: new selected widget not found");
+        console.warn("Warning: new selected widget not found");
         return false;
     }
 
     if (node) {
         if (node.getDesign() !== ADM.getDesignRoot()) {
-            console.log("Warning: selected node not found in design");
+            console.warn("Warning: selected node not found in design");
             return false;
         }
         if (!node.isSelectable()) {
@@ -403,7 +403,7 @@ ADM.addChild = function (parentRef, childRef, dryrun) {
 
     parent = ADM.toNode(parentRef);
     if (!parent) {
-        console.log("Warning: invalid parent while adding child: ", parentRef);
+        console.warn("Warning: invalid parent while adding child: ", parentRef);
         return null;
     }
 
@@ -415,7 +415,7 @@ ADM.addChild = function (parentRef, childRef, dryrun) {
     }
 
     if (!child) {
-        console.log("Warning: invalid widget while adding child: ", childRef);
+        console.warn("Warning: invalid widget while adding child: ", childRef);
         return null;
     }
 
@@ -433,7 +433,7 @@ ADM.addChild = function (parentRef, childRef, dryrun) {
         return child;
     }
 
-    console.log("Warning: failed to add child: ", childRef);
+    console.warn("Warning: failed to add child: ", childRef, parent, child);
     return null;
 };
 
@@ -471,7 +471,7 @@ ADM.addChildRecursive = function (parentRef, childRef, dryrun) {
 
     parent = ADM.toNode(parentRef);
     if (!parent) {
-        console.log("Warning: invalid parent while adding child: ", parentRef);
+        console.warn("Warning: invalid parent while adding child: ", parentRef);
         return null;
     }
 
@@ -483,7 +483,7 @@ ADM.addChildRecursive = function (parentRef, childRef, dryrun) {
     }
 
     if (!child) {
-        console.log("Warning: invalid widget while adding child: ", childRef);
+        console.warn("Warning: invalid widget while adding child: ", childRef);
         return null;
     }
 
@@ -504,7 +504,7 @@ ADM.addChildRecursive = function (parentRef, childRef, dryrun) {
         parent = parent.getParent();
     }
 
-    console.log("Warning: failed to add child: ", childRef);
+    console.warn("Warning: failed to add child recursively: ", childRef);
     return null;
 };
 
@@ -517,8 +517,8 @@ ADM.insertChildRelative = function (siblingRef, childRef, offset, dryrun) {
 
     sibling = ADM.toNode(siblingRef);
     if (!sibling) {
-        console.log("Warning: invalid sibling while inserting child: ",
-                    siblingRef);
+        console.warn("Warning: invalid sibling while inserting child: ",
+                     siblingRef);
         return null;
     }
 
@@ -530,8 +530,8 @@ ADM.insertChildRelative = function (siblingRef, childRef, offset, dryrun) {
     }
 
     if (!child) {
-        console.log("Warning: invalid widget while inserting child: ",
-                    childRef);
+        console.warn("Warning: invalid widget while inserting child: ",
+                     childRef);
     }
 
     if (sibling.insertChildRelative(child, offset, dryrun)) {
@@ -547,7 +547,7 @@ ADM.insertChildRelative = function (siblingRef, childRef, offset, dryrun) {
         return child;
     }
 
-    console.log("Warning: failed to insert child: ", childRef);
+    console.warn("Warning: failed to insert child: ", childRef);
     return null;
 };
 
@@ -601,13 +601,15 @@ ADM.removeChild = function (childRef, dryrun) {
 
     child = ADM.toNode(childRef);
     if (!child) {
-        console.log("Warning: invalid widget while removing child: ", childRef);
+        console.warn("Warning: invalid widget while removing child: ",
+                     childRef);
         return null;
     }
 
     parent = child.getParent();
     if (!parent) {
-        console.log("Warning: invalid parent while removing child: ", childRef);
+        console.warn("Warning: invalid parent while removing child: ",
+                     childRef);
         return null;
     }
 
@@ -625,8 +627,8 @@ ADM.removeChild = function (childRef, dryrun) {
         }
 
         if (ADM._activePage === child) {
-            console.log("Warning: attempted to remove the only page: ",
-                        childRef);
+            console.warn("Warning: attempted to remove the only page: ",
+                         childRef);
             return null;
         }
     }
@@ -648,7 +650,7 @@ ADM.removeChild = function (childRef, dryrun) {
     }
 
     if (!rval) {
-        console.log("Warning: unable to remove child: ", childRef);
+        console.warn("Warning: unable to remove child: ", childRef);
     }
     return rval;
 };
@@ -675,14 +677,14 @@ ADM.moveNode = function (nodeRef, newParentRef, zoneName, zoneIndex, dryrun) {
 
     node = ADM.toNode(nodeRef);
     if (!node) {
-        console.log("Warning: invalid widget while moving node: ", nodeRef);
+        console.warn("Warning: invalid widget while moving node: ", nodeRef);
         return null;
     }
 
     newParent = ADM.toNode(newParentRef);
     if (!newParent) {
-        console.log("Warning: invalid parent while moving node: ",
-                    newParentRef);
+        console.warn("Warning: invalid parent while moving node: ",
+                     newParentRef);
         return null;
     }
 
@@ -726,8 +728,8 @@ ADM.setProperty = function (nodeRef, property, value) {
 
     node = ADM.toNode(nodeRef);
     if (!node) {
-        console.log("Warning: invalid widget while setting property: ",
-                    nodeRef);
+        console.warn("Warning: invalid widget while setting property: ",
+                     nodeRef);
         return null;
     }
 
@@ -791,7 +793,7 @@ ADM.undo = function () {
             obj.node.setProperty(obj.property, obj.oldValue, obj.data);
         }
         else {
-            console.log("Warning: Unexpected UNDO transaction");
+            console.warn("Warning: Unexpected UNDO transaction");
             return;
         }
         ADM._redoStack.push(obj);
@@ -823,7 +825,7 @@ ADM.redo = function () {
             obj.node.setProperty(obj.property, obj.value, obj.data);
         }
         else {
-            console.log("Warning: Unexpected REDO transaction");
+            console.warn("Warning: Unexpected REDO transaction");
             return;
         }
         ADM._undoStack.push(obj);
@@ -840,7 +842,7 @@ ADM.redo = function () {
 ADM.cut = function () {
     var node;
     if (!ADM._selection) {
-        console.log("Warning: nothing selected to cut");
+        console.warn("Warning: nothing selected to cut");
         return false;
     }
 
@@ -862,7 +864,7 @@ ADM.cut = function () {
 ADM.copy = function () {
     var node;
     if (!ADM._selection) {
-        console.log("Warning: nothing selected to copy");
+        console.warn("Warning: nothing selected to copy");
         return false;
     }
 
@@ -885,7 +887,7 @@ ADM.copySubtree = function (node) {
     var newNode, prop, props, i, child, children, type, zoneName, zoneIndex;
 
     if (!(node instanceof ADMNode)) {
-        console.log("Warning: invalid argument to copySubtree: ", node);
+        console.warn("Warning: invalid argument to copySubtree: ", node);
         return null;
     }
 
@@ -980,7 +982,7 @@ function ADMNode(widgetType) {
             this._inheritance.push(currentType);
             currentType = widget.parent;
         } else {
-            console.log("Error: invalid type hierarchy creating ADM node");
+            console.error("Error: invalid type hierarchy creating ADM node");
             return;
         }
     }
@@ -1113,13 +1115,13 @@ ADMNode.prototype.getZone = function () {
 ADMNode.prototype.getZoneIndex = function () {
     var zone, length, i;
     if (!this._parent) {
-        console.log("Error: invalid parent while getting zone index");
+        console.error("Error: invalid parent while getting zone index");
         return -1;
     }
 
     zone = this._parent._zones[this._zone];
     if (!zone || !zone.length) {
-        console.log("Error: zone not found while getting zone index: " +
+        console.error("Error: zone not found while getting zone index: " +
                     this._zone);
         return -1;
     }
@@ -1215,7 +1217,7 @@ ADMNode.prototype.getDesign = function () {
 ADMNode.prototype.fireModelEvent = function (name, data) {
     var design = this.getDesign();
     if (!design) {
-        console.log("Warning: no root design found to fire model event");
+        console.warn("Warning: no root design found to fire model event");
         return;
     }
     design.fireEvent(name, data);
@@ -1303,7 +1305,7 @@ ADMNode.prototype.addChild = function (child, dryrun) {
                 if (wrapper.addChild(child, dryrun)) {
                     if (!this.addChildToZone(wrapper, redirect.zone, undefined,
                                              dryrun)) {
-                        console.log("Unable to create redirect wrapper for " +
+                        console.error("Unable to create redirect wrapper for " +
                                     myType);
                         return false;
                     } else {
@@ -1313,7 +1315,7 @@ ADMNode.prototype.addChild = function (child, dryrun) {
             }
         }
 
-        console.log("Warning: no zones found for child type");
+        console.warn("Warning: no zones found for child type");
         return false;
     }
 
@@ -1347,20 +1349,20 @@ ADMNode.prototype.addChildToZone = function (child, zoneName, zoneIndex,
     zone = this._zones[zoneName];
 
     if (!BWidget.zoneAllowsChild(myType, zoneName, childType)) {
-        console.log("Warning: zone " + zoneName + " doesn't allow child type " +
-                    childType);
+        console.warn("Warning: zone " + zoneName +
+                     " doesn't allow child type " + childType);
         return false;
     }
 
     if (!BWidget.childAllowsParent(myType, childType)) {
-        console.log("Warning: child type " + childType + " doesn't allow " +
-                    "parent type " + myType);
+        console.warn("Warning: child type " + childType + " doesn't allow " +
+                     "parent type " + myType);
         return false;
     }
 
     cardinality = BWidget.getZoneCardinality(myType, zoneName);
     if (!cardinality) {
-        console.log("Warning: no cardinality found for zone " + zoneName);
+        console.warn("Warning: no cardinality found for zone " + zoneName);
         return false;
     }
 
@@ -1368,7 +1370,7 @@ ADMNode.prototype.addChildToZone = function (child, zoneName, zoneIndex,
         limit = parseInt(cardinality, 10);
         if (zone.length >= limit) {
             // this zone is already full
-            console.log("Debug: zone already full: " + zoneName);
+            console.warn("Warning: zone already full: " + zoneName);
             return false;
         }
     }
@@ -1395,13 +1397,13 @@ ADMNode.prototype.addChildToZone = function (child, zoneName, zoneIndex,
 ADMNode.prototype.insertChildRelative = function (child, offset, dryrun) {
     var zone, i, index;
     if (!this._parent) {
-        console.log("Warning: cannot insert child relative to orphan sibling");
+        console.warn("Warning: cannot insert child relative to orphan sibling");
         return false;
     }
 
     zone = this._parent._zones[this._zone];
     if (!zone || !zone.length) {
-        console.log("Warning: zone not found in parent");
+        console.warn("Warning: zone not found in parent");
         return false;
     }
 
@@ -1421,7 +1423,7 @@ ADMNode.prototype.insertChildRelative = function (child, offset, dryrun) {
         }
     }
 
-    console.log("Warning: sibling not found in expected zone");
+    console.warn("Warning: sibling not found in expected zone");
     return false;
 };
 
@@ -1448,11 +1450,12 @@ ADMNode.prototype.insertChildInZone = function (child, zoneName, index,
 
     var zone = this._zones[zoneName];
     if (!zone) {
-        console.log("Error: zone not found in insertChildInZone: " + zoneName);
+        console.error("Error: zone not found in insertChildInZone: " +
+                      zoneName);
         return false;
     }
     if (index < 0 || index > zone.length) {
-        console.log("Error: invalid child insertion index");
+        console.error("Error: invalid child insertion index");
         return false;
     }
     if (child instanceof ADMNode) {
@@ -1469,7 +1472,7 @@ ADMNode.prototype.insertChildInZone = function (child, zoneName, index,
         }
         return true;
     } else {
-        console.log("Warning: children of ADMNode must be ADMNode");
+        console.warn("Warning: children of ADMNode must be ADMNode");
         return false;
     }
 };
@@ -1490,18 +1493,18 @@ ADMNode.prototype.moveNode = function (newParent, zoneName, zoneIndex, dryrun) {
     var oldParent, oldDesign, newDesign, oldZone, oldIndex, removed, rval, root;
     rval = false;
     if (!newParent) {
-        console.log("Error: invalid argument to moveChild");
+        console.error("Error: invalid argument to moveChild");
         return undefined;
     }
 
     if (this._root !== newParent._root) {
-        console.log("Error: attempted to move node between designs");
+        console.error("Error: attempted to move node between designs");
         return undefined;
     }
 
     oldParent = this._parent;
     if (!oldParent) {
-        console.log("Error: parent invalid in moveNode");
+        console.error("Error: parent invalid in moveNode");
         return undefined;
     }
 
@@ -1516,7 +1519,7 @@ ADMNode.prototype.moveNode = function (newParent, zoneName, zoneIndex, dryrun) {
 
     if (removed) {
         if (removed != this) {
-            console.log("Error: removed node didn't match in moveNode");
+            console.error("Error: removed node didn't match in moveNode");
         } else {
             // try to add child to new parent and zone
             rval = newParent.addChildToZone(this, zoneName, zoneIndex, dryrun);
@@ -1550,13 +1553,13 @@ ADMNode.prototype.moveNode = function (newParent, zoneName, zoneIndex, dryrun) {
 ADMNode.prototype.removeChild = function (child, dryrun) {
     var index;
     if (child._parent !== this) {
-        console.log("Error: child reports another parent while removing");
+        console.error("Error: child reports another parent while removing");
         return null;
     }
 
     index = child.getZoneIndex();
     if (index == -1) {
-        console.log("Error: child not found within this parent while removing");
+        console.error("Error: child not found in this parent while removing");
         return null;
     }
 
@@ -1575,13 +1578,13 @@ ADMNode.prototype.removeChildFromZone = function (zoneName, index, dryrun) {
     var zone, removed, child;
     zone = this._zones[zoneName];
     if (!zone) {
-        console.log("Error: no such zone found while removing child: " +
-                    zoneName);
+        console.error("Error: no such zone found while removing child: " +
+                      zoneName);
     }
 
     removed = zone.splice(index, 1);
     if (removed.length === 0) {
-        console.log("Warning: failed to remove child at index " + index);
+        console.warn("Warning: failed to remove child at index " + index);
         return null;
     }
 
@@ -1772,7 +1775,7 @@ ADMNode.prototype.setProperty = function (property, value, data, raw) {
     var orig, func, changed, type, rval = { };
     type = BWidget.getPropertyType(this.getType(), property);
     if (!type) {
-        console.log("Error: attempted to set non-existent property: " +
+        console.error("Error: attempted to set non-existent property: " +
                     property);
         return undefined;
     }
@@ -1781,8 +1784,9 @@ ADMNode.prototype.setProperty = function (property, value, data, raw) {
     if (typeof value !== type) {
         var numberTypes = {float:0,integer:0,number:0};
         if ((type in numberTypes) && isNaN(value)) {
-            console.log("Error: attempted to set property " + property + " (" +
-                        type + ") with wrong type (" + typeof value + ")");
+            console.error("Error: attempted to set property " + property +
+                          " (" + type + ") with wrong type (" + typeof value +
+                          ")");
             return rval;
         }
     }
@@ -1794,7 +1798,7 @@ ADMNode.prototype.setProperty = function (property, value, data, raw) {
     if (property == "id") {
         var pattern = /^[a-zA-Z]([\w-]*)$/;
         if (value && !pattern.test(value)) {
-            console.log("Error: attempted to set invalid id");
+            console.error("Error: attempted to set invalid id");
             return rval;
         }
     }
