@@ -69,7 +69,6 @@
                     resolveRefs(groups, groups);
                     listSubGroups(groupContainer, groups);
                     $('> li > a', groupContainer).first().trigger('click');
-                    widget.element.height(groupContainer.height());
                 }catch (e) {
                     alert(e);
                 }
