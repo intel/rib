@@ -332,7 +332,10 @@
             win = widget.options.contentDocument[0].defaultView;
 
             if (win && win.$ && win.$.mobile) {
-                win.$.mobile.changePage("#"+id, {transition: "none"});
+                if (win.$.mobile.activePage &&
+                    win.$.mobile.activePage.attr('id') !== id) {
+                    win.$.mobile.changePage("#"+id, {transition: "none"});
+                }
             }
         },
 
