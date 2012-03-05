@@ -127,10 +127,10 @@
                     projectDialog.dialog('option', 'title', "New Project")
                         .find(".buttonStyle", this)
                         .val("Next")
-                        .click(function (e) {
+                        .one("click", function (e) {
                             try {
                                 var options = {};
-                                options.name = projectDialog.find("#projectName").val() || "New Project";
+                                options.name = projectDialog.find("#projectName").val() || "Untitled";
                                 //TODO add support for theme
                                 /*
                                    options.theme = projectDialog.find("#themePicker").val();
@@ -154,16 +154,29 @@
         },
 
         _createSecondaryTools: function() {
-           var settingButton = $(this.element[0].ownerDocument.body).find('#setProj');
-           var projectDialog = this.options.projectDialog;
+           var settingButton, projectDialog, widget;
+           widget = this;
+           settingButton = $('#setProj',document.body);
+           projectDialog = this.options.projectDialog;
            settingButton.click(function(e){
                 projectDialog.dialog('option', 'title', "Project Setting")
                     .find(".buttonStyle")
                     .val("Done")
-                    .click(function (e) {
-                            //call project API to create a new project
-                            $.gb.pmUtils.setProject(null, options);
-                            e.stopPropagation();
+                    .one("click", function (e) {
+                        try {
+                            var opts = {};
+                            opts.name = $("#projectName",projectDialog).val()||
+                                        "Untitled";
+                            //call project API to set current project
+                            $.gb.pmUtils.setProject(null, opts);
+                            widget.refresh(widget);
+                        }
+                        catch (err) {
+                            console.error(err.description);
+                        }
+                        projectDialog.dialog("close");
+                        e.stopPropagation();
+                        return false;
                     })
                     .end()
                     .dialog("open");

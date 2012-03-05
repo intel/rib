@@ -43,8 +43,7 @@ $(function () {
         successReadData = function (entries) {
             // return if there is no project
             if (entries.length === 0) {
-                // call projectView refresh
-                forEachProject && forEachProject();
+                // TODO: Create a Untitled project and open it
                 return;
             }
             // get Max Pid from entries
@@ -76,7 +75,8 @@ $(function () {
         };
         errorCreateDir = function (e) {
             if (e.code === FileError.NOT_FOUND_ERR) {
-                fsUtils.mkdir(pmUtils.ProjectDir, success, error);
+                // TODO: Create a Untitled project and open it
+                fsUtils.mkdir(pmUtils.ProjectDir);
             } else {
                 console.error(e.code);
                 error && error();
@@ -194,7 +194,9 @@ $(function () {
         var i, pInfo;
         pid = pid || $.gb.pmUtils._activeProject;
         pInfo = pmUtils._projectsInfo[pid];
-        pInfo = pInfo || {};
+        if (!(pid && pInfo)) {
+            console.error("Invalid project to set");
+        }
         // save setting info into design
         for (i in options) {
             if (options.hasOwnProperty(i)) {
@@ -223,6 +225,7 @@ $(function () {
             destPid = pmUtils.getValidPid();
 
         fsUtils.cp(basePath + srcPid, basePath + destPid, function (copy) {
+            pmUtils._projectsInfo[destPid] = {};
             // copy the source project infomation
             pmUtils.setProject(destPid, pmUtils._projectsInfo[srcPid]);
 
