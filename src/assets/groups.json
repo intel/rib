@@ -1,187 +1,41 @@
-{
-    "All Widgets": {
-        "Button": {
-            "icon": "src/css/images/skins/phone.png"
-        },
+[{
+    "Functinal Grouping": [
+        "Button",
+        {
+            "Input": [
+                "Label",
+                "Slider",
+                "SelectMenu",
+                "Checkbox",
+                "OptionHeader",
+                {
+                    "Text": ["TextInput", "TextArea" ],
+                    "Boolean": ["ToggleSwitch", "RadioButton", "Switch"],
+                    "Date & Time": ["DateTimePicker", "CalendarPicker"],
+                    "Color": ["ColorPicker", "ColorPickerButton", "ColorPalette",
+                        "ColorTitle", "HsvPicker"]
+                }
+            ],
+            "Output": ["ProgressBar"],
+            "Layout": [ "Header","Footer", "ButtonGroup", "RadioGroup", "CheckboxGroup",
+                "Form", "List", "ListItem", "ListDivider", "ListButton", "OrderedList",
+                "Grid", "Block", "Accordion", "Collapsible"]
 
-        "Input": {
-           "Label": {
-               "icon": "src/css/images/skins/phone.png"
-           },
-
-           "Text": {
-               "TextInput": {
-                   "icon": "src/css/images/skins/phone.png"
-               },
-               "TextArea": {
-                   "icon": "src/css/images/skins/phone.png"
-               }
-           },
-
-           "Boolean": {
-               "ToggleSwitch": {
-                   "icon": "src/css/images/skins/phone.png"
-               },
-               "RadioButton": {
-                   "icon": "src/css/images/skins/phone.png"
-               },
-               "Switch": {
-                   "icon": "src/css/images/skins/phone.png"
-               }
-           },
-
-           "Date & Time": {
-               "DateTimePicker": {
-                   "icon": "src/css/images/skins/phone.png"
-               },
-               "CalendarPicker": {
-                   "icon": "src/css/images/skins/phone.png"
-               }
-           },
-
-           "Color": {
-               "ColorPicker": {
-                   "icon": "src/css/images/skins/phone.png"
-               },
-               "ColorPickerButton": {
-                   "icon": "src/css/images/skins/phone.png"
-               },
-
-               "ColorPalette": {
-                   "icon": "src/css/images/skins/phone.png"
-               },
-
-               "ColorTitle": {
-                   "icon": "src/css/images/skins/phone.png"
-               },
-               "HsvPicker": {
-                   "icon": "src/css/images/skins/phone.png"
-               }
-           },
-
-           "Slider": {
-               "icon": "src/css/images/skins/phone.png"
-           },
-
-           "SelectMenu": {
-               "icon": "src/css/images/skins/phone.png"
-           },
-
-           "Checkbox": {
-               "icon": "src/css/images/skins/phone.png"
-           },
-
-           "OptionHeader": {
-               "icon": "src/css/images/skins/phone.png"
-           }
-
-        },
-
-        "Output": {
-           "ProgressBar": {
-               "icon": "src/css/images/skins/phone.png"
-           }
-        },
-
-        "Layout": {
-           "Header": {
-               "icon": "src/css/images/skins/phone.png"
-           },
-           "Footer": {
-               "icon": "src/css/images/skins/phone.png"
-           },
-
-           "ButtonGroup": {
-               "icon": "src/css/images/skins/phone.png"
-           },
-
-           "RadioGroup": {
-               "icon": "src/css/images/skins/phone.png"
-           },
-
-           "CheckboxGroup": {
-               "icon": "src/css/images/skins/phone.png"
-           },
-
-           "Form": {
-               "icon": "src/css/images/skins/phone.png"
-           },
-
-           "List": {
-               "icon": "src/css/images/skins/phone.png"
-           },
-
-           "ListItem": {
-               "icon": "src/css/images/skins/phone.png"
-           },
-
-           "ListDivider": {
-               "icon": "src/css/images/skins/phone.png"
-           },
-
-           "ListButton": {
-               "icon": "src/css/images/skins/phone.png"
-           },
-
-           "OrderedList": {
-               "icon": "src/css/images/skins/phone.png"
-           },
-
-           "Grid": {
-               "icon": "src/css/images/skins/phone.png"
-           },
-
-           "Block": {
-               "icon": "src/css/images/skins/phone.png"
-           },
-
-           "Accordion": {
-               "icon": "src/css/images/skins/phone.png"
-           },
-
-           "Collapsible": {
-               "icon": "src/css/images/skins/phone.png"
-           },
-
-           "Form": {
-               "icon": "src/css/images/skins/phone.png"
-           },
-
-           "List": {
-               "icon": "src/css/images/skins/phone.png"
-           },
-
-           "ListItem": {
-               "icon": "src/css/images/skins/phone.png"
-           },
-
-           "ListDivider": {
-               "icon": "src/css/images/skins/phone.png"
-           },
-
-           "ListButton": {
-               "icon": "src/css/images/skins/phone.png"
-           },
-
-           "OrderedList": {
-               "icon": "src/css/images/skins/phone.png"
-           },
-
-           "Grid": {
-               "icon": "src/css/images/skins/phone.png"
-           },
-
-           "Block": {
-               "icon": "src/css/images/skins/phone.png"
-           },
-
-           "Accordion": {
-               "icon": "src/css/images/skins/phone.png"
-           },
-
-           "Collapsible": {
-               "icon": "src/css/images/skins/phone.png"
-           }
         }
-    }
-}
+    ],
+
+    "Widget Sets": [
+        {
+            "jQuery Mobile": [ "Button", "Label", "Slider", "SelectMenu",
+                "Checkbox","TextInput", "TextArea", "ToggleSwitch",
+                "RadioButton" , "Header","Footer", "ButtonGroup", "RadioGroup", "CheckboxGroup",
+                "Form", "List", "ListItem", "ListDivider", "ListButton", "OrderedList",
+                "Grid", "Block", "Accordion", "Collapsible"
+            ],
+            "Tizen Widgets": [ "OptionHeader",  "Switch","DateTimePicker",
+                "CalendarPicker", "ColorPicker", "ColorPickerButton",
+                "ColorPalette", "ColorTitle", "HsvPicker", "ProgressBar"
+            ]
+        }
+    ]
+}]

@@ -20,31 +20,33 @@
             var widget = this;
             $.getJSON("src/assets/groups.json", function (groups) {
                 var listSubGroups = function (container, group) {
-                    $.each(group, function(name , value) {
-                        if (!value.icon) {
-                            //This is a group
-                            var groupNode = $('<li/>')
-                                    .appendTo(container)
-                                    .append($('<a>' + name + '</a>')
-                                        .click(function (e) {
-                                            e.stopPropagation();
-                                            widget.element.find('.ui-selected')
-                                                .removeClass('ui-selected')
-                                                .removeClass('ui-state-active');
-                                            $(this).addClass('ui-state-active')
-                                                .addClass('ui-selected');
-                                            $(':gb-paletteView').paletteView('option',
-                                                "model", value);
+                    $.each(group, function(i , v) {
+                        if (typeof v !== "string") {
+                            //This is group definition
+                            $.each(v, function(name , value) {
+                                var groupNode = $('<li/>')
+                                        .appendTo(container)
+                                        .append($('<a>' + name + '</a>')
+                                            .click(function (e) {
+                                                e.stopPropagation();
+                                                widget.element.find('.ui-selected')
+                                                    .removeClass('ui-selected')
+                                                    .removeClass('ui-state-active');
+                                                $(this).addClass('ui-state-active')
+                                                    .addClass('ui-selected');
+                                                $(':gb-paletteView').paletteView('option',
+                                                    "model", value);
 
-                                        })
-                                    )
-                                    .click( function (e) {
-                                        e.stopPropagation();
-                                        $(this).toggleClass("close")
-                                            .children("ul").toggle();
-                                    });
-                            listSubGroups(
-                                $('<ul/>').appendTo(groupNode), value);
+                                            })
+                                        )
+                                        .click( function (e) {
+                                            e.stopPropagation();
+                                            $(this).toggleClass("close")
+                                                .children("ul").toggle();
+                                        });
+                                listSubGroups(
+                                    $('<ul/>').appendTo(groupNode), value);
+                            });
                         }
                     });
                 };
