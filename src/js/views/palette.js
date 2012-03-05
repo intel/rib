@@ -51,16 +51,19 @@
         refresh: function(event, widget) {
             var listWidgets = function (container, group) {
                     $.each(group, function (i, value) {
-                        if (value && typeof value === "string"){
-                            var li = $('<div id="BWidget-'+value+'"></div>').appendTo(container);
-                            $(li).button({
-                                label: BWidget.getDisplayLabel(value),
-                                icons: {primary: BWidget.getIcon(value)}
-                            });
-                            $(li).disableSelection();
-                            $(li).addClass('nrc-palette-widget');
-                            $(li).data("code", BWidget.getTemplate(value));
-                            $(li).data("adm-node", {type: value});
+                        if (value && typeof value === "string") {
+                            if (BWidget.isPaletteWidget(value)) {
+                                var li = $('<div id="BWidget-'+value+'"></div>')
+                                             .appendTo(container);
+                                $(li).button({
+                                    label: BWidget.getDisplayLabel(value),
+                                    icons: {primary: BWidget.getIcon(value)}
+                                });
+                                $(li).disableSelection();
+                                $(li).addClass('nrc-palette-widget');
+                                $(li).data("code", BWidget.getTemplate(value));
+                                $(li).data("adm-node", {type: value});
+                            }
                         }
                         else if (value)
                             listWidgets(container, value);
