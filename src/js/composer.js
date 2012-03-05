@@ -138,6 +138,8 @@ $(function() {
                             delegateNode = $(node);
                         }
                     }
+                } else if (widgetType === 'Block') {
+                    delegateNode = $('data-uid='+admNode.getParent().getUid());
                 }
 
                 // Move the adm-node class to the delegateNode and assign
@@ -147,8 +149,10 @@ $(function() {
                     $(node).addClass('orig-adm-node');
                     $(node).removeClass('adm-node');
                     delegateNode.addClass('adm-node');
-                    delegateNode.addClass('delegation');
-                    delegateNode.attr('data-uid', $(node).attr('data-uid'));
+                    if (widgetType !== 'Block') {
+                        delegateNode.addClass('delegation');
+                        delegateNode.attr('data-uid', $(node).attr('data-uid'));
+                    }
                 }
 
                 // Configure "select" handler
