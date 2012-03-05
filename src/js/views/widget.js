@@ -21,10 +21,12 @@
             $.getJSON("src/assets/groups.json", function (groups) {
                 var listSubGroups = function (container, group) {
                     $.each(group, function(i , v) {
-                        if (typeof v !== "string") {
+                        if ( $.isPlainObject(v)) {
                             //This is group definition
                             $.each(v, function(name , value) {
-                                var groupNode = $('<li/>')
+                                var groupNode;
+                                if (name === "atomic groups") return true;
+                                groupNode = $('<li/>')
                                         .appendTo(container)
                                         .append($('<a>' + name + '</a>')
                                             .click(function (e) {
@@ -49,9 +51,22 @@
                             });
                         }
                     });
+                }, resolveRefs = function (root, data) {
+                    $.each(data, function(name, value) {
+                        if (value &&  typeof value == "string" && value.indexOf('#') == 0) {
+                            var refObj = root;
+                            $.each(value.substring(1).split('.'), function (i, attr) {
+                                refObj = refObj[attr];
+                            });
+                            data.splice(data.indexOf(value), 1, refObj);
+                        }
+                        else if (value && typeof value === "object")
+                            resolveRefs(root, value);
+                    });
                 };
                 try{
                     var groupContainer = $('<ul/>').appendTo(widget.element);
+                    resolveRefs(groups, groups);
                     listSubGroups(groupContainer, groups);
                     $('> li > a', groupContainer).trigger('click');
                     widget.element.height(groupContainer.height());

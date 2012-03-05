@@ -1,40 +1,42 @@
 [{
+    "atomic groups": {
+        "jqm_input_ungrouped":[ "Label", "Slider", "SelectMenu", "Checkbox"],
+        "jqm_input_boolean":["ToggleSwitch", "RadioButton"],
+        "tizen_input_date":["DateTimePicker", "CalendarPicker"],
+        "tizen_input_color": ["ColorPicker", "ColorPickerButton",
+                        "ColorPalette", "ColorTitle", "HsvPicker"]
+    },
     "Functinal Grouping": [
         "Button",
+        "#0.atomic groups.jqm_input_ungrouped",
         {
             "Input": [
-                "Label",
-                "Slider",
-                "SelectMenu",
-                "Checkbox",
                 "OptionHeader",
                 {
-                    "Text": ["TextInput", "TextArea" ],
-                    "Boolean": ["ToggleSwitch", "RadioButton", "Switch"],
-                    "Date & Time": ["DateTimePicker", "CalendarPicker"],
-                    "Color": ["ColorPicker", "ColorPickerButton", "ColorPalette",
-                        "ColorTitle", "HsvPicker"]
+                    "Text": ["TextInput", "TextArea"],
+                    "Boolean": ["#0.atomic groups.jqm_input_boolean", "Switch"],
+                    "Date & Time": ["#0.atomic groups.tizen_input_date"],
+                    "Color": ["#0.atomic groups.tizen_input_color"]
                 }
             ],
             "Output": ["ProgressBar"],
-            "Layout": [ "Header","Footer", "ButtonGroup", "RadioGroup", "CheckboxGroup",
-                "Form", "List", "ListItem", "ListDivider", "ListButton", "OrderedList",
-                "Grid", "Block", "Accordion", "Collapsible"]
-
+            "Layout": [ "Header","Footer", "ButtonGroup", "RadioGroup",
+                "CheckboxGroup", "Form", "List", "ListItem", "ListDivider",
+                "ListButton", "OrderedList", "Grid", "Block", "Accordion",
+                "Collapsible"]
         }
     ],
 
     "Widget Sets": [
         {
-            "jQuery Mobile": [ "Button", "Label", "Slider", "SelectMenu",
-                "Checkbox","TextInput", "TextArea", "ToggleSwitch",
-                "RadioButton" , "Header","Footer", "ButtonGroup", "RadioGroup", "CheckboxGroup",
-                "Form", "List", "ListItem", "ListDivider", "ListButton", "OrderedList",
-                "Grid", "Block", "Accordion", "Collapsible"
+            "jQuery Mobile": [ "Button","#0.atomic groups.jqm_input_ungrouped",
+                "#0.Functinal Grouping.2.Input.1.Text",
+                "#0.atomic groups.jqm_input_boolean",
+                "#0.Functinal Grouping.2.Layout"
             ],
-            "Tizen Widgets": [ "OptionHeader",  "Switch","DateTimePicker",
-                "CalendarPicker", "ColorPicker", "ColorPickerButton",
-                "ColorPalette", "ColorTitle", "HsvPicker", "ProgressBar"
+            "Tizen Widgets": [ "OptionHeader",  "Switch",
+                "#0.atomic groups.tizen_input_date",
+                "#0.atomic groups.tizen_input_color", "ProgressBar"
             ]
         }
     ]
