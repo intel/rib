@@ -353,11 +353,12 @@ $(function() {
 
         if (result) {
             result = ADM.setDesignRoot(design);
-            design.suppressEvents(false);
         } else {
-            console.log("Error while build design root.");
-            return false;
+            console.error("Error while building design root from JSON");
+            result = false;
         }
+
+        design.suppressEvents(false);
         return result;
     }
 
