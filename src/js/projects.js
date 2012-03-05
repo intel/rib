@@ -117,6 +117,18 @@ $(function () {
     }
 
     /***************** APIs to manipulate projects *************************/
+    pmUtils.syncCurrentProject = function (success, error) {
+        var currentPid, currentDesign;
+        currentPid = pmUtils._activeProject;
+        currentDesign = ADM.getDesignRoot();
+        // serialize old design to json
+        if (currentPid) {
+            pmUtils.syncProject(currentPid, currentDesign, success, error);
+        } else {
+            success && success();
+        }
+    };
+
     /**
      * Asynchronous. create a new project and open it:
      * Get an valid pid, and use the pid to create a folder for the project
@@ -133,16 +145,17 @@ $(function () {
      *                 { "name": XXX, "theme":XXXX }
      * @param {function(Array)=} success callback. An optional
      * @param {function(FileError)=} error callback. An optional
+     * @param {ADMNode} the ADM design used to create a project. An optional
      *
      * success callback passed the pid of the new created project.
      * error callback passed the generated file error.
      *
      * @return
      */
-    pmUtils.createProject = function (options, success, error) {
+    pmUtils.createProject = function (options, success, error, design) {
         var newPid, successHandler, buildDesign, errorHandler;
         newPid = pmUtils.getValidPid();
-        buildDesign = function (newPid) {
+        buildDesign = function () {
             var newDesign, newPage, config;
             // build a new design
             newDesign = new ADMNode("Design");
@@ -157,26 +170,23 @@ $(function () {
             if (!newPage) {
                 console.log("Warning: create new page failed");
             }
-            // if the design has no page when setDesignRoot, a empty page will be added in
-            ADM.setDesignRoot(newDesign);
-
-            pmUtils._activeProject = newPid;
-            pmUtils._projectsInfo[newPid] = {};
-            pmUtils.setProject(newPid, options);
-            pmUtils.syncProject(newPid, newDesign, false, success, error);
+            return newDesign;
         };
         successHandler = function (dirEntry) {
-            var oldPid, oldDesign;
-            oldPid = pmUtils._activeProject;
-            oldDesign = ADM.getDesignRoot();
-            // serialize old design to json
-            if (oldPid) {
-                pmUtils.syncProject(oldPid, oldDesign, !pmUtils.designDirty, function () {
-                    buildDesign(dirEntry.name);
-                });
-            } else {
-                buildDesign(dirEntry.name);
-            }
+            pmUtils.syncCurrentProject(function () {
+                // if the design has no page when setDesignRoot, a empty page will be added in
+                if (design && (design instanceof ADMNode)) {
+                    ADM.setDesignRoot(design);
+                } else {
+                    ADM.setDesignRoot(buildDesign());
+                }
+                pmUtils.designDirty = true;
+                pmUtils._activeProject = newPid;
+                pmUtils._projectsInfo[newPid] = {};
+                pmUtils.setProject(newPid, options);
+                pmUtils.setAccessDate(newPid, new Date());
+                pmUtils.syncProject(newPid, ADM.getDesignRoot(), success, error);
+            });
         };
         errorHandler = function (e) {
             if (e.code === FileError.QUOTA_EXCEEDED_ERR) {
@@ -264,7 +274,7 @@ $(function () {
             pmUtils.setAccessDate(destPid, new Date());
 
             // just sync project info only
-            pmUtils.syncProject(destPid, null, true, success, error);
+            pmUtils.syncProject(destPid, null, success, error);
         }, error);
     };
 
@@ -292,15 +302,21 @@ $(function () {
      * @return
      */
     pmUtils.openProject = function (pid, success, error) {
-        var designPath, oldPid, successHandler;
+        var designPath, successHandler;
 
-        if(!pmUtils._projectsInfo[pid]) {
+        if (!pmUtils._projectsInfo[pid]) {
             console.error("Error: Invalid pid for project when opening project");
+            return;
+        }
+        // if the required project is already be opened, just update access date
+        if (pmUtils._activeProject === pid) {
+            // update access time
+            pmUtils.setAccessDate(pid, new Date());
+            success && success();
             return;
         }
 
         designPath = pmUtils.getDesignPath(pid);
-        oldPid = pmUtils._activeProject;
         successHandler = function () {
             // set current pid as active pid
             pmUtils._activeProject = pid;
@@ -310,13 +326,9 @@ $(function () {
             success && success();
         };
         // save current design
-        if (oldPid) {
-            pmUtils.syncProject(oldPid, ADM.getDesignRoot(), !pmUtils.designDirty, function() {
-                $.gb.asyncJSONToADM(designPath, successHandler, error);
-            });
-        } else {
+        pmUtils.syncCurrentProject(function() {
             $.gb.asyncJSONToADM(designPath, successHandler, error);
-        }
+        });
         return;
     };
 
@@ -487,7 +499,6 @@ $(function () {
      *
      * @param {String} project id
      * @param {ADMNode} ADM design node
-     * @param {Bool} if sync project info only, "true": just sync pInfo, "false"/null/undefined: sync both design and pInfo
      * @param {function()=} success callback. An optional
      * @param {function(Error/null)=} error callback. An optional
      *
@@ -496,10 +507,14 @@ $(function () {
      *
      * @return
      */
-    pmUtils.syncProject = function (pid, design, onlyInfoFlag, success, error) {
+    pmUtils.syncProject = function (pid, design, success, error) {
         var syncDesign, syncInfo;
         pid = pid || pmUtils._acitveProject;
         design = design || ADM.getDesignRoot();
+        if (!(pmUtils.designDirty || pmUtils.pInfoDirty)) {
+            success && success();
+            return;
+        }
         // define callbacks
         syncDesign = function (pid, design, successHandler, error) {
             var designPath;
@@ -508,7 +523,6 @@ $(function () {
         };
         syncInfo = function (pid, success, error) {
             var pInfo, metadataPath, successHandler;
-            pmUtils.setAccessDate(pid, new Date());
             pInfo = pmUtils._projectsInfo[pid];
             metadataPath = pmUtils.getMetadataPath(pid);
             successHandler = function () {
@@ -518,15 +532,15 @@ $(function () {
             };
             fsUtils.write(metadataPath, JSON.stringify(pInfo), successHandler, error);
         };
-        if (!onlyInfoFlag) {
+        if (pmUtils.designDirty) {
             // sync pInfo in the success handler of syncDesign
             syncDesign(pid, design, function () {
                 // clean design dirty flag
                 pmUtils.designDirty = false;
-                syncInfo(pid, success, error);
+                pmUtils.pInfoDirty && syncInfo(pid, success, error);
             }, error);
         } else {
-            syncInfo(pid, success, error);
+            pmUtils.pInfoDirty && syncInfo(pid, success, error);
         }
     };
 
