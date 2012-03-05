@@ -62,6 +62,7 @@ lib/web-ui-fw-libs.js                   MIT             Intel
 src/css/web-ui-fw-theme.css             MIT             Intel
 src/css/web-ui-fw-widgets.css           MIT             Intel
 lib/jszip.js				MIT or GPLv3	Stuart Knightley[5]
+lib/zipfile.js              Modified BSD    Arnaud Renervier[6]
 lib/CodeMirror-2.21/LICENSE                         BSD-like   Marijn Haverbeke
 lib/CodeMirror-2.21/lib/codemirror.css              BSD-like   Marijn Haverbeke
 lib/CodeMirror-2.21/lib/codemirror.js               BSD-like   Marijn Haverbeke
@@ -85,3 +86,4 @@ Notes:
 [3] Portions of the file (jslint.js) are copyright Intel Corporation, 2011.
 [4] einar@jsbeautifier.org
 [5] stuart@stuartk.co.uk
+[6] arno@renevier.net

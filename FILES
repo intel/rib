@@ -51,6 +51,8 @@ Haverbeke
 Marijn    lib/CodeMirror-2.21/mode/xml/xml.js                 BSD-like    [16]
 Haverbeke
 Intel     src/js/codeview-mode.js                             APLV2       N/A
+Arnaud
+Renevier  lib/zipfile.js                                      Modified BSD[17]
 
 Unreleased/Unpackaged Files (build/debug/development)
 =====================================================
@@ -84,3 +86,4 @@ Notes:
 [14] https://github.com/web-ui-fw/web-ui-fw
 [15] http://jszip.stuartk.co.uk
 [16] http://codemirror.net
+[17] https://github.com/arenevier/zipfile/blob/master/zipfile.js
