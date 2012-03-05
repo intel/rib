@@ -68,7 +68,7 @@
                     var groupContainer = $('<ul/>').appendTo(widget.element);
                     resolveRefs(groups, groups);
                     listSubGroups(groupContainer, groups);
-                    $('> li > a', groupContainer).trigger('click');
+                    $('> li > a', groupContainer).first().trigger('click');
                     widget.element.height(groupContainer.height());
                 }catch (e) {
                     alert(e);
