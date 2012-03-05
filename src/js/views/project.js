@@ -77,6 +77,12 @@
             reader = new FileReader();
             reader.onloadend = function(e) {
                 $.gb.JSONToADM(e.target.result);
+                // TODO: Need to either add it to activeProject, or create a
+                //       new project for it.  Once that is done, we also now
+                //       should switch to the layout view, like we do when
+                //       creating a new project, or on startup.  For example:
+                //
+                //$(document.body).tabs('select', 1);
             };
             reader.onError = function () {
                 console.error("Read imported file error.");
@@ -143,6 +149,8 @@
                                    */
                                 //call project API to create a new project
                                 $.gb.pmUtils.createProject(options, function() {
+                                    // show the layout tab
+                                    $(document.body).tabs('select', 1);
                                     widget.refresh(widget);
                                 });
                             }
