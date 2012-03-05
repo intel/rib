@@ -979,6 +979,10 @@ ul {
     -webkit-box-shadow:  3px 3px 3px rgba(0,0,0,.15);
 }
 
+.projectBox.ui-state-active {
+    border:3px solid #4ae57b;
+}
+
 .titleBar {
     width:225px;
     height:31px;
