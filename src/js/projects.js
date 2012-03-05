@@ -37,13 +37,40 @@ $(function () {
      *
      */
     pmUtils.init = function (forEachProject, error) {
-        var successReadData, errorCreateDir;
+        var successReadData, errorCreateDir, onEnd,
+            dirCount = 0,
+            brokenList = [],
+            fineList = [];
 
+        onEnd = function () {
+            var lastOpened, allHandled, pInfos;
+            allHandled = brokenList.length + fineList.length;
+            if (allHandled === dirCount) {
+                if (fineList.length === 0) {
+                    // No project, create a default "Untitled" project
+                    $.gb.pmUtils.createProject({"name": "Untitled"}, function () {
+                        forEachProject($.gb.pmUtils._activeProject);
+                    });
+                } else {
+                    // If there are some projects in sandbox, get the lastOpened project and open it
+                    pInfos = $.gb.pmUtils._projectsInfo;
+                    $.each(fineList, function (i, pid) {
+                        // if there is no active project, or the project access date is newer,
+                        // make this project as the active Project
+                        if (!lastOpened || pInfos[pid].accessDate > pInfos[lastOpened].accessDate) {
+                            lastOpened = pid;
+                        }
+                    });
+                    $.gb.pmUtils.openProject(lastOpened);
+                }
+            }
+        };
         // success handler for reading projects directory
         successReadData = function (entries) {
+            dirCount = entries.length;
             // return if there is no project
-            if (entries.length === 0) {
-                // TODO: Create a Untitled project and open it
+            if (dirCount === 0) {
+                onEnd();
                 return;
             }
             // get Max Pid from entries
@@ -65,7 +92,11 @@ $(function () {
                     pmUtils._projectsInfo[e.name] = dataObject;
                     // call projectView refresh
                     forEachProject && forEachProject(e.name);
+                    fineList.push(e.name);
+                    onEnd();
                 }, function () {
+                    brokenList.push(e.name);
+                    onEnd();
                     console.error("Can't get design file for project: " + e.name);
                     //TODO: may restore the project in autoSave feature
                     error && error();
@@ -75,8 +106,8 @@ $(function () {
         };
         errorCreateDir = function (e) {
             if (e.code === FileError.NOT_FOUND_ERR) {
-                // TODO: Create a Untitled project and open it
-                fsUtils.mkdir(pmUtils.ProjectDir);
+                // Create a Untitled project and open it in onEnd function
+                fsUtils.mkdir(pmUtils.ProjectDir, onEnd, error);
             } else {
                 console.error(e.code);
                 error && error();

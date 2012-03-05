@@ -349,7 +349,7 @@
             // Turn the body into a jQuery-UI "tabs" widget
             // TODO: Get starting tab from session cookie
             container.tabs({
-                selected: 0,
+                selected: 1,
                 show: $.proxy(this._tabChanged, this),
             });
 
@@ -539,17 +539,7 @@ $(function() {
     // FIXME: Remove all this fake ADM setup code once the remainder of
     //        the code for guibuilder has been merged with this new plugin
     //        model of coding...
-    var design, page, child, fsUtils,
-        config = {
-            pageTemplate: 'JQuery Mobile Page',
-            pageTitle: 'Home',
-            layout: ['Header', 'Footer'],
-        };
-    design = new ADMNode('Design');
-    config.design = design;
-    page = $.gb.pageUtils.createNewPage(config);
-
-    ADM.setDesignRoot(design);
+    var fsUtils;
     /***************** handler functions ************************/
 
     function fsInitSuccess(fs) {
@@ -582,10 +572,6 @@ $(function() {
     fsUtils = $.gb.fsUtils;
     fsUtils.initFS(fsUtils.fsType, fsUtils.fsSize, fsInitSuccess, fsInitFailed);
 
-
     // Actually invoke the plugin that sets up our app UI
     $(document).guibuilder({debugMode: true, model: ADM});
-
-    // FIXME: Remove the following, as noted above
-    ADM.setActivePage(page);
 });
