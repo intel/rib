@@ -549,6 +549,7 @@ $(function() {
 
         // init pmUtils
         $.gb.pmUtils.init();
+        $(document).ready( function () { $(window).trigger('resize'); });
     }
 
     function fsInitFailed() {
