@@ -595,7 +595,7 @@ $(function() {
         zip = new JSZip();
         resultHTML = generateHTML();
         resultDesign = $.gb.ADMToJSON();
-        resultHTML && zip.add("index.html", resultHTML);
+        resultHTML && zip.add("index.html", resultHTML.html);
         resultDesign && zip.add("design.json", resultDesign);
         files = [
             'src/css/images/ajax-loader.png',
