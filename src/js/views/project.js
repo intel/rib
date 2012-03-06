@@ -24,10 +24,10 @@
                 e = this.element,
                 widget = this;
 
-            o.designReset = null;
+            o.designReset = this._designResetHandler;
             o.selectionChanged = null;
             o.activePageChanged = null;
-            o.modelUpdated = null;
+            o.modelUpdated = this._modelUpdatedHandler;
 
             // FIXME: This should work, but $.extend of options seems to be
             //        creating a copy of the ADM, which will not containt the
@@ -279,7 +279,7 @@
             widget.designRoot = d;
 
             // Finally, redraw our view since the ADMDesign root has changed
-            widget.refresh(event, widget);
+            //widget.refresh(event, widget);
         },
 
         _selectionChangedHandler: function(event, widget) {
@@ -292,6 +292,10 @@
 
         _modelUpdatedHandler: function(event, widget) {
             widget = widget || this;
+            // if the designDirty is false, then set it
+            if (!($.gb.pmUtils.designDirty)) {
+                $.gb.pmUtils.designDirty = true;
+            }
         },
 
         _createSettingDialog: function() {
