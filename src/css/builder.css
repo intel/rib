@@ -544,13 +544,6 @@ body.ui-tabs.ui-widget {
     padding-right: .5em;
 }
 
-.tagFilterView {
-    border: 1px solid rgba(0,0,0,0.6);
-}
-.tagFilterView:after {
-    content: 'tagFilterView';
-}
-
 /*
   Outline View widget styles
 */

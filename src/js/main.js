@@ -265,15 +265,7 @@
             this.ui.projectView = $('<div/>').appendTo(container)
                 .attr('id', 'projectView')
                 .addClass('view project flex1 hbox');
-            this.ui.projectView.append('<div class="panel left">');
             this.ui.projectView.append('<div class="stage flex1 vbox">');
-            this.ui.projectView.find('.panel.left')
-                .panel({
-                    position: 'left',
-                    maxSize: '320',
-                    minSize: '160',
-                })
-                .append('<div class="tagFilterView flex1 vbox"></div>');
 
             this.ui.layoutView = $('<div/>').appendTo(container)
                 .attr('id', 'layoutView')
