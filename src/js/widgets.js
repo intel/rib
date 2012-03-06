@@ -719,9 +719,40 @@ var BWidgetRegistry = {
      */
     SelectMenu: {
         parent: "Base",
-        template: '<select></select>',
+        template: function(node) {
+            var prop, length, i, child,
+            code = $('<select></select>');
+            prop = node.getProperty("options");
+            length = prop.children.length;
+            for (i = 0; i< length; i++) {
+                child = prop.children[i];
+                $('<option value="' + child.value + '">'+ child.text + '</option>')
+                    .appendTo(code);
+            }
+            return code;
+        },
         newGroup: true,
         displayLabel: "Select Menu",
+        properties: {
+            options: {
+                 type: "record-array",
+                 sortable: true,
+                 recordType: {
+                     text: "string",
+                     value: "string"
+                 },
+                 children : [],
+                 defaultValue: {
+                     type:  "record-array",
+                     sortable: true,
+                     recordType: {
+                         text: "string",
+                         value: "string"
+                     },
+                     children : []
+                 }
+             }
+        },
         zones: [
             {
                 name: "default",
