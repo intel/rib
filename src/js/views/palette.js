@@ -53,12 +53,9 @@
                     $.each(group, function (i, value) {
                         if (value && typeof value === "string") {
                             if (BWidget.isPaletteWidget(value)) {
-                                var li = $('<div id="BWidget-'+value+'"></div>')
+                                var li = $('<img id="BWidget-'+value+'"></img>')
+                                             .attr("src", "src/css/images/widgets/" + value + ".png")
                                              .appendTo(container);
-                                $(li).button({
-                                    label: BWidget.getDisplayLabel(value),
-                                    icons: {primary: BWidget.getIcon(value)}
-                                });
                                 $(li).disableSelection();
                                 $(li).addClass('nrc-palette-widget');
                                 $(li).data("code", BWidget.getTemplate(value));
