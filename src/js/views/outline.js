@@ -42,6 +42,18 @@
                 .addClass('outline_content')
                 .appendTo(this.element);
 
+            $(window).resize(this, function(event) {
+                var el = event.data.element;
+                if (el.parent().height() == 0)
+                    return;
+                var newHeight = Math.round((el.parent().height()
+                                - $('.pageView').height()
+                                - $('#property_title').height()
+                                - 20) // height of ui-state-default + borders
+                                * 0.6);
+                el.height(newHeight);
+            });
+
 
             this.refresh(null, this);
 

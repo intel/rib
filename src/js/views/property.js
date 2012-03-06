@@ -78,16 +78,26 @@ function copyProperties(dest, src) {
                 .addClass(this.widgetName)
                 .append('<div/>')
                 .append('<div/>')
-                .children(':first')
-                    .attr('id', 'property_title')
-                    .addClass('flex0')
-                    .end()
                 .children(':last')
                     .attr('id', 'property_content')
                     .addClass('flex1');
 
             this.options.primaryTools = this._createPrimaryTools();
             this.options.secondaryTools = this._createSecondaryTools();
+            $(window).resize(this, function(event) {
+                var el = event.data.element;
+                if (el.parent().height() == 0)
+                    return;
+
+                var newHeight = Math.round((el.parent().height()
+                                - $('.pageView').height()
+                                - $('#property_title').height()
+                                - 20) // height of ui-state-default + borders
+                                * 0.4);
+                el.height(newHeight);
+            });
+
+            this.refresh(null, this);
 
             return this;
         },

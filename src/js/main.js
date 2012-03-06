@@ -280,7 +280,8 @@
                     minSize: '160',
                 })
                 .append('<div class="pageView flex0 vbox"></div>')
-                .append('<div class="outlineView flex1 vbox"></div>')
+                .append('<div class="outlineView flex0 vbox"></div>')
+                .append('<div id="property_title" class="flex0 vbox"></div>')
                 .append('<div class="propertyView flex0 vbox"></div>');
 
             this.ui.layoutView.find('.panel.right')
@@ -289,7 +290,7 @@
                     maxSize: '480',
                     minSize: '160',
                 })
-                .append('<div class="widgetView flex1 vbox"></div>')
+                .append('<div class="widgetView flex0 vbox"></div>')
                 .append('<div class="paletteView flex0 vbox"></div>');
 
             this.ui.codeView = $('<div/>').appendTo(container)
@@ -365,6 +366,7 @@
                 .append('<hr align=vertical>')
                 .append('<a id="exportProj">export</a>')
                 .appendTo(this.ui.extras);
+            $(window).trigger('resize');
         },
 
         _tabChanged: function(event, ui) {

@@ -639,9 +639,10 @@ body.ui-tabs.ui-widget {
 */
 .propertyView {
     border: 1px solid rgba(0,0,0,0.6);
-    padding-bottom: 20px;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
-.propertyView #property_title {
+#property_title {
     background-image: url('images/propertiesTitleBar.png');
     background-repeat: repeat-x;
     height: 24px;
@@ -661,7 +662,6 @@ body.ui-tabs.ui-widget {
 .widgetView {
     border: 1px solid rgba(0,0,0,0.6);
     overflow: auto;
-    min-height: 150px;
 }
 .widgetView:after {
 }
@@ -674,7 +674,6 @@ ul {
 */
 .paletteView {
     border: 1px solid rgba(0,0,0,0.6);
-    padding-bottom: 20px;
     overflow: auto;
 }
 .paletteView img {

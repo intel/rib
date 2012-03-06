@@ -88,8 +88,7 @@
         },
 
         resize: function(event, widget) {
-            this.element.height(this.element.parent().height() -
-                    this.element.next().height());
+            this.element.height(Math.round((this.element.parent().height() - 20) * 0.3));
         },
     });
 })(jQuery);

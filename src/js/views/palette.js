@@ -117,8 +117,7 @@
             }
         },
         resize: function(event, widget) {
-            this.element.height(this.element.parent().height() -
-                    this.element.prev().height());
+           this.element.height(Math.round((this.element.parent().height() - 20) * 0.7));
         },
 
     });
