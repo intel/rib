@@ -276,7 +276,7 @@
             this.ui.layoutView.find('.panel.left')
                 .panel({
                     position: 'left',
-                    maxSize: '320',
+                    maxSize: '480',
                     minSize: '160',
                 })
                 .append('<div class="pageView flex0 vbox"></div>')
@@ -286,7 +286,7 @@
             this.ui.layoutView.find('.panel.right')
                 .panel({
                     position: 'right',
-                    maxSize: '320',
+                    maxSize: '480',
                     minSize: '160',
                 })
                 .append('<div class="widgetView flex1 vbox"></div>')
@@ -300,7 +300,7 @@
             this.ui.codeViewLeftPanel = this.ui.codeView.find('.panel.left')
                 .panel({
                     position: 'left',
-                    maxSize: '320',
+                    maxSize: '480',
                     minSize: '160',
                 })
                 .append('<div class="pageView flex0 vbox"></div>')
