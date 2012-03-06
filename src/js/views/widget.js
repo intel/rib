@@ -26,9 +26,13 @@
                             $.each(v, function(name , value) {
                                 var groupNode;
                                 if (name === "atomic groups") return true;
+                                container.prev().prev().addClass('folder')
+                                    .removeClass('singleItem').html('');
                                 groupNode = $('<li/>')
                                         .appendTo(container)
-                                        .append($('<a>' + name + '</a>')
+                                        .append($('<span/>').addClass('singleItem').html("&#x2022;"))
+                                        .append($('<a/>')
+                                            .append($('<span>').text(name).addClass('widgetType'))
                                             .click(function (e) {
                                                 e.stopPropagation();
                                                 widget.element.find('.ui-selected')
@@ -46,8 +50,8 @@
                                             $(this).toggleClass("close")
                                                 .children("ul").toggle();
                                         });
-                                listSubGroups(
-                                    $('<ul/>').appendTo(groupNode), value);
+                                listSubGroups($('<ul/>').addClass('widgetGroup')
+                                        .appendTo(groupNode), value);
                             });
                         }
                     });
