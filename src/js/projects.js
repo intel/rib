@@ -32,8 +32,6 @@ $(function () {
      * @param {function()=} success callback. An optional
      * @param {function(FileError)=} error callback. An optional
      *
-     * success callback passed count of projects.
-     * error callback passed the generated file error.
      *
      */
     pmUtils.init = function (success, error) {
@@ -115,6 +113,11 @@ $(function () {
     }
 
     /***************** APIs to manipulate projects *************************/
+    /* Asynchronous. save current project to sandbox.
+     * @param {function()=} success callback. An optional
+     * @param {function(FileError)=} error callback. An optional
+     *
+     */
     pmUtils.syncCurrentProject = function (success, error) {
         var currentPid, currentDesign;
         currentPid = pmUtils._activeProject;
@@ -497,6 +500,38 @@ $(function () {
      */
     pmUtils.exportProject = function (pid) {};
     // TODO: manipulatation about the thumbnail of the project
+
+     /**
+     * Asynchronous. import a project and open it:
+     * @param {fileEntry} the fine entry of the imported file
+     * @param {function(Array)=} success callback. An optional
+     * @param {function(FileError)=} error callback. An optional
+     *
+     * success callback passed the pid of the imported project.
+     * error callback passed the generated file error.
+     *
+     * @return
+     */
+    pmUtils.importProject = function (file, success, error) {
+        var reader, options, design;
+        // TODO: get options from imported file
+        options = {"name": "Imported Project"};
+
+        reader = new FileReader();
+        reader.onloadend = function(e) {
+            design = $.gb.JSONToADM(e.target.result);
+            if (design && (design instanceof ADMNode)) {
+                $.gb.pmUtils.createProject(options, success, error, design);
+            } else {
+                console.error("Imported project failed");
+                error && error();
+            }
+        };
+        reader.onError = function () {
+            console.error("Read imported file error.");
+        };
+        reader.readAsText(file); // Read the file as plaintext.
+    };
 
     /**
      * Asynchronous. Sync all the project data into sandbox file system

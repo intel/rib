@@ -63,31 +63,20 @@
         },
 
         _importChangedCallback: function (e) {
-            var file, reader;
+            var file;
             if (e.currentTarget.files.length === 1) {
                 file = e.currentTarget.files[0];
+                $.gb.pmUtils.importProject(file, function () {
+                    // show the layout tab
+                    $(document.body).tabs('select', 1);
+                });
             } else {
                 if (e.currentTarget.files.length <= 1) {
                     console.warn("No files specified to import");
                 } else {
                     console.warn("Multiple file import not supported");
                 }
-                return false;
             }
-            reader = new FileReader();
-            reader.onloadend = function(e) {
-                $.gb.JSONToADM(e.target.result);
-                // TODO: Need to either add it to activeProject, or create a
-                //       new project for it.  Once that is done, we also now
-                //       should switch to the layout view, like we do when
-                //       creating a new project, or on startup.  For example:
-                //
-                //$(document.body).tabs('select', 1);
-            };
-            reader.onError = function () {
-                console.error("Read imported file error.");
-            };
-            reader.readAsText(file); // Read the file as plaintext.
         },
         _setOption: function(key, value) {
             switch (key) {
@@ -154,7 +143,6 @@
                                 $.gb.pmUtils.createProject(options, function() {
                                     // show the layout tab
                                     $(document.body).tabs('select', 1);
-                                    widget.refresh(widget);
                                 });
                             }
                             catch (err) {
