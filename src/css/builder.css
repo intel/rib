@@ -547,8 +547,7 @@ body.ui-tabs.ui-widget {
 /*
   Outline View widget styles
 */
-.widgetView,
-.outlineView {
+.gbTreeView {
     border: 1px solid rgba(0,0,0,0.6);
     overflow:auto
 }
@@ -569,22 +568,20 @@ body.ui-tabs.ui-widget {
 .outlineView .pageList {
     padding-left: 0px;
 }
-.widgetView .widgetGroup,
-.outlineView .widgetGroup {
+.gbTreeView .widgetGroup {
     padding-left: 20px;
 }
-.widgetView li,
-.outlineView li {
+.gbTreeView li {
     list-style: none;
 }
-.outlineView li > a, .widgetView li > a {
+.gbTreeView li > a {
     background: transparent;
     font-weight: normal;
     text-align: center;
     /* match the padding-left below so text doesn't move when selected */
     margin-left: 5px;
 }
-.outlineView li > a.ui-selected, .widgetView li > a.ui-selected {
+.gbTreeView li > a.ui-selected {
     background: #4ae57b;
     color: #424242;
     border: transparent;
@@ -597,14 +594,11 @@ body.ui-tabs.ui-widget {
     padding-right: 5px;
     margin-left: 0px;
 }
-.outlineView li > a:hover,
-.outlineView li > a.ui-selected:hover,
-.widgetView li > a:hover,
-.widgetView li > a.ui-selected:hover {
+.gbTreeView li > a:hover,
+.gbTreeView li > a.ui-selected:hover {
     color: #2c7a94;
 }
-.widgetView span.widgetType,
-.outlineView span.widgetType {
+.gbTreeView span.widgetType {
     font-size: 12px;
     color: #111111;
     font-style: normal;
@@ -614,8 +608,7 @@ body.ui-tabs.ui-widget {
     color: #aaaaaa;
     font-style: italic;
 }
-.widgetView span.folder,
-.outlineView span.folder {
+.gbTreeView span.folder {
     float: left;
     width: 10px;
     height: 26px;
@@ -624,19 +617,16 @@ body.ui-tabs.ui-widget {
     background-repeat: no-repeat;
     background-position: center;
 }
-.widgetView span.folder.close,
-.outlineView span.folder.close {
+.gbTreeView span.folder.close {
     background-image: url("images/pageTreeArrowClosed.png");
     background-repeat: no-repeat;
 }
-.widgetView span.singleItem,
-.outlineView span.singleItem {
+.gbTreeView span.singleItem {
     width: 10px;
     height: 10px;
     margin-right: 10px;
 }
-.widgetView li.label,
-.outlineView li.label {
+.gbTreeView li.label {
     font-style: italic;
     font-size: 10px;
     margin-top: 6px;

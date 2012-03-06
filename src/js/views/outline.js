@@ -23,6 +23,7 @@
             var o = this.options,
                 e = this.element;
 
+            e.addClass('gbTreeView');
             o.designReset = this._designResetHandler;
             o.selectionChanged = this._selectionChangedHandler;
             o.activePageChanged = this._activePageChangedHandler;

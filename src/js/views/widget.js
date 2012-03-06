@@ -18,6 +18,7 @@
 
         _create: function() {
             var widget = this;
+            widget.element.addClass('gbTreeView');
             $.getJSON("src/assets/groups.json", function (groups) {
                 var listSubGroups = function (container, group) {
                     $.each(group, function(i , v) {
