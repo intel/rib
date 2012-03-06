@@ -126,15 +126,11 @@ function copyProperties(dest, src) {
         refresh: function(event, widget) {
             widget = widget || this;
             if (event) {
-                if (!event.node || event.node.isSelectable() ||
-                    event.node.instanceOf('Page')) {
+                if (event.node && !(event.name === "modelUpdated" &&
+                    event.type === "nodeRemoved")) {
                     widget._showProperties(event);
-                }
-                else if (event.name === "modelUpdated" &&
-                         (event.type === "nodeRemoved" ||
-                          event.type === "nodeAdded") &&
-                         event.node.getType() === "Option") {
-                    event.node = event.parent;
+                } else {
+                    event.node = ADM.getActivePage();
                     widget._showProperties(event);
                 }
             }
