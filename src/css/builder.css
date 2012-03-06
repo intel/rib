@@ -651,9 +651,99 @@ body.ui-tabs.ui-widget {
 }
 .propertyView .property_content {
     background: #c8ced0;
+    min-height:100%;
+    position: relative;
 }
 .propertyView input.PropertyCheckBox {
-    margin-left: 70%;
+    text-align: right;
+    width: 20px;
+    margin: 0px;
+    margin-left:50px;
+    padding; 0px;
+    height: 23px;
+    border: 0px;
+    vertical-align: middle;
+}
+.propertyView form {
+    margin: 0px;
+    border: 0px;
+    padding: 10px;
+    padding-bottom: 80px;
+}
+.propertyView ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+.propertyView ul li {
+    clear: both;
+    line-height: 23px;
+    padding-top: 11px;
+}
+.propertyView .rightLabel {
+    margin: 0px;
+    margin-left: 20px;
+    padding: 0px;
+    border: 0px;
+    text-align: left;
+    width: 173px;
+}
+.propertyView .leftLabel {
+    margin: 0px;
+    padding: 0px;
+    border: 0px;
+    text-align: right;
+    width: 70px;
+}
+.propertyView input {
+    margin-left: 20px;
+    height: 23px;
+    width: 170px;
+    margin: 0px;
+    padding: 2px 5px;
+    border: none;
+    -webkit-border-radius: 5px;
+}
+.propertyView select {
+    margin-left: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    width: 173px;
+    height: 23px;
+}
+.propertyView .property_footer {
+    position: absolute;
+    bottom: 0px;
+    padding: 10px 0;
+    width: 100%;
+}
+.propertyView .buttonStyle {
+    display:block;
+    width:200px;
+    height:27px;
+    margin-left: 45px;
+    margin-right: 45px;
+    font-size: 0.8em;
+    text-align:center;
+    color:#424242;
+    border:1px solid #a1a1a1;
+    line-height:12px;
+    padding:8px 20px 7px 20px;
+    background-color: #fbfbfb;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#fbfbfb), to(#ececec));
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+    -moz-background-clip: padding;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    text-decoration:none;
+}
+.propertyView .buttonStyle:hover {
+    color:#eee;
+    background-color: #cccccc;
+    border-color:#424242;
+    background-image: -webkit-linear-gradient(top, #cccccc, #777777);
 }
 
 /*

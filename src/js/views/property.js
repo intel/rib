@@ -260,13 +260,111 @@ function copyProperties(dest, src) {
                 }
             }
 
-            $('#property_title').empty()
+            type = node.getType();
+            title.empty()
                 .append('<span>')
                 .children(':first')
-                    .text(BWidget.getDisplayLabel(node.getType()));
-            $('#property_content').empty()
-                .append('<table/>');
+                    .text(BWidget.getDisplayLabel(type));
+            content.empty()
+                .append('<form><ul/></form>')
+                .find('ul')
+                .addClass("propertyList");
+            propertyList = content.find(".propertyList");
+            props = node.getProperties();
+            options = node.getPropertyOptions();
+            //iterate property of node
+            for (p in props) {
+                labelVal = p.replace(/_/g,'-');
+                valueId = p+'-value';
+                valueVal = props[p];
+                propType = BWidget.getPropertyType(type, p);
+                code = $('<li/>')//.addClass('mt11')
+                    .appendTo(propertyList);
+                //display property of widget
+                switch (propType) {
+                    case "boolean":
+                        $('<input type="checkbox"/>')
+                            .attr('id', valueId)
+                            .addClass('PropertyCheckBox')
+                            .addClass('fl')
+                            .appendTo(code);
+                        $('<label for=' + p + '>' + labelVal + '</label>')
+                            .addClass('fr')
+                            .addClass('rightLabel')
+                            .appendTo(code);
+                        //initial value of checkbox
+                        if(node.getProperty (p) === true) {
+                            $("#"+valueId).attr("checked", true);
+                        }
+                        break;
+                    case "record-array":
+                        break;
+                    default:
+                        $('<label for=' + p + '>' + labelVal + '</label>')
+                            .addClass('fl')
+                            .addClass('leftLabel')
+                            .appendTo(code);
+                        //handle property has options
+                        if (options[p]) {
+                            $('<select size="1">')
+                                .attr('id', valueId)
+                                .addClass('fr')
+                                .appendTo(code);
+                            //add options to select list
+                            for (o in options[p]) {
+                                //TODO make it simple
+                                $('<option value="' + options[p][o] +
+                                        '">' +options[p][o] + '</option>')
+                                    .appendTo(code.find("#" + valueId));
+                                code.find('#'+ valueId).val(valueVal);
+                            }
+                        } else {
+                            $('<input type ="text" value="">')
+                                .attr('id', valueId)
+                                .addClass('fr')
+                                .appendTo(code);
+                            //set default value
+                            code.find('#' + valueId).val(valueVal);
 
+
+                        }
+                        break;
+                }
+
+                content.find('#' + valueId)
+                    .change(node, function (event) {
+                        var updated, node, element, type, value;
+                        updated = event.srcElement.id.replace(/-value/,''),
+                        node = event.data;
+
+                        if (node === null || node === undefined) {
+                            throw new Error("Missing node, prop change failed!");
+                            return;
+                        }
+                        value = validValue($(this),
+                            BWidget.getPropertyType(node.getType(), updated));
+                        ADM.setProperty(node, updated, value);
+                        event.stopPropagation();
+                        //return false;
+                    });
+            }
+
+            // add delete element button
+            $('<div><button> Delete Element </button></div>')
+                .addClass('property_footer')
+                .children('button')
+                .addClass('buttonStyle')
+                .attr('id', "deleteElement")
+                .end()
+                .appendTo(content);
+            content.find('#deleteElement')
+                .one('click', function (e) {
+                    ADM.removeChild(node.getUid(), false);
+                    e.stopPropagation();
+                    return false;
+                });
+
+            /*
             props = node.getProperties();
             options = node.getPropertyOptions();
             for (p in props) {
@@ -434,6 +532,7 @@ function copyProperties(dest, src) {
             $('td','.property_content').attr('align','left');
             $('th','.property_content').attr('align','left')
                 .addClass('ui-helper-reset ui-state-default');
+            */
         },
     });
 })(jQuery);
