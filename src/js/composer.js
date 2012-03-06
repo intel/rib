@@ -214,7 +214,7 @@ $(function() {
                         adm = window.parent.ADM,
                         bw = window.parent.BWidget,
                         root = adm.getDesignRoot(),
-                        node, zones, newParent,
+                        node, zones, newParent, newZone,
                         rdx, idx, cid, pid, sid,
                         sibling, children, parent,
                         role, received;
@@ -334,8 +334,7 @@ $(function() {
 
                         // Notify the ADM that element has been moved
                         if ((zones && zones.length===1 &&
-                                      zones[0].cardinality!=='1') ||
-                            (newParent && newParent.getType() === 'Header')) {
+                                      zones[0].cardinality!=='1')) {
                             if (!node ||
                                 !adm.moveNode(node, newParent, zones[0],
                                               idx)) {
@@ -343,6 +342,22 @@ $(function() {
                             } else {
                                 debug && console.log('Moved node');
                                 if (node) adm.setSelected(node.getUid());
+                            }
+                        } else if (node && newParent &&
+                                   newParent.getType() === 'Header') {
+                            for (var z=0; z < zones.length; z++) {
+                                if (adm.moveNode(node, newParent, zones[z],
+                                    0, true)) {
+                                    newZone = zones[z];
+                                    break;
+                                }
+                            }
+                            if (newZone) {
+                                adm.moveNode(node, newParent, newZone, 0);
+                                debug && console.log('Moved node');
+                                if (node) adm.setSelected(node.getUid());
+                            } else {
+                                console.warn('Move node failed');
                             }
                         } else {
                             console.warn('Move node failed: invalid zone');
