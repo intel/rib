@@ -1582,14 +1582,19 @@ ADMNode.prototype.removeChildFromZone = function (zoneName, index, dryrun) {
                       zoneName);
     }
 
-    removed = zone.splice(index, 1);
+    if (dryrun) {
+        removed = [zone[index]];
+    } else {
+        removed = zone.splice(index, 1);
+    }
+
     if (removed.length === 0) {
         console.warn("Warning: failed to remove child at index " + index);
         return null;
     }
 
+    child = removed[0];
     if (!dryrun) {
-        child = removed[0];
         child._parent = null;
         child._root = null;
 
