@@ -175,13 +175,13 @@ $(function () {
         successHandler = function (dirEntry) {
             pmUtils.syncCurrentProject(function () {
                 // if the design has no page when setDesignRoot, a empty page will be added in
+                pmUtils._activeProject = newPid;
                 if (design && (design instanceof ADMNode)) {
                     ADM.setDesignRoot(design);
                 } else {
                     ADM.setDesignRoot(buildDesign());
                 }
                 pmUtils.designDirty = true;
-                pmUtils._activeProject = newPid;
                 pmUtils._projectsInfo[newPid] = {};
                 pmUtils.setProject(newPid, options);
                 pmUtils.setAccessDate(newPid, new Date());
@@ -315,19 +315,26 @@ $(function () {
             success && success();
             return;
         }
-
         designPath = pmUtils.getDesignPath(pid);
-        successHandler = function () {
-            // set current pid as active pid
-            pmUtils._activeProject = pid;
-            // update access time
-            pmUtils.setAccessDate(pid, new Date());
-            // load json file in sandbox
-            success && success();
+
+        successHandler = function (result) {
+            var design = $.gb.JSONToADM(result);
+            if (design && (design instanceof ADMNode)) {
+                // set current pid as active pid
+                pmUtils._activeProject = pid;
+                // set the new design as design root
+                ADM.setDesignRoot(design);
+                // update access time
+                pmUtils.setAccessDate(pid, new Date());
+                success && success();
+            } else {
+                error && error();
+            }
         };
         // save current design
         pmUtils.syncCurrentProject(function() {
-            $.gb.asyncJSONToADM(designPath, successHandler, error);
+            // read the design file and build ADM design according it
+            $.gb.fsUtils.read(designPath, successHandler);
         });
         return;
     };

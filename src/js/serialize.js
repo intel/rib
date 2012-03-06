@@ -278,9 +278,11 @@ $(function() {
      * AMD design root to this design, which sends a designReset event.
      *
      * @param {Object} obj The JSON object to parse
-     * @return {Boolean} True if the design is loaded successfully.
+     * @return {ADMNode/null} the design build from the text if success, null if failed.
      */
     function JSONToADM(text) {
+        var result, design, parsedObject;
+
         function add_child(parent, nodes) {
             if (typeof(nodes) !== "object") {
                 return false;
@@ -328,16 +330,15 @@ $(function() {
             return true;
         }
 
-        var result, design, parsedObject;
         try {
             parsedObject = $.parseJSON(text);
         } catch(e) {
+            parsedObject = null;
             alert("Invalid design file.");
-            return false;
         }
         if (parsedObject === null || parsedObject.type !== "Design") {
             console.log("obj is null or is not a 'Design' Node");
-            return false;
+            return null;
         }
 
         design = new ADMNode("Design");
@@ -347,33 +348,18 @@ $(function() {
         try {
             result = add_child(design, parsedObject.children);
         } catch(e) {
+            result = null;
             alert("Invalid design file.");
-            return false;
-        }
-
-        if (result) {
-            result = ADM.setDesignRoot(design);
-        } else {
-            console.error("Error while building design root from JSON");
-            result = false;
         }
 
         design.suppressEvents(false);
-        return result;
-    }
 
-
-    /*
-     * This function is loads a JSON template and creates a new ADM tree
-     */
-    function asyncJSONToADM(filePath, success, error) {
-        $.gb.fsUtils.read(filePath, function(result) {
-            if (JSONToADM(result)) {
-                success && success();
-            } else {
-                error && error();
-            }
-        });
+        if (result) {
+            return design;
+        } else {
+            console.error("Error while building design root from JSON");
+            return null;
+        }
     }
 
     /*******************************************************
@@ -658,7 +644,6 @@ $(function() {
     $.gb.ADMToJSON = ADMToJSON;
     $.gb.asyncADMToJSON = asyncADMToJSON;
     $.gb.JSONToADM = JSONToADM;
-    $.gb.asyncJSONToADM = asyncJSONToADM;
 
     $.gb.getDefaultHeaders = getDefaultHeaders;
     $.gb.getDesignHeaders = getDesignHeaders;
