@@ -77,9 +77,13 @@ function copyProperties(dest, src) {
             this.element
                 .addClass(this.widgetName)
                 .append('<div/>')
+                .children(':first')
+                    .addClass('property_title')
+                    .addClass('flex0')
+                    .end()
                 .append('<div/>')
                 .children(':last')
-                    .attr('id', 'property_content')
+                    .addClass('property_content')
                     .addClass('flex1');
 
             this.options.primaryTools = this._createPrimaryTools();
@@ -91,7 +95,6 @@ function copyProperties(dest, src) {
 
                 var newHeight = Math.round((el.parent().height()
                                 - $('.pageView').height()
-                                - $('#property_title').height()
                                 - 20) // height of ui-state-default + borders
                                 * 0.4);
                 el.height(newHeight);
@@ -243,7 +246,9 @@ function copyProperties(dest, src) {
                 showUid = false,
                 labelId, labelVal, valueId, valueVal, count,
                 widget = this,
-                p, props, options, code, o;
+                p, props, options, code, o,
+                title = this.element.find('.property_title'),
+                content = this.element.find('.property_content');
 
             // Clear the properties pane when nothing is selected
             if (node === null || node === undefined) {
@@ -422,12 +427,12 @@ function copyProperties(dest, src) {
                 window.parent.ADM.removeChild(node.getUid());
             });
 
-            $('table','#property_content').attr({ 'cellspacing': '0' });
-            $('th:odd, td:odd','#property_content')
+            $('table','.property_content').attr({ 'cellspacing': '0' });
+            $('th:odd, td:odd','.property_content')
                 .css({ 'border-top': '1px solid black',
                        'border-bottom': '1px solid black' });
-            $('td','#property_content').attr('align','left');
-            $('th','#property_content').attr('align','left')
+            $('td','.property_content').attr('align','left');
+            $('th','.property_content').attr('align','left')
                 .addClass('ui-helper-reset ui-state-default');
         },
     });

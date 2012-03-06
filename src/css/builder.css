@@ -642,14 +642,14 @@ body.ui-tabs.ui-widget {
     overflow-y: auto;
     overflow-x: hidden;
 }
-#property_title {
+.propertyView .property_title {
     background-image: url('images/propertiesTitleBar.png');
     background-repeat: repeat-x;
     height: 24px;
     font: 11px Semi-Bold #333333;
     text-shadow: 1px 1px 1px #fff;
 }
-.propertyView #property_content {
+.propertyView .property_content {
     background: #c8ced0;
 }
 .propertyView input.PropertyCheckBox {
