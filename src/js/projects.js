@@ -36,7 +36,7 @@ $(function () {
      * error callback passed the generated file error.
      *
      */
-    pmUtils.init = function (forEachProject, error) {
+    pmUtils.init = function (success, error) {
         var successReadData, errorCreateDir, onEnd,
             dirCount = 0,
             brokenList = [],
@@ -49,7 +49,7 @@ $(function () {
                 if (fineList.length === 0) {
                     // No project, create a default "Untitled" project
                     $.gb.pmUtils.createProject({"name": "Untitled"}, function () {
-                        forEachProject($.gb.pmUtils._activeProject);
+                        success && success();
                     });
                 } else {
                     // If there are some projects in sandbox, get the lastOpened project and open it
@@ -61,7 +61,7 @@ $(function () {
                             lastOpened = pid;
                         }
                     });
-                    $.gb.pmUtils.openProject(lastOpened);
+                    $.gb.pmUtils.openProject(lastOpened, success, error);
                 }
             }
         };
@@ -90,8 +90,6 @@ $(function () {
                     var dataObject = $.parseJSON(text);
                     // use the name of project folder as key, it's also PID
                     pmUtils._projectsInfo[e.name] = dataObject;
-                    // call projectView refresh
-                    forEachProject && forEachProject(e.name);
                     fineList.push(e.name);
                     onEnd();
                 }, function () {
@@ -176,15 +174,16 @@ $(function () {
             pmUtils.syncCurrentProject(function () {
                 // if the design has no page when setDesignRoot, a empty page will be added in
                 pmUtils._activeProject = newPid;
+                pmUtils._projectsInfo[newPid] = {};
+                pmUtils.setProject(newPid, options);
+                pmUtils.setAccessDate(newPid, new Date());
+
                 if (design && (design instanceof ADMNode)) {
                     ADM.setDesignRoot(design);
                 } else {
                     ADM.setDesignRoot(buildDesign());
                 }
                 pmUtils.designDirty = true;
-                pmUtils._projectsInfo[newPid] = {};
-                pmUtils.setProject(newPid, options);
-                pmUtils.setAccessDate(newPid, new Date());
                 pmUtils.syncProject(newPid, ADM.getDesignRoot(), success, error);
             });
         };
@@ -310,8 +309,6 @@ $(function () {
         }
         // if the required project is already be opened, just update access date
         if (pmUtils._activeProject === pid) {
-            // update access time
-            pmUtils.setAccessDate(pid, new Date());
             success && success();
             return;
         }
@@ -322,10 +319,10 @@ $(function () {
             if (design && (design instanceof ADMNode)) {
                 // set current pid as active pid
                 pmUtils._activeProject = pid;
-                // set the new design as design root
-                ADM.setDesignRoot(design);
                 // update access time
                 pmUtils.setAccessDate(pid, new Date());
+                // set the new design as design root
+                ADM.setDesignRoot(design);
                 success && success();
             } else {
                 error && error();

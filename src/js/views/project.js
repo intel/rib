@@ -124,6 +124,9 @@
                 // value is an object contains {"pid":XX, "date":XXX}
                 widget.createProjectBox(value.pid, container, widget);
             });
+            // Mark the active project box
+            $('#'+$.gb.pmUtils._activeProject, container)
+                .addClass('ui-state-active');
         },
 
         // Private functions
@@ -279,7 +282,7 @@
             widget.designRoot = d;
 
             // Finally, redraw our view since the ADMDesign root has changed
-            //widget.refresh(event, widget);
+            widget.refresh(event, widget);
         },
 
         _selectionChangedHandler: function(event, widget) {
@@ -361,12 +364,7 @@
                 var success = function () {
                     // show the layout tab
                     $(document.body).tabs('select', 1);
-                    // Mark the active project box
-                    $('#'+$.gb.pmUtils._activeProject, container)
-                        .addClass('ui-state-active');
                 };
-                $('.projectBox.ui-state-active', container)
-                    .removeClass('ui-state-active');
                 $.gb.pmUtils.openProject(pid, success);
             };
             cloneHandler = function () {
@@ -385,11 +383,6 @@
             box = $('<div/>').attr('id',pid)
                              .addClass('projectBox')
                              .appendTo(container);
-            if ($.gb.pmUtils._activeProject === pid) {
-                box.addClass('ui-state-active');
-            } else {
-                box.removeClass('ui-state-active');
-            }
             title = $('<div />').addClass('titleBar')
                         .append('<h1>' + $.gb.pmUtils.getName(pid) + '</h1>')
                         .append($('<div class="openButton"></div>').click(openHandler))
