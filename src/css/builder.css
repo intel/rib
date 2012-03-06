@@ -687,6 +687,9 @@ ul {
     padding-bottom: 20px;
     overflow: auto;
 }
+.paletteView img {
+    padding: 5px;
+}
 
 .ui-accordion .ui-accordion-header {
     padding-left: 1.5em;
