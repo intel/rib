@@ -664,7 +664,7 @@ body.ui-tabs.ui-widget {
     border: 0px;
     vertical-align: middle;
 }
-.propertyView form {
+.propertyView .propertyItems {
     margin: 0px;
     border: 0px;
     padding: 10px;
@@ -693,12 +693,12 @@ body.ui-tabs.ui-widget {
     padding: 0px;
     border: 0px;
     text-align: right;
-    width: 70px;
+    width: 60px;
 }
 .propertyView input {
     margin-left: 20px;
     height: 23px;
-    width: 170px;
+    width: 160px;
     margin: 0px;
     padding: 2px 5px;
     border: none;
@@ -709,6 +709,64 @@ body.ui-tabs.ui-widget {
     font-size: 12px;
     font-weight: bold;
     width: 173px;
+    height: 23px;
+}
+.propertyView fieldset {
+    display: inline;
+    width: 195px;
+    border: 0px;
+    margin: 0px;
+    padding: 0px 0px 50px 0px;
+}
+.propertyView #optionList li {
+    padding-top: 5px;
+    line-height: 20px;
+}
+.propertyView .labelText {
+    margin: 0px;
+    margin-left: 0px;
+    padding: 0px;
+    border: 0px;
+    text-align: center;
+    width: 70px;
+}
+.propertyView .labelValue {
+    margin: 0px;
+    margin-right: 30px;
+    padding: 0px;
+    border: 0px;
+    text-align: center;
+    width: 50px;
+}
+.propertyView #optionList li {
+    padding: 0px;
+    margin: 0px;
+    border: 0px;
+    margin-top: 5px;
+}
+.propertyView .optionText {
+    width: 70px;
+    margin-left: 10px;
+}
+.propertyView .optionValue {
+    width: 50px;
+    margin-left: 15px;
+}
+.propertyView .sortOption {
+    background-image: url("images/propertiesDragIconSmall.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    float: left;
+    width: 10px;
+    height: 23px;
+}
+.propertyView .deleteOption {
+    background-image: url("images/deleteButton_up.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    float: right;
+    margin: 0px;
+    width: 10px;
     height: 23px;
 }
 .propertyView .property_footer {

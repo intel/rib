@@ -243,10 +243,9 @@ function copyProperties(dest, src) {
 
         _showProperties: function(event) {
             var node = event.node,
-                showUid = false,
                 labelId, labelVal, valueId, valueVal, count,
-                widget = this,
-                p, props, options, code, o,
+                widget = this, type,  i, child, index, propType,
+                p, props, options, code, o, propertyList,
                 title = this.element.find('.property_title'),
                 content = this.element.find('.property_content');
 
@@ -266,7 +265,7 @@ function copyProperties(dest, src) {
                 .children(':first')
                     .text(BWidget.getDisplayLabel(type));
             content.empty()
-                .append('<form><ul/></form>')
+                .append('<div class="propertyItems"><ul/></div>')
                 .find('ul')
                 .addClass("propertyList");
             propertyList = content.find(".propertyList");
@@ -278,7 +277,7 @@ function copyProperties(dest, src) {
                 valueId = p+'-value';
                 valueVal = props[p];
                 propType = BWidget.getPropertyType(type, p);
-                code = $('<li/>')//.addClass('mt11')
+                code = $('<li/>')
                     .appendTo(propertyList);
                 //display property of widget
                 switch (propType) {
@@ -298,6 +297,109 @@ function copyProperties(dest, src) {
                         }
                         break;
                     case "record-array":
+                        $('<label for=' + p + '>' + labelVal + '</label>')
+                            .addClass('fl leftLabel')
+                            .appendTo(code);
+                        $('<fieldset><ul/></fieldset>')
+                            .addClass('fr')
+                            .children('ul')
+                            .attr('id', 'optionList')
+                            .end()
+                            .appendTo(code);
+                        $('<li/>').append('<label for=text> Text </label>')
+                            .children(':first')
+                            .addClass('labelText fl')
+                            .end()
+                            .append('<label for=value> Value </label>')
+                            .children(':last')
+                            .addClass('labelValue fr')
+                            .end()
+                            .appendTo(code.find('#optionList'));
+                        $('<li><ul/></li>')
+                            .children(':first')
+                            .attr('id', "pr_ol")
+                            .end()
+                            .appendTo(code.find('#optionList'));
+                        //insert options into select menu
+                        for (i = 0; i< props[p].children.length; i ++){
+                            child = props[p].children[i];
+                            $('<li/>').data('index', i)
+                                .append('<span class="sortOption"/>')
+                                .append('<input type="text"/>')
+                                .children(':last')
+                                .val(child.text)
+                                .addClass('optionText')
+                                .change(node, function (event) {
+                                     index = $(this).parent().data('index');
+                                     props[p].children[index].text = $(this).val();
+                                     node.fireEvent("modelUpdated",
+                                                   {type: "propertyChanged",
+                                                    node: node,
+                                                    property: p});
+                                })
+                                .end()
+                                .append('<input type="text"/>')
+                                .children(':last')
+                                .val( child.value)
+                                .addClass('optionValue')
+                                .change(node, function (event) {
+                                    index = $(this).parent().data('index');
+                                    props[p].children[index].value = $(this).val();
+                                    node.fireEvent("modelUpdated",
+                                                  {type: "propertyChanged",
+                                                   node: node,
+                                                   property: p});
+                                })
+                                .end()
+                                .append('<span class="deleteOption"/>')
+                                //add delete option handler
+                                .children(':last')
+                                .click(function(e) {
+                                    try {
+                                        index = $(this).parent().data('index');
+                                        props[p].children.splice(index, 1);
+                                        node.fireEvent("modelUpdated",
+                                                      {type: "propertyChanged",
+                                                       node: node,
+                                                       property: p});
+                                    }
+                                    catch (err) {
+                                        console.error(err.message);
+                                    }
+                                    e.stopPropagation();
+                                    return false;
+                                })
+                                .end()
+                                .appendTo(code.find('#pr_ol'));
+                        }
+
+                        //add add items handler
+                        $('<li><label for=items><u>+ add item</u></label></li>')
+                            .children(':first')
+                            .addClass('rightLabel fl')
+                            .attr('id', 'addOptionItem')
+                            .end()
+                            .appendTo(code.find('#optionList'));
+                        code.find('#addOptionItem')
+                            .click(function(e) {
+                                try {
+                                    var optionItem = {};
+                                    optionItem.text = "Option";
+                                    optionItem.value = "Value";
+                                    props[p].children.push(optionItem);
+                                    node.fireEvent("modelUpdated",
+                                                  {type: "propertyChanged",
+                                                   node: node,
+                                                   property: p});
+                                }
+                                catch (err) {
+                                    console.error(err.message);
+                                }
+                                e.stopPropagation();
+                                return false;
+                            });
+
+                        // make option sortable
                         break;
                     default:
                         $('<label for=' + p + '>' + labelVal + '</label>')
