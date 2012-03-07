@@ -258,30 +258,31 @@
                 .append('<div/>')
                 .children(':first')
                 .addClass('flex1 vbox wrap_left')
-                .append('<form><legend/><ul>' +
-                        '<li class="mt23"> <label for="title">Page Title</label>' +
+                .append('<form><ul><li/>' +
+                        '<li> <label for="title">Page Title</label>' +
                         '<input type ="text" id="pageTitle" value=""></li>' +
                         '<li class="mt23"><label for="Template">page Template</label>' +
                         '<select id="pagePicker" size="1"></select></li>' +
-                        '<li class="m150"><label for="Layout">Layout</label>' +
+                        '<li class="m150 mt30"><label for="Layout">Layout</label>' +
                         '<fieldset><ul>' +
-                        '<li class="fieldLi">' +
+                        '<li>' +
                         '<input class="fieldInput" type="radio" name="Layout"/>' +
                         '<label class="fieldLabel" for="layout">Normal Page</label></li>' +
-                        '<li class="fieldLi">' +
+                        '<li>' +
                         '<input class="fieldInput" type="radio" name="Layout"/>' +
                         '<label class="fieldLabel" for="layout">Dialog</label></li>' +
-                        '<li class="fieldLi">' +
+                        '<li>' +
                         '<input id="header_layout" class="fieldInput" type="checkbox" name="Header"/>' +
                         '<label class="fieldLabel" for="layout">Header</label></li>' +
-                        '<li class="fieldLi">' +
+                        '<li>' +
                         '<input id="footer_layout" class="fieldInput" type="checkbox" name="Footer"/>' +
                         '<label class="fieldLabel" for="layout">Footer</label></li>' +
                         '</ul></fieldset></li>' +
-                        '<li class="mt150"><input type="submit" value="Add Page" class="buttonStyle mr120 fr" />' +
-                        '<u id="pageCancel" class="mr_200 fr">Cancel</u></li>' +
                         '</ul>' +
-                        '</form>')
+                        '</form>' +
+                        '<div class="div-bottom">'+
+                        '<p class="bottom"><input type="submit" value="Add Page" class="buttonStyle mr120 fr" />' +
+                        '<u id="pageCancel" class="mr_200 fr">Cancel</u></p></div>' )
                 .end()
                 .append('<div/>')
                 .children(':last')
@@ -347,6 +348,7 @@
                      catch (err) {
                          console.error(err.description);
                      }
+                     newPageDialog.find("#pageTitle").val("");
                      $("#pageDialog").dialog("close");
                      return false;
               });

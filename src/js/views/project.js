@@ -148,6 +148,7 @@
                             catch (err) {
                                 console.error(err.description);
                             }
+                            $('#projectName').val('');
                             projectDialog.dialog("close");
                             e.stopPropagation();
                             return false;
@@ -316,8 +317,10 @@
                         '<select id="themePicker" size="4"></select></li>' +
                         '<li class="mt50"><u id="uploadTheme" class="fr mr40">Upload Theme</u></li>' +
                         */
-                        '<li class="mt200"><input type="submit" value="Done" class="buttonStyle mr40 fr" />' +
-                        '</li></ul></form>')
+                        '</ul></form>' +
+                        '<div class="div-bottom">'+
+                        '<p class="bottom"><input type="submit" value="Done" class="buttonStyle mr120 fr" />' +
+                        '</p></div>')
                 .end()
                 .append('<div/>')
                 .children(':last')

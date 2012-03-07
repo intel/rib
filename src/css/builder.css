@@ -766,6 +766,10 @@ ul {
     border-radius: 8px;
     -webkit-background-clip: padding-box;
     background-clip: padding-box;
+    font-size: 14px;
+    font-weight: Semi-Bold;
+    font-color: #333;
+
 }
 .ui-dialog {
     padding: 0px;
@@ -806,6 +810,12 @@ ul {
     background-position: center;
     background-repeat: no-repeat;
 }
+.gbDialog .div-bottom{
+    position:absolute;
+    bottom:0px;
+    width:385px;
+    height:80px;
+}
 .gbDialog fieldset {
     padding: 0px;
     margin: 0px;
@@ -814,28 +824,34 @@ ul {
 .gbDialog legend {
     height: 10px;
 }
+.gbDialog .bottom {
+    position:absolute;
+    bottom:32px;
+    left:145px;
+}
 .gbDialog label {
     float: left;
-    font-size: 12px;
-    font-weight: Semi-Bold;
-    font-color: #333;
     text-align: right;
-    width: 114px;
-    margin-left: 11px;
-    margin-right: 0px;
+    width: 125px;
+    margin-left: 0px;
+    margin-right: 20px;
     border: 0px;
     padding: 0px;
 }
-.gbDialog input {
-    margin-left: 20px;
-    height: 23px;
-    width: 200px;
+.gbDialog input[type="text"] {
+    padding:0px;
+    margin-left: 0px;
+    height: 19px;
+    width: 216px;
+}
+.gbDialog form {
+    height:100%;
 }
 .gbDialog select {
-    margin-left: 20px;
-    font-size: 11px;
-    width: 200px;
-    background: #eaf1f4
+    margin-left: 0px;
+    width: 220px;
+    height:23px;
+    background: #eaf1f4;
 }
 .gbDialog span {
     float: right;
@@ -851,6 +867,9 @@ ul {
 }
 .mt15 {
     margin-top: 15px;
+}
+.mt30 {
+    margin-top:30px;
 }
 .mt200 {
     margin-top: 200px;
@@ -910,13 +929,12 @@ ul {
     padding: 0;
     list-style-type: none;
 }
-.gbDialog ul li {
+.gbDialog li {
     clear: both;
     height: 23px;
 }
 .gbDialog fieldset {
     display: inline;
-    width: 200px;
 }
 .gbDialog .fieldLi {
     clear: both;
