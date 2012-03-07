@@ -539,7 +539,7 @@ $(function () {
 
         reader = new FileReader();
         reader.onloadend = function(e) {
-            design = $.gb.JSONToADM(e.target.result);
+            design = $.gb.zipToADM(e.target.result);
             if (design && (design instanceof ADMNode)) {
                 $.gb.pmUtils.createProject(options, success, error, design);
             } else {
@@ -550,7 +550,7 @@ $(function () {
         reader.onError = function () {
             console.error("Read imported file error.");
         };
-        reader.readAsText(file); // Read the file as plaintext.
+        reader.readAsBinaryString(file);
     };
 
     /**
@@ -643,7 +643,7 @@ $(function () {
      */
     pmUtils.sortByAccessDate = function (arr) {
         var orderFunc = function (a, b) {
-            return (b.date > a.date);
+            return (b.date - a.date);
         };
         return arr.sort(orderFunc);
     };

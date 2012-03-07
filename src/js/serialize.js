@@ -362,6 +362,25 @@ $(function() {
         }
     }
 
+    /*
+     * This function is to find valid design.json in imported file and build ADMTree according it
+     */
+    function zipToADM(data) {
+        var zip, designData;
+        try {
+            zip = new ZipFile(data);
+            zip.filelist.forEach(function(zipInfo, idx, array) {
+                // if find a file name contians "json" then get its data
+                if (zipInfo.filename.indexOf("json") !== -1) {
+                    designData = zip.extract(zipInfo.filename);
+                }
+            });
+        } catch (e) {
+            designData = data;
+        }
+        return JSONToADM(designData);
+    }
+
     /*******************************************************
      * ADM to JSON Direction
      ******************************************************/
@@ -644,6 +663,7 @@ $(function() {
     $.gb.ADMToJSON = ADMToJSON;
     $.gb.asyncADMToJSON = asyncADMToJSON;
     $.gb.JSONToADM = JSONToADM;
+    $.gb.zipToADM = zipToADM;
 
     $.gb.getDefaultHeaders = getDefaultHeaders;
     $.gb.getDesignHeaders = getDesignHeaders;
