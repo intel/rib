@@ -8,45 +8,6 @@
  *
  */
 "use strict";
-function validValue(element, type) {
-    var ret = null, value = element.val();
-    switch (type) {
-        case 'boolean':
-            ret = element.is(':checked');;
-            break;
-        case 'float':
-            ret = parseFloat(value);
-            break;
-        case 'integer':
-            ret = parseInt(value, 10);
-            break;
-        case 'number':
-            ret = Number(value);
-            break;
-        case 'object':
-            ret = Object(value);
-            break;
-        case 'string':
-            ret = String(value);
-            break;
-        default:
-            ret = value;
-            break;
-    }
-    return ret;
-};
-
-function copyProperties(dest, src) {
-    var text, value;
-
-    text = src.getProperty("text");
-    dest.setProperty("text", text);
-
-    value = src.getProperty("value");
-    dest.setProperty("value", value);
-};
-
-
 // Property view widget
 
 (function($, undefined) {
@@ -484,175 +445,33 @@ function copyProperties(dest, src) {
                     return false;
                 });
 
-            /*
-            props = node.getProperties();
-            options = node.getPropertyOptions();
-            for (p in props) {
-                if (node.getType() === "SelectMenu" && p === "options") {
-                    continue;
+            function validValue(element, type) {
+                var ret = null, value = element.val();
+                switch (type) {
+                    case 'boolean':
+                        ret = element.is(':checked');;
+                        break;
+                    case 'float':
+                        ret = parseFloat(value);
+                        break;
+                    case 'integer':
+                        ret = parseInt(value, 10);
+                        break;
+                    case 'number':
+                        ret = Number(value);
+                        break;
+                    case 'object':
+                        ret = Object(value);
+                        break;
+                    case 'string':
+                        ret = String(value);
+                        break;
+                    default:
+                        ret = value;
+                        break;
                 }
-                labelVal = p.replace(/_/g,'-');
-                labelId = p+'-label';
-                valueId = p+'-value';
-                valueVal = props[p];
-                if (options[p]) {
-                    code = '<tr><th id="' + labelId + '">' + labelVal +
-                               '</th>' + '<td width="100%">' +
-                               '<select id="' + valueId + '">';
-                    for (o in options[p]) {
-                        if (options[p][o] == props[p]) {
-                            code += '<option value="' + options[p][o] +
-                                    '" selected=true>' + options[p][o] +
-                                    '</option>';
-                        } else {
-                            code += '<option value="' + options[p][o] + '">' +
-                                    options[p][o] + '</option>';
-                        }
-                    }
-                    code += '</select>' + '</td></tr>';
-                    $('#property_content').children().last().append(code);
-                } else if(BWidget.getPropertyType(node.getType(), p) === "boolean") {
-                    $('#property_content').children().last()
-                        .append('<tr><td><input type="checkbox" id="' + valueId +
-                                '" class="PropertyCheckBox"></td>' +
-                                '<td>' + labelVal + '</td>' +
-                                '</tr>');
-
-                    if(node.getProperty (p) === true) {
-                        $("#"+valueId).attr("checked", true);
-                    }
-                }
-                else {
-                    $('#property_content').children().last()
-                        .append('<tr><th id="' + labelId + '">' + labelVal +
-                                '</th>' +
-                                '<td>' +
-                                '<input class="full" id="' + valueId + '" />' +
-                                '</td></tr>');
-                    $('#'+valueId).val(valueVal);
-                }
-                $('#' + valueId).change(node, function (event) {
-                    var updated, node, element, type, value;
-                    updated = event.srcElement.id.replace(/-value/,''),
-                    node = event.data;
-
-                    if (node === null || node === undefined) {
-                        throw new Error("Missing node, prop change failed!");
-                        return;
-                    }
-                    value = validValue($(this),
-                        BWidget.getPropertyType(node.getType(), updated));
-                    ADM.setProperty(node, updated, value);
-                });
-            }
-
-            if (node.getType() === "SelectMenu") {
-                widget.currentNode = node;
-                var children = node.getChildren();
-                $('#property_content')
-                    .append('<table id="sortable">' +
-                            '</table>');
-                $('#sortable').sortable({
-                    containment: 'parent',
-                    axis: 'y',
-                    items: 'tr:not(.sortable-title)',
-                    start: function(event, ui){
-                        widget.originalRowIndex = ui.item[0].rowIndex - 1;
-                    },
-                    stop: function(event, ui){
-                        var original = widget.originalRowIndex;
-                        widget.originalRowIndex = ui.item[0].rowIndex - 1;
-                        var current = widget.originalRowIndex;
-                        var node = widget.currentNode;
-                        var children = node.getChildren();
-                        var tmp = new ADMNode('Option');
-                        var i;
-                        if (current !== original) {
-                            if (current < original) {
-                                copyProperties(tmp, children[original]);
-                                for (i = original; i > current; i--) {
-                                    copyProperties(children[i], children[i-1]);
-                                }
-                                copyProperties(children[current], tmp);
-                            }
-                            else {
-                                copyProperties(tmp, children[original]);
-                                for (i = original + 1; i <= current; i++) {
-                                    copyProperties(children[i-1], children[i]);
-                                }
-                                copyProperties(children[current], tmp);
-                            }
-                        }
-                    },
-                });
-                $('#property_content').children().last()
-                    .append('<tr class="sortable-title"><td>Options: </td>' +
-                        '<td>Text</td><td>Value</td></tr>');
-                for (var i=0; i<children.length; i++) {
-                    var subnode = children[i];
-                    var subprops = subnode.getProperties();
-                    $('#property_content').children().last()
-                        .append('<tr id="' + i + '">' +
-                                '<td>' +
-                                '<img ' +
-                             'src="src/css/images/verticalDragger.png" />' +
-                                '</td>' +
-                                '<td>' +
-                                '<input id="option-text-' + i +
-                                '" size="5" />'+
-                                '</td>' +
-                                '<td>' +
-                                '<input id="option-value-' +i+ '" size="5" />' +
-                                '</td><td><button id="option-delete-' +
-                                i + '">-</button></td></tr>');
-                    $('#option-text-'+i).val(subprops["text"]);
-                    $('#option-value-'+i).val(subprops["value"]);
-                    $('#option-text-'+i).change(subnode, function(event) {
-                        var updated = event.srcElement.id,
-                            node = event.data,
-                            value,
-                            element = $('#' + updated);
-                        value = validValue($(this),
-                            BWidget.getPropertyType(node.getType(), "text"));
-                        ADM.setProperty(node, "text", value);
-                    });
-                    $('#option-value-'+i).change(subnode, function(event) {
-                        var updated = event.srcElement.id,
-                            node = event.data,
-                            value,
-                            element = $('#' + updated);
-                        value = validValue($(this),
-                            BWidget.getPropertyType(node.getType(), "value"));
-                        ADM.setProperty(node, "value", value);
-                    });
-                    $('#option-delete-'+i).click(subnode, function(event){
-                        var node = event.data;
-                        ADM.removeChild(node.getUid(), false);
-                    });
-                }
-                $('#property_content').children().last()
-                    .append('<button id="option-add">Add</button><br><br>');
-                $('#option-add').click(node, function(event){
-                    var node = event.data;
-                    var child = new ADMNode('Option');
-                    ADM.addChild(node, child);
-                });
-            }
-
-            $('#property_content').children().last()
-                .append('<button id="delete">Delete</button>');
-            $('#delete').click(function() {
-                window.parent.ADM.removeChild(node.getUid());
-            });
-
-            $('table','.property_content').attr({ 'cellspacing': '0' });
-            $('th:odd, td:odd','.property_content')
-                .css({ 'border-top': '1px solid black',
-                       'border-bottom': '1px solid black' });
-            $('td','.property_content').attr('align','left');
-            $('th','.property_content').attr('align','left')
-                .addClass('ui-helper-reset ui-state-default');
-            */
+                return ret;
+            };
         },
     });
 })(jQuery);
