@@ -364,6 +364,16 @@
             deleteHandler = function () {
                 var success = function (pid) {
                     widget.refresh();
+                    // If the deleted project it the active project
+                    // or there is no project then find the last opened project
+                    // and open it, create a new project in no project case
+                    if (!$.gb.pmUtils._activeProject) {
+                        $(document.body).one("tabsselect", function (e, tab) {
+                            if (tab.index === 1) {
+                                $.gb.pmUtils.showLastOpened();
+                            }
+                        });
+                    }
                 };
                 $.gb.pmUtils.deleteProject(pid, success);
             };

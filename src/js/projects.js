@@ -41,26 +41,10 @@ $(function () {
             fineList = [];
 
         onEnd = function () {
-            var lastOpened, allHandled, pInfos;
+            var allHandled;
             allHandled = brokenList.length + fineList.length;
             if (allHandled === dirCount) {
-                if (fineList.length === 0) {
-                    // No project, create a default "Untitled" project
-                    $.gb.pmUtils.createProject({"name": "Untitled"}, function () {
-                        success && success();
-                    });
-                } else {
-                    // If there are some projects in sandbox, get the lastOpened project and open it
-                    pInfos = $.gb.pmUtils._projectsInfo;
-                    $.each(fineList, function (i, pid) {
-                        // if there is no active project, or the project access date is newer,
-                        // make this project as the active Project
-                        if (!lastOpened || pInfos[pid].accessDate > pInfos[lastOpened].accessDate) {
-                            lastOpened = pid;
-                        }
-                    });
-                    $.gb.pmUtils.openProject(lastOpened, success, error);
-                }
+                $.gb.pmUtils.showLastOpened(success, error);
             }
         };
         // success handler for reading projects directory
@@ -113,6 +97,34 @@ $(function () {
     }
 
     /***************** APIs to manipulate projects *************************/
+    /* Asynchronous. find the last opened project and show it, if there is no
+     * project in sandbox, then create an "Untitled" project.
+     * @param {function()=} success callback. An optional
+     * @param {function(FileError)=} error callback. An optional
+     *
+     */
+    pmUtils.showLastOpened = function (success, error) {
+        var pid, pInfos, lastOpened;
+        lastOpened = null;
+        pInfos = $.gb.pmUtils._projectsInfo;
+        // Go through pInfos to get the last opened
+        for (pid in pInfos) {
+            if (pInfos.hasOwnProperty(pid)) {
+                if (!lastOpened || pInfos[pid].accessDate > pInfos[lastOpened].accessDate) {
+                    lastOpened = pid;
+                }
+            }
+        }
+        if (lastOpened) {
+            $.gb.pmUtils.openProject(lastOpened, success, error);
+        } else {
+            // No project, create a default "Untitled" project
+            $.gb.pmUtils.createProject({"name": "Untitled"}, function () {
+                success && success();
+            });
+        }
+    };
+
     /* Asynchronous. save current project to sandbox.
      * @param {function()=} success callback. An optional
      * @param {function(FileError)=} error callback. An optional
