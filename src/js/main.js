@@ -554,7 +554,14 @@ $(function() {
         $(document).delegate('#exportProj', "click", $.gb.exportPackage);
 
         // init pmUtils
-        $.gb.pmUtils.init();
+        $.gb.pmUtils.init(function () {
+            var autoSave = function () {
+                $.gb.pmUtils.syncCurrentProject(function () {
+                    setTimeout(autoSave, 3000);
+                });
+            };
+            autoSave();
+        });
         $(document).ready( function () { $(window).trigger('resize'); });
     }
 

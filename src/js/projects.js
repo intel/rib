@@ -574,6 +574,10 @@ $(function () {
         };
         syncInfo = function (pid, success, error) {
             var pInfo, metadataPath, successHandler;
+            if (!pmUtils.pInfoDirty) {
+                success && success();
+                return;
+            }
             pInfo = pmUtils._projectsInfo[pid];
             metadataPath = pmUtils.getMetadataPath(pid);
             successHandler = function () {
@@ -588,10 +592,10 @@ $(function () {
             syncDesign(pid, design, function () {
                 // clean design dirty flag
                 pmUtils.designDirty = false;
-                pmUtils.pInfoDirty && syncInfo(pid, success, error);
+                syncInfo(pid, success, error);
             }, error);
         } else {
-            pmUtils.pInfoDirty && syncInfo(pid, success, error);
+            syncInfo(pid, success, error);
         }
     };
 
