@@ -400,6 +400,24 @@ function copyProperties(dest, src) {
                             });
 
                         // make option sortable
+                        content.find('#pr_ol').sortable({
+                            axis: 'y',
+                            containment: content.find('#pr_ol'),
+                            start: function(event, ui) {
+                                widget.origRowIndex = ui.item.index();
+                            },
+                            stop: function(event, ui) {
+                                var optionItem, curIndex = ui.item.index(),
+                                    origIndex = widget.origRowIndex;
+                                    optionItem = props[p].children.splice(origIndex,1)[0];
+
+                                props[p].children.splice(curIndex, 0, optionItem);
+                                node.fireEvent("modelUpdated",
+                                              {type: "propertyChanged",
+                                               node: node,
+                                               property: p});
+                            },
+                        });
                         break;
                     default:
                         $('<label for=' + p + '>' + labelVal + '</label>')
