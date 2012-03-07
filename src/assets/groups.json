@@ -6,7 +6,7 @@
         "tizen_input_color": ["ColorPicker", "ColorPickerButton",
                         "ColorPalette", "ColorTitle", "HsvPicker"]
     },
-    "Functinal Grouping": [
+    "Functional Groups": [
         "Button",
         "#0.atomic groups.jqm_input_ungrouped",
         {
@@ -30,9 +30,9 @@
     "Widget Sets": [
         {
             "jQuery Mobile": [ "Button","#0.atomic groups.jqm_input_ungrouped",
-                "#0.Functinal Grouping.2.Input.1.Text",
+                "#0.Functional Groups.2.Input.1.Text",
                 "#0.atomic groups.jqm_input_boolean",
-                "#0.Functinal Grouping.2.Layout"
+                "#0.Functional Groups.2.Layout"
             ],
             "Tizen Widgets": [ "OptionHeader",  "Switch",
                 "#0.atomic groups.tizen_input_date",
