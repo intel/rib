@@ -373,6 +373,10 @@
             var el, tools, type = ui.panel.id;
             el = $('#'+type+' .stage');
 
+            // save current project when change to project view
+            if (type === "projectView") {
+                $.gb.pmUtils.syncCurrentProject();
+            }
             // Expose any primary tools for this view
             tools = $(el)[type]('option', 'primaryTools');
             $('.tools-primary').children().hide();
