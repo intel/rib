@@ -334,7 +334,6 @@
 
             $('.widgetView').each( function () {
                 $(this).widgetView();
-                $(this).widgetView('option', 'model', ADM);
                 widget._bindResizeEvent(this, 'widgetView');
             });
 
