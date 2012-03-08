@@ -360,7 +360,7 @@ ADM.getSelectedNode = function () {
  * @throws {Error} If node is invalid.
  */
 ADM.setSelected = function (nodeRef) {
-    var uid = null, node = ADM.toNode(nodeRef);
+    var uid = null, node = ADM.toNode(nodeRef), page = node;
     if (node === undefined) {
         console.warn("Warning: new selected widget not found");
         return false;
@@ -377,6 +377,11 @@ ADM.setSelected = function (nodeRef) {
 
         uid = node.getUid();
     }
+
+    while (page && page.getType() !== "Page")
+        page = page.getParent();
+    if (page)
+        ADM.setActivePage(page);
 
     if (ADM._selection !== node) {
         ADM._selection = node;
