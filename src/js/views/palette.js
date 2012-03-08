@@ -95,10 +95,8 @@
 
                         // Filter out those that will not accept this widget
                         return s.filter( function(index) {
-                            var id = $(this).attr('data-uid'), node, wt;
-                            node = a.getDesignRoot().findNodeByUid(id);
-                            wt = node.getType();
-                            return a.canAddChild(node, t);
+                            var id = $(this).attr('data-uid');
+                            return id && a.canAddChild(id, t);
                         });
                     },
                     start: function(event,ui){
