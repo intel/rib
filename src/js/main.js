@@ -256,10 +256,10 @@
         _constructApp: function(container) {
             var widget = this;
             $('<ul/>').appendTo(container)
-                .append('<li><a href="#projectView">Project</a></li>')
-                .append('<li><a href="#layoutView">Layout</a></li>')
-                .append('<li><a href="#codeView">Code</a></li>')
-                .append('<li><a href="#liveView">Preview</a></li>');
+                .append('<li><a class="projectViewButton" href="#projectView"></a></li>')
+                .append('<li><a class="layoutViewButton" href="#layoutView"></a></li>')
+                .append('<li><a class="codeViewButton" href="#codeView"></a></li>')
+                .append('<li><a class="liveViewButton" href="#liveView"></a></li>');
 
             // Add the view plugins
             this.ui.projectView = $('<div/>').appendTo(container)

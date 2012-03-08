@@ -196,6 +196,8 @@ body.ui-tabs.ui-widget {
     -webkit-border-bottom-left-radius: 0px;
     -webkit-border-bottom-right-radius: 0px;
     margin-right: 0px !important;
+    border: none;
+    background: none;
 }
 .navbar > ul.ui-tabs-nav li:first-child {
     -webkit-border-top-left-radius: .5em !important;
@@ -227,6 +229,11 @@ body.ui-tabs.ui-widget {
     text-transform: uppercase;
     margin-top: 6px;
     margin-bottom: 2px;
+}
+
+.navbar > ul.ui-tabs-nav li a {
+    padding:0;
+    height: 32px;
 }
 
 /*
@@ -1344,4 +1351,48 @@ body.ui-tabs.ui-widget {
 }
 input.screenCoordinate::-webkit-inner-spin-button {
     -webkit-appearance: none
+}
+
+.projectViewButton {
+    background: url("images/homeButton_up.png") no-repeat 0 0;
+    width: 45px;
+}
+.projectViewButton:hover,
+.projectViewButton:active {
+    background-image: url("images/homeButton_active.png");
+}
+.ui-tabs-selected >.projectViewButton {
+    background-image: url("images/homeButton_down.png");
+}
+.layoutViewButton {
+    background: url("images/layoutButton_up.png") no-repeat 0 0;
+    width: 80px;
+}
+.layoutViewButton:hover,
+.layoutViewButton:active {
+    background-image: url("images/layoutButton_active.png");
+}
+.ui-tabs-selected >.layoutViewButton {
+    background-image: url("images/layoutButton_down.png");
+}
+.codeViewButton {
+    background: url("images/codeButton_up.png") no-repeat 0 0;
+    width: 71px;
+}
+.codeViewButton:hover,
+.codeViewButton:active {
+    background-image: url("images/codeButton_active.png");
+}
+.ui-tabs-selected >.codeViewButton {
+    background-image: url("images/codeButton_down.png");
+}
+.liveViewButton {
+    background: url("images/previewButton_up.png") no-repeat 0 0;
+    width: 87px;
+}
+.liveViewButton:active {
+    background-image: url("images/previewButton_active.png");
+}
+.ui-tabs-selected >.liveViewButton {
+    background-image: url("images/previewButton_down.png");
 }
