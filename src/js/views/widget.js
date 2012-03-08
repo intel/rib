@@ -14,49 +14,12 @@
 
 (function($, undefined) {
 
-    $.widget('gb.widgetView', {
+    $.widget('gb.widgetView',  $.gb.treeView, {
 
         _create: function() {
             var widget = this;
-            widget.element.addClass('gbTreeView');
             $.getJSON("src/assets/groups.json", function (groups) {
-                var listSubGroups = function (container, group) {
-                    $.each(group, function(i , v) {
-                        if ( $.isPlainObject(v)) {
-                            //This is group definition
-                            $.each(v, function(name , value) {
-                                var groupNode;
-                                if (name === "atomic groups") return true;
-                                container.prev().prev().addClass('folder')
-                                    .removeClass('singleItem').html('');
-                                groupNode = $('<li/>')
-                                        .appendTo(container)
-                                        .append($('<span/>').addClass('singleItem').html("&#x2022;"))
-                                        .append($('<a/>')
-                                            .append($('<span>').text(name).addClass('widgetType'))
-                                            .click(function (e) {
-                                                e.stopPropagation();
-                                                widget.element.find('.ui-selected')
-                                                    .removeClass('ui-selected')
-                                                    .removeClass('ui-state-active');
-                                                $(this).addClass('ui-state-active')
-                                                    .addClass('ui-selected');
-                                                $(':gb-paletteView').paletteView('option',
-                                                    "model", value);
-
-                                            })
-                                        )
-                                        .click( function (e) {
-                                            e.stopPropagation();
-                                            $(this).toggleClass("close")
-                                                .children("ul").toggle();
-                                        });
-                                listSubGroups($('<ul/>').addClass('widgetGroup')
-                                        .appendTo(groupNode), value);
-                            });
-                        }
-                    });
-                }, resolveRefs = function (root, data) {
+                var resolveRefs = function (root, data) {
                     $.each(data, function(name, value) {
                         if (value &&  typeof value == "string" && value.indexOf('#') == 0) {
                             var refObj = root;
@@ -69,22 +32,15 @@
                             resolveRefs(root, value);
                     });
                 };
-                try{
-                    var groupContainer = $('<ul/>').appendTo(widget.element);
-                    resolveRefs(groups, groups);
-                    listSubGroups(groupContainer, groups);
-                    $('> li > a', groupContainer).first().trigger('click');
-                }catch (e) {
-                    alert(e);
-                }
-
+                resolveRefs(groups, groups);
+                widget._setOption("model", groups);
+                widget.findDomNode(groups[0]['Functional Groups']).trigger('click');
             });
             return this;
         },
 
-        destroy: function() {
-            // TODO: unbind any ADM event handlers
-            $(this.element).find('.'+this.widgetName).remove();
+        _nodeSelected: function (treeModelNode, data) {
+            $(':gb-paletteView').paletteView('option', "model", treeModelNode);
         },
 
         resize: function(event, widget) {

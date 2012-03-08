@@ -1,5 +1,5 @@
 [{
-    "atomic groups": {
+    "_hidden_node": {
         "jqm_input_ungrouped":[ "Label", "Slider", "SelectMenu", "Checkbox"],
         "jqm_input_boolean":["ToggleSwitch", "RadioButton"],
         "tizen_input_date":["DateTimePicker", "CalendarPicker"],
@@ -8,15 +8,15 @@
     },
     "Functional Groups": [
         "Button",
-        "#0.atomic groups.jqm_input_ungrouped",
+        "#0._hidden_node.jqm_input_ungrouped",
         {
             "Input": [
                 "OptionHeader",
                 {
                     "Text": ["TextInput", "TextArea"],
-                    "Boolean": ["#0.atomic groups.jqm_input_boolean", "Switch"],
-                    "Date & Time": ["#0.atomic groups.tizen_input_date"],
-                    "Color": ["#0.atomic groups.tizen_input_color"]
+                    "Boolean": ["#0._hidden_node.jqm_input_boolean", "Switch"],
+                    "Date & Time": ["#0._hidden_node.tizen_input_date"],
+                    "Color": ["#0._hidden_node.tizen_input_color"]
                 }
             ],
             "Output": ["ProgressBar"],
@@ -29,14 +29,14 @@
 
     "Widget Sets": [
         {
-            "jQuery Mobile": [ "Button","#0.atomic groups.jqm_input_ungrouped",
+            "jQuery Mobile": [ "Button","#0._hidden_node.jqm_input_ungrouped",
                 "#0.Functional Groups.2.Input.1.Text",
-                "#0.atomic groups.jqm_input_boolean",
+                "#0._hidden_node.jqm_input_boolean",
                 "#0.Functional Groups.2.Layout"
             ],
             "Tizen Widgets": [ "OptionHeader",  "Switch",
-                "#0.atomic groups.tizen_input_date",
-                "#0.atomic groups.tizen_input_color", "ProgressBar"
+                "#0._hidden_node.tizen_input_date",
+                "#0._hidden_node.tizen_input_color", "ProgressBar"
             ]
         }
     ]

@@ -51,7 +51,7 @@
         },
 
         _createTreeView: function (container, rootContainer, node) {
-            var widget = this;
+            var widget = this, selected = widget._getSelected?widget._getSelected():null;
             $.each(node, function(i , v) {
                 if ( $.isPlainObject(v)) {
                     //This is children definition
@@ -78,7 +78,12 @@
                                         widget._setSelected($(this));
                                         return false;
                                     })
-                                    .each(function () { $(this).data('origin_node', v._origin_node?v._origin_node:value)})
+                                    .each(function () {
+                                        var origin_node = v._origin_node?v._origin_node:value;
+                                        $(this).data('origin_node', origin_node);
+                                        if (origin_node === selected)
+                                            widget._setSelected($(this));
+                                    })
                                 );
                         if (typeof widget._render === "function")
                             widget._render(folderNode, v._origin_node);

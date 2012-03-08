@@ -13,17 +13,12 @@
 
 (function($, undefined) {
 
-    $.widget('gb.outlineView', {
-
-        options: {
-            model: null,
-        },
+    $.widget('gb.outlineView', $.gb.treeView, {
 
         _create: function() {
             var o = this.options,
                 e = this.element;
 
-            e.addClass('gbTreeView');
             o.designReset = this._designResetHandler;
             o.selectionChanged = this._selectionChangedHandler;
             o.activePageChanged = this._activePageChangedHandler;
@@ -36,11 +31,6 @@
             if (o.model) {
                 this._bindADMEvents(o.model);
             }
-
-            $('<div/>')
-                .addClass('ui-widget-content')
-                .addClass('outline_content')
-                .appendTo(this.element);
 
             $(window).resize(this, function(event) {
                 var el = event.data.element;
@@ -66,21 +56,11 @@
                 case 'model':
                     this._unbindADMEvents();
                     this._bindADMEvents(value);
-                    this.refresh(null, this);
                     break;
                 default:
                     break;
             }
-        },
-
-        destroy: function() {
-            // TODO: unbind any ADM event handlers
-            $(this.element).find('.'+this.widgetName).remove();
-        },
-
-        refresh: function(event, widget) {
-            widget = widget || this;
-            widget._renderOutlineView();
+            $.gb.treeView.prototype._setOption.apply(this, arguments);
         },
 
         // Private functions
@@ -185,33 +165,7 @@
                 node = event.node;
             }
 
-            // Deactive state of selected before
-            widget.element.find($('.outline_content'))
-                .find('.ui-state-active')
-                .removeClass('ui-state-active')
-                .end()
-                .find('.ui-selected')
-                .removeClass('ui-selected');
-
-            // Find this node in outline pane
-            rootNode = widget.element.find(".pageList");
-            nodeInOutline = $(rootNode).find("#Outline-"+node.getUid()+" > a");
-            $(nodeInOutline).addClass('ui-state-active')
-                .addClass('ui-selected');
-
-            currentNode = nodeInOutline;
-            while (currentNode.length &&
-                   currentNode.html() !== rootNode.html())  {
-                $(currentNode).show();
-                currentNode = currentNode.parent();
-            }
-
-            // Make sure selected node is visible on show
-            widget.element.find($('.outline_content'))
-                .find('.ui-selected:first', this)
-                .each(function (){
-                    this.scrollIntoViewIfNeeded();
-                });
+            widget.setSelected(node);
         },
 
         _activePageChangedHandler: function(event, widget) {
@@ -234,144 +188,66 @@
             widget.refresh(event, widget);
         },
 
-        _renderOutlineView: function() {
-            var page, selected,
-                self = this,
-                model = self.options.model, root,
-                $tree = self.element.find('.outline_content');
+        _toTreeModel: function (model) {
+            var adm2TreeModel = function (admNode) {
+                var treeNode = {},
+                    childNodes = [],
+                    children, i, type, showInOutline, label;
 
-            if (!model) {
-                return false;
-            } else {
-                root = model.getDesignRoot();
-            }
-
-            $tree.empty();
-            $('<ul/>')
-                .addClass('pageList')
-                .appendTo($tree);
-            for (var i = 0; i < root.getChildrenCount(); i++) {
-                page = root.getChildren()[i];
-                render_sub(page, self.element.find('.pageList'));
-            }
-
-            // Now make sure the selected node is properly identified
-            selected = root.findNodeByUid(model.getSelected()) ||
-                       model.getActivePage();
-            if (selected) {
-                $tree.find("#Outline-"+selected.getUid()+" > a")
-                    .addClass('ui-state-active')
-                    .addClass('ui-selected');
-            }
-            return true;
-
-            function  setSelected(item) {
-                var UID = $(item).attr('adm-uid');
-
-                // find whether selected widget in current active page
-                var currentNode = root.findNodeByUid(UID);
-                while (currentNode.getType() !== "Page" &&
-                       currentNode.getType() !=="Design") {
-                    currentNode = currentNode.getParent();
-                }
-                if (currentNode.getType() !== "Page") {
-                    return;
-                }
-                if (model.getActivePage() !== currentNode) {
-                    model.setActivePage(currentNode);
+                if (!(admNode instanceof ADMNode)) {
+                    return treeNode;
                 }
 
-                model.setSelected(UID);
-            }
-
-            function render_sub(node, $container) {
-                var newItem, children, i, type, UID, showInOutline, widgetID,
-                    label, id, $subContainer, labelFunc;
-
-                if (!(node instanceof ADMNode)) {
-                    return;
-                }
-
-                type = node.getType();
-                UID = node.getUid();
+                type = admNode.getType();
                 showInOutline = BWidget.isPaletteWidget(type) ||
                     (type === "Page");
-                widgetID = type + '-' + UID;
-                $subContainer = $container;
-
-                labelFunc = BWidget.getOutlineLabelFunction(type);
-                if (labelFunc) {
-                    label = labelFunc(node);
-                    if (label) {
-                        $container.append($('<li class="label">' +
-                                            labelFunc(node) + '</li>'));
-                    }
-                }
-
                 label = BWidget.getDisplayLabel(type);
-
-                // check whether current node should be shown in outline pane
                 if (showInOutline) {
-                    newItem = $('<li><span/><a><span/></a></li>')
-                       .find('span:last')
-                       .addClass('widgetType')
-                       .text(label)
-                       .end()
-                       .attr('id', 'Outline-' + UID)
-                       .appendTo($container);
-
-                    if (node.hasUserVisibleDescendants()) {
-                        newItem.find('span:first')
-                               .addClass('folder')
-                               .end()
-                               .append('<ul/>')
-                               .find('ul')
-                               .attr('id', widgetID)
-                               .addClass('widgetGroup');
-                        $subContainer = $container.find("#" + widgetID);
-                    } else {
-                        newItem.find('span:first')
-                               .addClass('singleItem')
-                               .html("&#x2022;");
-                    }
-
-                    if (type === "Page") {
-                        //set page id
-                        id = node.getProperty('id');
-                        newItem.find("a")
-                            .append('<span/>')
-                            .children(':last')
-                            .addClass('pageTitle')
-                            .text(' (' + id + ')');
-                    }
-
-                    newItem.attr('adm-uid', UID);
-
-                    // add click handler
-                    newItem.find('span:first')
-                        .click(function(e) {
-                            $(this).toggleClass("close")
-                                .parent()
-                                .children("ul").toggle();
-                            e.stopPropagation();
-                    });
-
-                    newItem.find("a").click(function(e) {
-                        var that =$(this).parent();
-                        setSelected(that);
-                        e.stopPropagation();
-                        return false;  // Stop event bubbling
-                    });
+                    treeNode[label] = childNodes;
+                    treeNode._origin_node = admNode;
                 }
+                else
+                    treeNode = childNodes;
 
-                if (node.getChildrenCount() > 0) {
-                    children = node.getChildren();
-                    for (i = 0; i < children.length; i++) {
-                        render_sub(children[i], $subContainer);
-                    }
+                children = admNode.getChildren();
+                for (i = 0; i < children.length; i++) {
+                    var childTreeModel = adm2TreeModel(children[i]);
+                    if ($.isPlainObject(childTreeModel))
+                        childNodes.push(childTreeModel);
+                    else
+                        $.merge(childNodes, childTreeModel);
                 }
-                return;
+                return treeNode;
+            };
+            return adm2TreeModel(model.getDesignRoot());
+        },
+        _getSelected: function () {
+            var model = this.options.model;
+            return model.getDesignRoot().findNodeByUid(model.getSelected()) ||
+                       model.getActivePage();
+        },
+        _render: function (domNode, data) {
+            var labelFunc, parentNode = data.getParent();
+            labelFunc = BWidget.getOutlineLabelFunction(parentNode.getType());
+            if (labelFunc) {
+                var label = labelFunc(parentNode);
+                if (label) {
+                    domNode.before($('<li class="label">' +
+                                        label + '</li>'));
+                }
+            }
+            if (data.getType() === "Page") {
+                //set page id
+                var id = data.getProperty('id');
+                domNode.find("a")
+                    .append('<span/>')
+                    .children(':last')
+                    .addClass('pageTitle')
+                    .text(' (' + id + ')');
             }
         },
+        _nodeSelected: function (treeModelNode, data) {
+            this.options.model.setSelected(data.getUid());
+        }
     });
 })(jQuery);

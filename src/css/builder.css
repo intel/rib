@@ -575,36 +575,32 @@ body.ui-tabs.ui-widget {
 /*
   Outline View widget styles
 */
-.gbTreeView {
+.treeView {
     border: 1px solid rgba(0,0,0,0.6);
     overflow: auto;
     background: #fff;
     border: none;
     padding: 0px 10px 0px 10px;
-}
-.outlineView .outline_content {
     border: none;
 }
-.widgetView ul,
-.outlineView .pageList {
+
+.treeView ul {
     padding-left: 0px;
-}
-.gbTreeView .widgetGroup {
-    padding-left: 20px;
-}
-.gbTreeView ul {
     margin: 0px;
 }
-.gbTreeView li {
+.treeView .widgetGroup {
+    padding-left: 20px;
+}
+.treeView li {
     list-style: none;
     clear: both;
 }
-.gbTreeView li > a {
+.treeView li > a {
     background: transparent;
     font-weight: normal;
     text-align: center;
 }
-.gbTreeView li > a.ui-selected {
+.treeView li > a.ui-selected {
     background: #4ae57b;
     color: #424242;
     border: transparent;
@@ -616,19 +612,19 @@ body.ui-tabs.ui-widget {
     padding-right: 5px;
     margin-left: -5px;
 }
-.gbTreeView li > a:hover,
-.gbTreeView li > a.ui-selected:hover {
+.treeView li > a:hover,
+.treeView li > a.ui-selected:hover {
     color: #2c7a94;
 }
-.gbTreeView span.widgetType {
+.treeView span.widgetType {
     font-size: 12px;
     color: #111111;
     font-style: normal;
 }
-.gbTreeView span.widgetType:hover {
+.treeView span.widgetType:hover {
     color: #888;
 }
-.gbTreeView a.ui-selected span.widgetType {
+.treeView a.ui-selected span.widgetType {
     color: #111111;
 }
 .outlineView span.pageTitle {
@@ -639,7 +635,7 @@ body.ui-tabs.ui-widget {
 .outlineView a.ui-selected span.pageTitle {
     color: #666;
 }
-.gbTreeView span.folder {
+.treeView span.folder {
     float: left;
     width: 10px;
     height: 26px;
@@ -648,16 +644,16 @@ body.ui-tabs.ui-widget {
     background-repeat: no-repeat;
     background-position: center;
 }
-.gbTreeView span.folder.close {
+.treeView span.folder.close {
     background-image: url("images/pageTreeArrowClosed.png");
     background-repeat: no-repeat;
 }
-.gbTreeView span.singleItem {
+.treeView span.singleItem {
     width: 10px;
     height: 10px;
     margin-right: 10px;
 }
-.gbTreeView li.label {
+.treeView li.label {
     font-style: italic;
     font-size: 10px;
     margin-top: 6px;
