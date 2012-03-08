@@ -567,21 +567,38 @@ $(function () {
      * @return
      */
     pmUtils.syncProject = function (pid, design, success, error) {
-        var syncDesign, syncInfo;
+        var syncDesign, syncInfo, saveWrite;
         pid = pid || pmUtils._acitveProject;
         design = design || ADM.getDesignRoot();
         if (!(pmUtils.designDirty || pmUtils.pInfoDirty)) {
             success && success();
             return;
         }
+        saveWrite = function (path, data, success, error) {
+            var swap, successHandler;
+            if (!data || !path) {
+                console.warn("No data or path to save write");
+                return;
+            }
+            swap = path + ".swap";
+            successHandler = function (fileEntry) {
+                fileEntry.getParent(function (dirEntry) {
+                    var newName = fileEntry.name;
+                    newName = newName.slice(0, (newName.length - 5))
+                    fileEntry.moveTo(dirEntry, newName, success, error)
+                });
+            };
+            $.gb.fsUtils.write(swap, data, successHandler, error);
+        };
         // define callbacks
         syncDesign = function (pid, design, successHandler, error) {
-            var designPath;
+            var designPath, data;
             designPath = pmUtils.getDesignPath(pid);
-            return $.gb.asyncADMToJSON(design, designPath, successHandler, error);
+            data = $.gb.ADMToJSON(design);
+            saveWrite(designPath, data, successHandler, error);
         };
         syncInfo = function (pid, success, error) {
-            var pInfo, metadataPath, successHandler;
+            var pInfo, metadataPath, successHandler, data;
             if (!pmUtils.pInfoDirty) {
                 success && success();
                 return;
@@ -593,7 +610,14 @@ $(function () {
                 pmUtils.pInfoDirty = false;
                 success && success();
             };
-            fsUtils.write(metadataPath, JSON.stringify(pInfo), successHandler, error);
+            try {
+                data = JSON.stringify(pInfo);
+            } catch (e) {
+                console.error("Failed to stringify pInfo, " + e);
+                error && error(e);
+                return;
+            }
+            saveWrite(metadataPath, data, successHandler, error);
         };
         if (pmUtils.designDirty) {
             // sync pInfo in the success handler of syncDesign
