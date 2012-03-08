@@ -421,21 +421,6 @@ $(function() {
         }
     }
 
-    function asyncADMToJSON(ADMTreeNode, outPath, success, error) {
-        // Set a fixed position to  the output file
-        var path = outPath || "design.json",
-            root = ADMTreeNode || ADM.getDesignRoot(),
-            text = ADMToJSON(ADMTreeNode);
-
-        if (text) {
-            $.gb.fsUtils.write(path, text, success, error);
-            return true;
-        } else {
-            error && error();
-            return false;
-        }
-    }
-
     function getDefaultHeaders() {
         var i, props, el;
 
@@ -661,7 +646,6 @@ $(function() {
     /***************** export functions out *********************/
     // Export serialization functions into $.gb namespace
     $.gb.ADMToJSON = ADMToJSON;
-    $.gb.asyncADMToJSON = asyncADMToJSON;
     $.gb.JSONToADM = JSONToADM;
     $.gb.zipToADM = zipToADM;
 
