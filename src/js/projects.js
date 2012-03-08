@@ -77,9 +77,14 @@ $(function () {
                 }, function () {
                     brokenList.push(e.name);
                     onEnd();
-                    console.error("Can't get design file for project: " + e.name);
-                    //TODO: may restore the project in autoSave feature
-                    error && error();
+                    console.error("Can't get design file for project:",e.name);
+                    // Remove the broken project directory
+                    // TODO: may try to restore the project in the future
+                    if (e.isDirectory) {
+                        e.removeRecursively(function () {
+                            console.warn("Broken project removed:",e.name);
+                        });
+                    }
                 });
             });
             return;
