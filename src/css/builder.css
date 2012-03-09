@@ -209,6 +209,18 @@ body.ui-tabs.ui-widget {
     margin-bottom: 0px;
     padding-bottom: 0px;
 }
+.navbar .default-tools a:hover {
+    /* GRG */
+    color: #ccc;
+}
+.navbar .default-tools a:active {
+    /* GRG */
+    color: #999;
+}
+.navbar a:active {
+    /* GRG */
+    color: #999;
+}
 
 /*
   View widget base styles
@@ -381,6 +393,14 @@ body.ui-tabs.ui-widget {
     padding-left: 10px;
     text-transform: capitalize;
     float: right;
+}
+.panel-section-header .tool a:hover {
+    /* GRG */
+    color: #666;
+}
+.panel-section-header .tool a:active {
+    /* GRG */
+    color: #999;
 }
 .panel-section-header .divider {
     background-image: url('images/addDuplicateDivider.png');
