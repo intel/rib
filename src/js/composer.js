@@ -169,11 +169,6 @@ $(function() {
         // Configure "sortable" behaviors
         targets = $('.nrc-sortable-container,[data-role="page"]');
 
-        // Fixup "Collapsible" to make the content div jQM adds at runtime
-        // be a "sortable" as well
-        $('.ui-collapsible-content').addClass('nrc-sortable-container');
-        targets.add('.ui-collapsible-content');
-
         debug && console.log("Found ["+targets.length+"] sortable targets: ");
 
         targets
