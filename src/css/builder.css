@@ -528,7 +528,8 @@ body.ui-tabs.ui-widget {
 */
 .tools-secondary {
     display: -webkit-box;
-    padding: .5em;
+    padding-right: .5em;
+    padding-top: 1em;
     box-pack: end;
     -moz-box-pack: end;
     -webkit-box-pack: end;
@@ -562,15 +563,22 @@ body.ui-tabs.ui-widget {
     font-style:italic;
 }
 .tools-secondary a {
+    cursor: pointer;
+    font-size: 12px;
+    font-family: Semi-Bold;
+    color: #f0f0f0;
+    text-shadow: -1px -1px 1px #111;
     display: inline-block;
     margin-top: 8px;
     padding-left: 15px;
     padding-right: 15px;
     text-transform: uppercase;
     text-decoration: none;
-    color: #fefffa;
     box-align: center;
     -webkit-box-align: center;
+}
+.tools-secondary a:hover {
+    color: #fefffa;
 }
 .tools-secondary > button:first-child {
     padding-left: .5em;
@@ -1390,9 +1398,14 @@ input.screenCoordinate::-webkit-inner-spin-button {
     background: url("images/previewButton_up.png") no-repeat 0 0;
     width: 87px;
 }
+.liveViewButton:hover,
 .liveViewButton:active {
     background-image: url("images/previewButton_active.png");
 }
 .ui-tabs-selected >.liveViewButton {
     background-image: url("images/previewButton_down.png");
+}
+.centerImage {
+    margin-top: 5px;
+    margin-bottom: 0px;
 }

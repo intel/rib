@@ -361,7 +361,7 @@
                 .addClass('tools-secondary flex1 hbox');
             $('<div/>').addClass('default-tools hbox').show()
                 .append('<a id="setProj">project settings</a>')
-                .append('<hr align=vertical>')
+                .append('<p class="centerImage"><img src="src/css/images/projectExportDivider.png"/></p>')
                 .append('<a id="exportProj">export</a>')
                 .appendTo(this.ui.extras);
             $(window).trigger('resize');
