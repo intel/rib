@@ -510,7 +510,7 @@ var BWidgetRegistry = {
         properties: {
             action: {
                 type: "string",
-                defaultValue: "#",
+                defaultValue: "http://",
                 htmlAttribute: "action",
                 forceAttribute: true
             },
