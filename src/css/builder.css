@@ -964,6 +964,14 @@ ul {
     width:385px;
     height:80px;
 }
+.gbDialog .ui-dialog-buttonpane {
+    border-top-width: 0px;
+}
+.gbDialog .ui-dialog-buttonpane .ui-dialog-buttonset {
+    float: none;
+    display: -webkit-box;
+    -webkit-box-pack: center;
+}
 .gbDialog fieldset {
     padding: 0px;
     margin: 0px;
@@ -1000,12 +1008,6 @@ ul {
     width: 220px;
     height:23px;
     background: #eaf1f4;
-}
-.gbDialog span {
-    float: right;
-    display: inline;
-    margin-right: 40px;
-    text-align: right;
 }
 .gbDialog .uploadStyle {
     text-decoration: underline;

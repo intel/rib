@@ -119,6 +119,56 @@
         },
 
         // Private functions
+        _dialogOpenHandler: function (e, ui) {
+            try {
+                var name, isCreate, dialog;
+                dialog = this.options && this.options.projectDialog;
+                dialog = dialog || $(this).dialog('option', 'projectDialog');
+                isCreate = dialog.data('new-project-dialog');
+                name = $.gb.pmUtils.getName( $.gb.pmUtils._activeProject) ||
+                       'Untitled';
+
+                $("#projectName", dialog).val((isCreate)?'':name);
+                $(".ui-button-text", dialog).text((isCreate)?'Next':'Done')
+            }
+            catch (err) {
+                console.error(err.message);
+                return false;
+            }
+        },
+
+        _dialogCloseHandler: function (e, ui) {
+            try {
+                var opts = {}, isCreate, dialog;
+                dialog = this.options && this.options.projectDialog;
+                dialog = dialog || $(this).dialog('option', 'projectDialog');
+                isCreate = dialog.data('new-project-dialog');
+                opts.name = $("#projectName", dialog).val()|| "Untitled";
+                //TODO: Add support for theme
+                //options.theme = ("#themePicker", this).val();
+
+                if (isCreate) {
+                    //call project API to create a new project
+                    $.gb.pmUtils.createProject(opts, function() {
+                        // show the layout tab
+                        $(document.body).tabs('select', 1);
+                    });
+                } else {
+                    //call project API to update current project
+                    $.gb.pmUtils.setProject(null, opts);
+                    $(':gb-projectView').projectView('refresh');
+                }
+                // Blank out the title
+                dialog && $('#projectName', dialog).val('');
+                dialog && dialog.dialog("close");
+                return true;
+            }
+            catch (err) {
+                console.error(err.message);
+                return false;
+            }
+        },
+
         _createPrimaryTools: function() {
             var tools, widget, projectDialog;
             widget = this;
@@ -128,32 +178,8 @@
                 .append('<button id="importProj"></button>');
             tools.children().addClass('buttonStyle ui-state-default')
                 .first().click( function(e) {
-                    projectDialog.dialog('option', 'title', "New Project")
-                        .find(".buttonStyle", this)
-                        .val("Next")
-                        .one("click", function (e) {
-                            try {
-                                var options = {};
-                                options.name = projectDialog.find("#projectName").val() || "Untitled";
-                                //TODO add support for theme
-                                /*
-                                   options.theme = projectDialog.find("#themePicker").val();
-                                   */
-                                //call project API to create a new project
-                                $.gb.pmUtils.createProject(options, function() {
-                                    // show the layout tab
-                                    $(document.body).tabs('select', 1);
-                                });
-                            }
-                            catch (err) {
-                                console.error(err.description);
-                            }
-                            $('#projectName').val('');
-                            projectDialog.dialog("close");
-                            e.stopPropagation();
-                            return false;
-                        })
-                        .end()
+                    projectDialog.dialog('option', 'title', 'New Project')
+                        .data('new-project-dialog',true)
                         .dialog("open");
             });
             return tools;
@@ -165,26 +191,8 @@
            settingButton = $('#setProj',document.body);
            projectDialog = this.options.projectDialog;
            settingButton.click(function(e){
-                projectDialog.dialog('option', 'title', "Project Setting")
-                    .find(".buttonStyle")
-                    .val("Done")
-                    .one("click", function (e) {
-                        try {
-                            var opts = {};
-                            opts.name = $("#projectName",projectDialog).val()||
-                                        "Untitled";
-                            //call project API to set current project
-                            $.gb.pmUtils.setProject(null, opts);
-                            widget.refresh(widget);
-                        }
-                        catch (err) {
-                            console.error(err.description);
-                        }
-                        projectDialog.dialog("close");
-                        e.stopPropagation();
-                        return false;
-                    })
-                    .end()
+                projectDialog.dialog('option', 'title', 'Project Settings')
+                    .data('new-project-dialog',false)
                     .dialog("open");
                     e.stopPropagation();
                 })
@@ -309,26 +317,22 @@
                 .children(':first')
                 .addClass('flex1 vbox wrap_left')
                 .append('<form><legend/><ul>' +
-                        '<li class="mt23"><label for="name">Project Name</label>' +
-                        '<input type ="text" id="projectName" value=""/></li>' +
-                        //TODO add support for theme
-                        /*
-                        '<li class="mt23"><label for="name">Theme</label>' +
-                        '<select id="themePicker" size="4"></select></li>' +
-                        '<li class="mt50"><u id="uploadTheme" class="fr mr40">Upload Theme</u></li>' +
-                        */
-                        '</ul></form>' +
-                        '<div class="div-bottom">'+
-                        '<p class="bottom"><input type="submit" value="Done" class="buttonStyle mr120 fr" />' +
-                        '</p></div>')
+                    '<li class="mt23"><label for="name">Project Name</label>' +
+                    '<input type ="text" id="projectName" value=""/></li>' +
+                    /* TODO: add support for theme
+                    '<li class="mt23"><label for="name">Theme</label>' +
+                    '<select id="themePicker" size="4"></select></li>' +
+                    '<li class="mt50"><u id="uploadTheme" class="fr mr40">' +
+                    'Upload Theme</u></li>' +
+                    */
+                    '</ul></form><div class="div-bottom"></div>')
                 .end()
                 .append('<div/>')
                 .children(':last')
                 .addClass('flex1 wrap_right')
                 .end()
                 .appendTo(projectDialog, this);
-            //TODO: add support for theme
-            /*
+            /* TODO: add support for theme
             // Insert the list of themes
             for (var t in themeNames) {
                var id = themeNames[t];
@@ -343,7 +347,26 @@
                 height: 489,
                 width: 770,
                 resizable: false,
+                title: "New Project",
+                buttons: { 'Next': this._dialogCloseHandler },
+                open: this._dialogOpenHandler
                 });
+
+            // Call our close handler onSubmit, not default action
+            projectDialog.find('form').submit(this, function(e) {
+                e.stopImmediatePropagation();
+                e.preventDefault();
+                if (e && e.data && e.data._dialogCloseHandler) {
+                    return e.data._dialogCloseHandler(e);
+                }
+                return false;
+            });
+
+            // Reparent the jquery-ui dialog button pane into our div so we
+            // can acheive the desired layout (See pg 6 of the UI spec).
+            $('.ui-dialog-buttonpane',$(projectDialog).dialog('widget'))
+                .detach()
+                .appendTo('.div-bottom');
             return projectDialog;
         },
 
