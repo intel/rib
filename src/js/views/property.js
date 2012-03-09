@@ -189,6 +189,9 @@
 
         _selectionChangedHandler: function(event, widget) {
             widget = widget || this;
+            //in case current focus input item change event not triggered
+            //we trigger it firstly
+            $("input:focus").trigger('change');
             widget.refresh(event,widget);
         },
 
@@ -415,7 +418,7 @@
                 content.find('#' + valueId)
                     .change(node, function (event) {
                         var updated, node, element, type, value;
-                        updated = event.srcElement.id.replace(/-value/,''),
+                        updated = event.target.id.replace(/-value/,''),
                         node = event.data;
 
                         if (node === null || node === undefined) {
