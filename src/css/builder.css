@@ -569,20 +569,13 @@ body.ui-tabs.ui-widget {
 */
 .gbTreeView {
     border: 1px solid rgba(0,0,0,0.6);
-    overflow:auto
+    overflow: auto;
+    background: #fff;
+    border: none;
+    padding: 10px;
 }
-.widgetView,
 .outlineView .outline_content {
-    background:#fff;
-    padding:10px;
-    -webkit-border-radius: 14px;
-    -moz-border-radius: 14px;
-    border-radius: 14px;
-    -moz-background-clip: padding; -webkit-background-
-    clip: padding-box; background-clip: padding-box;
-    -webkit-box-shadow: 2px 2px 3px #595b55;
-    -moz-box-shadow: 2px 2px 3px #595b55;
-    box-shadow: 2px 2px 3px #595b55;
+    border: none;
 }
 .widgetView ul,
 .outlineView .pageList {
@@ -591,6 +584,9 @@ body.ui-tabs.ui-widget {
 .gbTreeView .widgetGroup {
     padding-left: 20px;
 }
+.gbTreeView ul {
+    margin: 0px;
+}
 .gbTreeView li {
     list-style: none;
 }
@@ -598,8 +594,6 @@ body.ui-tabs.ui-widget {
     background: transparent;
     font-weight: normal;
     text-align: center;
-    /* match the padding-left below so text doesn't move when selected */
-    margin-left: 5px;
 }
 .gbTreeView li > a.ui-selected {
     background: #4ae57b;
@@ -609,10 +603,9 @@ body.ui-tabs.ui-widget {
     -webkit-background-clip: padding-box;
     padding-top: 0px;
     padding-bottom: 3px;
-    /* match the margin-left above so text doesn't move when selected */
     padding-left: 5px;
     padding-right: 5px;
-    margin-left: 0px;
+    margin-left: -5px;
 }
 .gbTreeView li > a:hover,
 .gbTreeView li > a.ui-selected:hover {
@@ -623,10 +616,19 @@ body.ui-tabs.ui-widget {
     color: #111111;
     font-style: normal;
 }
+.gbTreeView span.widgetType:hover {
+    color: #888;
+}
+.gbTreeView a.ui-selected span.widgetType {
+    color: #111111;
+}
 .outlineView span.pageTitle {
     font-size: 12px;
     color: #aaaaaa;
     font-style: italic;
+}
+.outlineView a.ui-selected span.pageTitle {
+    color: #666;
 }
 .gbTreeView span.folder {
     float: left;
