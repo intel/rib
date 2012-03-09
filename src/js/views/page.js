@@ -57,8 +57,8 @@
                     .addClass('panel-section-contents')
                     .end();
 
-            $('#addPage').click(this, this._addPageHandler);
-            $('#copyPage').click(this, this._copyPageHandler);
+            this.element.find('#addPage').click(this, this._addPageHandler);
+            this.element.find('#copyPage').click(this, this._copyPageHandler);
 
             this.options.primaryTools = this._createPrimaryTools();
             this.options.secondaryTools = this._createSecondaryTools();
@@ -242,6 +242,47 @@
             return false;
         },
 
+        _dialogOpenHandler: function (e, ui) {
+            try {
+                var dialog = $('#pageDialog') || $(this).dialog('option', 'newPageDialog');
+                dialog.find("#pageTitle").val("");
+                dialog.find('#pagePicker').get(0).selectedIndex = 0;
+                dialog.find('#header_layout').attr("checked", true);
+                dialog.find('#footer_layout').attr("checked", true);
+            }
+            catch (err) {
+                console.error(err.message);
+                return false;
+            }
+        },
+
+        _dialogCloseHandler: function (e, ui) {
+            try {
+                var options = {}, layout = [], newPage,
+                    dialog = $('#pageDialog');
+
+                options.pageTitle = dialog.find("#pageTitle").val() || "NewPage";
+                options.pageTemplate = dialog.find("#pagePicker").val();
+                //get checkbox value
+                if (dialog.find('#header_layout').is(":checked")) {
+                    layout.push('Header');
+                }
+                if (dialog.find('#footer_layout').is(":checked")) {
+                    layout.push('Footer');
+                }
+                options.layout = layout;
+                newPage = $.gb.pageUtils.createNewPage(options);
+                ADM.setActivePage(newPage);
+                dialog.dialog("close");
+                return true;
+            }
+            catch (err) {
+                console.error(err.message);
+                $("#pageDialog").dialog("close");
+                return false;
+            }
+        },
+
         _initNewPageDialog: function() {
             var self = this,
                 model = self.model,
@@ -278,26 +319,19 @@
                         '<input id="footer_layout" class="fieldInput" type="checkbox" name="Footer"/>' +
                         '<label class="fieldLabel" for="layout">Footer</label></li>' +
                         '</ul></fieldset></li>' +
-                        '</ul>' +
-                        '</form>' +
-                        '<div class="div-bottom">'+
-                        '<p class="bottom"><input type="submit" value="Add Page" class="buttonStyle mr120 fr" />' +
-                        '<u id="pageCancel" class="mr_200 fr">Cancel</u></p></div>' )
+                        '</ul></form><div class="div-bottom"/>')
                 .end()
                 .append('<div/>')
                 .children(':last')
                 .addClass('flex1 wrap_right')
                 .end()
                 .appendTo(newPageDialog, self);
-             // Insert the list of page templates
-             for (t in ptNames) {
-                 id = ptNames[t];
-                 $('<option id="'+ id +'" value="' + id + '">'+ id + '</option>')
-                     .appendTo('#pagePicker', self);
-             }
-             // initialize the value of checkbox
-             newPageDialog.find('#header_layout').attr("checked", true);
-             newPageDialog.find('#footer_layout').attr("checked", true);
+            // Insert the list of page templates
+            for (t in ptNames) {
+                id = ptNames[t];
+                $('<option id="'+ id +'" value="' + id + '">'+ id + '</option>')
+                    .appendTo('#pagePicker', self);
+            }
 
              //once user change the page Template, change the layout value
              $('#pagePicker',newPageDialog).change( function(e) {
@@ -326,48 +360,36 @@
                          break;
                  }
              });
-
-             // bind event hanler to button
-             newPageDialog.find('.buttonStyle', self)
-                 .click(function(e){
-                     try {
-                         var options = {}, layout = [], newPage;
-                         options.pageTitle = newPageDialog.find("#pageTitle").val() || "NewPage";
-                         options.pageTemplate = newPageDialog.find("#pagePicker", self).val();
-                         //get checkbox value
-                         if (newPageDialog.find('#header_layout').is(":checked")) {
-                             layout.push('Header');
-                         }
-                         if (newPageDialog.find('#footer_layout').is(":checked")) {
-                             layout.push('Footer');
-                         }
-                         options.layout = layout;
-                         newPage = $.gb.pageUtils.createNewPage(options);
-                         ADM.setActivePage(newPage);
-                     }
-                     catch (err) {
-                         console.error(err.description);
-                     }
-                     newPageDialog.find("#pageTitle").val("");
-                     $("#pageDialog").dialog("close");
-                     return false;
-              });
-
-              // bind event hanler to Cancel Link
-              newPageDialog.find('#pageCancel')
-                  .click(function(e){
-                      $("#pageDialog").dialog("close");
-                      return false;
-              });
-
-              newPageDialog.dialog({
-                  autoOpen: false,
-                  modal: true,
-                  height: 454,
-                  width: 770,
-                  resizable: false,
-                  title: 'New Page'
+             // Call our close handler onSubmit, not default action
+             newPageDialog.find('form').submit(this, function(e) {
+                 e.stopImmediatePropagation();
+                 e.preventDefault();
+                 if (e && e.data && e.data._dialogCloseHandler) {
+                     return e.data._dialogCloseHandler(e);
+                 }
+                 return false;
              });
+             newPageDialog.dialog({
+                 autoOpen: false,
+                 modal: true,
+                 height: 454,
+                 width: 770,
+                 resizable: false,
+                 title: 'New Page',
+                 open: self._dialogOpenHandler,
+                 buttons: { 'Add Page': this._dialogCloseHandler,
+                     'Cancel': function() {
+                         $( this ).dialog( "close" );
+                     }}
+             });
+             // Reparent the jquery-ui dialog button pane into our div so we
+             // can acheive the desired layout (See pg 6 of the UI spec).
+             $('.ui-dialog-buttonpane',newPageDialog.dialog('widget'))
+                 .detach()
+                 .appendTo(newPageDialog.find('.div-bottom'));
+             $('.ui-button-text', newPageDialog.dialog('widget'))
+                 .addClass('buttonStyle');
+
              return newPageDialog;
          },
     });

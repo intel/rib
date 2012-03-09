@@ -361,7 +361,9 @@
             // can acheive the desired layout (See pg 6 of the UI spec).
             $('.ui-dialog-buttonpane',$(projectDialog).dialog('widget'))
                 .detach()
-                .appendTo('.div-bottom');
+                .appendTo(projectDialog.find('.div-bottom'));
+            $('.ui-button-text', projectDialog.dialog('widget'))
+                .addClass('buttonStyle');
             return projectDialog;
         },
 

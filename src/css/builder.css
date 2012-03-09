@@ -1081,9 +1081,9 @@ ul {
 }
 .gbDialog .buttonStyle {
     display:block;
-    width:100px;
-    height:27px;
-    font-size: 0.8em;
+    width:60px;
+    height:12px;
+    font-size:12px;
     text-align:center;
     color:#424242;
     border:1px solid #a1a1a1;
@@ -1091,19 +1091,35 @@ ul {
     padding:8px 20px 7px 20px;
     background-color: #fbfbfb;
     background-image: -webkit-gradient(linear, left top, left bottom, from(#fbfbfb), to(#ececec));
+    background-image: -webkit-linear-gradient(top, #fbfbfb, #ececec);
+    background-image:
+    -moz-linear-gradient(top, #fbfbfb, #ececec);
+    background-image:
+    -ms-linear-gradient(top, #fbfbfb, #ececec);
+    background-image:
+    -o-linear-gradient(top, #fbfbfb, #ececec);
+    background-image:
+    linear-gradient(to bottom, #fbfbfb, #ececec);
     -webkit-border-radius: 6px;
     -moz-border-radius: 6px;
     border-radius: 6px;
-    -moz-background-clip: padding;
-    -webkit-background-clip: padding-box;
-    background-clip: padding-box;
+    -moz-background-clip: padding; -webkit-background-clip: padding-box; background-clip: padding-box;
     text-decoration:none;
 }
 .gbDialog .buttonStyle:hover {
     color:#eee;
     background-color: #cccccc;
     border-color:#424242;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#cccccc), to(#777777));
     background-image: -webkit-linear-gradient(top, #cccccc, #777777);
+    background-image:
+    -moz-linear-gradient(top, #cccccc, #777777);
+    background-image:
+    -ms-linear-gradient(top, #cccccc, #777777);
+    background-image:
+    -o-linear-gradient(top, #cccccc, #777777);
+    background-image:
+    linear-gradient(to bottom, #cccccc, #777777);
 }
 .gbDialog ul {
     margin: 0;
