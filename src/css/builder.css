@@ -599,6 +599,7 @@ body.ui-tabs.ui-widget {
     background: transparent;
     font-weight: normal;
     text-align: center;
+    cursor: pointer
 }
 .treeView li > a.ui-selected {
     background: #4ae57b;
@@ -643,6 +644,7 @@ body.ui-tabs.ui-widget {
     background-image: url("images/pageTreeArrowOpen.png");
     background-repeat: no-repeat;
     background-position: center;
+    cursor: pointer
 }
 .treeView span.folder.close {
     background-image: url("images/pageTreeArrowClosed.png");
@@ -838,9 +840,6 @@ body.ui-tabs.ui-widget {
     overflow: auto;
 }
 .widgetView:after {
-}
-ul {
-    cursor: pointer
 }
 
 /*
