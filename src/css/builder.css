@@ -895,24 +895,28 @@ ul {
 .page-arrow.ui-state-active:hover {
     background-image: url("images/pageArrow_down.png");
 }
-.pageIcon {
+.panel-section-contents .pageIcon {
     background-image: url("images/pageIcon_off.png");
     min-width: 20px;
     min-height: 24px;
     text-align: center;
+    line-height: 24px;
     float: left;
     margin: 7px 5px;
-    font: 10px normal #ffffff;
+    font-size: 10px !important;
+    font-weight: bold !important;
+    color: #ffffff !important;
 }
 .pageIcon.ui-selected {
     background-image: url("images/pageIcon_on.png");
-    font: 10px bold #333333;
+    font-weight: bold;
+    color: #333333 !important;
 }
 .pageIcon:hover {
     background-image: url("images/pageIcon_hover.png");
 }
 .pageIcon.ui-selected:hover {
-    background-image: url("images/pageIcon_hover.png");
+    background-image: url("images/pageIcon_on.png");
 }
 
 /*
