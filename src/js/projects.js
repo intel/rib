@@ -97,6 +97,14 @@ $(function () {
     }
 
     /***************** APIs to manipulate projects *************************/
+    /* Get the acitve project.
+     *
+     * @return the pid of current acitve project
+     */
+    pmUtils.getActive = function () {
+        return pmUtils._activeProject;
+    };
+
     /* Asynchronous. find the last opened project and show it, if there is no
      * project in sandbox, then create an "Untitled" project.
      * @param {function()=} success callback. An optional

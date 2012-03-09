@@ -114,7 +114,7 @@
                 widget.createProjectBox(value.pid, container, widget);
             });
             // Mark the active project box
-            $('#'+$.gb.pmUtils._activeProject, container)
+            $('#'+$.gb.pmUtils.getActive(), container)
                 .addClass('ui-state-active');
         },
 
@@ -125,7 +125,7 @@
                 dialog = this.options && this.options.projectDialog;
                 dialog = dialog || $(this).dialog('option', 'projectDialog');
                 isCreate = dialog.data('new-project-dialog');
-                name = $.gb.pmUtils.getName( $.gb.pmUtils._activeProject) ||
+                name = $.gb.pmUtils.getName( $.gb.pmUtils.getActive()) ||
                        'Untitled';
 
                 $("#projectName", dialog).val((isCreate)?'':name);
@@ -393,7 +393,7 @@
                     // If the deleted project it the active project
                     // or there is no project then find the last opened project
                     // and open it, create a new project in no project case
-                    if (!$.gb.pmUtils._activeProject) {
+                    if (!$.gb.pmUtils.getActive()) {
                         $(document.body).one("tabsselect", function (e, tab) {
                             if (tab.index === 1) {
                                 $.gb.pmUtils.showLastOpened();
