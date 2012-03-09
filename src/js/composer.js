@@ -243,6 +243,20 @@ $(function() {
                     isDrop = ui.item.hasClass('nrc-palette-widget');
                     received = $(this).data('received');
 
+                    // Fix PTSDK-501: Only drop on active page
+                    if (role && role === 'page' && adm.getActivePage()) {
+                        if (adm.getActivePage().getUid() !== Number(pid)) {
+                            if (isDrop && received) {
+                                //received.data('draggable').cancel();
+                                $(received.draggable).draggable('cancel');
+                            } else {
+                                $(this).sortable('cancel');
+                            }
+                            ui.item.remove();
+                            return false;
+                        }
+                    }
+
                     // Let child containers get the drop if they intersect
                     if (childIntersects(this)) {
                         if (isDrop && received) {
