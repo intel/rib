@@ -186,22 +186,17 @@
         },
 
         _createSecondaryTools: function() {
-           var settingButton, projectDialog, widget;
-           widget = this;
-           settingButton = $('#setProj',document.body);
-           projectDialog = this.options.projectDialog;
-           settingButton.click(function(e){
+            var settingButton, projectDialog, widget;
+            widget = this;
+            settingButton = $('#setProj',document.body);
+            projectDialog = this.options.projectDialog;
+            settingButton.click(function(e){
                 projectDialog.dialog('option', 'title', 'Project Settings')
                     .data('new-project-dialog',false)
                     .dialog("open");
-                    e.stopPropagation();
-                })
-            return $('<div/>').addClass('hbox').hide()
-                .append('<input type="search" />')
-                .children().attr({
-                    name: "filter",
-                    placeholder: "filter projects"
-                });
+                e.stopPropagation();
+            })
+            return [];
         },
 
         _bindADMEvents: function(a) {
