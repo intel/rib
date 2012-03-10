@@ -73,6 +73,7 @@
                 var w = this.element.find('.nrc-palette-widget');
 
                 w.draggable({
+                    scroll: false,
                     revert: false,
                     appendTo: 'body',
                     iframeFix: true,
@@ -90,8 +91,9 @@
                             a=$(':gb-layoutView').layoutView('option','model'),
                             t=$(this).data('adm-node').type, s = [];
 
-                        // Find all sortables (and the page)
-                        s=f.find('.nrc-sortable-container,[data-role="page"]');
+                        // Find all sortables (and page) on the active page
+                        f = f.find('#'+ADM.getActivePage().getProperty('id'));
+                        s = f.find('.nrc-sortable-container').andSelf();
 
                         // Filter out those that will not accept this widget
                         return s.filter( function(index) {
@@ -100,15 +102,59 @@
                         });
                     },
                     start: function(event,ui){
-                        var d = $(this).draggable('option','connectToSortable');
-                        if (d.length <= 0) {
-                            return false;
-                        }
+                        var d = $(this).draggable('option','connectToSortable'),
+                            f = $(':gb-layoutView')
+                                    .layoutView('option','contentDocument'), s;
+
                         if (ui.helper) {
                             if (ui.helper[0].id == "") {
                                 ui.helper[0].id = this.id+'-helper';
                             }
                         }
+
+                        // Find all adm-nodes (and page) on the active page
+                        f = f.find('#'+ADM.getActivePage().getProperty('id'));
+                        s = f.find('.adm-node').andSelf();
+
+                        // First mark all nodes as blocked
+                        s && s.addClass('ui-masked');
+
+                        // Then unmark all valid targets
+                        d && d.removeClass('ui-masked')
+                              .addClass('ui-unmasked');
+
+                        // Also unmark adm-node descendants of valid targets
+                        // that are not also children of a masked container
+                        // - Solves styling issues with nested containers
+                        $('.ui-unmasked',f).each(function() {
+                            var that = this, nodes;
+                            $('.adm-node',this)
+                                .not('.nrc-sortable-container')
+                                .each(function() {
+                                    var rents = $(this).parentsUntil(that,
+                                          '.nrc-sortable-container.ui-masked');
+                                    if (!rents.length) {
+                                        $(this).removeClass('ui-masked')
+                                               .addClass('ui-unmasked');
+                                    }
+                                });
+                        });
+                    },
+                    stop: function(event,ui){
+                        var f = $(':gb-layoutView')
+                                    .layoutView('option','contentDocument');
+                        f = f.find('#'+ADM.getActivePage().getProperty('id'));
+
+                        // Reset masked states on all nodes on the active page
+                        f.find('.ui-masked, .ui-unmasked')
+                            .andSelf()
+                            .removeClass('ui-masked ui-unmasked');
+
+                        // Reset active state on all nodes on the active page
+                        // - Fixes a glitch where ui-state-active sometimes
+                        //   remains after dragging has completed...
+                        f.find('.ui-state-active')
+                            .removeClass('ui-state-active');
                     },
                 })
                 .disableSelection();
