@@ -268,15 +268,6 @@ body.ui-tabs.ui-widget {
     -webkit-box-pack: top;
     -webkit-box-align: center;
 }
-.view.live .stage .panel-section-contents {
-/*
-    border-left: 1px solid #8c8d8d;
-    border-bottom: 1px solid #b9b9b9;
-*/
-    height: 41px;
-    min-height: 41px;
-    max-height: 41px;
-}
 .view.live .stage .panel-section-contents:last {
     background: #e4e5df;
 }
@@ -295,9 +286,6 @@ body.ui-tabs.ui-widget {
     top: 0px;
     left: 0px;
     right: 0px;
-    height: 66px;
-    min-height: 66px;
-    max-height: 66px;
 }
 .view.live iframe {
     display: block;
@@ -413,6 +401,11 @@ body.ui-tabs.ui-widget {
 
 .panel-section-contents {
     background-color: #E4E5DF;
+    padding: 5px;
+    /* this 30 + padding 5 top and bottom + 1px border = 41px like before */
+    height: 30px;
+    min-height: 30px;
+    max-height: 30px;
 }
 .left { border-right: 1px solid #b9bab6; }
 .right { border-left: 1px solid #b9bab6; }
@@ -870,9 +863,6 @@ ul {
 .pageView > .panel-section-contents {
     border-right: 1px solid #b9bab6;
     border-bottom: 1px solid #a4a6a6;
-    height: 41px;
-    min-height: 41px;
-    max-height: 41px;
     background-image: url('images/pageSelectorBackground.png');
     background-repeat: repeat-x;
     background-size: cover;
@@ -902,7 +892,7 @@ ul {
     text-align: center;
     line-height: 24px;
     float: left;
-    margin: 7px 5px;
+    margin: 3px 5px;
     font-size: 10px !important;
     font-weight: bold !important;
     color: #ffffff !important;
@@ -1313,7 +1303,7 @@ ul {
 }
 .screenCoordinate {
     width: 4em;
-    margin-top: 0.9em
+    margin-top: 6px;
 }
 input.screenCoordinate::-webkit-inner-spin-button {
     -webkit-appearance: none
