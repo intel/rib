@@ -109,18 +109,36 @@ $.map($.ui['draggable'].prototype.plugins['drag'], function (elem, index) {
 			//Copy over some variables to allow calling the sortable's native _intersectsWith
             /////////////////////////////////////////////////////////////////
             // Start of our changes
-            var dragDocOffsetInSortWin = getOffsetInWindow(inst.element[0].ownerDocument.documentElement, getOwnerWindow(this.instance.element[0]));
+            var dragDocOffsetInSortWin = getOffsetInWindow(inst.element[0].ownerDocument.documentElement, getOwnerWindow(this.instance.element[0])),
+                thisSortable = this,
+                isInnerMostSortable = false;
 			this.instance.positionAbs = {top:inst.positionAbs.top + dragDocOffsetInSortWin.top, left: inst.positionAbs.left + dragDocOffsetInSortWin.left};
+            event.pageX += dragDocOffsetInSortWin.left;
+            event.pageY += dragDocOffsetInSortWin.top;
             // End of our changes
 			this.instance.helperProportions = inst.helperProportions;
 			this.instance.offset.click = inst.offset.click;
 			
+            /////////////////////////////////////////////////////////////////
+            // Start of our changes
+            //To avoid creating of multiple place holders, we only fake the innner most sortable
 			if(this.instance._intersectsWith(this.instance.containerCache)) {
-                /////////////////////////////////////////////////////////////////
-                // Start of our changes
-                event.pageX += dragDocOffsetInSortWin.left;
-                event.pageY += dragDocOffsetInSortWin.top;
-                // End of our changes
+                isInnerMostSortable = true;
+                $.each(inst.sortables, function () {
+                    var dragDocOffsetInSortWin = getOffsetInWindow(inst.element[0].ownerDocument.documentElement, getOwnerWindow(this.instance.element[0]));
+                    this.instance.positionAbs = {top:inst.positionAbs.top + dragDocOffsetInSortWin.top, left: inst.positionAbs.left + dragDocOffsetInSortWin.left};
+                    // End of our changes
+                    this.instance.helperProportions = inst.helperProportions;
+                    this.instance.offset.click = inst.offset.click;
+                    if  (this != thisSortable
+                        && this.instance._intersectsWith(this.instance.containerCache)
+                        && $.ui.contains(thisSortable.instance.element[0], this.instance.element[0]))
+                        isInnerMostSortable = false;
+                    return isInnerMostSortable;
+                });
+            }
+			if(isInnerMostSortable) {
+            // End of our changes
 
 				//If it intersects, we use a little isOver variable and set it once, so our move-in stuff gets fired only once
 				if(!this.instance.isOver) {
@@ -136,6 +154,11 @@ $.map($.ui['draggable'].prototype.plugins['drag'], function (elem, index) {
 					event.target = this.instance.currentItem[0];
 					this.instance._mouseCapture(event, true);
 					this.instance._mouseStart(event, true, true);
+                    /////////////////////////////////////////////////////////////////
+                    // Start of our changes
+                    // To trigger the over and change event properly, we should set the current container to null
+		            this.instance.currentContainer = null;
+                    // End of our changes
 
 					//Because the browser event is way off the new appended portlet, we modify a couple of variables to reflect the changes
 					this.instance.offset.click.top = inst.offset.click.top;
@@ -181,6 +204,12 @@ $.map($.ui['draggable'].prototype.plugins['drag'], function (elem, index) {
 				}
 
 			};
+            /////////////////////////////////////////////////////////////////
+            // Start of our changes
+            //We should restore our changes to event.
+            event.pageX -= dragDocOffsetInSortWin.left;
+            event.pageY -= dragDocOffsetInSortWin.top;
+            // End of our changes
 
 		});
 
