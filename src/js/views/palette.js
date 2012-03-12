@@ -80,7 +80,7 @@
                     containment: false,
                     connectToSortable: $(':gb-layoutView')
                                        .layoutView('option', 'contentDocument')
-                                       .find('.nrc-sortable-container'),
+                                       .find('.ui-page-active'),
                     helper: 'clone',
                     refreshPositions: true,
                     stack: '.layoutView iframe',
