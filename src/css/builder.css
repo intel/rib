@@ -681,7 +681,7 @@ body.ui-tabs.ui-widget {
 }
 .propertyView .property_content {
     background: #c8ced0;
-    min-height:100%;
+    min-height:80%;
     position: relative;
 }
 .propertyView input.PropertyCheckBox {
