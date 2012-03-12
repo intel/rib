@@ -597,6 +597,7 @@ body.ui-tabs.ui-widget {
 }
 .gbTreeView li {
     list-style: none;
+    clear: both;
 }
 .gbTreeView li > a {
     background: transparent;
