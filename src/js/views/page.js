@@ -378,17 +378,21 @@
                  title: 'New Page',
                  open: self._dialogOpenHandler,
                  buttons: { 'Add Page': this._dialogCloseHandler,
-                     'Cancel': function() {
-                         $( this ).dialog( "close" );
-                     }}
+                            'Cancel': function() {
+                                $( this ).dialog( "close" );
+                            }
+                          }
              });
              // Reparent the jquery-ui dialog button pane into our div so we
              // can acheive the desired layout (See pg 6 of the UI spec).
              $('.ui-dialog-buttonpane',newPageDialog.dialog('widget'))
                  .detach()
                  .appendTo(newPageDialog.find('.div-bottom'));
-             $('.ui-button-text', newPageDialog.dialog('widget'))
+             $('.ui-button-text', newPageDialog.dialog('widget')).first()
                  .addClass('buttonStyle');
+             $('button', newPageDialog.dialog('widget')).last()
+                 .removeClass('ui-button ui-corner-all')
+                 .addClass('linkStyle');
 
              return newPageDialog;
          },

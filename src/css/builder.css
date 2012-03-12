@@ -998,6 +998,9 @@ ul {
 .gbDialog .ui-dialog-buttonpane {
     border-top-width: 0px;
 }
+#pageDialog.gbDialog .ui-dialog-buttonpane {
+    margin-left: 115px;
+}
 .gbDialog .ui-dialog-buttonpane .ui-dialog-buttonset {
     float: none;
     display: -webkit-box;
@@ -1120,6 +1123,14 @@ ul {
     -o-linear-gradient(top, #cccccc, #777777);
     background-image:
     linear-gradient(to bottom, #cccccc, #777777);
+}
+.gbDialog .linkStyle {
+    background: none !important;
+    border: none !important;
+    text-decoration: underline;
+}
+.gbDialog .linkStyle:hover {
+    color: #888;
 }
 .gbDialog ul {
     margin: 0;
