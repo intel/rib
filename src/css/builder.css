@@ -580,7 +580,7 @@ body.ui-tabs.ui-widget {
     overflow: auto;
     background: #fff;
     border: none;
-    padding: 10px;
+    padding: 0px 10px 0px 10px;
 }
 .outlineView .outline_content {
     border: none;
