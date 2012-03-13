@@ -853,7 +853,14 @@ var BWidgetRegistry = {
                     button.setProperty("checked", true);
                 }
             }
-        }
+        },
+
+        delegate: function (domNode, admNode) {
+            var type = admNode.getType(); 
+            $(domNode).find('.ui-controlgroup-label').before('<div class="groupHeader">'
+                             + BWidget.getDisplayLabel(type) + '</div>');
+            return domNode;       
+        },       
     },
 
     /**
@@ -975,7 +982,14 @@ var BWidgetRegistry = {
             for (i = 0; i < 3; i++) {
                 node.addChild(new ADMNode("Checkbox"));
             }
-        }
+        },
+
+        delegate: function (domNode, admNode) {
+            var type = admNode.getType(); 
+            $(domNode).find('.ui-controlgroup-label').before('<div class="groupHeader">'
+                             + BWidget.getDisplayLabel(type) + '</div>');
+            return domNode;       
+        },       
     },
 
     /**

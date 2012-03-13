@@ -22,7 +22,7 @@
     outline-offset: -1px;
 }
 .nrc-sortable-container:not([data-role=footer]):not([data-role=header]).nrc-empty {
-    padding: 1.5em;
+    height: 66px;
 }
 .nrc-hint-text {
     opacity: 0.5;
@@ -100,4 +100,19 @@ fieldset.adm-node.ui-unmasked,
 .adm-node.ui-selected.ui-masked,
 .adm-node.nrc-empty.ui-masked {
     outline: none;
+}
+
+/**************************/
+/* container header style */
+/**************************/
+.groupHeader {
+    margin-left: -10px;
+    margin-right: -10px;
+    margin-top: -10px;
+    margin-bottom: 5px;
+    padding-top: 2px;
+    padding-left: 4px;
+    padding-bottom: 2px;
+    background-color: #6d8995;
+    color: white;
 }

@@ -460,6 +460,14 @@
                 } else {
                     $(domNode).removeClass('nrc-empty');
                 }
+
+                //  Inject a header to some containers here. 
+                var type = admNode.getType();
+                if (type != 'Footer' && type != 'Header' && type != 'RadioGroup' && 
+                    type != 'CheckboxGroup' && type != 'Content' && type != 'Collapsible') {   
+                    $(domNode).append('<div class="groupHeader">' + 
+                                      BWidget.getDisplayLabel(type) + '</div>');
+                }   
             }
         },
     });
