@@ -21,11 +21,14 @@
             $.getJSON("src/assets/groups.json", function (groups) {
                 var resolveRefs = function (root, data) {
                     $.each(data, function(name, value) {
-                        if (value &&  typeof value == "string" && value.indexOf('#') == 0) {
-                            var refObj = root;
-                            $.each(value.substring(1).split('.'), function (i, attr) {
-                                refObj = refObj[attr];
-                            });
+                        var refObj;
+                        if (value &&  typeof value == "string" &&
+                            value.indexOf('#') == 0) {
+                            refObj = root;
+                            $.each(value.substring(1).split('.'),
+                                function (i, attr) {
+                                    refObj = refObj[attr];
+                                });
                             data.splice(data.indexOf(value), 1, refObj);
                         }
                         else if (value && typeof value === "object")
@@ -34,7 +37,8 @@
                 };
                 resolveRefs(groups, groups);
                 widget._setOption("model", groups);
-                widget.findDomNode(groups[0]['Functional Groups']).trigger('click');
+                widget.findDomNode(groups[0]['Functional Groups'])
+                      .trigger('click');
             });
             return this;
         },
@@ -44,7 +48,8 @@
         },
 
         resize: function(event, widget) {
-            this.element.height(Math.round((this.element.parent().height() - 20) * 0.3));
+            this.element.height(
+                Math.round((this.element.parent().height() - 20) * 0.3));
         },
     });
 })(jQuery);

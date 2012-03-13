@@ -46,53 +46,62 @@
             if (widget.options.model) {
                 var container = $('<ul/>').appendTo(this.element.empty());
                 widget._createTreeView(container, container,
-                        this._toTreeModel(this.options.model))
+                                       this._toTreeModel(this.options.model))
             }
         },
 
         _createTreeView: function (container, rootContainer, node) {
-            var widget = this, selected = widget._getSelected?widget._getSelected():null;
+            var widget = this,
+                selected = widget._getSelected?widget._getSelected():null;
             $.each(node, function(i , v) {
                 if ( $.isPlainObject(v)) {
                     //This is children definition
                     $.each(v, function(name , value) {
                         var folderNode;
-                        if (name === "_hidden_node" || name === "_origin_node") return true;
+                        if (name === "_hidden_node"||name === "_origin_node") {
+                            return true;
+                        }
                         container.prev().prev().addClass('folder')
                             .removeClass('singleItem').html('');
                         folderNode = $('<li/>')
-                                .appendTo(container)
-                                .append($('<span/>').addClass('singleItem').html("&#x2022;")
-                                    .click(function(e) {
-                                        $(this).toggleClass("close")
-                                        .parent()
-                                        .children("ul").toggle();
-                                        e.stopPropagation();
-                                    })
-                                )
-                                .append($('<a/>')
-                                    .append($('<span>').text(name).addClass('widgetType'))
-                                    .click(function (e) {
-                                        e.stopPropagation();
-                                        widget._nodeSelected(value, v._origin_node);
+                            .appendTo(container)
+                            .append($('<span/>').addClass('singleItem')
+                                .html("&#x2022;")
+                                .click(function(e) {
+                                    $(this).toggleClass("close")
+                                    .parent()
+                                    .children("ul").toggle();
+                                    e.stopPropagation();
+                                }))
+                            .append($('<a/>')
+                                .append($('<span>').text(name)
+                                                   .addClass('widgetType'))
+                                .click(function (e) {
+                                    e.stopPropagation();
+                                    widget._nodeSelected(value, v._origin_node);
+                                    widget._setSelected($(this));
+                                    return false;
+                                })
+                                .each(function () {
+                                    var origin_node = v._origin_node||value;
+                                    $(this).data('origin_node', origin_node);
+                                    if (origin_node === selected) {
                                         widget._setSelected($(this));
-                                        return false;
-                                    })
-                                    .each(function () {
-                                        var origin_node = v._origin_node?v._origin_node:value;
-                                        $(this).data('origin_node', origin_node);
-                                        if (origin_node === selected)
-                                            widget._setSelected($(this));
-                                    })
-                                );
-                        if (typeof widget._render === "function")
+                                    }
+                                })
+                            );
+                        if (typeof widget._render === "function") {
                             widget._render(folderNode, v._origin_node);
-                        widget._createTreeView($('<ul/>').addClass('widgetGroup')
-                                .appendTo(folderNode), rootContainer, value);
+                        }
+                        widget._createTreeView($('<ul/>')
+                                                   .addClass('widgetGroup')
+                                                   .appendTo(folderNode),
+                                               rootContainer, value);
                     });
                 }
             });
         },
+
         _setSelected: function (domNode) {
             this.element.find('.ui-selected')
                 .removeClass('ui-selected')
@@ -101,11 +110,12 @@
                 .addClass('ui-selected')
                 [0].scrollIntoViewIfNeeded();
         },
+
         findDomNode: function (node) {
-           return this.element.find('*').filter(function() {
-                     return $(this).data("origin_node") == node ;
-                     });
+           return $('a', this.element).filter( function() {
+               return $(this).data("origin_node") === node; });
         },
+
         setSelected: function (node) {
            this._setSelected(this.findDomNode(node));
         },
