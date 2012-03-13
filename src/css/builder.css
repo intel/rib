@@ -919,8 +919,8 @@ body.ui-tabs.ui-widget {
 }
 .panel-section-contents .pageIcon {
     background-image: url("images/pageIcon_off.png");
-    min-width: 20px;
-    min-height: 24px;
+    width: 20px;
+    height: 24px;
     text-align: center;
     line-height: 24px;
     float: left;
@@ -939,6 +939,18 @@ body.ui-tabs.ui-widget {
 }
 .pageIcon.ui-selected:hover {
     background-image: url("images/pageIcon_on.png");
+}
+.deleteTag {
+    display: none;
+    position: relative;
+    left: 16px;
+    top: -25px;
+    min-width: 10px;
+    min-height: 10px;
+    background: url("images/tagButton_up.png") no-repeat 0px;
+}
+.deleteTag:hover {
+    background: url("images/tagButton_down.png") no-repeat 0px;
 }
 
 /*

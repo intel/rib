@@ -26,9 +26,7 @@
             o.designReset = this._designResetHandler;
             o.selectionChanged = null;
             o.activePageChanged = this._activePageChangedHandler;
-            // FIXME: Should also bind to modelUpdated, which is what fires
-            //        when a page is added or removed
-            o.modelUpdated = null;
+            o.modelUpdated = this._modelUpdatedHandler;;
 
             // FIXME: This should work, but $.extend of options seems to be
             //        creating a copy of the ADM, which will not containt the
@@ -111,6 +109,28 @@
                         .click(function (e) {
                             model.setActivePage($(this).data('page'));
                         })
+                        .hover(function (e) {
+                            $(e.target).children(':first').show();
+                        }, function (e) {
+                            $(e.target).children(':first').hide();
+                        })
+                        .append('<div/>')
+                        .children(':first')
+                        .addClass('deleteTag')
+                        .click(function (e) {
+                            try {
+                                var result, page = $(this).parent().data('page'),
+                                    pageUtils = $.gb.pageUtils;
+
+                                result = pageUtils.deletePage(page.getUid());
+                            }
+                            catch (err) {
+                                console.error(err.message);
+                            }
+                            e.stopPropagation();
+                            return false;
+                        })
+                        .end()
                         .appendTo(pages);
                 }
             }
@@ -177,6 +197,7 @@
         _designResetHandler: function(event, widget) {
             var d = event && event.design, o;
 
+
             widget = widget || this;
             o = widget.options;
             d = d || o.model.getDesignRoot();
@@ -210,6 +231,16 @@
             //        cause a complete re-creation of the page list
             widget.refresh();
         },
+
+        _modelUpdatedHandler: function(event, widget) {
+            if(event.node.getType()==='Page' &&
+               (event.type === "nodeRemoved" ||
+                event.type === "nodeAdded")) {
+                widget.refresh(event, widget);
+            } else {
+                return;
+            }
+       },
 
         _addPageHandler: function(event) {
             var widget = event && event.data,
