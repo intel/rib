@@ -383,7 +383,8 @@ body.ui-tabs.ui-widget {
 }
 .panel-section-header .title {
     font-size : 11px;
-    font-weight: Semi-Bold;
+    font-family: OpenSans-SB;
+    font-weight: 600; /* semi-bold */
     float: left;
     margin-left: 10px;
     text-transform: uppercase;
@@ -528,8 +529,7 @@ body.ui-tabs.ui-widget {
 */
 .tools-secondary {
     display: -webkit-box;
-    padding-right: .5em;
-    padding-top: 1em;
+    padding: .5em;
     box-pack: end;
     -moz-box-pack: end;
     -webkit-box-pack: end;
@@ -537,7 +537,8 @@ body.ui-tabs.ui-widget {
 .tools-secondary .default-tools {
     margin-top: 5px;
     font-size: 12px;
-    font-weight: Semi-Bold;
+    font-family: OpenSans-SB;
+    font-weight: 600; /* semi-bold */
     color: #f0f0f0;
     margin-bottom: 4px;
 }
@@ -565,7 +566,8 @@ body.ui-tabs.ui-widget {
 .tools-secondary a {
     cursor: pointer;
     font-size: 12px;
-    font-family: Semi-Bold;
+    font-family: OpenSans-SB;
+    font-weight: 600; /* semi-bold */
     color: #f0f0f0;
     text-shadow: -1px -1px 1px #111;
     display: inline-block;
@@ -682,7 +684,6 @@ body.ui-tabs.ui-widget {
   Property View widget styles
 */
 .propertyView {
-    border: 1px solid rgba(0,0,0,0.6);
     overflow-y: auto;
     overflow-x: hidden;
 }
@@ -690,8 +691,12 @@ body.ui-tabs.ui-widget {
     background-image: url('images/propertiesTitleBar.png');
     background-repeat: repeat-x;
     height: 24px;
-    font: 11px Semi-Bold #333333;
+    font-size: 11px;
+    color: #333333;
+    font-family: OpenSans-SB;
+    font-weight: 600; /* semi-bold */
     text-shadow: 1px 1px 1px #fff;
+    text-transform: uppercase;
 }
 .propertyView .property_content {
     background: #c8ced0;
@@ -881,10 +886,12 @@ body.ui-tabs.ui-widget {
 .pageView.panel-section {
     border-right: 1px solid #b9bab6;
 }
+.propertyView > .panel-section-header,
 .pageView > .panel-section-header {
     background-image: url('images/pagesTitleBarBackground28px.png');
     border-right: 1px solid #b9bab6;
 }
+.propertyView > .panel-section-contents,
 .pageView > .panel-section-contents {
     border-right: 1px solid #b9bab6;
     border-bottom: 1px solid #a4a6a6;
@@ -956,7 +963,8 @@ body.ui-tabs.ui-widget {
     -webkit-background-clip: padding-box;
     background-clip: padding-box;
     font-size: 14px;
-    font-weight: Semi-Bold;
+    font-family: OpenSans-SB;
+    font-weight: 600; /* semi-bold */
     font-color: #333;
 
 }

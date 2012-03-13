@@ -39,7 +39,7 @@
                 .addClass(this.widgetName)
                 .append('<div/>')
                 .children(':first')
-                    .addClass('property_title')
+                    .addClass('panel-section-header')
                     .addClass('flex0')
                     .end()
                 .append('<div/>')
@@ -210,7 +210,7 @@
                 labelId, labelVal, valueId, valueVal, count,
                 widget = this, type,  i, child, index, propType,
                 p, props, options, code, o, propertyList,
-                title = this.element.find('.property_title'),
+                title = this.element.find('.panel-section-header'),
                 content = this.element.find('.property_content');
 
             // Clear the properties pane when nothing is selected
@@ -227,7 +227,8 @@
             title.empty()
                 .append('<span>')
                 .children(':first')
-                    .text(BWidget.getDisplayLabel(type));
+                    .addClass('title')
+                    .text(BWidget.getDisplayLabel(type)+' Properties');
             content.empty()
                 .append('<div class="propertyItems"><ul/></div>')
                 .find('ul')
