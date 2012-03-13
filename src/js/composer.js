@@ -368,9 +368,13 @@ $(function() {
                                 if (node) adm.setSelected(node.getUid());
                             } else {
                                 console.warn('Move node failed');
+                                ui.item.remove();
+                                return false;
                             }
                         } else {
                             console.warn('Move node failed: invalid zone');
+                            ui.item.remove();
+                            return false;
                         }
                     }
 /*
