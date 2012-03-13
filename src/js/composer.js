@@ -105,7 +105,7 @@ $(function() {
         // - Some we do (collapsible "expand" and "collapse" for example
         $('*', document).andSelf()
             .unbind('click vmousedown vmousecancel vmouseup vmouseover focus'
-                  + 'vmouseout blur touchmove mousedown');
+                  + 'vmouseout blur');
 
         $('.adm-node:not(.delegation),.orig-adm-node').each ( function (index, node) {
             var admNode, widgetType, delegate, events,
