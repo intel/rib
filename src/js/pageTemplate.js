@@ -132,6 +132,37 @@ $(function() {
                 }
             }
             return types;
+        },
+
+        /*
+         * Delete page
+         * @param {Interger} pageUid UID of delete Page
+         * return {Boolean} true if nodes have been delete successfully,
+         *                  otherwise return false
+         */
+        deletePage: function(pageUid) {
+            try {
+                //if current page is the last page, we will create a new page which
+                //has the same template as current one
+                var newPage, options = {},
+                    admDesign = ADM.getDesignRoot();
+
+                if (admDesign.getChildren().length === 1) {
+                    options.layout = this.getActivePageLayout();
+                    newPage = this.createNewPage(options);
+                    if (!newPage) {
+                        console.error("error: create new page failed");
+                        return false;
+                    }
+                }
+                //delete Current Page node from design
+                ADM.removeChild(pageUid, false);
+                return true;
+            }
+            catch (err) {
+                console.error(err.message);
+                return false;
+            }
         }
     };
 
