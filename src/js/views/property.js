@@ -444,7 +444,16 @@
                 .appendTo(content);
             content.find('#deleteElement')
                 .one('click', function (e) {
-                    ADM.removeChild(node.getUid(), false);
+                    try {
+                        if (type === "Page") {
+                            $.gb.pageUtils.deletePage(node.getUid(), false);
+                        } else {
+                            ADM.removeChild(node.getUid(), false);
+                        }
+                    }
+                    catch (err) {
+                        console.error(err.message);
+                    }
                     e.stopPropagation();
                     return false;
                 });
