@@ -591,6 +591,45 @@ ADM.insertChildAfter = function (siblingRef, childRef, dryrun) {
 };
 
 /**
+ * Ensures that the given page is not active by making another page active, if
+ * necessary. If this is the only page, however, it cannot be inactive, and
+ * the function returns false. If pageRef doesn't refer to a valid node, or the
+ * node is not a page, or the page is inactive or made inactive, returns true.
+ *
+ * @param {ADMNode/String} pageRef Either an ADMNode or a string type of a node.
+ * @param {Boolean} dryrun [Optional] True if the call should be a dry run.
+ * @return {Boolean} False if the given page could not be made inactive, true if
+ *                   it already was, or was made inactive, or was invalid.
+ */
+ADM.ensurePageInactive = function (pageRef, dryrun) {
+    var design, pages, pageIndex, p, page = ADM.toNode(pageRef);
+    if (!page || page.getType() != "Page") {
+        return true;
+    }
+
+    if (ADM.getActivePage() !== page) {
+        // this page is already inactive
+        return true;
+    }
+
+    // make another page active
+    design = ADM.getDesignRoot();
+    pages = design.getChildren();
+    for (pageIndex in pages) {
+        p = pages[pageIndex];
+        if (p !== page) {
+            if (!dryrun) {
+                ADM.setActivePage(p);
+            }
+            return true;
+        }
+    }
+
+    console.warn("Warning: no other page found to make active");
+    return false;
+}
+
+/**
  * Removes the given child from the design.
  * Using this high-level API records the action as user-visible and part of the
  * undo/redo stacks.
@@ -618,24 +657,9 @@ ADM.removeChild = function (childRef, dryrun) {
         return null;
     }
 
-    if (ADM._activePage === child) {
-        // trying to remove the current page, make another page active
-        pages = design.getChildren();
-        for (pageIndex in pages) {
-            page = pages[pageIndex];
-            if (page !== child) {
-                if (!dryrun) {
-                    ADM.setActivePage(page);
-                }
-                break;
-            }
-        }
-
-        if (ADM._activePage === child) {
-            console.warn("Warning: attempted to remove the only page: ",
-                         childRef);
-            return null;
-        }
+    if (!ADM.ensurePageInactive(child)) {
+        console.warn("Warning: attempted to remove the only page: ", childRef);
+        return null;
     }
 
     zone = child.getZone();
@@ -782,6 +806,7 @@ ADM.undo = function () {
     if (ADM._undoStack.length > 0) {
         obj = ADM._undoStack.pop();
         if (obj.type === "add") {
+            ADM.ensurePageInactive(obj.child);
             obj.parent.removeChild(obj.child);
         }
         else if (obj.type === "remove") {

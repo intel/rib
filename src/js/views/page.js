@@ -255,18 +255,18 @@
         },
 
         _copyPageHandler: function(event) {
-            var widget = event && event.data,
-                newPage, curPage;
+            var widget = event && event.data, newPage, curPage, adm;
 
-            if (!widget && !widget.options && !widgets.options.model) {
+            if (!widget || !widget.options || !widget.options.model) {
                 return;
             }
+            adm = widget.options.model;
 
-            curPage = widget.options.model.getActivePage();
-            newPage = widget.options.model.copySubtree(curPage);
+            curPage = adm.getActivePage();
+            newPage = adm.copySubtree(curPage);
 
-            if (widget.options.model.getDesignRoot().addChild(newPage)) {
-                widget.options.model.setActivePage(newPage);
+            if (adm.addChild(adm.getDesignRoot(), newPage)) {
+                adm.setActivePage(newPage);
             }
 
             event.stopImmediatePropagation();

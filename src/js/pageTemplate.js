@@ -40,7 +40,7 @@ $(function() {
             }
 
             // create New ADM page node
-            newPage = creatPageNode();
+            newPage = ADM.addChild(design, 'Page');
             if (!newPage) {
                 return null;
             }
@@ -85,18 +85,6 @@ $(function() {
             }
 
             /*
-             * Create a page node and set it's id property
-             * @return {ADMNode} page node or null if add failed.
-             */
-            function creatPageNode() {
-                var pageNode = addNode(design, 'Page');
-                if (!pageNode) {
-                    return null;
-                }
-                return pageNode;
-            }
-
-            /*
              * create  new page's child according to layout
              * @param {ADMNode} pageNode new page node.
              * @param {Array} layout which contains types of child type
@@ -105,12 +93,14 @@ $(function() {
              *                   otherwise return false
              */
             function setPageLayout(pageNode, layout) {
-                var t,that;
+                var t, that;
                 for (t in layout ){
-                     that = addNode(pageNode, layout[t]);
-                     if (that === null) {
-                         return false;
-                     }
+                    design.suppressEvents(true);
+                    that = addNode(pageNode, layout[t]);
+                    design.suppressEvents(false);
+                    if (that === null) {
+                        return false;
+                    }
                 }
                 return true;
             }
