@@ -1,0 +1,35 @@
+@font-face
+{
+    font-family: OpenSans-SB;
+    src: url('fonts/OpenSans-Semibold.ttf');
+    font-weight: 600;
+    font-style: normal;
+}
+@font-face
+{
+    font-family: OpenSans;
+    src: url('fonts/OpenSans-Regular.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face
+{
+    font-family: OpenSans;
+    src: url('fonts/OpenSans-Bold.ttf');
+    font-weight: bold;
+    font-style: normal;
+}
+@font-face
+{
+    font-family: OpenSans;
+    src: url('fonts/OpenSans-Italic.ttf');
+    font-weight: normal;
+    font-style: italic;
+}
+@font-face
+{
+    font-family: OpenSans;
+    src: url('fonts/OpenSans-BoldItalic.ttf');
+    font-weight: bold;
+    font-style: italic;
+}
