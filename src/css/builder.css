@@ -525,7 +525,7 @@ body.ui-tabs.ui-widget {
 }
 .tools-primary #btnpaste {
     background-image: url('images/pasteButton_up.png');
-    width: 71px;
+    width: 70px;
 }
 .tools-primary #btnpaste:hover,
 .tools-primary #btnpaste:active {
