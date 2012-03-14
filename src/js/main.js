@@ -281,6 +281,7 @@
                 })
                 .append('<div class="pageView flex0 vbox"></div>')
                 .append('<div class="outlineView flex0 vbox"></div>')
+                .append('<div class="panel-section-header property_title flex0 vbox"></div>')
                 .append('<div class="propertyView flex0 vbox"></div>');
 
             this.ui.layoutView.find('.panel.right')
@@ -305,6 +306,7 @@
                 })
                 .append('<div class="pageView flex0 vbox"></div>')
                 .append('<div class="outlineView flex1 vbox"></div>')
+                .append('<div class="panel-section-header property_title flex0 vbox"></div>')
                 .append('<div class="propertyView flex1 vbox"></div>');
 
             this.ui.liveView = $('<div/>').appendTo(container)

@@ -38,11 +38,6 @@
             this.element
                 .addClass(this.widgetName)
                 .append('<div/>')
-                .children(':first')
-                    .addClass('panel-section-header')
-                    .addClass('flex0')
-                    .end()
-                .append('<div/>')
                 .children(':last')
                     .addClass('property_content')
                     .addClass('flex1');
@@ -56,6 +51,8 @@
 
                 var newHeight = Math.round((el.parent().height()
                                 - $('.pageView').height()
+                                - el.parent().find('.property_title')
+                                      .height()
                                 - 20) // height of ui-state-default + borders
                                 * 0.4);
                 el.height(newHeight);
@@ -210,7 +207,7 @@
                 labelId, labelVal, valueId, valueVal, count,
                 widget = this, type,  i, child, index, propType,
                 p, props, options, code, o, propertyList,
-                title = this.element.find('.panel-section-header'),
+                title = this.element.parent().find('.property_title'),
                 content = this.element.find('.property_content');
 
             // Clear the properties pane when nothing is selected

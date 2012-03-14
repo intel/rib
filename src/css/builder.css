@@ -360,6 +360,7 @@ body.ui-tabs.ui-widget {
 .panel-section {
 }
 .panel-section-header {
+    display: block;
     height: 30px;
     min-height: 30px;
     max-height: 30px;
