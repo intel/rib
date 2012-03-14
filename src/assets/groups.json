@@ -1,38 +1,48 @@
 [{
     "_hidden_node": {
-        "jqm_input_ungrouped":[ "Label", "Slider", "SelectMenu", "Checkbox"],
-        "jqm_input_boolean":["ToggleSwitch", "RadioButton"],
+        "jqm_toolbars":["Header", "Footer"],
+        "jqm_input_boolean":["ToggleSwitch", "RadioButton", "RadioGroup", "Checkbox", "CheckboxGroup"],
+        "jqm_other_inputs":[ {
+                    "Form": ["Form"],
+                    "Label": ["Label"],
+                    "Text": ["TextInput", "TextArea"],
+                    "Select": ["SelectMenu"],
+                    "Number": ["Slider"]
+            }
+         ],
         "tizen_input_date":["DateTimePicker", "CalendarPicker"],
         "tizen_input_color": ["ColorPicker", "ColorPickerButton",
                         "ColorPalette", "ColorTitle", "HsvPicker"]
     },
     "Functional Groups": [
-        "Button",
-        "#0._hidden_node.jqm_input_ungrouped",
         {
-            "Input": [
-                "OptionHeader",
+            "Toolbars": ["#0._hidden_node.jqm_toolbars", "OptionHeader"],
+            "Buttons": ["Button","ButtonGroup"],
+            "Content Formatting": ["Grid", "Collapsible", "Accordion"],
+            "Form Elements": [
+                "#0._hidden_node.jqm_other_inputs.0",
                 {
-                    "Text": ["TextInput", "TextArea"],
                     "Boolean": ["#0._hidden_node.jqm_input_boolean", "Switch"],
                     "Date & Time": ["#0._hidden_node.tizen_input_date"],
                     "Color": ["#0._hidden_node.tizen_input_color"]
                 }
             ],
-            "Output": ["ProgressBar"],
-            "Layout": [ "Header","Footer", "ButtonGroup", "RadioGroup",
-                "CheckboxGroup", "Form", "List", "ListItem", "ListDivider",
-                "ListButton", "OrderedList", "Grid", "Block", "Accordion",
-                "Collapsible"]
+            "List views": [
+                 "List", "OrderedList", "ListItem", "ListDivider", "ListButton"
+            ],
+            "Output": ["ProgressBar"]
         }
     ],
 
     "Widget Sets": [
         {
-            "jQuery Mobile": [ "Button","#0._hidden_node.jqm_input_ungrouped",
-                "#0.Functional Groups.2.Input.1.Text",
+            "jQuery Mobile": [ 
+                "#0._hidden_node.jqm_toolbars",
+                "#0.Functional Groups.0.Buttons",
+                "#0.Functional Groups.0.Content Formatting",
+                "#0._hidden_node.jqm_other_inputs",
                 "#0._hidden_node.jqm_input_boolean",
-                "#0.Functional Groups.2.Layout"
+                "#0.Functional Groups.0.List views"
             ],
             "Tizen Widgets": [ "OptionHeader",  "Switch",
                 "#0._hidden_node.tizen_input_date",
