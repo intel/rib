@@ -182,7 +182,7 @@ $(function() {
                 appendTo: 'body',
                 connectWith: '.nrc-sortable-container',
                 cancel: '> :not(.adm-node)',//,select',
-                items: '> *.adm-node',
+                items: '> *.adm-node:not(.ui-header,.ui-content,.ui-footer)',
                 start: function(event, ui){
                     $(this).addClass('ui-state-active');
                     trackOffsets('start:   ',ui,$(this).data('sortable'));
