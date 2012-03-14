@@ -465,6 +465,7 @@ body.ui-tabs.ui-widget {
     background-repeat: no-repeat;
     background-size: 100% 100%;
     height: 32px;
+    cursor: pointer;
 }
 .tools-primary button:first-child {
     -webkit-border-top-left-radius: .5em !important;
@@ -478,6 +479,7 @@ body.ui-tabs.ui-widget {
     background-image: url('images/newProjectButton_up.png');
     width: 110px;
 }
+.tools-primary #newProj:hover,
 .tools-primary #newProj:active {
     background-image: url('images/newProjectButton_down.png');
 }
@@ -485,6 +487,7 @@ body.ui-tabs.ui-widget {
     background-image: url('images/importProjectButton_up.png');
     width: 109px;
 }
+.tools-primary #importProj:hover,
 .tools-primary #importProj:active {
     background-image: url('images/importProjectButton_down.png');
 }
@@ -492,6 +495,7 @@ body.ui-tabs.ui-widget {
     background-image: url('images/undoButton_up.png');
     width: 61px;
 }
+.tools-primary #btnundo:hover,
 .tools-primary #btnundo:active {
     background-image: url('images/undoButton_down.png');
 }
@@ -499,6 +503,7 @@ body.ui-tabs.ui-widget {
     background-image: url('images/redoButton_up.png');
     width: 58px;
 }
+.tools-primary #btnredo:hover,
 .tools-primary #btnredo:active {
     background-image: url('images/redoButton_down.png');
 }
@@ -506,6 +511,7 @@ body.ui-tabs.ui-widget {
     background-image: url('images/cutButton_up.png');
     width: 50px;
 }
+.tools-primary #btncut:hover,
 .tools-primary #btncut:active {
     background-image: url('images/cutButton_down.png');
 }
@@ -513,6 +519,7 @@ body.ui-tabs.ui-widget {
     background-image: url('images/copyButton_up.png');
     width: 58px;
 }
+.tools-primary #btncopy:hover,
 .tools-primary #btncopy:active {
     background-image: url('images/copyButton_down.png');
 }
@@ -520,6 +527,7 @@ body.ui-tabs.ui-widget {
     background-image: url('images/pasteButton_up.png');
     width: 71px;
 }
+.tools-primary #btnpaste:hover,
 .tools-primary #btnpaste:active {
     background-image: url('images/pasteButton_down.png');
 }
