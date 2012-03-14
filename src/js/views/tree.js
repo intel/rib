@@ -78,8 +78,8 @@
                                                    .addClass('widgetType'))
                                 .click(function (e) {
                                     e.stopPropagation();
-                                    widget._nodeSelected(value, v._origin_node);
                                     widget._setSelected($(this));
+                                    widget._nodeSelected(value, v._origin_node);
                                     return false;
                                 })
                                 .each(function () {
@@ -90,6 +90,7 @@
                                     }
                                 })
                             );
+
                         if (typeof widget._render === "function") {
                             widget._render(folderNode, v._origin_node);
                         }
