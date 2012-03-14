@@ -168,7 +168,7 @@ $(function() {
         });
 
         // Configure "sortable" behaviors
-        targets = $('.nrc-sortable-container,[data-role="page"]');
+        targets = $('.nrc-sortable-container,body .ui-page');
 
         debug && console.log("Found ["+targets.length+"] sortable targets: ");
 
@@ -180,8 +180,8 @@ $(function() {
                 placeholder: 'ui-sortable-placeholder',
                 tolerance: 'pointer',
                 appendTo: 'body',
-                connectWith: '.nrc-sortable-container',
-                cancel: '> :not(.adm-node)',//,select',
+                connectWith: '.adm-node.ui-sortable',
+                cancel: '> :not(.adm-node)',
                 items: '> *.adm-node:not(.ui-header,.ui-content,.ui-footer)',
                 start: function(event, ui){
                     $(this).addClass('ui-state-active');
