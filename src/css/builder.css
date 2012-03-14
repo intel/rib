@@ -695,6 +695,7 @@ body.ui-tabs.ui-widget {
 .propertyView {
     overflow-y: auto;
     overflow-x: hidden;
+    min-width: 300px;
 }
 .propertyView .property_title {
     background-image: url('images/propertiesTitleBar.png');
@@ -707,6 +708,12 @@ body.ui-tabs.ui-widget {
     text-shadow: 1px 1px 1px #fff;
     text-transform: uppercase;
 }
+.propertyView .title {
+    font-size : 12px;
+    font-family: OpenSans-SB;
+    font-weight: 600; /* semi-bold */
+    font-color: #333333;
+}
 .propertyView .property_content {
     background: #c8ced0;
     min-height:80%;
@@ -714,7 +721,7 @@ body.ui-tabs.ui-widget {
 }
 .propertyView input.PropertyCheckBox {
     text-align: right;
-    width: 20px;
+    width: 35px;
     margin: 0px;
     margin-left:50px;
     padding; 0px;
@@ -725,8 +732,7 @@ body.ui-tabs.ui-widget {
 .propertyView .propertyItems {
     margin: 0px;
     border: 0px;
-    padding: 10px;
-    padding-bottom: 80px;
+    padding: 0px 10px 50px 10px;
 }
 .propertyView ul {
     margin: 0;
@@ -739,7 +745,7 @@ body.ui-tabs.ui-widget {
     padding-top: 11px;
 }
 .propertyView .rightLabel {
-    margin: 0px;
+    margin: 0px 0px 0px 20px;
     padding: 0px;
     border: 0px;
     text-align: left;
@@ -750,30 +756,28 @@ body.ui-tabs.ui-widget {
     padding: 0px;
     border: 0px;
     text-align: right;
-    width: 60px;
+    width: 80px;
 }
 .propertyView input {
-    margin-left: 20px;
     height: 23px;
-    width: 160px;
-    margin: 0px;
+    width: 140px;
+    margin: 0px 0px 0px 20px;
     padding: 2px 5px;
     border: none;
     -webkit-border-radius: 5px;
 }
 .propertyView select {
-    margin-left: 20px;
-    font-size: 12px;
-    font-weight: bold;
-    width: 173px;
+    width: 100px;
     height: 23px;
+    margin: 0px 0px 0px 20px;
 }
 .propertyView fieldset {
-    display: inline;
-    width: 195px;
+    position: relative;
+    width: 180px;
+    left: 80px;
     border: 0px;
     margin: 0px;
-    padding: 0px 0px 50px 0px;
+    padding: 0px;
 }
 .propertyView #optionList li {
     padding-top: 5px;
@@ -781,15 +785,15 @@ body.ui-tabs.ui-widget {
 }
 .propertyView .labelText {
     margin: 0px;
-    margin-left: 0px;
+    margin-left: 20px;
     padding: 0px;
     border: 0px;
     text-align: center;
-    width: 70px;
+    width: 60px;
 }
 .propertyView .labelValue {
     margin: 0px;
-    margin-right: 30px;
+    margin-left: 50px;
     padding: 0px;
     border: 0px;
     text-align: center;
@@ -802,11 +806,11 @@ body.ui-tabs.ui-widget {
     margin-top: 5px;
 }
 .propertyView .optionText {
-    width: 70px;
+    width: 50px;
     margin-left: 10px;
 }
 .propertyView .optionValue {
-    width: 50px;
+    width: 40px;
     margin-left: 15px;
 }
 .propertyView .sortOption {
@@ -822,7 +826,7 @@ body.ui-tabs.ui-widget {
     background-repeat: no-repeat;
     background-position: center;
     float: right;
-    margin: 0px;
+    margin: 0px 10px 0px 0px;
     width: 10px;
     height: 23px;
 }

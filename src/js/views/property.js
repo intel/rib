@@ -236,6 +236,10 @@
             //iterate property of node
             for (p in props) {
                 labelVal = p.replace(/_/g,'-');
+                labelVal = labelVal.charAt(0).toUpperCase()+labelVal.substring(1);
+                if (labelVal === "Id") {
+                    labelVal = labelVal.toUpperCase(); 
+                }
                 valueId = p+'-value';
                 valueVal = props[p];
                 propType = BWidget.getPropertyType(type, p);
@@ -246,12 +250,10 @@
                     case "boolean":
                         $('<input type="checkbox"/>')
                             .attr('id', valueId)
-                            .addClass('PropertyCheckBox')
-                            .addClass('fl')
+                            .addClass('PropertyCheckBox fl')
                             .appendTo(code);
                         $('<label for=' + p + '>' + labelVal + '</label>')
-                            .addClass('fr')
-                            .addClass('rightLabel')
+                            .addClass('rightLabel title')
                             .appendTo(code);
                         //initial value of checkbox
                         if(node.getProperty (p) === true) {
@@ -260,28 +262,19 @@
                         break;
                     case "record-array":
                         $('<label for=' + p + '>' + labelVal + '</label>')
-                            .addClass('fl leftLabel')
+                            .addClass('fl leftLabel title')
+                            .appendTo(code);
+                        $('<label for=text> Text </label>')
+                             .addClass('labelText title')
+                             .appendTo(code);
+                        $('<label for=value> Value </label>')
+                            .addClass('labelValue title')
                             .appendTo(code);
                         $('<fieldset><ul/></fieldset>')
-                            .addClass('fr')
                             .children('ul')
                             .attr('id', 'optionList')
                             .end()
                             .appendTo(code);
-                        $('<li/>').append('<label for=text> Text </label>')
-                            .children(':first')
-                            .addClass('labelText fl')
-                            .end()
-                            .append('<label for=value> Value </label>')
-                            .children(':last')
-                            .addClass('labelValue fr')
-                            .end()
-                            .appendTo(code.find('#optionList'));
-                        $('<li><ul/></li>')
-                            .children(':first')
-                            .attr('id', "pr_ol")
-                            .end()
-                            .appendTo(code.find('#optionList'));
                         //insert options into select menu
                         for (i = 0; i< props[p].children.length; i ++){
                             child = props[p].children[i];
@@ -290,7 +283,7 @@
                                 .append('<input type="text"/>')
                                 .children(':last')
                                 .val(child.text)
-                                .addClass('optionText')
+                                .addClass('optionText title')
                                 .change(node, function (event) {
                                      index = $(this).parent().data('index');
                                      props[p].children[index].text = $(this).val();
@@ -302,8 +295,8 @@
                                 .end()
                                 .append('<input type="text"/>')
                                 .children(':last')
-                                .val( child.value)
-                                .addClass('optionValue')
+                                .val(child.value)
+                                .addClass('optionValue title')
                                 .change(node, function (event) {
                                     index = $(this).parent().data('index');
                                     props[p].children[index].value = $(this).val();
@@ -332,13 +325,13 @@
                                     return false;
                                 })
                                 .end()
-                                .appendTo(code.find('#pr_ol'));
+                                .appendTo(code.find('#optionList'));
                         }
 
                         //add add items handler
                         $('<li><label for=items><u>+ add item</u></label></li>')
                             .children(':first')
-                            .addClass('rightLabel fl')
+                            .addClass('rightLabel fl title')
                             .attr('id', 'addOptionItem')
                             .end()
                             .appendTo(code.find('#optionList'));
@@ -362,9 +355,9 @@
                             });
 
                         // make option sortable
-                        content.find('#pr_ol').sortable({
+                        content.find('#optionList').sortable({
                             axis: 'y',
-                            containment: content.find('#pr_ol'),
+                            containment: content.find('#optionList'),
                             start: function(event, ui) {
                                 widget.origRowIndex = ui.item.index();
                             },
@@ -383,14 +376,13 @@
                         break;
                     default:
                         $('<label for=' + p + '>' + labelVal + '</label>')
-                            .addClass('fl')
-                            .addClass('leftLabel')
+                            .addClass('fl leftLabel title')
                             .appendTo(code);
                         //handle property has options
                         if (options[p]) {
                             $('<select size="1">')
                                 .attr('id', valueId)
-                                .addClass('fr')
+                                .addClass('title')
                                 .appendTo(code);
                             //add options to select list
                             for (o in options[p]) {
@@ -403,12 +395,10 @@
                         } else {
                             $('<input type ="text" value="">')
                                 .attr('id', valueId)
-                                .addClass('fr')
+                                .addClass('title')
                                 .appendTo(code);
                             //set default value
                             code.find('#' + valueId).val(valueVal);
-
-
                         }
                         break;
                 }
@@ -427,7 +417,7 @@
                             BWidget.getPropertyType(node.getType(), updated));
                         ADM.setProperty(node, updated, value);
                         event.stopPropagation();
-                        //return false;
+                        return false;
                     });
             }
 
