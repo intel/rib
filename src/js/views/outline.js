@@ -21,7 +21,6 @@
 
             o.designReset = this._designResetHandler;
             o.selectionChanged = this._selectionChangedHandler;
-            o.activePageChanged = this._activePageChangedHandler;
             o.modelUpdated = this._modelUpdatedHandler;
 
             // FIXME: This should work, but $.extend of options seems to be
@@ -79,9 +78,6 @@
                 if (o.selectionChanged) {
                     a.bind("selectionChanged", o.selectionChanged, this);
                 }
-                if (o.activePageChanged) {
-                    a.bind("activePageChanged", o.activePageChanged, this);
-                }
 
                 // Since model changed, need to call our designReset hander
                 // to sync up the ADMDesign modelUpdated event handler
@@ -108,9 +104,6 @@
                 }
                 if (o.selectionChanged) {
                     a.unbind("selectionChanged", o.selectionChanged, this);
-                }
-                if (o.activePageChanged) {
-                    a.unbind("activePageChanged", o.activePageChanged, this);
                 }
             }
         },
@@ -170,20 +163,6 @@
             widget.setSelected(node);
         },
 
-        _activePageChangedHandler: function(event, widget) {
-            widget = widget || this;
-
-            if (!event.page || event.page === undefined ||
-                !widget.options.model) {
-                return;
-            }
-
-            if (event.page.getUid() === widget.options.model.getActivePage()) {
-                return;
-            }
-
-            widget.refresh(event, widget);
-        },
 
         _modelUpdatedHandler: function(event, widget) {
             widget = widget || this;
