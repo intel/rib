@@ -24,7 +24,6 @@
             var o = this.options,
                 e = this.element;
 
-
             this.refresh(null, this);
 
             return this;
@@ -49,27 +48,32 @@
         },
 
         refresh: function(event, widget) {
-            var listWidgets = function (container, group) {
-                    $.each(group, function (i, value) {
-                        if (value && typeof value === "string") {
-                            if (BWidget.isPaletteWidget(value)) {
-                                var li = $('<img id="BWidget-'+value+'"></img>')
-                                             .attr("src", "src/css/images/widgets/" + value + ".png")
-                                             .appendTo(container);
-                                $(li).disableSelection();
-                                $(li).addClass('nrc-palette-widget');
-                                $(li).data("code", BWidget.getTemplate(value));
-                                $(li).data("adm-node", {type: value});
-                            }
-                        }
-                        else if (value)
-                            listWidgets(container, value);
-                    });
-                };
+            var listWidgets, columns;
+
             widget = widget || this;
+
+            listWidgets = function (container, group) {
+                $.each(group, function (i, value) {
+                    if (value && typeof value === "string") {
+                        if (BWidget.isPaletteWidget(value)) {
+                            var li = $('<img id="BWidget-'+value+'"></img>')
+                                .attr("src", "src/css/images/widgets/" + value + ".png")
+                                .appendTo(container);
+                            $(li).disableSelection()
+                                .addClass('nrc-palette-widget')
+                                .data("code", BWidget.getTemplate(value))
+                                .data("adm-node", {type: value});
+                        }
+                    }
+                    else if (value)
+                        listWidgets(container, value);
+                });
+            };
+
             if (widget.options && widget.options.model) {
                 this.element.empty();
-                listWidgets((this.element), this.options.model);
+                this.element.append('<div class="columns">');
+                listWidgets((this.element.find('.columns')), this.options.model);
                 var w = this.element.find('.nrc-palette-widget');
 
                 w.draggable({
@@ -179,7 +183,8 @@
             }
         },
         resize: function(event, widget) {
-           this.element.height(Math.round((this.element.parent().height() - 20) * 0.7));
+            var e = this.element;
+            e.height(Math.round((e.parent().height() - 30) * 0.7));
         },
 
     });

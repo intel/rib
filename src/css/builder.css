@@ -881,9 +881,22 @@ body.ui-tabs.ui-widget {
 .paletteView {
     border: 1px solid rgba(0,0,0,0.6);
     overflow: auto;
+    padding: 2px;
+}
+.paletteView .columns {
+    text-align: center;
+
+    -moz-column-width: 135px; /* Firefox */
+    -webkit-column-width: 135px; /* Safari and Chrome */
+    column-width: 140px;
+
+    -moz-column-gap: 10px; /* Firefox */
+    -webkit-column-gap: 5px; /* Safari and Chrome */
+    column-gap: 10px;
 }
 .paletteView img {
     padding: 5px;
+    width: 130px;
 }
 
 .ui-accordion .ui-accordion-header {
