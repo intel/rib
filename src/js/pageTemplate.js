@@ -40,7 +40,7 @@ $(function() {
             }
 
             // create New ADM page node
-            newPage = ADM.addChild(design, 'Page');
+            newPage = ADM.createNode('Page');
             if (!newPage) {
                 return null;
             }
@@ -63,6 +63,7 @@ $(function() {
                 }
             }
             */
+            ADM.addChild(design, newPage);
             return result? newPage: null;
 
             /**
