@@ -46,13 +46,13 @@
             if (widget.options.model) {
                 var container = $('<ul/>').appendTo(this.element.empty());
                 widget._createTreeView(container, container,
-                                       this._toTreeModel(this.options.model))
+                                       this._toTreeModel(this.options.model));
+                widget.setSelected(widget._getSelected?widget._getSelected():null);
             }
         },
 
         _createTreeView: function (container, rootContainer, node) {
-            var widget = this,
-                selected = widget._getSelected?widget._getSelected():null;
+            var widget = this;
             $.each(node, function(i , v) {
                 if ( $.isPlainObject(v)) {
                     //This is children definition
@@ -85,9 +85,6 @@
                                 .each(function () {
                                     var origin_node = v._origin_node||value;
                                     $(this).data('origin_node', origin_node);
-                                    if (origin_node === selected) {
-                                        widget._setSelected($(this));
-                                    }
                                 })
                             );
 
@@ -104,12 +101,14 @@
         },
 
         _setSelected: function (domNode) {
-            this.element.find('.ui-selected')
-                .removeClass('ui-selected')
-                .removeClass('ui-state-active');
-            domNode.addClass('ui-state-active')
-                .addClass('ui-selected')
-                [0].scrollIntoViewIfNeeded();
+            if (domNode[0]) {
+                this.element.find('.ui-selected')
+                    .removeClass('ui-selected')
+                    .removeClass('ui-state-active');
+                domNode.addClass('ui-state-active')
+                    .addClass('ui-selected')
+                    [0].scrollIntoViewIfNeeded();
+            }
         },
 
         findDomNode: function (node) {
