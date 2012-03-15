@@ -180,16 +180,33 @@ $(function() {
                 placeholder: 'ui-sortable-placeholder',
                 tolerance: 'pointer',
                 appendTo: 'body',
-                connectWith: '.adm-node.ui-sortable',
+                connectWith: '.adm-node.ui-sortable:not(.ui-masked)',
                 cancel: '> :not(.adm-node)',
                 items: '> *.adm-node:not(.ui-header,.ui-content,.ui-footer)',
                 start: function(event, ui){
-                    $(this).addClass('ui-state-active');
+                    //$(this).addClass('ui-state-active');
                     trackOffsets('start:   ',ui,$(this).data('sortable'));
                 },
                 over: function(event, ui){
+                    $('.ui-sortable.ui-state-active')
+                        .removeClass('ui-state-active');
                     $(this).addClass('ui-state-active');
                     trackOffsets('over:    ',ui,$(this).data('sortable'));
+                    if (ui && ui.placeholder) {
+                        var s = ui.placeholder.siblings('.adm-node:visible'),
+                            p = ui.placeholder.parent();
+                        if (p.hasClass('ui-content')) {
+                            ui.placeholder.css('width', p.width());
+                        } else if (p.hasClass('ui-header')) {
+                            // Do nothing
+                        } else if (s.length && s.eq(0).width()) {
+                            ui.placeholder.css('width', s.eq(0).width());
+                            ui.placeholder.css('display',
+                                               s.eq(0).css('display'));
+                        } else {
+                            ui.placeholder.css('width', p.width());
+                        }
+                    }
                 },
                 out: function(event, ui){
                     $(this).removeClass('ui-state-active');
@@ -403,6 +420,14 @@ $(function() {
                 }
             })
             .disableSelection();
+
+        // Fixup "Collapsible" to make the content div be marked as empty,
+        // not it's toplevel element
+        $('.ui-collapsible.empty').each (function () {
+            $(this).removeClass('empty')
+                   .find('.ui-collapsible-content')
+                       .addClass('empty');
+        });
 
         var inputs = targets.find('input');
         $(inputs).disableSelection();

@@ -48,11 +48,6 @@
 /*************************/
 /* Class specific tweaks */
 /*************************/
-.compact {
-    border: none;
-    margin: 0px;
-    padding: 0px;
-}
 .nrc-sortable-container[data-role="content"] > * {
     margin-top: 10px;
     margin-bottom: 10px;
@@ -69,6 +64,7 @@
     outline: 1px dotted #bbbdc0;
     outline-offset: -1px;
 }
+.nrc-sortable-container.empty:after,
 .nrc-sortable-container:empty:after {
     height: 66px;
     content: "drop widgets here...";
@@ -111,32 +107,39 @@
     outline-offset: -2px;
     z-index: 9998;
 }
-.nrc-sortable-container.ui-state-active:not([data-role=footer]):not([data-role=header]),
-.nrc-sortable-container.ui-state-active:not([data-role=footer]):not([data-role=header]).nrc-empty {
+.nrc-sortable-container.ui-state-active,
+.nrc-sortable-container.ui-state-active:empty {
     outline: 2px solid #da1c2e;
     outline-offset: -2px;
 }
-.ui-selectable-helper {
-    position: absolute;
-    z-index: 1111;
-    border:1px dotted black;
-}
-
 .ui-sortable-helper {
     opacity: 0.8;
     z-index: 9999 !important;
 }
 .ui-sortable-placeholder {
     display: block;
+    box-sizing: border-box;
     height: 1px;
     min-height: 1px;
     max-height: 1px;
     margin: 0px;
-    margin-left: 10px;
-    margin-right: 10px;
     padding: 0px;
     background-color: #da1c2e;
     border: 0px none transparent;
+}
+.nrc-sortable-container.ui-content > .ui-sortable-placeholder {
+    margin-top: -5px;
+    margin-bottom: -5px;
+}
+.nrc-sortable-container.ui-content > .ui-sortable-placeholder:last-child,
+.nrc-sortable-container.ui-content > .ui-sortable-placeholder:nth-last-child(2) {
+    margin-top: 0px !important;
+    margin-bottom: 0px !important;
+    background-color: blue !important;
+}
+.nrc-sortable-container:empty > .ui-draggable-placeholder:only-child {
+    margin-top: 33px;
+    margin-bottom: 33px;
 }
 .ui-select.ui-masked span,
 .ui-masked > .orig-adm-node:not(.ui-unmasked),
@@ -144,8 +147,6 @@
     outline-width: 1px !important;
     outline-style: solid !important;
     outline-color: #222 !important;
-    border-style: solid;
-    border-color: #888;
     -webkit-border-radius: 0;
     background: #888;
     -webkit-mask-box-image: -webkit-linear-gradient(black);
@@ -165,10 +166,6 @@ fieldset.adm-node.ui-unmasked,
 .adm-node.ui-unmasked:not(.nrc-sortable-container) {
     opacity: 1.0;
 }
-.adm-node.ui-selected.ui-masked,
-.adm-node.nrc-empty.ui-masked {
-    outline: none;
-}
 
 /**************************/
 /* container header style */
@@ -184,7 +181,6 @@ fieldset.adm-node.ui-unmasked,
     background-color: #6d8995;
     color: white;
 }
-
 .ui-drag-header:before {
     content: attr(header-label);
     display: block;
@@ -203,11 +199,12 @@ fieldset.adm-node.ui-unmasked,
 [data-role="listview"]:not([data-inset="true"]).ui-drag-header:before {
     margin: 0px;
 }
-.ui-header[class*="ui-bar-"]:before, .ui-footer[class*="ui-bar-"]:before,
+form.ui-drag-header:before,
+.ui-header[class*="ui-bar-"]:before,
+.ui-footer[class*="ui-bar-"]:before,
 div.ui-drag-header[class*="ui-grid"]:before,
 div.ui-drag-header[data-role="controlgroup"]:before,
 div.ui-drag-header[data-role="collapsible-set"]:before,
-form.ui-drag-header:before,
 [data-role="listview"]:not([data-inset="false"]).ui-drag-header:before {
     margin-top: -10px;
     margin-left: -10px;
@@ -220,10 +217,13 @@ form.ui-drag-header:before,
     background-color: #fbfbfb;
     background: -webkit-linear-gradient(top, #fbfbfb 0px , #dbdbdb 50%);
 }
-
 .ui-header[class*="ui-bar-"],
 .ui-footer[class*="ui-bar-"] {
     background: #ffffff;
     font-weight: normal;
     text-shadow: none;
+}
+/* Fix header button top offset from drag bar */
+.ui-header.ui-drag-header > .adm-node.ui-btn {
+    top: 18px;
 }

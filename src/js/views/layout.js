@@ -455,6 +455,11 @@
             // If this node is a "container", make sure it's class reflects this
             if (admNode.isContainer() || admNode.getType() === 'Header') {
                 $(domNode).addClass('nrc-sortable-container');
+                if (admNode.getChildrenCount() === 0) {
+                    $(domNode).addClass('empty');
+                } else {
+                    $(domNode).removeClass('empty')
+                }
                 // If this node should have a drag header, make sure it's class
                 // reflects this
                 if (admNode.isHeaderVisible()) {
