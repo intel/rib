@@ -269,6 +269,7 @@ var BWidgetRegistry = {
     Header: {
         parent: "Base",
         allowIn: "Page",
+        dragHeader: true,
         template: function (node) {
             var prop, code = $('<div data-role="header"><h1></h1></div>');
             code = BWidgetRegistry.Base.applyProperties(node, code);
@@ -332,6 +333,7 @@ var BWidgetRegistry = {
     Footer: {
         parent: "Base",
         allowIn: "Page",
+        dragHeader: true,
         template: function (node) {
             var prop, code = $('<div data-role="footer"></div>');
             code = BWidgetRegistry.Base.applyProperties(node, code);
@@ -408,6 +410,7 @@ var BWidgetRegistry = {
      */
     ButtonGroup: {
         parent: "Base",
+        dragHeader: true,
         template: '<div data-role="controlgroup"></div>',
         newGroup: true,
         displayLabel: "Button Group",
@@ -499,6 +502,7 @@ var BWidgetRegistry = {
         //        a form for each widget to be associated with in properties,
         //        for example. Need to look at this.
         parent: "Base",
+        dragHeader: true,
         template: '<form></form>',
         newGroup: true,
         zones: [
@@ -818,6 +822,7 @@ var BWidgetRegistry = {
      */
     RadioGroup: {
         parent: "ButtonGroup",
+        dragHeader: true,
         newGroup: true,
         displayLabel: "Radio Group",
         properties: {
@@ -854,13 +859,6 @@ var BWidgetRegistry = {
                 }
             }
         },
-
-        delegate: function (domNode, admNode) {
-            var type = admNode.getType(); 
-            $(domNode).find('.ui-controlgroup-label').before('<div class="groupHeader">'
-                             + BWidget.getDisplayLabel(type) + '</div>');
-            return domNode;       
-        },       
     },
 
     /**
@@ -951,6 +949,7 @@ var BWidgetRegistry = {
      */
     CheckboxGroup: {
         parent: "ButtonGroup",
+        dragHeader: true,
         newGroup: true,
         displayLabel: "Checkbox Group",
         properties: {
@@ -983,13 +982,6 @@ var BWidgetRegistry = {
                 node.addChild(new ADMNode("Checkbox"));
             }
         },
-
-        delegate: function (domNode, admNode) {
-            var type = admNode.getType(); 
-            $(domNode).find('.ui-controlgroup-label').before('<div class="groupHeader">'
-                             + BWidget.getDisplayLabel(type) + '</div>');
-            return domNode;       
-        },       
     },
 
     /**
@@ -1033,6 +1025,7 @@ var BWidgetRegistry = {
      */
     List: {
         parent: "Base",
+        dragHeader: true,
         newGroup: true,
         properties: {
             inset: {
@@ -1079,6 +1072,7 @@ var BWidgetRegistry = {
      */
     OrderedList: {
         parent: "Base",
+        dragHeader: true,
         displayLabel: "Ordered List",
         properties: {
             inset: {
@@ -1194,6 +1188,7 @@ var BWidgetRegistry = {
      */
     Grid: {
         parent: "Base",
+        dragHeader: true,
         newGroup: true,
         properties: {
             rows: {
@@ -1479,6 +1474,7 @@ var BWidgetRegistry = {
      */
     Accordion: {
         parent: "Base",
+        dragHeader: true,
         template: '<div data-role="collapsible-set"></div>',
         zones: [
             {
@@ -1705,6 +1701,21 @@ var BWidget = {
             return true;
         }
         return false;
+    },
+
+    /**
+     * Tests whether this widget type should be shown with a drag header bar.
+     *
+     * @param {String} widgetType The type of the widget.
+     * @return {Boolean} true if this widget is to be shown in the palette,
+     *                   false if not or it is undefined.
+     */
+    isHeaderVisible: function (widgetType) {
+        var widget = BWidgetRegistry[widgetType];
+        if (typeof widget === "object" && widget.dragHeader !== true) {
+            return false;
+        }
+        return true;
     },
 
     /**

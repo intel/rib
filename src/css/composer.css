@@ -7,6 +7,44 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  *
  */
+/********************/
+/* Font definitions */
+/********************/
+@font-face
+{
+    font-family: OpenSans-SB;
+    src: url('fonts/OpenSans-Semibold.ttf');
+    font-weight: 600;
+    font-style: normal;
+}
+@font-face
+{
+    font-family: OpenSans;
+    src: url('fonts/OpenSans-Regular.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face
+{
+    font-family: OpenSans;
+    src: url('fonts/OpenSans-Bold.ttf');
+    font-weight: bold;
+    font-style: normal;
+}
+@font-face
+{
+    font-family: OpenSans;
+    src: url('fonts/OpenSans-Italic.ttf');
+    font-weight: normal;
+    font-style: italic;
+}
+@font-face
+{
+    font-family: OpenSans;
+    src: url('fonts/OpenSans-BoldItalic.ttf');
+    font-weight: bold;
+    font-style: italic;
+}
 /*************************/
 /* Class specific tweaks */
 /*************************/
@@ -15,14 +53,44 @@
     margin: 0px;
     padding: 0px;
 }
-.nrc-sortable-container:not([data-role=footer]):not([data-role=header]) {
+.nrc-sortable-container[data-role="content"] > * {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.nrc-sortable-container[data-role="content"] > *:first-child {
+    margin-top: 0px;
+}
+.nrc-sortable-container[data-role="content"] > *:last-child {
+    margin-bottom: 0px;
+}
+.nrc-sortable-container {
     padding: 10px;
     box-sizing: border-box;
     outline: 1px dotted #bbbdc0;
     outline-offset: -1px;
 }
-.nrc-sortable-container:not([data-role=footer]):not([data-role=header]).nrc-empty {
+.nrc-sortable-container:empty:after {
     height: 66px;
+    content: "drop widgets here...";
+    color: black;
+    text-align: center;
+    text-transform: capitalize;
+    font-family: OpenSans;
+    font-size: 13px;
+    font-style: italic;
+    opacity: 0.75;
+    left: 45%;
+}
+.nrc-sortable-container.ui-listview:not([data-inset="true"]) {
+    margin: 10px -10px;
+    padding: 0px 1px 1px 1px !important;
+}
+.nrc-sortable-container.ui-listview:not([data-inset="true"]) > li {
+    margin-left: 1px;
+    margin-right: 1px;
+}
+.nrc-sortable-container.ui-listview:not([data-inset="true"]) > li:last-child {
+    margin-bottom: 1px;
 }
 .nrc-hint-text {
     opacity: 0.5;
@@ -115,4 +183,47 @@ fieldset.adm-node.ui-unmasked,
     padding-bottom: 2px;
     background-color: #6d8995;
     color: white;
+}
+
+.ui-drag-header:before {
+    content: attr(header-label);
+    display: block;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    background: -webkit-linear-gradient(top, #6d8995, #6d8995);
+    text-indent: 4px;
+    text-shadow: none;
+    font-size: 9px;
+    font-family: OpenSans;
+    font-weight: bold;
+    color: #ffffff;
+    height: 13px;
+    margin-bottom: 0px;
+}
+[data-role="listview"]:not([data-inset="true"]).ui-drag-header:before {
+    margin: 0px;
+}
+.ui-header[class*="ui-bar-"]:before, .ui-footer[class*="ui-bar-"]:before,
+div.ui-drag-header[class*="ui-grid"]:before,
+div.ui-drag-header[data-role="controlgroup"]:before,
+div.ui-drag-header[data-role="collapsible-set"]:before,
+form.ui-drag-header:before,
+[data-role="listview"]:not([data-inset="false"]).ui-drag-header:before {
+    margin-top: -10px;
+    margin-left: -10px;
+    margin-right: -10px;
+}
+.ui-drag-header:hover:before {
+    outline: 1px solid #bbbdb0;
+    outline-offset: -1px;
+    color: #2d3c4a;
+    background-color: #fbfbfb;
+    background: -webkit-linear-gradient(top, #fbfbfb 0px , #dbdbdb 50%);
+}
+
+.ui-header[class*="ui-bar-"],
+.ui-footer[class*="ui-bar-"] {
+    background: #ffffff;
+    font-weight: normal;
+    text-shadow: none;
 }

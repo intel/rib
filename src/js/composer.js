@@ -406,21 +406,6 @@ $(function() {
 
         var inputs = targets.find('input');
         $(inputs).disableSelection();
-
-        // Fixup "Collapsible" to make the content div be marked as empty,
-        // not it's toplevel element
-        $('.ui-collapsible.nrc-empty').each (function () {
-            $(this).removeClass('nrc-empty')
-                   .find('.ui-collapsible-content')
-                       .addClass('nrc-empty');
-        });
-
-        // Populate empty nodes with a "hint" to drop things there
-        $('.nrc-empty').each( function() {
-            if ($('.nrc-hint-text', this).length === 0) {
-                $(this).append('<p class="nrc-hint-text">Drop widgets here...</p>');
-            }
-        });
     });
 
     $('div:jqmData(role="page")').live('pageshow', function(e) {

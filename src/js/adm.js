@@ -1205,6 +1205,15 @@ ADMNode.prototype.isContainer = function () {
 };
 
 /**
+ * Tests whether this node show have the drag header visible.
+ *
+ * @return {Boolean} True if the node shown have a drag header added.
+ */
+ADMNode.prototype.isHeaderVisible = function () {
+    return this.isContainer && BWidget.isHeaderVisible(this.getType());
+};
+
+/**
  * Finds the object in the subtree rooted at this object (inclusive), by UID.
  *
  * @param {Number} uid The unique ID of the object to be found.

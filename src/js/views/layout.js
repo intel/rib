@@ -455,19 +455,13 @@
             // If this node is a "container", make sure it's class reflects this
             if (admNode.isContainer() || admNode.getType() === 'Header') {
                 $(domNode).addClass('nrc-sortable-container');
-                if (admNode.getChildrenCount() === 0) {
-                    $(domNode).addClass('nrc-empty');
-                } else {
-                    $(domNode).removeClass('nrc-empty');
+                // If this node should have a drag header, make sure it's class
+                // reflects this
+                if (admNode.isHeaderVisible()) {
+                    $(domNode).addClass('ui-drag-header');
+                    $(domNode).attr('header-label',
+                                    BWidget.getDisplayLabel(admNode.getType()));
                 }
-
-                //  Inject a header to some containers here. 
-                var type = admNode.getType();
-                if (type != 'Footer' && type != 'Header' && type != 'RadioGroup' && 
-                    type != 'CheckboxGroup' && type != 'Content' && type != 'Collapsible') {   
-                    $(domNode).append('<div class="groupHeader">' + 
-                                      BWidget.getDisplayLabel(type) + '</div>');
-                }   
             }
         },
     });
