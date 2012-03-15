@@ -971,8 +971,6 @@ body.ui-tabs.ui-widget {
 */
 .nrc-palette-widget.ui-draggable-dragging,
 .nrc-palette-widget.ui-sortable-helper {
-    width: 128px !important;
-    height: 39px !important;
     display: inline-block;
     border: 1px solid #da1c2e !important;
 }
