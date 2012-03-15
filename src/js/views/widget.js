@@ -48,8 +48,12 @@
         },
 
         resize: function(event, widget) {
-            this.element.height(
-                Math.round((this.element.parent().height() - 20) * 0.3));
+            var headerHeight = 30, resizeBarHeight = 20, used, e;
+            e = this.element;
+
+            // allocate 30% of the remaining space for the filter tree
+            used = 2 * headerHeight + resizeBarHeight;
+            e.height(Math.round((e.parent().height() - used) * 0.3));
         },
     });
 })(jQuery);

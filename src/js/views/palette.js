@@ -183,8 +183,12 @@
             }
         },
         resize: function(event, widget) {
-            var e = this.element;
-            e.height(Math.round((e.parent().height() - 30) * 0.7));
+            var headerHeight = 30, resizeBarHeight = 20, used, e;
+            e = this.element;
+
+            // allocate 70% of the remaining space for the palette
+            used = 2 * headerHeight + resizeBarHeight;
+            e.height(Math.round((e.parent().height() - used) * 0.7));
         },
 
     });

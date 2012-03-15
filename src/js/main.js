@@ -290,7 +290,9 @@
                     maxSize: '480',
                     minSize: '160',
                 })
+                .append('<div class="panel-section-header flex0 vbox"><span class="title">Widget Categories</span></div>')
                 .append('<div class="widgetView flex0 vbox"></div>')
+                .append('<div class="panel-section-header flex0 vbox"><span class="title">Widgets</span></div>')
                 .append('<div class="paletteView flex0 vbox"></div>');
 
             this.ui.codeView = $('<div/>').appendTo(container)

@@ -654,6 +654,9 @@ body.ui-tabs.ui-widget {
 .treeView a.ui-selected span.widgetType {
     color: #111111;
 }
+.outlineView {
+    border-bottom: 1px solid rgba(0,0,0,0.6);
+}
 .outlineView span.pageTitle {
     font-size: 12px;
     color: #aaaaaa;
@@ -869,7 +872,7 @@ body.ui-tabs.ui-widget {
   Widget View widget styles
 */
 .widgetView {
-    border: 1px solid rgba(0,0,0,0.6);
+    border-bottom: 1px solid rgba(0,0,0,0.6);
     overflow: auto;
 }
 .widgetView:after {
@@ -879,7 +882,6 @@ body.ui-tabs.ui-widget {
   Palette View widget styles
 */
 .paletteView {
-    border: 1px solid rgba(0,0,0,0.6);
     overflow: auto;
     padding: 2px;
 }
