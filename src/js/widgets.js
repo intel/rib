@@ -1018,6 +1018,7 @@ var BWidgetRegistry = {
             }
         },
         template: '<input type="checkbox"><label for="%ID%">%LABEL%</label>',
+        delegate: 'parent'
     },
 
     /**
