@@ -276,6 +276,7 @@ $(function() {
                     '.ui-page > .orig-adm-node.ui-sortable:not(.ui-masked)',
                 cancel: '> :not(.adm-node,.orig-adm-node)',
                 items: '> *.adm-node:not(.ui-header,.ui-content,.ui-footer),' +
+                    ' .adm-node.ui-checkbox,' +
                     '> *.orig-adm-node:not(.ui-header,.ui-content,.ui-footer)',
                 start: function(event, ui){
                     trackOffsets('start:   ',ui,$(this).data('sortable'));
@@ -457,7 +458,7 @@ $(function() {
                         idx = ui.item.parent().children('.adm-node')
                                               .index(ui.item);
                         cid = ui.item.attr('data-uid');
-                        pid = ui.item.parent().attr('data-uid');
+                        pid = ui.item.closest('.adm-node.ui-sortable').attr('data-uid');
                         node = root.findNodeByUid(cid);
                         newParent = root.findNodeByUid(pid);
                         zones = bw.getZones(newParent.getType());
