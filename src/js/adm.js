@@ -240,7 +240,7 @@ ADM.getDesignRoot = function () {
  * @return {Boolean} True if the design root was actually changed.
  */
 ADM.setDesignRoot = function (design) {
-    var children;
+    var children, page;
     if (!(design instanceof ADMNode) || design.getType() !== "Design") {
         console.warn("Warning: tried to set invalid design root");
         return false;
@@ -253,13 +253,17 @@ ADM.setDesignRoot = function (design) {
         // ensure a design always has a page
         children = ADM._design.getChildren();
         if (children.length === 0) {
-            ADM._design.addChild(new ADMNode("Page"));
+            page = new ADMNode("Page");
+            ADM._design.addChild(page);
+        } else {
+            page = children[0];
         }
 
         ADM._undoStack = [];
         ADM._redoStack = [];
 
         ADM.fireEvent("designReset", { design: design });
+        ADM.setActivePage(page);
         return true;
     }
     return false;
@@ -292,7 +296,7 @@ ADM.setActivePage = function (page) {
     if (ADM._activePage !== page) {
         oldPage = ADM._activePage;
         ADM._activePage = page;
-        ADM.setSelected(null);
+        ADM.setSelected(page);
         ADM.fireEvent("activePageChanged", { page: page, oldPage: oldPage });
         return true;
     }
