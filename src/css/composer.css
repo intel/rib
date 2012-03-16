@@ -135,7 +135,6 @@
 .nrc-sortable-container.ui-content > .ui-sortable-placeholder:nth-last-child(2) {
     margin-top: 0px !important;
     margin-bottom: 0px !important;
-    background-color: blue !important;
 }
 .nrc-sortable-container:empty > .ui-draggable-placeholder:only-child {
     margin-top: 33px;
