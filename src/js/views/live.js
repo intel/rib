@@ -239,6 +239,9 @@
                         widget._setPreviewPage(page.getProperty('id'), widget);
                     }
 
+                    $(liveDoc).bind('contextmenu', function(e) {
+                        e.preventDefault();
+                    });
                     $('body', liveDoc).css({
                         // prevent I bar cursor over UI text
                         "cursor": "default",
