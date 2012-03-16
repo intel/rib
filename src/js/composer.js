@@ -418,7 +418,7 @@ $(function() {
         // Populate empty nodes with a "hint" to drop things there
         $('.nrc-empty').each( function() {
             if ($('.nrc-hint-text', this).length === 0) {
-                $(this).append('<p class="nrc-hint-text">Drop target...</p>');
+                $(this).append('<p class="nrc-hint-text">Drop widgets here...</p>');
             }
         });
     });
