@@ -69,6 +69,10 @@
                 var el = event.data.element,
                     doc = event.data.options.contentDocument,
                     iframe = event.data.options.iframe;
+
+                // Nothing to resize if iframe contents has not been loaded
+                if (!event || !event.data || !event.data.loaded) return;
+
                 // Force resize of the stage when containing window resizes
                 el.height(el.parent().height());
                 el.find('div').height(el.parent().height());
