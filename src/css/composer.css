@@ -100,6 +100,9 @@
 /********************************************/
 /* Necessary to override some jQM css rules */
 /********************************************/
+.adm-node.ui-selected.ui-checkbox {
+    outline-offset: 0px;
+}
 .adm-node.ui-selected,
 .nrc-sortable-container.ui-selected:not([data-role=footer]):not([data-role=header]),
 .nrc-sortable-container.ui-selected:not([data-role=footer]):not([data-role=header]).nrc-empty {
