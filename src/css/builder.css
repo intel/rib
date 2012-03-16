@@ -606,13 +606,14 @@ body.ui-tabs.ui-widget {
     overflow: auto;
     background: #fff;
     border: none;
-    padding: 0px 10px 0px 10px;
+    /* tweaked so the green highlight is 2px away from top/bottom */
+    padding: 2px 10px 4px 10px;
     border: none;
 }
 
 .treeView ul {
     padding-left: 0px;
-    margin: 0px;
+    margin: 0px 0px 0px -2px;
 }
 .treeView .widgetGroup {
     padding-left: 20px;
@@ -633,15 +634,8 @@ body.ui-tabs.ui-widget {
     border: transparent;
     -webkit-border-radius: 4px;
     -webkit-background-clip: padding-box;
-    padding-top: 0px;
-    padding-bottom: 3px;
-    padding-left: 5px;
-    padding-right: 5px;
+    padding: 0px 5px 3px 5px;
     margin-left: -5px;
-}
-.treeView li > a:hover,
-.treeView li > a.ui-selected:hover {
-    color: #2c7a94;
 }
 .treeView span.widgetType {
     font-size: 12px;
@@ -649,7 +643,7 @@ body.ui-tabs.ui-widget {
     font-style: normal;
 }
 .treeView span.widgetType:hover {
-    color: #888;
+    color: #2c7a94;
 }
 .treeView a.ui-selected span.widgetType {
     color: #111111;
@@ -668,7 +662,7 @@ body.ui-tabs.ui-widget {
 .treeView span.folder {
     float: left;
     width: 10px;
-    height: 26px;
+    height: 21px;
     margin-right: 10px;
     background-image: url("images/pageTreeArrowOpen.png");
     background-repeat: no-repeat;
@@ -680,15 +674,15 @@ body.ui-tabs.ui-widget {
     background-repeat: no-repeat;
 }
 .treeView span.singleItem {
-    width: 10px;
-    height: 10px;
-    margin-right: 10px;
+    margin-left: 2px;
+    margin-right: 12px;
 }
 .treeView li.label {
     font-style: italic;
     font-size: 10px;
-    margin-top: 6px;
-    margin-bottom: 2px;
+    margin-left: 2px;
+    padding-top: 3px;
+    padding-bottom: 1px;
     color: #808080;
 }
 
