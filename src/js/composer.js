@@ -366,6 +366,8 @@ $(function() {
                                 !adm.moveNode(node, newParent, zones[0],
                                               idx)) {
                                 console.warn('Move node failed');
+                                ui.item.remove();
+                                return false;
                             } else {
                                 debug && console.log('Moved node');
                                 if (node) adm.setSelected(node.getUid());

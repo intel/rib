@@ -140,6 +140,8 @@
     margin-top: 33px;
     margin-bottom: 33px;
 }
+.ui-header[class*="ui-bar-"].ui-masked,
+.ui-footer[class*="ui-bar-"].ui-masked,
 .ui-select.ui-masked span,
 .ui-masked > .orig-adm-node:not(.ui-unmasked),
 .ui-masked {
