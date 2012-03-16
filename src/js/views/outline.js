@@ -204,8 +204,7 @@
         },
         _getSelected: function () {
             var model = this.options.model;
-            return model.getDesignRoot().findNodeByUid(model.getSelected()) ||
-                       model.getActivePage();
+            return model.getSelectedNode() || model.getActivePage();
         },
         _render: function (domNode, data) {
             var labelFunc, parentNode = data.getParent();

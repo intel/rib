@@ -53,7 +53,7 @@
 
         _createTreeView: function (container, rootContainer, node) {
             var widget = this;
-            $.each(node, function(i , v) {
+            $.each(node, function(i, v) {
                 if ( $.isPlainObject(v)) {
                     //This is children definition
                     $.each(v, function(name , value) {
@@ -78,8 +78,8 @@
                                                    .addClass('widgetType'))
                                 .click(function (e) {
                                     e.stopPropagation();
-                                    widget._setSelected($(this));
-                                    widget._nodeSelected(value, v._origin_node);
+                                    widget._nodeSelected(value, v._origin_node,
+                                                         $(this));
                                     return false;
                                 })
                                 .each(function () {

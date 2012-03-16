@@ -43,7 +43,8 @@
             return this;
         },
 
-        _nodeSelected: function (treeModelNode, data) {
+        _nodeSelected: function (treeModelNode, data, domNode) {
+            this._setSelected(domNode);
             $(':gb-paletteView').paletteView('option', "model", treeModelNode);
         },
 
