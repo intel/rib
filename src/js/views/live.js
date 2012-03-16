@@ -235,6 +235,13 @@
                     if (page) {
                         widget._setPreviewPage(page.getProperty('id'), widget);
                     }
+
+                    $('body', liveDoc).css({
+                        // prevent I bar cursor over UI text
+                        "cursor": "default",
+                        // prevent user drags from selecting UI text
+                        "-webkit-user-select": "none"
+                    });
                 });
             }
         },
