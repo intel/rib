@@ -36,7 +36,7 @@
                 if (el.parent().height() == 0)
                     return;
                 var newHeight = Math.round((el.parent().height()
-                                - $('.pageView').height()
+                                -el.parent().find('.pageView').height()
                                 - el.parent().find('.property_title')
                                       .height()
                                 - 20) // height of ui-state-default + borders
