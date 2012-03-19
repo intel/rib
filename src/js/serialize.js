@@ -280,8 +280,8 @@ $(function() {
      * @param {Object} obj The JSON object to parse
      * @return {ADMNode/null} the design build from the text if success, null if failed.
      */
-    function JSONToADM(text) {
-        var result, design, parsedObject;
+    function JSONToProj(text) {
+        var result, design, parsedObject, resultProject = {};
 
         function add_child(parent, nodes) {
             if (typeof(nodes) !== "object") {
@@ -355,7 +355,9 @@ $(function() {
         design.suppressEvents(false);
 
         if (result) {
-            return design;
+            resultProject.design = design;
+            resultProject.pInfo = parsedObject.pInfo;
+            return resultProject;
         } else {
             console.error("Error while building design root from JSON");
             return null;
@@ -365,7 +367,7 @@ $(function() {
     /*
      * This function is to find valid design.json in imported file and build ADMTree according it
      */
-    function zipToADM(data) {
+    function zipToProj(data) {
         var zip, designData;
         try {
             zip = new ZipFile(data);
@@ -378,7 +380,7 @@ $(function() {
         } catch (e) {
             designData = data;
         }
-        return JSONToADM(designData);
+        return JSONToProj(designData);
     }
 
     /*******************************************************
@@ -635,8 +637,8 @@ $(function() {
     /***************** export functions out *********************/
     // Export serialization functions into $.gb namespace
     $.gb.ADMToJSONObj = ADMToJSONObj;
-    $.gb.JSONToADM = JSONToADM;
-    $.gb.zipToADM = zipToADM;
+    $.gb.JSONToProj = JSONToProj;
+    $.gb.zipToProj = zipToProj;
 
     $.gb.getDefaultHeaders = getDefaultHeaders;
     $.gb.getDesignHeaders = getDesignHeaders;

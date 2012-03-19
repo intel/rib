@@ -343,7 +343,9 @@ $(function () {
         designPath = pmUtils.getDesignPath(pid);
 
         successHandler = function (result) {
-            var design = $.gb.JSONToADM(result);
+            var design, project;
+            project = $.gb.JSONToProj(result);
+            design = project.design;
             if (design && (design instanceof ADMNode)) {
                 // set current pid as active pid
                 pmUtils._activeProject = pid;
@@ -538,13 +540,19 @@ $(function () {
      * @return
      */
     pmUtils.importProject = function (file, success, error) {
-        var reader, options, design;
-        // TODO: get options from imported file
-        options = {"name": "Imported Project"};
+        var reader = new FileReader();
 
-        reader = new FileReader();
         reader.onloadend = function(e) {
-            design = $.gb.zipToADM(e.target.result);
+            var options, design, resultProject;
+            resultProject = $.gb.zipToProj(e.target.result);
+            if (!resultProject) {
+                alert("Invalid imported project.");
+                return;
+            }
+            // Get options from imported file
+            options = resultProject.pInfo || {"name":"Imported Project"};
+            design = resultProject.design;
+
             if (design && (design instanceof ADMNode)) {
                 $.gb.pmUtils.createProject(options, success, error, design);
             } else {
