@@ -147,7 +147,14 @@ $.map($.ui['draggable'].prototype.plugins['drag'], function (elem, index) {
 					//Now we fake the start of dragging for the sortable instance,
 					//by cloning the list group item, appending it to the sortable and using it as inst.currentItem
 					//We can then fire the start event of the sortable with our passed browser event, and our own helper (so it doesn't create a new one)
-					this.instance.currentItem = $(self).clone().removeAttr('id').appendTo(this.instance.element).data("sortable-item", true);
+                    /////////////////////////////////////////////////////////////////
+                    // Start of our changes
+                    var currentItem = this.instance.currentItem = $(self).clone().removeAttr('id').appendTo(this.instance.element).data('sortable-item', true);
+                    $.each(self.data(), function (n, v) {
+                        if (n !== $.expando)
+                            currentItem.data(n, v);
+                    });
+                    // End of our changes
 					this.instance.options._helper = this.instance.options.helper; //Store helper option to later restore it
 					this.instance.options.helper = function() { return ui.helper[0]; };
 

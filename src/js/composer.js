@@ -71,6 +71,7 @@ $(function() {
     };
 
     window.handleSelect = handleSelect;
+    window.ADM = window.parent.ADM;
     $('div:jqmData(role="page")').live('pageinit', function(e) {
         var targets,
             debug = (window.top.$.gb && window.top.$.gb.debug()),
@@ -186,6 +187,51 @@ $(function() {
                 start: function(event, ui){
                     //$(this).addClass('ui-state-active');
                     trackOffsets('start:   ',ui,$(this).data('sortable'));
+                    var d = $($(this).sortable('option', 'connectWith')),
+                        f = $(document),
+                        type = window.parent.$(ui.item).data('adm-node')?
+                            window.parent.$(ui.item).data('adm-node').type
+                            :ADM.getDesignRoot().findNodeByUid($(ui.item).attr('data-uid')).getType(),
+                        s = [], id;
+
+                    // Must have an active page in order to filter
+                    if (!ADM.getActivePage()) {
+                        console.warning('Filter failure: No active page.');
+                        return s;
+                    } else {
+                        id = ADM.getActivePage().getProperty('id');
+                    }
+
+                    // Find all adm-nodes (and page) on the active page
+                    f = f.find('#'+id);
+                    s = f.find('.adm-node').andSelf();
+
+                    // First mark all nodes as blocked
+                    s && s.addClass('ui-masked');
+
+                    // Then unmark all valid targets
+                    d && d.each (function () {
+                        if (ADM.canAddChild($(this).attr('data-uid'), type))
+                            $(this).removeClass('ui-masked')
+                                .addClass('ui-unmasked');
+                    });
+
+                    // Also unmark adm-node descendants of valid targets
+                    // that are not also children of a masked container
+                    // - Solves styling issues with nested containers
+                    $('.ui-unmasked',f).each(function() {
+                        var that = this, nodes;
+                        $('.adm-node',this)
+                            .not('.nrc-sortable-container')
+                            .each(function() {
+                                var rents = $(this).parentsUntil(that,
+                                      '.nrc-sortable-container.ui-masked');
+                                if (!rents.length) {
+                                    $(this).removeClass('ui-masked')
+                                           .addClass('ui-unmasked');
+                                }
+                            });
+                    });
                 },
                 over: function(event, ui){
                     $('.ui-sortable.ui-state-active')
@@ -218,13 +264,6 @@ $(function() {
                     $(this).removeClass('ui-state-active');
                     trackOffsets('out:     ',ui,$(this).data('sortable'));
                 },
-                receive: function(event, ui){
-                    // XXX: workaround for loss of $.data context when the
-                    //      draggable connectToSortable plugin clones the
-                    //      ui.item and places it into the sortable...
-                    $(this).data('received', ui.item.data());
-                    trackOffsets('receive: ',ui,$(this).data('sortable'));
-                },
                 stop: function(event, ui){
                     trackOffsets('stop:    ',ui,$(this).data('sortable'));
                     var type, isDrop,
@@ -236,7 +275,7 @@ $(function() {
                         node, zones, newParent, newZone,
                         rdx, idx, cid, pid, sid,
                         sibling, children, parent,
-                        role, received;
+                        role;
 
                     role = $(this).attr('data-role') || '';
 
@@ -256,18 +295,21 @@ $(function() {
                     };
 
                     $(this).removeClass('ui-state-active');
+                    // Reset masked states on all nodes on the active page
+                    $.mobile.activePage.find('.ui-masked, .ui-unmasked')
+                        .andSelf()
+                        .removeClass('ui-masked ui-unmasked');
 
                     if (!ui.item) return;
 
                     isDrop = ui.item.hasClass('nrc-palette-widget');
-                    received = $(this).data('received');
 
                     // Fix PTSDK-501: Only drop on active page
                     if (role && role === 'page' && adm.getActivePage()) {
                         if (adm.getActivePage().getUid() !== Number(pid)) {
-                            if (isDrop && received) {
+                            if (isDrop) {
                                 //received.data('draggable').cancel();
-                                $(received.draggable).draggable('cancel');
+                                $(ui.item).draggable('cancel');
                             } else {
                                 $(this).sortable('cancel');
                             }
@@ -278,9 +320,9 @@ $(function() {
 
                     // Let child containers get the drop if they intersect
                     if (childIntersects(this)) {
-                        if (isDrop && received) {
+                        if (isDrop) {
                             //received.data('draggable').cancel();
-                            $(received.draggable).draggable('cancel');
+                            $(ui.item).draggable('cancel');
                         } else {
                             $(this).sortable('cancel');
                         }
@@ -290,13 +332,9 @@ $(function() {
 
                     // Drop from palette: add a node
                     if (isDrop) {
-                        if (!received) {
-                            ui.item.remove();
-                            return false;
-                        }
 
-                        if (received.admNode) {
-                            type = received.admNode.type;
+                        if (window.parent.$(ui.item).data('adm-node')) {
+                            type = window.parent.$(ui.item).data('adm-node').type;
                         }
 
                         if (!type) {
