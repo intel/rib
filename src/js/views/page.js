@@ -110,9 +110,9 @@
                             model.setActivePage($(this).data('page'));
                         })
                         .hover(function (e) {
-                            $(e.target).children(':first').show();
+                            $(this).children(':first').show();
                         }, function (e) {
-                            $(e.target).children(':first').hide();
+                            $(this).children(':first').hide();
                         })
                         .append('<div/>')
                         .children(':first')
