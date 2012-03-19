@@ -570,14 +570,12 @@ $(function() {
         return $exportNoticeDialog;
     }
 
-    function exportPackage () {
-        var zip, resultHTML, resultDesign, files, i;
+    function exportPackage (resultProject) {
+        var zip, resultHTML, files, i;
         zip = new JSZip();
         resultHTML = generateHTML();
-        resultDesign = $.gb.ADMToJSONObj();
-        resultDesign = JSON.stringify(resultDesign);
         resultHTML && zip.add("index.html", resultHTML.html);
-        resultDesign && zip.add("design.json", resultDesign);
+        resultProject && zip.add("project.json", resultProject);
         files = [
             'src/css/images/ajax-loader.png',
             'src/css/images/icons-18-white.png',

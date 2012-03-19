@@ -553,7 +553,7 @@ $(function() {
         }
         // bind handlers for import and export buttons
         $(document).delegate('#importProj', "click", function () { $("#importFile").click(); });
-        $(document).delegate('#exportProj', "click", $.gb.exportPackage);
+        $(document).delegate('#exportProj', "click", $.gb.pmUtils.exportProject);
 
         // init pmUtils
         $.gb.pmUtils.init(function () {

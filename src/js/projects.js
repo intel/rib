@@ -68,7 +68,7 @@ $(function () {
             });
             // fill all projects info into pmUtils._projectsInfo
             $.each(entries, function(index, e) {
-                fsUtils.read(e.fullPath + "/project.json", function (text) {
+                fsUtils.read(e.fullPath + "/pInfo.json", function (text) {
                     var dataObject = $.parseJSON(text);
                     // use the name of project folder as key, it's also PID
                     pmUtils._projectsInfo[e.name] = dataObject;
@@ -246,7 +246,7 @@ $(function () {
      * @return {String} path of metadata file of the project
      */
     pmUtils.getMetadataPath = function (pid) {
-        var metadataPath = pmUtils.ProjectDir + "/" + pid + "/" + "project.json";
+        var metadataPath = pmUtils.ProjectDir + "/" + pid + "/" + "pInfo.json";
         return metadataPath;
     };
 
@@ -522,10 +522,34 @@ $(function () {
     /**
      * Export the zip file of the project
      *
-     * @param {String} project id
      * @return {Bool} return true if success, false when fails
      */
-    pmUtils.exportProject = function (pid) {};
+    pmUtils.exportProject = function () {
+        var pid, pInfo, design, obj, resultProject;
+        pid = pmUtils.getActive();
+        pInfo = pmUtils._projectsInfo[pid];
+        if (!pInfo) {
+            console.error("Error: Invalid pid for project");
+        }
+        design = ADM.getDesignRoot();
+        obj = $.gb.ADMToJSONObj(design);
+        // Following is for the serializing part
+        if (typeof obj === "object") {
+            obj.pInfo = pInfo;
+            resultProject = JSON.stringify(obj);
+            try {
+                $.gb.exportPackage(resultProject);
+            } catch (e) {
+                console.error("Export to package failed");
+                return false;
+            }
+        } else {
+            console.error("Invalid serialized Object for ADM tree");
+            return false;
+        }
+        return true;
+    };
+
     // TODO: manipulatation about the thumbnail of the project
 
      /**
