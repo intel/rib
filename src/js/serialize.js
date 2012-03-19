@@ -384,7 +384,8 @@ $(function() {
     /*******************************************************
      * ADM to JSON Direction
      ******************************************************/
-    function JSObjectFromADMTree(ADMTreeNode) {
+    function ADMToJSONObj(ADMTreeNode) {
+        ADMTreeNode = ADMTreeNode || ADM.getDesignRoot();
         if (ADMTreeNode instanceof ADMNode) {
             // Save staff in ADMNode
             var JSObject = {},
@@ -398,25 +399,12 @@ $(function() {
             children = ADMTreeNode.getChildren();
             if (children.length > 0) {
                 for (i = 0; i < children.length; i++) {
-                    JSObject.children[i] = JSObjectFromADMTree(children[i]);
+                    JSObject.children[i] = ADMToJSONObj(children[i]);
                 }
             }
             return JSObject;
         } else {
             console.log("warning: children of ADMNode must be ADMNode");
-            return null;
-        }
-    }
-    function ADMToJSON(ADMTreeNode) {
-        // Set a fixed position to  the output file
-        var root = ADMTreeNode || ADM.getDesignRoot(),
-            JSObjectForADM = JSObjectFromADMTree(root);
-
-        // Following is for the serializing part
-        if (typeof JSObjectForADM === "object") {
-            return JSON.stringify(JSObjectForADM);
-        } else {
-            console.log("error: invalid serialized Object for ADM tree");
             return null;
         }
     }
@@ -584,7 +572,8 @@ $(function() {
         var zip, resultHTML, resultDesign, files, i;
         zip = new JSZip();
         resultHTML = generateHTML();
-        resultDesign = $.gb.ADMToJSON();
+        resultDesign = $.gb.ADMToJSONObj();
+        resultDesign = JSON.stringify(resultDesign);
         resultHTML && zip.add("index.html", resultHTML.html);
         resultDesign && zip.add("design.json", resultDesign);
         files = [
@@ -645,7 +634,7 @@ $(function() {
 
     /***************** export functions out *********************/
     // Export serialization functions into $.gb namespace
-    $.gb.ADMToJSON = ADMToJSON;
+    $.gb.ADMToJSONObj = ADMToJSONObj;
     $.gb.JSONToADM = JSONToADM;
     $.gb.zipToADM = zipToADM;
 

@@ -597,10 +597,16 @@ $(function () {
         };
         // define callbacks
         syncDesign = function (pid, design, successHandler, error) {
-            var designPath, data;
+            var designPath, data, obj;
             designPath = pmUtils.getDesignPath(pid);
-            data = $.gb.ADMToJSON(design);
-            saveWrite(designPath, data, successHandler, error);
+            obj = $.gb.ADMToJSONObj(design);
+            if (typeof obj === "object") {
+                data = JSON.stringify(obj);
+                saveWrite(designPath, data, successHandler, error);
+            } else {
+                console.error("sync failed: invalid serialized Object for ADM tree");
+            }
+            return;
         };
         syncInfo = function (pid, success, error) {
             var pInfo, metadataPath, successHandler, data;
