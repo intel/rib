@@ -198,7 +198,13 @@ $(function() {
                         if (p.hasClass('ui-content')) {
                             ui.placeholder.css('width', p.width());
                         } else if (p.hasClass('ui-header')) {
-                            // Do nothing
+                            if (s.length && s.eq(0).width()) {
+                                ui.placeholder.css('width', s.eq(0).width());
+                                ui.placeholder.css('display',
+                                                   s.eq(0).css('display'));
+                            } else {
+                                ui.placeholder.css('width', '128px');
+                            }
                         } else if (s.length && s.eq(0).width()) {
                             ui.placeholder.css('width', s.eq(0).width());
                             ui.placeholder.css('display',
