@@ -271,6 +271,7 @@ $(function() {
                 placeholder: 'ui-sortable-placeholder',
                 tolerance: 'pointer',
                 appendTo: 'body',
+                helper: 'clone',
                 connectWith:
                     '.ui-page > .adm-node.ui-sortable:not(.ui-masked),' +
                     '.ui-page > .orig-adm-node.ui-sortable:not(.ui-masked)',
@@ -292,6 +293,15 @@ $(function() {
                     $(this).addClass('ui-state-active');
 
                     applyMasking($('.ui-sortable-connected'));
+                },
+                sort: function(event, ui){
+                    // Workaround a jQuery UI bug which doesn't take scrollTop
+                    // into accounting when checking if mouse is near top or
+                    // bottom of the sortable
+                    var s = $(this).data('sortable'), sP = s.scrollParent;
+                    if(sP[0] != document && sP[0].tagName != 'HTML') {
+                        s.overflowOffset.top = sP.offset().top+sP[0].scrollTop;
+                    }
                 },
                 over: function(event, ui){
                     $('.ui-sortable.ui-state-active')
