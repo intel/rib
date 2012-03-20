@@ -159,6 +159,7 @@
                         endColorstr=#99FCFCC7);
 }
 ul.adm-node.ui-unmasked,
+ol.adm-node.ui-unmasked,
 fieldset.adm-node.ui-unmasked,
 .orig-adm-node.nrc-sortable-container.ui-unmasked {
     background: #fff;
