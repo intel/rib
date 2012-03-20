@@ -1443,12 +1443,6 @@ var BWidgetRegistry = {
             {
                 name: "default",
                 cardinality: "N",
-                // FIXME: Ultimately, this should probably be allowed, but
-                //        for now, it's way too hard to drop two collapsibles
-                //        into a collapsible set without this line, because
-                //        when it's prevented the canvas looks up to the
-                //        parent and tries to add it.
-                deny: "Collapsible"
             }
         ],
         delegate: function (domNode, admNode) {
