@@ -71,6 +71,9 @@
         resize: function(event, widget) {
             var selected, activePage;
             widget = widget || this;
+
+            if (!widget.element.data('visible')) return;
+
             $(widget._editor.getScrollerElement())
                 .css('height', widget.element.height());
             widget._editor.refresh();
@@ -88,6 +91,9 @@
             var self = this, textCode;
 
             widget = widget || this;
+
+            if (!widget.element.data('visible')) return;
+
             self._htmlDoc = generateHTML();
             textCode = $(self.element).find('#text-code');
 
@@ -213,6 +219,9 @@
 
         _selectionChangedHandler: function(event, widget) {
             widget = widget || this;
+
+            if (!widget.element.data('visible')) return;
+
             widget._selectCode(widget._htmlDoc.doc, event.uid);
         },
 
@@ -222,6 +231,9 @@
                 !widget.options.model) {
                 return;
             }
+
+            if (!widget.element.data('visible')) return;
+
             widget.refresh();
             if (widget._editor)
                 widget._editor.setValue(widget._htmlDoc.html);

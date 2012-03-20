@@ -118,7 +118,7 @@
             widget = widget || event && event.data || this;
             name = (event)?(event.name)?event.name:event.type:'';
 
-            if (!widget.loaded) return;
+            if (!widget.loaded || !widget.element.data('visible')) return;
 
             if (!event) {
                 widget._serializeADMDesignToDOM();

@@ -375,6 +375,10 @@
             var el, tools, type = ui.panel.id;
             el = $('#'+type+' .stage');
 
+            $('.ui-tabs-panel .stage').data('visible', false);
+            $(ui.panel).find('.stage').data('visible', true);
+            $(el)[type]('refresh');
+
             // save current project when change to project view
             if (type === "projectView") {
                 $.gb.pmUtils.syncCurrentProject();
