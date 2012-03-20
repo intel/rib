@@ -70,6 +70,87 @@ $(function() {
         return node;
     };
 
+    var dndfilter = function (el) {
+        var o = top.$.gb && top.$.gb.layoutView &&
+                top.$(':gb-layoutView').layoutView('option'),
+            f = (o)?o.contentDocument:$(document),
+            a = (o)?o.model:window.top.ADM,
+            t, s = {}, id;
+
+        // Must have a model (ADM) in order to filter
+        if (!a) {
+            console.warning('Filter failure: No model.');
+            return s;
+        }
+
+        // Must have an active page in order to filter
+        if (!a.getActivePage()) {
+            console.warning('Filter failure: No active page.');
+            return s;
+        }
+
+        id = a.getActivePage().getProperty('id');
+
+        // Determine the widget Type being dragged
+        t = el.data('adm-node') && el.data('adm-node').type;
+        t = t || a.getDesignRoot().findNodeByUid(el.attr('data-uid')).getType();
+
+        if (!t) {
+            console.warning('Filter failure: No widget type.');
+            return s;
+        }
+
+        // Find all sortables (and page) on the active page
+        f = f.find('#'+id);
+        s = f.find('.nrc-sortable-container').andSelf();
+
+        // Filter out those that will not accept this widget
+        return s.filter( function(index) {
+            var uid = $(this).attr('data-uid');
+            return uid && a.canAddChild(uid, t);
+        });
+    };
+
+    var unmaskNodes = function () {
+        // Reset masked states on all nodes on the active page
+        $.mobile.activePage.find('.ui-masked, .ui-unmasked').andSelf()
+            .removeClass('ui-masked ui-unmasked');
+    };
+
+    var applyMasking = function (els) {
+
+        if (els.length <= 0) return;
+
+        // First mark all nodes as blocked
+        $(document)
+            .find('.adm-node,.orig-adm-node')
+            .andSelf()
+            .addClass('ui-masked');
+
+        // Then unmark all valid targets
+        els.removeClass('ui-masked').addClass('ui-unmasked');
+
+        // Also unmark adm-node descendants of valid targets
+        // that are not also children of a masked container
+        // - Solves styling issues with nested containers
+        $('.ui-unmasked',document).each(function() {
+            var that = this, nodes;
+            $('.adm-node, .orig-adm-node',this)
+                .not('.nrc-sortable-container')
+                .each(function() {
+                    var rents = $(this).parentsUntil(that,
+                          '.nrc-sortable-container.ui-masked');
+                    if (!rents.length) {
+                        $(this).removeClass('ui-masked')
+                               .addClass('ui-unmasked');
+                    }
+                });
+        });
+    };
+
+    window.top.$.gb = window.top.$.gb || {};
+    window.top.$.gb.dndfilter = dndfilter;
+
     window.handleSelect = handleSelect;
     window.ADM = window.parent.ADM;
     $('div:jqmData(role="page")').live('pageinit', function(e) {
@@ -181,65 +262,35 @@ $(function() {
                 placeholder: 'ui-sortable-placeholder',
                 tolerance: 'pointer',
                 appendTo: 'body',
-                connectWith: '.adm-node.ui-sortable:not(.ui-masked)',
-                cancel: '> :not(.adm-node)',
-                items: '> *.adm-node:not(.ui-header,.ui-content,.ui-footer)',
+                connectWith: '.adm-node.ui-sortable:not(.ui-masked),' +
+                    '.orig-adm-node.ui-sortable:not(.ui-masked)',
+                cancel: '> :not(.adm-node,.orig-adm-node)',
+                items: '> *.adm-node:not(.ui-header,.ui-content,.ui-footer),' +
+                    '> *.orig-adm-node:not(.ui-header,.ui-content,.ui-footer)',
                 start: function(event, ui){
-                    //$(this).addClass('ui-state-active');
                     trackOffsets('start:   ',ui,$(this).data('sortable'));
-                    var d = $($(this).sortable('option', 'connectWith')),
-                        f = $(document),
-                        type = window.parent.$(ui.item).data('adm-node')?
-                            window.parent.$(ui.item).data('adm-node').type
-                            :ADM.getDesignRoot().findNodeByUid($(ui.item).attr('data-uid')).getType(),
-                        s = [], id;
 
-                    // Must have an active page in order to filter
-                    if (!ADM.getActivePage()) {
-                        console.warning('Filter failure: No active page.');
-                        return s;
-                    } else {
-                        id = ADM.getActivePage().getProperty('id');
+                    // Only filter and mask if the item is not a draggable,
+                    // which happens when coming from the palette.
+                    if (ui.item && ui.item.data('draggable')) {
+                        return;
                     }
 
-                    // Find all adm-nodes (and page) on the active page
-                    f = f.find('#'+id);
-                    s = f.find('.adm-node').andSelf();
+                    $('.ui-sortable.ui-state-active')
+                        .removeClass('ui-state-active');
+                    $(this).addClass('ui-state-active');
 
-                    // First mark all nodes as blocked
-                    s && s.addClass('ui-masked');
-
-                    // Then unmark all valid targets
-                    d && d.each (function () {
-                        if (ADM.canAddChild($(this).attr('data-uid'), type))
-                            $(this).removeClass('ui-masked')
-                                .addClass('ui-unmasked');
-                    });
-
-                    // Also unmark adm-node descendants of valid targets
-                    // that are not also children of a masked container
-                    // - Solves styling issues with nested containers
-                    $('.ui-unmasked',f).each(function() {
-                        var that = this, nodes;
-                        $('.adm-node',this)
-                            .not('.nrc-sortable-container')
-                            .each(function() {
-                                var rents = $(this).parentsUntil(that,
-                                      '.nrc-sortable-container.ui-masked');
-                                if (!rents.length) {
-                                    $(this).removeClass('ui-masked')
-                                           .addClass('ui-unmasked');
-                                }
-                            });
-                    });
+                    applyMasking($('.ui-sortable-connected'));
                 },
                 over: function(event, ui){
                     $('.ui-sortable.ui-state-active')
                         .removeClass('ui-state-active');
                     $(this).addClass('ui-state-active');
                     trackOffsets('over:    ',ui,$(this).data('sortable'));
+
                     if (ui && ui.placeholder) {
-                        var s = ui.placeholder.siblings('.adm-node:visible'),
+                        var s = ui.placeholder.siblings('.adm-node:visible,' +
+                                                      '.orig-adm-node:visible'),
                             p = ui.placeholder.parent();
                         if (p.hasClass('ui-content')) {
                             ui.placeholder.css('width', p.width());
@@ -279,6 +330,9 @@ $(function() {
 
                     role = $(this).attr('data-role') || '';
 
+                    // Reset masked states on all nodes on the active page
+                    unmaskNodes();
+
                     function childIntersects(that) {
                         var intersects = false,
                             s = $(that).find(':data(sortable)')
@@ -295,10 +349,6 @@ $(function() {
                     };
 
                     $(this).removeClass('ui-state-active');
-                    // Reset masked states on all nodes on the active page
-                    $.mobile.activePage.find('.ui-masked, .ui-unmasked')
-                        .andSelf()
-                        .removeClass('ui-masked ui-unmasked');
 
                     if (!ui.item) return;
 
@@ -308,7 +358,6 @@ $(function() {
                     if (role && role === 'page' && adm.getActivePage()) {
                         if (adm.getActivePage().getUid() !== Number(pid)) {
                             if (isDrop) {
-                                //received.data('draggable').cancel();
                                 $(ui.item).draggable('cancel');
                             } else {
                                 $(this).sortable('cancel');
@@ -321,7 +370,6 @@ $(function() {
                     // Let child containers get the drop if they intersect
                     if (childIntersects(this)) {
                         if (isDrop) {
-                            //received.data('draggable').cancel();
                             $(ui.item).draggable('cancel');
                         } else {
                             $(this).sortable('cancel');
@@ -332,9 +380,8 @@ $(function() {
 
                     // Drop from palette: add a node
                     if (isDrop) {
-
-                        if (window.parent.$(ui.item).data('adm-node')) {
-                            type = window.parent.$(ui.item).data('adm-node').type;
+                        if (ui.item.data('adm-node')) {
+                            type = ui.item.data('adm-node').type;
                         }
 
                         if (!type) {
@@ -383,10 +430,12 @@ $(function() {
                                 sid = sibling.attr('data-uid');
                                 if (adm.insertChildBefore(sid, type, true)) {
                                     node = adm.insertChildBefore(sid, type);
-                                    debug && console.log('Inserted 1st node',role);
+                                    debug && console.log('Inserted 1st node',
+                                                         role);
                                     if (node) adm.setSelected(node.getUid());
                                 } else {
-                                    console.warn('Insert 1st child failed:',role);
+                                    console.warn('Insert 1st child failed:',
+                                                 role);
                                 }
                             }
                         }
@@ -440,30 +489,22 @@ $(function() {
                             return false;
                         }
                     }
-/*
-                },
-                custom: {
-                    refreshContainers: function() {
-                        for (var i = this.containers.length - 1; i >= 0; i--){
-                            var wo = top.getOffsetInWindow(
-                                         this.containers[i].element[0]
-                                         .ownerDocument.documentElement,top),
-				p = this.containers[i].element.offset();
-
-                            this.containers[i].containerCache.left =
-                                 p.left + wo.left;
-                            this.containers[i].containerCache.top =
-                                 p.top + wo.top;
-                            this.containers[i].containerCache.width =
-                                 this.containers[i].element.outerWidth();
-                            this.containers[i].containerCache.height =
-                                 this.containers[i].element.outerHeight();
-                            trackOffsets('cache['+i+']:',
-                                 { offset: {left: wo.left, top:wo.top}});
-                        };
-                    }
-*/
                 }
+            })
+            .bind('mousedown.composer', function(event) {
+                var n = event && event.target &&
+                        $(event.target).closest('.adm-node,.orig-adm-node'),
+                    d = n.length && dndfilter(n);
+                if (event && event.button !== 0) return false;
+
+                $('.ui-sortable-connected')
+                    .removeClass('ui-sortable-connected');
+                d.addClass('ui-sortable-connected');
+                $(this).sortable('option','connectWith',
+                    '.ui-sortable-connected')
+                $(this).sortable('refresh')
+
+                return true;
             })
             .disableSelection();
 

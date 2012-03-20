@@ -89,31 +89,7 @@
                     refreshPositions: true,
                     stack: '.layoutView iframe',
                     revertDuration: 0,
-                    filter: function() {
-                        var f=$(':gb-layoutView')
-                                    .layoutView('option','contentDocument'),
-                            a=$(':gb-layoutView').layoutView('option','model'),
-                            t=$(this).data('adm-node').type,
-                            s = [], id;
-
-                        // Must have an active page in order to filter
-                        if (!ADM.getActivePage()) {
-                            console.warning('Filter failure: No active page.');
-                            return s;
-                        } else {
-                            id = ADM.getActivePage().getProperty('id');
-                        }
-
-                        // Find all sortables (and page) on the active page
-                        f = f.find('#'+id);
-                        s = f.find('.nrc-sortable-container').andSelf();
-
-                        // Filter out those that will not accept this widget
-                        return s.filter( function(index) {
-                            var id = $(this).attr('data-uid');
-                            return id && a.canAddChild(id, t);
-                        });
-                    },
+                    filter: function() { return $.gb.dndfilter($(this)); },
                     start: function(event,ui){
                         var d = $(this).draggable('option','connectToSortable'),
                             f = $(':gb-layoutView')
