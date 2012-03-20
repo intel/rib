@@ -316,7 +316,9 @@
                     .not('[data-role=\'page\']')
                     .addClass('ui-selected').first().each(function() {
                         // Scroll selected node into view
-                        this.scrollIntoViewIfNeeded();
+                        setTimeout($.proxy(function() {
+                            this.scrollIntoViewIfNeeded()
+                        }, this), 100);
                     });
             }
         },
