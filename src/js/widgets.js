@@ -270,6 +270,7 @@ var BWidgetRegistry = {
         parent: "Base",
         allowIn: "Page",
         dragHeader: true,
+        paletteImageName: "jqm_header.svg",
         template: function (node) {
             var prop, code = $('<div data-role="header"><h1></h1></div>');
             code = BWidgetRegistry.Base.applyProperties(node, code);
@@ -334,6 +335,7 @@ var BWidgetRegistry = {
         parent: "Base",
         allowIn: "Page",
         dragHeader: true,
+        paletteImageName: "jqm_footer.svg",
         template: function (node) {
             var prop, code = $('<div data-role="footer"></div>');
             code = BWidgetRegistry.Base.applyProperties(node, code);
@@ -411,6 +413,7 @@ var BWidgetRegistry = {
     ButtonGroup: {
         parent: "Base",
         dragHeader: true,
+        paletteImageName: "jqm_vertical_button_group.svg",
         template: '<div data-role="controlgroup"></div>',
         newGroup: true,
         displayLabel: "Button Group",
@@ -445,6 +448,7 @@ var BWidgetRegistry = {
      */
     Button: {
         parent: "Base",
+        paletteImageName: "jqm_button.svg",
         properties: {
             text: {
                 type: "string",
@@ -503,6 +507,7 @@ var BWidgetRegistry = {
         //        for example. Need to look at this.
         parent: "Base",
         dragHeader: true,
+        paletteImageName: "jqm_form.svg",
         template: '<form></form>',
         newGroup: true,
         zones: [
@@ -535,6 +540,7 @@ var BWidgetRegistry = {
      */
     Slider: {
         parent: "Base",
+        paletteImageName: "jqm_slider.svg",
         properties: {
             // TODO: What's this for? wouldn't text be in an associated label?
             //       Document above.
@@ -621,6 +627,7 @@ var BWidgetRegistry = {
         //        label text a property of other form elements and the
         //        <label> part of their templates.
         parent: "Base",
+        paletteImageName: "jqm_label.svg",
         properties: {
             text: {
                 type: "string",
@@ -636,6 +643,7 @@ var BWidgetRegistry = {
     TextInput: {
         parent: "Base",
         displayLabel: "Text Input",
+        paletteImageName: "jqm_text_input.svg",
         properties: {
             hint: {
                 type: "string",
@@ -667,6 +675,7 @@ var BWidgetRegistry = {
         //        and wrap them in a fieldcontain
         parent: "Base",
         displayLabel: "Text Area",
+        paletteImageName: "jqm_text_area.svg",
         properties: {
             hint: {
                 type: "string",
@@ -689,6 +698,7 @@ var BWidgetRegistry = {
     ToggleSwitch: {
         parent: "Base",
         displayLabel: "Toggle Switch",
+        paletteImageName: "jqm_toggle_switch.svg",
         properties: {
             value1: {
                 type: "string",
@@ -723,6 +733,7 @@ var BWidgetRegistry = {
      */
     SelectMenu: {
         parent: "Base",
+        paletteImageName: "jqm_select.svg",
         template: function(node) {
             var prop, length, i, child,
             code = $('<select></select>');
@@ -825,6 +836,7 @@ var BWidgetRegistry = {
         dragHeader: true,
         newGroup: true,
         displayLabel: "Radio Group",
+        paletteImageName: "jqm_radio_group.svg",
         properties: {
             // FIXME: Put fieldcontain back in here, but will require
             //        support for selector on HTML attribute for data-type
@@ -867,6 +879,7 @@ var BWidgetRegistry = {
     RadioButton: {
         parent: "Base",
         displayLabel: "Radio Button",
+        paletteImageName: "jqm_radio_button.svg",
         allowIn: "RadioGroup",
         properties: {
             // FIXME: All the radio buttons in a group need to have a common
@@ -952,6 +965,7 @@ var BWidgetRegistry = {
         dragHeader: true,
         newGroup: true,
         displayLabel: "Checkbox Group",
+        paletteImageName: "jqm_checkbox_group.svg",
         properties: {
             // FIXME: Put fieldcontain back in here, but will require
             //        support for selector on HTML attribute for data-type
@@ -989,6 +1003,7 @@ var BWidgetRegistry = {
      */
     Checkbox: {
         parent: "Base",
+        paletteImageName: "jqm_checkbox.svg",
         properties: {
             id: {
                 type: "string",
@@ -1026,6 +1041,7 @@ var BWidgetRegistry = {
      */
     List: {
         parent: "Base",
+        paletteImageName: "jqm_list.svg",
         dragHeader: true,
         newGroup: true,
         properties: {
@@ -1075,6 +1091,7 @@ var BWidgetRegistry = {
         parent: "Base",
         dragHeader: true,
         displayLabel: "Ordered List",
+        paletteImageName: "jqm_ordered_list.svg",
         properties: {
             inset: {
                 type: "boolean",
@@ -1121,6 +1138,7 @@ var BWidgetRegistry = {
     ListItem: {
         parent: "Base",
         displayLabel: "List Item",
+        paletteImageName: "jqm_list_item.svg",
         allowIn: [ "List", "OrderedList" ],
         properties: {
             text: {
@@ -1137,6 +1155,7 @@ var BWidgetRegistry = {
     ListDivider: {
         parent: "Base",
         displayLabel: "List Divider",
+        paletteImageName: "jqm_list_divider.svg",
         allowIn: [ "List", "OrderedList" ],
         properties: {
             text: {
@@ -1153,6 +1172,7 @@ var BWidgetRegistry = {
     ListButton: {
         parent: "Base",
         displayLabel: "List Button",
+        paletteImageName: "jqm_list_button.svg",
         allowIn: [ "List", "OrderedList" ],
         properties: {
             text: {
@@ -1190,6 +1210,7 @@ var BWidgetRegistry = {
     Grid: {
         parent: "Base",
         dragHeader: true,
+        paletteImageName: "jqm_grid.svg",
         newGroup: true,
         properties: {
             rows: {
@@ -1423,6 +1444,7 @@ var BWidgetRegistry = {
      */
     Collapsible: {
         parent: "Base",
+        paletteImageName: "jqm_collapsible.svg",
         template: '<div data-role="collapsible"><h1>%HEADING%</h1></div>',
         newGroup: true,
         properties: {
@@ -1470,6 +1492,7 @@ var BWidgetRegistry = {
     Accordion: {
         parent: "Base",
         dragHeader: true,
+        paletteImageName: "jqm_accordian.svg",
         template: '<div data-role="collapsible-set"></div>',
         zones: [
             {
@@ -1482,6 +1505,7 @@ var BWidgetRegistry = {
 
     DateTimePicker: {
         parent: "Base",
+        paletteImageName: "tizen_date_picker.svg",
         template: '<input type="date" />',
         newGroup: true,
         newAccordion: true,
@@ -1490,12 +1514,14 @@ var BWidgetRegistry = {
 
     CalendarPicker: {
         parent: "Base",
+        paletteImageName: "tizen_calendar_picker.svg",
         template: '<a data-role="calendarpicker" data-icon="grid" data-iconpos="notext" data-inline="true"></a>',
 
     },
 
     ColorPicker: {
         parent: "Base",
+        paletteImageName: "tizen_color_picker.svg",
         template: '<div data-role="colorpicker" />',
         newGroup: true,
         properties: {
@@ -1508,6 +1534,7 @@ var BWidgetRegistry = {
 
     ColorPickerButton: {
         parent: "Base",
+        paletteImageName: "tizen_color_picker_button.svg",
         template: '<div data-role="colorpickerbutton" />',
         properties: {
             data_color: {
@@ -1520,6 +1547,7 @@ var BWidgetRegistry = {
 
     ColorPalette: {
         parent: "Base",
+        paletteImageName: "tizen_color_palette.svg",
         template: '<div data-role="colorpalette" />',
         properties: {
             data_color: {
@@ -1537,6 +1565,7 @@ var BWidgetRegistry = {
 
     ColorTitle: {
         parent: "Base",
+        paletteImageName: "tizen_color_title.svg",
         template: '<div data-role="colortitle" />',
         properties: {
             data_color: {
@@ -1548,6 +1577,7 @@ var BWidgetRegistry = {
 
     HsvPicker: {
         parent: "Base",
+        paletteImageName: "tizen_hsv_color_picker.svg",
         template: '<div data-role="hsvpicker" />',
         properties: {
             data_color: {
@@ -1559,18 +1589,21 @@ var BWidgetRegistry = {
 
     ProgressBar: {
         parent: "Base",
+        paletteImageName: "tizen_progress_bar.svg",
         newGroup: true,
         template: '<div data-role="processingbar" />',
     },
 
     Switch: {
         parent: "Base",
+        paletteImageName: "tizen_vertical_toggle_switch.svg",
         template: '<div data-role="toggleswitch" />',
         delegate: 'next'
     },
 
     OptionHeader: {
         parent: "Base",
+        paletteImageName: "tizen_option_header.svg",
         template: '<div data-role="optionheader" />',
         zones: [
             {
@@ -1711,6 +1744,20 @@ var BWidget = {
             return false;
         }
         return true;
+    },
+
+    /**
+     * Gets the palette image name for the given widget type.
+     *
+     * @param {String} widgetType The type of the widget.
+     * @return {String} Palette image name.
+     */
+    getPaletteImageName: function (widgetType) {
+        var widget = BWidgetRegistry[widgetType];
+        if (typeof widget === "object") {
+            return widget.paletteImageName;
+        }
+        return "missing.svg";
     },
 
     /**

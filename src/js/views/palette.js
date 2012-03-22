@@ -57,7 +57,8 @@
                     if (value && typeof value === "string") {
                         if (BWidget.isPaletteWidget(value)) {
                             var li = $('<img id="BWidget-'+value+'"></img>')
-                                .attr("src", "src/css/images/widgets/" + value + ".png")
+                                .attr("src", "src/css/images/widgets/" +
+                                             BWidget.getPaletteImageName(value))
                                 .appendTo(container);
                             $(li).disableSelection()
                                 .addClass('nrc-palette-widget')
