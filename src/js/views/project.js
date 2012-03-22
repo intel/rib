@@ -368,7 +368,7 @@
         },
 
         createProjectBox: function(pid, container, widget) {
-            var box, title, content, thumbnail, rightSide, openHandler, cloneHandler, deleteHandler;
+            var box, title, content, thumbnail, imgPath, rightSide, openHandler, cloneHandler, deleteHandler;
             widget = widget || this;
             container = container || $('.projectView');
             openHandler = function () {
@@ -402,22 +402,28 @@
             };
             // draw project box
             box = $('<div/>').attr('id',pid)
-                             .addClass('projectBox')
+                             .addClass('projectBox vbox')
                              .appendTo(container);
-            title = $('<div />').addClass('titleBar')
-                        .append('<h1>' + $.gb.pmUtils.getName(pid) + '</h1>')
+            title = $('<div />').addClass('titleBar flex0')
+                        .append('<span>' + $.gb.pmUtils.getName(pid) + '</span>')
                         .append($('<div class="openButton"></div>').click(openHandler))
                         .appendTo(box);
-            thumbnail= $('<div />').addClass('thumbnail').appendTo(box);
-            //TODO: .attr('backgroundImage', pmUtils.getThumbnail(pid))
-            $('<div />').addClass("rightSide")
+            content = $('<div />').addClass('content flex1 hbox')
+                      .appendTo(box);
+            //TODO: imgPath = pmUtils.getThumbnail(pid);
+            imgPath = 'src/css/images/emptyProjectThumbnail.png';
+            thumbnail= $('<img />').attr('src', imgPath);
+            $('<div />').addClass('thumbnail flex1')
+                        .append(thumbnail)
+                        .appendTo(content);
+            $('<div />').addClass("rightSide flex1")
                         .append('<b>LAST OPENED</b><br />')
                         .append('<span>' + ($.gb.pmUtils.getAccessDate(pid)).toString().slice(4, 24) + '</span>')
                         // apend clone button
-                        .append($('<div>Clone</div>').addClass("cloneButton").click(cloneHandler))
+                        .append($('<div>Clone</div>').addClass("clone button").click(cloneHandler))
                         // apend delete button
-                        .append($('<div>Delete</div>').addClass("deleteButton").click(deleteHandler))
-                        .appendTo(box);
+                        .append($('<div>Delete</div>').addClass("delete button").click(deleteHandler))
+                        .appendTo(content);
         },
     });
 })(jQuery);

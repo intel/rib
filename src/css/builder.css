@@ -1238,13 +1238,12 @@ body.ui-tabs.ui-widget {
 .projectBox {
     float:left;
     margin:20px;
-    width:225px;
+    width:230px;
     height:170px;
     border:3px solid #fff;
     background:#fff;
     position:relative;
     overflow:hidden;
-    font-family:sans-serif;
     -webkit-border-radius: 10px;
     -webkit-box-shadow:  3px 3px 3px rgba(0,0,0,.15);
 }
@@ -1254,23 +1253,24 @@ body.ui-tabs.ui-widget {
 }
 
 .titleBar {
-    width:225px;
+    width:230px;
     height:31px;
     position:relative;
     background:#545f6a;
     -webkit-border-radius: 10px 10px 0 0;
 }
 
-.titleBar h1 {
-    margin:0;
+.titleBar span {
+    margin:.5em;
     padding:0;
     position:absolute;
-    top:9px;
-    left:13px;
-    overflow:hidden;
+    width:140px;
+    height:31px;
     color:#fff;
     font-size:0.8em;
-    font-family:sans-serif;
+    font-family: OpenSans-SB;
+    overflow:hidden;
+    text-overflow:ellipsis;
     font-weight:bold;
 }
 
@@ -1295,65 +1295,48 @@ body.ui-tabs.ui-widget {
     background-repeat: no-repeat;
 }
 
+.projectBox .content {
+    padding: 8px;
+}
 .thumbnail {
-    background-image: url("images/emptyProjectThumbnail.png");
-    background-repeat: no-repeat;
-    position:absolute;
-    top: 40px;
-    left :10px;
-    width: 119px;
-    height: 122px;
 }
 .rightSide {
-    position:absolute;
-    top: 44px;
-    left :135px;
-    width: 80px;
-    height: 116px;
+    font-family: OpenSans;
     font-size: 0.6em;
     color: #444444;
     text-align:right;
     line-height:125%;
 }
-.cloneButton{
+.projectBox .button {
     position:absolute;
     text-decoration:underline;
     padding-top: 5px;
-    padding-left: 3px;
     padding-right: 30px;
-    top: 60px;
-    right: 0;
+    right: 10px;
     height: 25px;
-    background-image: url("images/cloneButton_up.png");
     background-repeat: no-repeat;
     background-position: right top;
 }
-.cloneButton:hover, .cloneButton:focus {
+.clone.button{
+    padding-left: 3px;
+    bottom: 33px;
+    background-image: url("images/cloneButton_up.png");
+}
+.projectBox .button:hover, .projectBox .button:focus {
     opacity: 0.8;
 }
 
-.cloneButton:active {
+.clone.button:active {
     background-image: url("images/cloneButton_down.png");
     background-repeat: no-repeat;
 }
 
-.deleteButton{
-    position:absolute;
-    padding-right: 30px;
-    padding-top: 5px;
-    top: 93px;
-    right: 0;
-    height: 25px;
-    text-decoration:underline;
+.delete.button{
+    bottom: 3px;
     background-image: url("images/deleteButton_up.png");
-    background-repeat: no-repeat;
-    background-position: right top;
-}
-.deleteButton:hover, .deleteButton:focus {
-    opacity: 0.8;
 }
 
-.deleteButton:active {
+.delete.button:active {
     background-image: url("images/deleteButton_down.png");
     background-repeat: no-repeat;
 }
