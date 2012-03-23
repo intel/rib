@@ -305,6 +305,14 @@ $(function() {
                     var s = $(this).data('sortable'), sP = s.scrollParent;
                     if(sP[0] != document && sP[0].tagName != 'HTML') {
                         s.overflowOffset.top = sP.offset().top+sP[0].scrollTop;
+                        // Hackish solution to cheat jquery UI so that
+                        // horizontal scroll will never happen. Note that we
+                        // can't use axis:'x' to solve the problem, as it
+                        // tolltaly forbid horizontal moving, which will cause
+                        // some problems, e.g, moving widgets to right blocks
+                        // of Grid will be impossible
+                        s.overflowOffset.left = sP.offsetWidth/2
+                            - s.options.scrollSensitivity;
                     }
                 },
                 over: function(event, ui){
