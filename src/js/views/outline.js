@@ -160,6 +160,19 @@
                 node = event.node;
             }
 
+            // When a page is selected, we will close all other page subtrees
+            // and ensure the selected pages' subtree is opened
+            if (node.getType() === 'Page') {
+                // node is <a> element, need the "folder" <span> before it
+                var fldr = widget.findDomNode(node).prev('.folder').eq(0);
+                // "Close" all other page folders
+                $('>ul>li>span.folder:not(.close)', widget.element).not(fldr)
+                    .trigger('click');
+                // Make sure this page folder is "Open"
+                if (fldr.hasClass('close')) {
+                    fldr.trigger('click');
+                }
+            }
             widget.setSelected(node);
         },
 
