@@ -108,6 +108,7 @@
                 domNode.addClass('ui-state-active')
                     .addClass('ui-selected')
                     [0].scrollIntoViewIfNeeded();
+                domNode.parent()[0].scrollIntoViewIfNeeded();
             }
         },
 
