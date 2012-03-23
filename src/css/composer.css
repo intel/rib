@@ -100,6 +100,7 @@
 /********************************************/
 /* Necessary to override some jQM css rules */
 /********************************************/
+.adm-node.ui-selected.ui-radio,
 .adm-node.ui-selected.ui-checkbox {
     outline-offset: 0px;
 }

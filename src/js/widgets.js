@@ -911,6 +911,7 @@ var BWidgetRegistry = {
                 htmlAttribute: "data-theme"
             }
         },
+        delegate: 'parent',
         template: function (node) {
             //var prop, code = $('<div data-role="header"><h1></h1></div>');
             var prop, label, code = $('<input type="radio"><label></label>');
