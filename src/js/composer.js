@@ -292,6 +292,10 @@ $(function() {
                         .removeClass('ui-state-active');
                     $(this).addClass('ui-state-active');
 
+                    //jQuery UI should have done this after hiding current item
+                    //and creating placeholder.
+                    $(this).sortable('refreshPositions');
+
                     applyMasking($('.ui-sortable-connected'));
                 },
                 sort: function(event, ui){
