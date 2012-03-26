@@ -4,26 +4,43 @@ Owner:    File:                                License:       Source:
 -----     -----                                --------       -------
 Intel     index.html                           APLv2          N/A
 Intel     README                               APLv2          N/A
-jQuery    lib/jquery-1.6.2.js                  MIT & GPLv2    [1]
-jQuery    lib/jquery-1.6.2.min.js              MIT & GPLv2    [2]
+jQuery    lib/jquery-1.6.4.js                  MIT & GPLv2    [1]
+jQuery    lib/jquery-1.6.4.min.js              MIT & GPLv2    [2]
 jQuery    lib/jquery-ui-1.8.16.custom.js       MIT & GPLv2    [3]
 jQuery    lib/jquery-ui-1.8.16.custom.min.js   MIT & GPLv2    [4]
 jQuery    lib/jquery.mobile-1.0.js             MIT & GPLv2    [5]
 jQuery    lib/jquery.mobile-1.0.min.js         MIT & GPLv2    [6]
-Ryan Ray  lib/jquery.lame.js                   FreeBSD        [7]
-N/A       lib/json2.js                         Public Domain  [8]
 Intel     src/js/serialize.js                  APLv2          N/A
 Intel     src/js/fs.js                         APLv2          N/A
 Intel     src/js/widgets.js                    APLv2          N/A
 Intel     src/js/adm.js                        APLv2          N/A
-Intel     src/js/template.js                   APLv2          N/A
-Intel     src/js/palette.js                    APLv2          N/A
-Intel     src/js/properties.js                 APLv2          N/A
-Intel     src/js/builder.js                    APLv2          N/A
-Intel     src/assets/palette.json              APLv2          N/A
+Intel     src/js/pageTemplate.js               APLv2          N/A
+Intel     src/js/panel.js                      APLv2          N/A
+jQuery    src/js/jquery-workarounds.js         MIT, GPLv2     [8]
+& Intel                                        & APLv2
+Intel     src/js/main.js                       APLv2          N/A
+Intel     src/js/composer.js                   APLv2          N/A
+Intel     src/js/codeview-mode.js              APLv2          N/A
+Intel     src/js/devices.js                    APLv2          N/A
+Intel     src/js/projects.js                   APLv2          N/A
+Intel     src/js/views/live.js                 APLv2          N/A
+Intel     src/js/views/widget.js               APLv2          N/A
+Intel     src/js/views/outline.js              APLv2          N/A
+Intel     src/js/views/tree.js                 APLv2          N/A
+Intel     src/js/views/project.js              APLv2          N/A
+Intel     src/js/views/code.js                 APLv2          N/A
+Intel     src/js/views/layout.js               APLv2          N/A
+Intel     src/js/views/palette.js              APLv2          N/A
+Intel     src/js/views/view-core.js            APLv2          N/A
+Intel     src/js/views/property.js             APLv2          N/A
+Intel     src/js/views/page.js                 APLv2          N/A
+Intel     src/assets/devices.json              APLv2          N/A
+Intel     src/assets/groups.json               APLv2          N/A
 Intel     src/assets/serializeText.json        APLv2          N/A
 Intel     src/css/builder.css                  APLv2          N/A
-Intel     src/css/template.css                 APLv2          N/A
+Intel     src/css/composer.css                 APLv2          N/A
+Intel     src/css/fonts.css                    APLv2          N/A
+Intel     src/css/panel.css                    APLv2          N/A
 jQuery    src/css/jquery.mobile-1.0.css        MIT & GPLv2    [9]
 jQuery    src/css/jquery.mobile-1.0.min.css    MIT & GPLv2    [10]
 Einar     lib/js-beautify/beautify-html.js     MIT            [13]
@@ -70,18 +87,18 @@ Douglas    build/jslint.js           BSD-like  [11,12]
 Crockford                             (w/ conditions)
 
 Notes:
-[1] http://code.jquery.com/jquery-1.6.2.js
-[2] http://code.jquery.com/jquery-1.6.2.min.js
+[1] http://code.jquery.com/jquery-1.6.4.js
+[2] http://code.jquery.com/jquery-1.6.4.min.js
 [3] http://jqueryui.com/download/?themeparams=%3fctl%3dthemeroller
 [4] http://jqueryui.com/download/?themeparams=%3fctl%3dthemeroller
-[5] http://code.jquery.com/mobile/1.0b3/jquery.mobile-1.0b3.js
-[6] http://code.jquery.com/mobile/1.0b3/jquery.mobile-1.0b3.min.js
-[7] http://www.trainwrecked.net/lame/jquery.lame.js
-[8] https://github.com/douglascrockford/JSON-js/blob/master/json2.js
-[9] http://code.jquery.com/mobile/1.0b3/jquery.mobile-1.0b3.css
-[10] http://code.jquery.com/mobile/1.0b3/jquery.mobile-1.0b3.min.css
+[5] http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.js
+[6] http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.js
+[8] Portions of this file contains jQuery-UI functions copied from original
+    sources ([3]) and modified by Intel to override default behaviors.
+[9] http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.css
+[10] http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.css
 [11] https://github.com/douglascrockford/JSLint/blob/master/jslint.js
-[12] Portions of the file (jslint.js) are copyright Intel Corporation, 2011.
+[12] Portions of the file (jslint.js) are copyright Intel Corporation, 2011-2012
 [13] https://github.com/einars/js-beautify
 [14] https://github.com/web-ui-fw/web-ui-fw
 [15] http://jszip.stuartk.co.uk

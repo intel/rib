@@ -34,7 +34,7 @@ You may need to configure thttpd to start up.
 
 Legal Stuff:
 ============
-Copyright (C) 2011, Intel Corporation.
+Copyright (C) 2011-2012, Intel Corporation.
 
 Unless otherwise noted below, all code is Licensed under the Apache Public
 License version 2.0 (LICENSE-APLv2.txt).  For a complete list of files and
@@ -45,31 +45,31 @@ necessary for the runtime use of this application:
 
 File:					License:	Copyright Holder:
 -----					--------	-----------------
-lib/jquery-1.6.2.js			MIT & GPLv2	The jQuery Project
-lib/jquery-1.6.2.min.js			MIT & GPLv2	The jQuery Project
+lib/jquery-1.6.4.js			MIT & GPLv2	The jQuery Project
+lib/jquery-1.6.4.min.js			MIT & GPLv2	The jQuery Project
 lib/jquery-ui-1.8.16.custom.js		MIT & GPLv2	The jQuery Project
 lib/jquery-ui-1.8.16.custom.min.js	MIT & GPLv2	The jQuery Project
 lib/jquery.mobile-1.0.js		MIT & GPLv2	The jQuery Project
 lib/jquery.mobile-1.0.min.js		MIT & GPLv2	The jQuery Project
 src/css/jquery.mobile-1.0.css		MIT & GPLv2	The jQuery Project
 src/css/jquery.mobile-1.0.min.css	MIT & GPLv2	The jQuery Project
-lib/json2.js				Public Domain	N/A
-lib/jquery.lame.js			FreeBSD		Ryan Ray[1]
 lib/js-beautify/beautify-html.js	MIT		Einar Lielmanis[4]
 lib/js-beautify/beautify.js		MIT		Einar Lielmanis[4]
-lib/web-ui-fw.js                        MIT             Intel
-lib/web-ui-fw-libs.js                   MIT             Intel
-src/css/web-ui-fw-theme.css             MIT             Intel
-src/css/web-ui-fw-widgets.css           MIT             Intel
+lib/web-ui-fw.js			MIT             Intel
+lib/web-ui-fw-libs.js			MIT             Intel
+src/css/web-ui-fw-theme.css		MIT             Intel
+src/css/web-ui-fw-widgets.css		MIT             Intel
 lib/jszip.js				MIT or GPLv3	Stuart Knightley[5]
-lib/zipfile.js              Modified BSD    Arnaud Renervier[6]
-lib/CodeMirror-2.21/LICENSE                         BSD-like   Marijn Haverbeke
-lib/CodeMirror-2.21/lib/codemirror.css              BSD-like   Marijn Haverbeke
-lib/CodeMirror-2.21/lib/codemirror.js               BSD-like   Marijn Haverbeke
-lib/CodeMirror-2.21/mode/css/css.js                 BSD-like   Marijn Haverbeke
-lib/CodeMirror-2.21/mode/htmlmixed/htmlmixed.js     BSD-like   Marijn Haverbeke
-lib/CodeMirror-2.21/mode/javascript/javascript.js   BSD-like   Marijn Haverbeke
-lib/CodeMirror-2.21/mode/xml/xml.js                 BSD-like   Marijn Haverbeke
+lib/zipfile.js				Modified BSD    Arnaud Renervier[6]
+lib/CodeMirror-2.21/LICENSE		BSD-like	Marijn Haverbeke
+lib/CodeMirror-2.21/lib/codemirror.css	BSD-like	Marijn Haverbeke
+lib/CodeMirror-2.21/lib/codemirror.js	BSD-like	Marijn Haverbeke
+lib/CodeMirror-2.21/mode/css/css.js	BSD-like	Marijn Haverbeke
+lib/CodeMirror-2.21/mode/htmlmixed/htmlmixed.js
+					BSD-like	Marijn Haverbeke
+lib/CodeMirror-2.21/mode/javascript/javascript.js
+					BSD-like	Marijn Haverbeke
+lib/CodeMirror-2.21/mode/xml/xml.js	BSD-like	Marijn Haverbeke
 
 The following files were copied into this project from upstream and are
 only included as development tools (build, debugging, reporting).  They
@@ -81,9 +81,8 @@ build/jslint.js				BSD-like	Douglas Crockford[2,3]
 					(w/ conditions)
 
 Notes:
-[1] ryan@trainwrecked.net
 [2] douglas@crockford.com
-[3] Portions of the file (jslint.js) are copyright Intel Corporation, 2011.
+[3] Portions of the file (jslint.js) are copyright Intel Corporation, 2011-2012
 [4] einar@jsbeautifier.org
 [5] stuart@stuartk.co.uk
 [6] arno@renevier.net

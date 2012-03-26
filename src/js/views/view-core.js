@@ -1,6 +1,6 @@
 /*
  * gui-builder - A simple WYSIWYG HTML5 app creator
- * Copyright (c) 2011, Intel Corporation.
+ * Copyright (c) 2011-2012, Intel Corporation.
  *
  * This program is licensed under the terms and conditions of the
  * Apache License, version 2.0.  The full text of the Apache License is at

@@ -1,11 +1,18 @@
 /*
  * gui-builder - A simple WYSIWYG HTML5 app creator
- * Copyright (c) 2011, Intel Corporation.
+ * Copyright (c) 2011-2012, Intel Corporation.
  *
  * This program is licensed under the terms and conditions of the
  * Apache License, version 2.0.  The full text of the Apache License is at
  * http://www.apache.org/licenses/LICENSE-2.0
  *
+ * Portions of this file are copied from original jQuery UI sources also
+ * included in this project (see lib/jquery-ui-1.8.16.custom.js) and the
+ * unmodified lines from those files retain their original copyright:
+ *
+ *   "Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
+ *    Dual licensed under the MIT or GPL Version 2 licenses.
+ *    http://jquery.org/license"
  */
 
 var getOwnerWindow = function (node) {
