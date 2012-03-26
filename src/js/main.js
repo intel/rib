@@ -65,7 +65,6 @@
             // Now invoke any view plugins on appropriate elements
             this._bindViewPlugins();
 
-            this.refresh();
 
             if ($.gb.debug('mousetrack')) {
                 this._createMouseTracker($(document.body));
@@ -89,7 +88,6 @@
                     $.resizable.prototype._setOption.apply( this, key, value );
                     break;
             }
-            this.refresh();
         },
 
         // Public functions

@@ -62,7 +62,6 @@
                 default:
                     break;
             }
-            $.gb.treeView.prototype._setOption.apply(this, arguments);
         },
 
         // Private functions
@@ -80,11 +79,6 @@
                     a.bind("selectionChanged", o.selectionChanged, this);
                 }
 
-                // Since model changed, need to call our designReset hander
-                // to sync up the ADMDesign modelUpdated event handler
-                if (o.designReset) {
-                    o.designReset({design: a.getDesignRoot()}, this);
-                }
             }
         },
 
