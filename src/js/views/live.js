@@ -229,19 +229,21 @@
 
             iframe = widget.options.iframe;
             if (iframe.length) {
-                liveDoc = widget.options.contentDocument[0];
-                liveDoc.open();
-                liveDoc.writeln(generateHTML().html);
-                liveDoc.close();
-                iframe.load( function () {
+                // Bind load event first to make sure it will be fired when
+                // liveDoc is successfully written.
+                iframe.one('load', function () {
                     var page = widget.options.model.getActivePage() || null;
                     if (page) {
                         widget._setPreviewPage(page.getProperty('id'), widget);
                     }
 
-                    $(liveDoc).bind('contextmenu', function(e) {
-                        e.preventDefault();
-                    });
+                    // We have to use the "$" in iframe or when you switching
+                    // between live view and layout view several times, the
+                    // contextMenu will reappear.
+                    getOwnerWindow(liveDoc.documentElement).$(liveDoc)
+                        .bind('contextmenu', function(e) {
+                            e.preventDefault();
+                        });
                     $('body', liveDoc).css({
                         // prevent I bar cursor over UI text
                         "cursor": "default",
@@ -249,6 +251,10 @@
                         "-webkit-user-select": "none"
                     });
                 });
+                liveDoc = widget.options.contentDocument[0];
+                liveDoc.open();
+                liveDoc.writeln(generateHTML().html);
+                liveDoc.close();
             }
         },
 
