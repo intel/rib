@@ -233,7 +233,7 @@
         },
 
         _modelUpdatedHandler: function(event, widget) {
-            if(event.node.getType()==='Page' &&
+            if (event.node && event.node.getType()==='Page' &&
                (event.type === "nodeRemoved" ||
                 event.type === "nodeAdded")) {
                 widget.refresh(event, widget);

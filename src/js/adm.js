@@ -630,6 +630,7 @@ ADM.ensurePageInactive = function (pageRef, dryrun) {
     }
 
     console.warn("Warning: no other page found to make active");
+    ADM.setActivePage(null);
     return false;
 }
 
@@ -663,7 +664,6 @@ ADM.removeChild = function (childRef, dryrun) {
 
     if (!ADM.ensurePageInactive(child)) {
         console.warn("Warning: attempted to remove the only page: ", childRef);
-        return null;
     }
 
     zone = child.getZone();

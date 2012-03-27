@@ -140,14 +140,18 @@ $(function() {
 
                 if (admDesign.getChildren().length === 1) {
                     options.layout = this.getActivePageLayout();
+                }
+
+                // delete current page node from design
+                ADM.removeChild(pageUid, false);
+                if (admDesign.getChildren().length === 0) {
                     newPage = this.createNewPage(options);
                     if (!newPage) {
                         console.error("error: create new page failed");
                         return false;
                     }
+                    ADM.setActivePage(newPage);
                 }
-                //delete Current Page node from design
-                ADM.removeChild(pageUid, false);
                 return true;
             }
             catch (err) {
