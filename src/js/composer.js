@@ -560,26 +560,6 @@ $(function() {
         });
     });
 
-    // Allow for deletion of selected widget
-    $(document).keyup(function(e) {
-        if (e.which === 46) {
-            $('.ui-selected').each( function () {
-                var id = $(this).attr('data-uid');
-                window.parent.ADM.removeChild(id);
-            });
-        }
-    });
-    // Watch our parent document also
-    $(top.document).keyup(function(e) {
-        if (e.which === 46 && !$(this.activeElement).is('input')) {
-            $('.ui-selected').each( function () {
-                var id = $(this).attr('data-uid');
-                window.parent.ADM.removeChild(id);
-            });
-        }
-    });
-
-
     function messageHandler(e) {
         switch (e.data) {
             case 'reload':
