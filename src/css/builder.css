@@ -480,6 +480,7 @@ body.ui-tabs.ui-widget {
     background-image: url('images/newProjectButton_up.png');
     width: 110px;
 }
+.tools-primary #newProj:focus,
 .tools-primary #newProj:hover,
 .tools-primary #newProj:active {
     background-image: url('images/newProjectButton_down.png');
@@ -488,6 +489,7 @@ body.ui-tabs.ui-widget {
     background-image: url('images/importProjectButton_up.png');
     width: 109px;
 }
+.tools-primary #importProj:focus,
 .tools-primary #importProj:hover,
 .tools-primary #importProj:active {
     background-image: url('images/importProjectButton_down.png');
@@ -496,6 +498,7 @@ body.ui-tabs.ui-widget {
     background-image: url('images/undoButton_up.png');
     width: 61px;
 }
+.tools-primary #btnundo:focus,
 .tools-primary #btnundo:hover,
 .tools-primary #btnundo:active {
     background-image: url('images/undoButton_down.png');
@@ -504,6 +507,7 @@ body.ui-tabs.ui-widget {
     background-image: url('images/redoButton_up.png');
     width: 58px;
 }
+.tools-primary #btnredo:focus,
 .tools-primary #btnredo:hover,
 .tools-primary #btnredo:active {
     background-image: url('images/redoButton_down.png');
@@ -512,6 +516,7 @@ body.ui-tabs.ui-widget {
     background-image: url('images/cutButton_up.png');
     width: 50px;
 }
+.tools-primary #btncut:focus,
 .tools-primary #btncut:hover,
 .tools-primary #btncut:active {
     background-image: url('images/cutButton_down.png');
@@ -520,6 +525,7 @@ body.ui-tabs.ui-widget {
     background-image: url('images/copyButton_up.png');
     width: 58px;
 }
+.tools-primary #btncopy:focus,
 .tools-primary #btncopy:hover,
 .tools-primary #btncopy:active {
     background-image: url('images/copyButton_down.png');
@@ -529,6 +535,7 @@ body.ui-tabs.ui-widget {
     width: 70px;
 }
 .tools-primary #btnpaste:hover,
+.tools-primary #btnpaste:focus,
 .tools-primary #btnpaste:active {
     background-image: url('images/pasteButton_down.png');
 }
@@ -611,6 +618,9 @@ body.ui-tabs.ui-widget {
     border: none;
 }
 
+.treeView:focus {
+    background: #F9F9F9;
+}
 .treeView ul {
     padding-left: 0px;
     margin: 0px 0px 0px -2px;
@@ -855,6 +865,7 @@ body.ui-tabs.ui-widget {
     background-clip: padding-box;
     text-decoration:none;
 }
+.propertyView .buttonStyle:focus,
 .propertyView .buttonStyle:hover {
     color:#eee;
     background-color: #cccccc;
@@ -1388,6 +1399,7 @@ input.screenCoordinate::-webkit-inner-spin-button {
     background: url("images/homeButton_up.png") no-repeat 0 0;
     width: 45px;
 }
+.projectViewButton:focus,
 .projectViewButton:hover,
 .projectViewButton:active {
     background-image: url("images/homeButton_active.png");
@@ -1399,6 +1411,7 @@ input.screenCoordinate::-webkit-inner-spin-button {
     background: url("images/layoutButton_up.png") no-repeat 0 0;
     width: 80px;
 }
+.layoutViewButton:focus,
 .layoutViewButton:hover,
 .layoutViewButton:active {
     background-image: url("images/layoutButton_active.png");
@@ -1410,6 +1423,7 @@ input.screenCoordinate::-webkit-inner-spin-button {
     background: url("images/codeButton_up.png") no-repeat 0 0;
     width: 71px;
 }
+.codeViewButton:focus,
 .codeViewButton:hover,
 .codeViewButton:active {
     background-image: url("images/codeButton_active.png");
@@ -1421,6 +1435,7 @@ input.screenCoordinate::-webkit-inner-spin-button {
     background: url("images/previewButton_up.png") no-repeat 0 0;
     width: 87px;
 }
+.liveViewButton:focus,
 .liveViewButton:hover,
 .liveViewButton:active {
     background-image: url("images/previewButton_active.png");
