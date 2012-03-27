@@ -40,6 +40,7 @@
                 widget.findDomNode(groups[0]['Functional Groups'])
                       .trigger('click');
             });
+            this.enableKeyNavigation();
             return this;
         },
 

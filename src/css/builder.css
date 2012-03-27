@@ -637,15 +637,20 @@ body.ui-tabs.ui-widget {
     font-weight: normal;
     text-align: center;
     cursor: pointer
-}
-.treeView li > a.ui-selected {
-    background: #4ae57b;
-    color: #424242;
     border: transparent;
     -webkit-border-radius: 4px;
     -webkit-background-clip: padding-box;
     padding: 0px 5px 3px 5px;
     margin-left: -5px;
+}
+.treeView li > a.ui-selected {
+    border: transparent;
+    background: #4ae57b;
+    color: #424242;
+}
+.treeView li > a.focused {
+    border: 1px solid #2c7a94;
+    color: #424242;
 }
 .treeView span.widgetType {
     font-size: 12px;

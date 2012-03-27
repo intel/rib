@@ -46,6 +46,7 @@
 
 
             this.refresh(null, this);
+            this.enableKeyNavigation();
 
             return this;
         },
