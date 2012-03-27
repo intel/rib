@@ -97,15 +97,23 @@
             var widget = widget || this;
             widget.element.addClass('treeView');
             if (widget.options.model) {
-                var container = $('<ul/>').appendTo(this.element.empty());
-                widget._createTreeView(container, container,
+                widget._createTreeView(this.element.empty(),
                                        this._toTreeModel(this.options.model));
                 widget.setSelected(widget._getSelected?widget._getSelected():null);
             }
         },
 
-        _createTreeView: function (container, rootContainer, node) {
-            var widget = this;
+        _createTreeView: function (attachingNode, node, attachment) {
+            var widget = this, container = attachingNode,
+                parentDomNode = attachingNode.parent().parent(),
+                attachment = attachment || 'appendTo';
+            if (attachment === 'appendTo') {
+                container = attachingNode.children('ul');
+                if (container.length === 0)
+                   container = $('<ul/>').addClass('widgetGroup')
+                       .appendTo(attachingNode);
+                parentDomNode = attachingNode;
+            }
             $.each(node, function(i, v) {
                 if ( $.isPlainObject(v)) {
                     //This is children definition
@@ -114,11 +122,14 @@
                         if (name === "_hidden_node"||name === "_origin_node") {
                             return true;
                         }
-                        container.prev().prev().addClass('folder')
+
+                        parentDomNode.find('> span').addClass('folder')
                             .removeClass('singleItem').html('');
+
                         folderNode = $('<li/>')
-                            .appendTo(container)
-                            .append($('<span/>').addClass('singleItem')
+                            [attachment](container)
+                            .append($('<span/>')
+                                .addClass('singleItem')
                                 .html("&#x2022;")
                                 .click(function(e) {
                                     $(this).toggleClass("close")
@@ -144,10 +155,7 @@
                         if (typeof widget._render === "function") {
                             widget._render(folderNode, v._origin_node);
                         }
-                        widget._createTreeView($('<ul/>')
-                                                   .addClass('widgetGroup')
-                                                   .appendTo(folderNode),
-                                               rootContainer, value);
+                        widget._createTreeView(folderNode, value);
                     });
                 }
             });
@@ -174,5 +182,35 @@
            this._setSelected(this.findDomNode(node));
         },
 
+        addNode: function (node) {
+            var siblings, parentDomNode, index, widget = this,
+                parentNode = widget._getParent(node);
+            while (parentNode &&
+                    (parentDomNode = widget.findDomNode(parentNode).parent())
+                    .length === 0)
+                parentNode = widget._getParent(parentNode);
+            siblings = widget._getChildTreeNodes(parentNode);
+            if (parentDomNode.length === 0)
+                parentDomNode = widget.element;
+            for ( index = 0; index < siblings.length; index ++ ){
+                if (siblings[index]._origin_node === node)
+                    break;
+            }
+            if (siblings.length === 1)
+                widget._createTreeView(parentDomNode, [siblings[index]]);
+            else {
+                if ( index === 0)
+                    widget._createTreeView(widget.findDomNode
+                            (siblings[index + 1]._origin_node).parent()
+                            .parent().children(':first'), [siblings[index]],
+                            'insertBefore');
+                else
+                    widget._createTreeView(widget.findDomNode
+                            (siblings[index - 1]._origin_node).parent(),
+                            [siblings[index]], 'insertAfter');
+
+
+            }
+        },
     });
 })(jQuery);

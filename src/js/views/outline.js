@@ -174,41 +174,59 @@
 
         _modelUpdatedHandler: function(event, widget) {
             widget = widget || this;
-            widget.refresh(event, widget);
+            switch (event.type) {
+                case "nodeAdded":
+                    widget.addNode(event.node);
+                break;
+                default:
+                    widget.refresh();
+                break;
+            }
+        },
+        _getParent: function (node) {
+            return node.getParent();
+        },
+        _getChildTreeNodes: function (node) {
+            node = node || this.options.model.getDesignRoot();
+            var children =  this._adm2TreeModel(node);
+            if ($.isArray(children))
+                return children;
+            else
+                return children[BWidget.getDisplayLabel(node.getType())];
         },
 
-        _toTreeModel: function (model) {
-            var adm2TreeModel = function (admNode) {
-                var treeNode = {},
-                    childNodes = [],
-                    children, i, type, showInOutline, label;
+        _adm2TreeModel: function (admNode) {
+            var treeNode = {},
+                childNodes = [],
+                children, i, type, showInOutline, label;
 
-                if (!(admNode instanceof ADMNode)) {
-                    return treeNode;
-                }
-
-                type = admNode.getType();
-                showInOutline = BWidget.isPaletteWidget(type) ||
-                    (type === "Page");
-                label = BWidget.getDisplayLabel(type);
-                if (showInOutline) {
-                    treeNode[label] = childNodes;
-                    treeNode._origin_node = admNode;
-                }
-                else
-                    treeNode = childNodes;
-
-                children = admNode.getChildren();
-                for (i = 0; i < children.length; i++) {
-                    var childTreeModel = adm2TreeModel(children[i]);
-                    if ($.isPlainObject(childTreeModel))
-                        childNodes.push(childTreeModel);
-                    else
-                        $.merge(childNodes, childTreeModel);
-                }
+            if (!(admNode instanceof ADMNode)) {
                 return treeNode;
-            };
-            return adm2TreeModel(model.getDesignRoot());
+            }
+
+            type = admNode.getType();
+            showInOutline = BWidget.isPaletteWidget(type) ||
+                (type === "Page");
+            label = BWidget.getDisplayLabel(type);
+            if (showInOutline) {
+                treeNode[label] = childNodes;
+                treeNode._origin_node = admNode;
+            }
+            else
+                treeNode = childNodes;
+
+            children = admNode.getChildren();
+            for (i = 0; i < children.length; i++) {
+                var childTreeModel = this._adm2TreeModel(children[i]);
+                if ($.isPlainObject(childTreeModel))
+                    childNodes.push(childTreeModel);
+                else
+                    $.merge(childNodes, childTreeModel);
+            }
+            return treeNode;
+        },
+        _toTreeModel: function (model) {
+            return this._adm2TreeModel(model.getDesignRoot());
         },
         _getSelected: function () {
             var model = this.options.model;
