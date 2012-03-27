@@ -70,6 +70,7 @@
             if ($.gb.debug('mousetrack')) {
                 this._createMouseTracker($(document.body));
             }
+            $.gb.enableKeys($(document));
         },
 
         _setOption: function(key, value) {

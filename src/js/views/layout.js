@@ -172,6 +172,7 @@
         _iframeLoaded: function(event) {
             event.data.loaded = true;
             event.data.refresh(null, event.data);
+            $.gb.enableKeys(event.data.options.contentDocument);
         },
 
         _createPrimaryTools: function() {
