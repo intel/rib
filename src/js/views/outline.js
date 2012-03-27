@@ -178,8 +178,22 @@
                 case "nodeAdded":
                     widget.addNode(event.node);
                 break;
+                case "nodeRemoved":
+                    widget.removeNode(event.node);
+                break;
+                case "nodeMoved":
+                    widget.moveNode(event.node);
+                break;
+                case "propertyChanged":
+                    if (event.property === "id" &&
+                            event.node.getType() === "Page")
+                        widget._renderPageNode
+                            (widget.findDomNode(event.node).parent(),
+                            event.node);
+                break;
                 default:
-                    widget.refresh();
+                    console.warning('Unknown type of modelUpdated event:'
+                        + event.type);
                 break;
             }
         },
@@ -232,6 +246,17 @@
             var model = this.options.model;
             return model.getSelectedNode() || model.getActivePage();
         },
+        _renderPageNode: function (domNode, node) {
+            if (node.getType() === "Page") {
+                //set page id
+                var id = node.getProperty('id'),
+                    titleNode = domNode.find("> a > .pageTitle");
+                if (titleNode.length === 0)
+                    titleNode = $('<span/>').addClass('pageTitle')
+                        .appendTo(domNode.find("> a"));
+                titleNode.text(' (' + id + ')');
+            }
+        },
         _render: function (domNode, data) {
             var labelFunc, parentNode = data.getParent();
             labelFunc = BWidget.getOutlineLabelFunction(parentNode.getType());
@@ -242,15 +267,7 @@
                                         label + '</li>'));
                 }
             }
-            if (data.getType() === "Page") {
-                //set page id
-                var id = data.getProperty('id');
-                domNode.find("a")
-                    .append('<span/>')
-                    .children(':last')
-                    .addClass('pageTitle')
-                    .text(' (' + id + ')');
-            }
+            this._renderPageNode(domNode, data);
         },
         _nodeSelected: function (treeModelNode, data) {
             this.options.model.setSelected(data.getUid());

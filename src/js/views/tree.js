@@ -212,5 +212,12 @@
 
             }
         },
+        removeNode: function (node) {
+            this.findDomNode(node).parent().remove();
+        },
+        moveNode: function (node) {
+            this.removeNode(node);
+            this.addNode(node);
+        },
     });
 })(jQuery);
