@@ -407,8 +407,8 @@ ADM.setSelected = function (nodeRef) {
  * @param {Boolean} dryrun [Optional] True if the call should be a dry run.
  * @return {ADMNode} The child object, on success; null, on failure.
  */
-ADM.addChild = function (parentRef, childRef, dryrun) {
-    var parent, child;
+ADM.addChild = function (parentRef, childRef, dryrun, compositeTransaction) {
+    var parent, child, transObj;
 
     parent = ADM.toNode(parentRef);
     if (!parent) {
@@ -434,11 +434,15 @@ ADM.addChild = function (parentRef, childRef, dryrun) {
         }
         // use getParent below in case the child was redirected to another
         // node (as in the case of Page/Content)
-        ADM.transaction({
+        transObj = {
             type: "add",
             parent: child.getParent(),
             child: child
-        });
+        };
+        if (compositeTransaction)
+            compositeTransaction.operations.push(transObj);
+        else
+            ADM.transaction(transObj);
         return child;
     }
 
@@ -644,8 +648,9 @@ ADM.ensurePageInactive = function (pageRef, dryrun) {
  * @param {Boolean} dryrun [Optional] True if the call should be a dry run.
  * @return {ADMNode} The removed child, or null it or its parent is not found.
  */
-ADM.removeChild = function (childRef, dryrun) {
-    var design, child, parent, pageIndex, page, pages, rval, zone, zoneIndex;
+ADM.removeChild = function (childRef, dryrun, compositeTransaction) {
+    var design, child, parent, pageIndex, page, pages, rval, zone, zoneIndex,
+        transObj;
     design = ADM.getDesignRoot();
 
     child = ADM.toNode(childRef);
@@ -673,13 +678,17 @@ ADM.removeChild = function (childRef, dryrun) {
         if (dryrun) {
             return true;
         }
-        ADM.transaction({
+        transObj = {
             type: "remove",
             parent: parent,
             child: child,
             zone: zone,
             zoneIndex: zoneIndex
-        });
+        };
+        if (compositeTransaction)
+            compositeTransaction.operations.push(transObj);
+        else
+            ADM.transaction(transObj);
     }
 
     if (!rval) {
@@ -806,9 +815,8 @@ ADM.transaction = function (obj) {
  * transaction is then added to the redo stack.
  */
 ADM.undo = function () {
-    var obj;
-    if (ADM._undoStack.length > 0) {
-        obj = ADM._undoStack.pop();
+    var obj, undo = function (obj) {
+        var i;
         if (obj.type === "add") {
             ADM.ensurePageInactive(obj.child);
             obj.parent.removeChild(obj.child);
@@ -826,10 +834,19 @@ ADM.undo = function () {
             // TODO: this could require deeper copy of complex properties
             obj.node.setProperty(obj.property, obj.oldValue, obj.data);
         }
+        else if (obj.type === "composite") {
+            for ( i = obj.operations.length - 1; i >=0; i --)
+                undo(obj.operations[i]);
+        }
         else {
             console.warn("Warning: Unexpected UNDO transaction");
             return;
         }
+
+    };
+    if (ADM._undoStack.length > 0) {
+        obj = ADM._undoStack.pop();
+        undo(obj);
         ADM._redoStack.push(obj);
     }
 };
@@ -839,9 +856,8 @@ ADM.undo = function () {
  * transaction is then added to the undo stack.
  */
 ADM.redo = function () {
-    var obj;
-    if (ADM._redoStack.length > 0) {
-        obj = ADM._redoStack.pop();
+    var obj, redo = function (obj) {
+        var i;
         if (obj.type === "add") {
             obj.parent.addChild(obj.child);
         }
@@ -858,10 +874,18 @@ ADM.redo = function () {
             // TODO: this could require deeper copy of complex properties
             obj.node.setProperty(obj.property, obj.value, obj.data);
         }
+        else if (obj.type === "composite") {
+            for ( i = obj.operations.length - 1; i >=0; i --)
+                redo(obj.operations[i]);
+        }
         else {
             console.warn("Warning: Unexpected REDO transaction");
             return;
         }
+    };
+    if (ADM._redoStack.length > 0) {
+        obj = ADM._redoStack.pop();
+        redo(obj);
         ADM._undoStack.push(obj);
     }
 };

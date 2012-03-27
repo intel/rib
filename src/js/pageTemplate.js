@@ -27,7 +27,7 @@ $(function() {
          * @param {Object} config The page configure to create new page.
          * @return {ADMNode} The page node, or null if the page type was invalid.
          */
-        createNewPage: function(config) {
+        createNewPage: function(config, compositeTransaction) {
             var design = config.design || ADM.getDesignRoot(),
                 pageTemplate = config.pageTemplate || this.options[pageTemplate],
                 pageTitle = config.pageTitle || this.options[pageTitle],
@@ -63,7 +63,7 @@ $(function() {
                 }
             }
             */
-            ADM.addChild(design, newPage);
+            ADM.addChild(design, newPage, false, compositeTransaction);
             return result? newPage: null;
 
             /**
@@ -136,22 +136,24 @@ $(function() {
                 //if current page is the last page, we will create a new page which
                 //has the same template as current one
                 var newPage, options = {},
-                    admDesign = ADM.getDesignRoot();
+                    admDesign = ADM.getDesignRoot(),
+                    compositeTransaction = {type: 'composite', operations:[]};
 
                 if (admDesign.getChildren().length === 1) {
                     options.layout = this.getActivePageLayout();
                 }
 
                 // delete current page node from design
-                ADM.removeChild(pageUid, false);
+                ADM.removeChild(pageUid, false, compositeTransaction);
                 if (admDesign.getChildren().length === 0) {
-                    newPage = this.createNewPage(options);
+                    newPage = this.createNewPage(options, compositeTransaction);
                     if (!newPage) {
                         console.error("error: create new page failed");
                         return false;
                     }
                     ADM.setActivePage(newPage);
                 }
+                ADM.transaction(compositeTransaction);
                 return true;
             }
             catch (err) {
