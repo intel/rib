@@ -58,7 +58,8 @@
                 .addClass('panel-section')
                 .addClass('vbox')
                 .addClass('flex0')
-                .css({ "min-width": 300, })  // FIXME: do this in CSS
+                .css({ "min-width": 300, 
+                       "max-width": 300})  // FIXME: do this in CSS
                 .pageView();
             pagePanel.pageView('option', 'model', ADM);
 
