@@ -942,8 +942,10 @@ body.ui-tabs.ui-widget {
     background-size: cover;
     padding: 5px 0px 5px 0px;
 }
+.pageView > .panel-section-contents {
+    display: -webkit-box;
+}
 .page-arrow.left {
-    float: left;
     margin: 3px 0.5%;
     padding:0px;
     width: 9%;
@@ -951,24 +953,27 @@ body.ui-tabs.ui-widget {
     height:24px;
     -webkit-transform: rotate(180deg);
     background:url("images/pageArrow_dimmed.png") no-repeat 0px;
+    -webkit-box-flex: 1;
+    background-position: center;
 }
 .page-arrow.right {
-    float: left;
     margin: 3px 0.5%;
     padding:0px;
     border:0px;
     width: 9%;
     height:24px;
     background:url("images/pageArrow_dimmed.png") no-repeat 0px;
+    -webkit-box-flex: 1;
+    background-position: center;
 }
 .pageView .allwidth {
     width:1000%;
 }
 .pageView .pages-box {
-    float:left;
     overflow: hidden;
     width:80%;
     padding:0px;
+    -webkit-box-flex: 0;
 }
 .page-arrow.ui-state-active {
     background-image: url("images/pageArrow_up.png");
@@ -978,15 +983,17 @@ body.ui-tabs.ui-widget {
 }
 .panel-section-contents .pageIcon {
     background-image: url("images/pageIcon_off.png");
-    width: 20px;
+    width: 30px;
     height: 24px;
     text-align: center;
     line-height: 24px;
     float: left;
-    margin: 3px 5px;
+    margin: 3px 0px;
     font-size: 10px !important;
     font-weight: bold !important;
     color: #ffffff !important;
+    background-repeat: no-repeat;
+    background-position: 5px 0px;
 }
 .pageIcon.ui-selected {
     background-image: url("images/pageIcon_on.png");
@@ -1002,14 +1009,37 @@ body.ui-tabs.ui-widget {
 .deleteTag {
     display: none;
     position: relative;
-    left: 16px;
-    top: -25px;
+    left: 20px;
+    top: -26px;
     min-width: 10px;
     min-height: 10px;
-    background: url("images/tagButton_up.png") no-repeat 0px;
+    width: 10px;
+    height: 10px;
+    margin-right: 0px;
+    border-radius: 50%;
+    border-width: 1px;
+    color: rgba(255, 255, 255, 0.75);
+    border-color: rgba(160, 160, 160, 0.75);
+    background-image: -webkit-radial-gradient(circle,
+                                              rgba(160, 160, 160, 0.75),
+                                              rgba(160, 160, 160, 0.75));
+    line-height: 1;
+    font-size: 10px;
+    font-weight: bold;
+    text-align: center;
+    text-indent: 0px;
+    font-family: monospace;
+    -webkit-text-stroke-width: 0px;
+}
+.deleteTag:after {
+    content: 'X';
 }
 .deleteTag:hover {
-    background: url("images/tagButton_down.png") no-repeat 0px;
+    border-width: 2px;
+    color: white;
+    border-color: red;
+    background-image: -webkit-radial-gradient(circle, red, red);
+    -webkit-text-stroke-color: white;
 }
 
 /*

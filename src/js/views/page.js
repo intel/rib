@@ -125,20 +125,37 @@
          * scroll page view
          * direction: boolean. if true, scroll right; false, scroll left.
          */
-        _scrollPage: function(side) {
+        _scrollPage: function(left, index) {
             var box = this.element.find('#box'),
                 length = this.element.find('.pageIcon').outerWidth(true),
                 scroller = this.element.find('#pages'),
-                pageCount = this.options.model.getDesignRoot().getChildren().length,
+                pageCount = scroller.children().length,
+                visibleCount = (box.innerWidth() / length).toFixed(), pos,
                 scrollLeft = box.scrollLeft();
 
-            if(side){
-                if (scrollLeft < pageCount * length){
-                    box.scrollLeft(scrollLeft + length);
+            if (index === undefined && typeof(left) !== 'boolean') {
+                index = parseInt(left,10);
+                left = undefined;
+            }
+
+            if (index >= 0 && index < scroller.children().length ) {
+                if (index*length+length >= scrollLeft + box.innerWidth()) {
+                    box.animate({
+                        scrollLeft: scrollLeft + index * length + length -
+                                    box.innerWidth()});
+                } else if (index*length < scrollLeft) {
+                    box.animate({scrollLeft: index*length});
+                }
+                return;
+            }
+
+            if(left){
+                if (scrollLeft < (pageCount-visibleCount)*length){
+                    box.animate({scrollLeft: scrollLeft + length});
                 }
             } else {
                 if(scrollLeft !== 0){
-                    box.scrollLeft(scrollLeft-length);
+                    box.animate({scrollLeft: scrollLeft - length});
                 }
             }
         },
@@ -281,11 +298,18 @@
         },
 
         _activePageChangedHandler: function(event, widget) {
+            var newIndex = event&&event.page && event.page.getZoneIndex(),
+                oldIndex = event&&event.oldPage && event.oldPage.getZoneIndex();
+
             widget = widget || this;
 
             // FIXME: This should just toggle 'ui-selected' class, not
             //        cause a complete re-creation of the page list
-            widget.refresh(event,widget);
+            //widget.refresh(event,widget);
+            widget.element.find('.ui-selected').removeClass('ui-selected');
+            widget.element.find('#pages').children().eq(newIndex)
+                .addClass('ui-selected');
+            widget._scrollPage(newIndex);
         },
 
         _modelUpdatedHandler: function(event, widget) {
