@@ -27,7 +27,7 @@ $(function() {
          * @param {Object} config The page configure to create new page.
          * @return {ADMNode} The page node, or null if the page type was invalid.
          */
-        createNewPage: function(config, compositeTransaction) {
+        createNewPage: function(config) {
             var design = config.design || ADM.getDesignRoot(),
                 pageTemplate = config.pageTemplate || this.options[pageTemplate],
                 pageTitle = config.pageTitle || this.options[pageTitle],
@@ -63,7 +63,7 @@ $(function() {
                 }
             }
             */
-            ADM.addChild(design, newPage, false, compositeTransaction);
+            ADM.addChild(design, newPage);
             return result? newPage: null;
 
             /**
@@ -135,25 +135,24 @@ $(function() {
             try {
                 //if current page is the last page, we will create a new page which
                 //has the same template as current one
-                var newPage, options = {},
-                    admDesign = ADM.getDesignRoot(),
-                    compositeTransaction = {type: 'composite', operations:[]};
+                var newPage, options = {}, admDesign = ADM.getDesignRoot();
 
                 if (admDesign.getChildren().length === 1) {
                     options.layout = this.getActivePageLayout();
                 }
 
                 // delete current page node from design
-                ADM.removeChild(pageUid, false, compositeTransaction);
+                ADM.startTransaction();
+                ADM.removeChild(pageUid);
                 if (admDesign.getChildren().length === 0) {
-                    newPage = this.createNewPage(options, compositeTransaction);
+                    newPage = this.createNewPage(options);
                     if (!newPage) {
                         console.error("error: create new page failed");
                         return false;
                     }
                     ADM.setActivePage(newPage);
                 }
-                ADM.transaction(compositeTransaction);
+                ADM.endTransaction();
                 return true;
             }
             catch (err) {

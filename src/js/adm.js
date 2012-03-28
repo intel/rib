@@ -156,6 +156,7 @@ var ADM = {
     _undoStack: [],
     _redoStack: [],
     _clipboard: null,
+    _transaction: null,
 
     init: function () {
         // copy event functions from ADMEventSource
@@ -396,6 +397,48 @@ ADM.setSelected = function (nodeRef) {
 };
 
 /**
+ * Initiates an atomic transaction from the user's point of view, that may
+ * involve more than one change to the the ADM. The initial usage is when the
+ * user deletes the last page and we automatically replace it with a new one.
+ * Using startTransaction and endTransaction, the remove and add can be treated
+ * atomically, so if undo/redo occurs on this operation they will be rolled
+ * back or performed again together.
+ *
+ * @return {None}
+ */
+ADM.startTransaction = function () {
+    if (!this._transaction) {
+        this._transaction = { count: 1 };
+        this.transaction({
+            type: "begin"
+        });
+    } else {
+        this._transaction.count++;
+    }
+}
+
+/**
+ * Completes an atomic transaction from the user's point of view, that may
+ * have involved more than one change to the the ADM. If the user then clicks
+ * Undo, the entire transaction will be rolled back in response.
+ *
+ * @return {None}
+ */
+ADM.endTransaction = function () {
+    if (!this.transaction) {
+        throw new Error("No transaction found in endTransaction");
+    }
+
+    this._transaction.count--;
+    if (this._transaction.count === 0) {
+        this._transaction = null;
+        this.transaction({
+            type: "end"
+        });
+    }
+}
+
+/**
  * Add a child of the given type to parent.
  * Using this high-level API records the action as user-visible and part of the
  * undo/redo stacks.
@@ -407,8 +450,8 @@ ADM.setSelected = function (nodeRef) {
  * @param {Boolean} dryrun [Optional] True if the call should be a dry run.
  * @return {ADMNode} The child object, on success; null, on failure.
  */
-ADM.addChild = function (parentRef, childRef, dryrun, compositeTransaction) {
-    var parent, child, transObj;
+ADM.addChild = function (parentRef, childRef, dryrun) {
+    var parent, child;
 
     parent = ADM.toNode(parentRef);
     if (!parent) {
@@ -434,15 +477,11 @@ ADM.addChild = function (parentRef, childRef, dryrun, compositeTransaction) {
         }
         // use getParent below in case the child was redirected to another
         // node (as in the case of Page/Content)
-        transObj = {
+        ADM.transaction({
             type: "add",
             parent: child.getParent(),
             child: child
-        };
-        if (compositeTransaction)
-            compositeTransaction.operations.push(transObj);
-        else
-            ADM.transaction(transObj);
+        });
         return child;
     }
 
@@ -648,9 +687,8 @@ ADM.ensurePageInactive = function (pageRef, dryrun) {
  * @param {Boolean} dryrun [Optional] True if the call should be a dry run.
  * @return {ADMNode} The removed child, or null it or its parent is not found.
  */
-ADM.removeChild = function (childRef, dryrun, compositeTransaction) {
-    var design, child, parent, pageIndex, page, pages, rval, zone, zoneIndex,
-        transObj;
+ADM.removeChild = function (childRef, dryrun) {
+    var design, child, parent, pageIndex, page, pages, rval, zone, zoneIndex;
     design = ADM.getDesignRoot();
 
     child = ADM.toNode(childRef);
@@ -678,17 +716,13 @@ ADM.removeChild = function (childRef, dryrun, compositeTransaction) {
         if (dryrun) {
             return true;
         }
-        transObj = {
+        ADM.transaction({
             type: "remove",
             parent: parent,
             child: child,
             zone: zone,
             zoneIndex: zoneIndex
-        };
-        if (compositeTransaction)
-            compositeTransaction.operations.push(transObj);
-        else
-            ADM.transaction(transObj);
+        });
     }
 
     if (!rval) {
@@ -816,7 +850,6 @@ ADM.transaction = function (obj) {
  */
 ADM.undo = function () {
     var obj, undo = function (obj) {
-        var i;
         if (obj.type === "add") {
             ADM.ensurePageInactive(obj.child);
             obj.parent.removeChild(obj.child);
@@ -834,20 +867,26 @@ ADM.undo = function () {
             // TODO: this could require deeper copy of complex properties
             obj.node.setProperty(obj.property, obj.oldValue, obj.data);
         }
-        else if (obj.type === "composite") {
-            for ( i = obj.operations.length - 1; i >=0; i --)
-                undo(obj.operations[i]);
-        }
         else {
             console.warn("Warning: Unexpected UNDO transaction");
             return;
         }
-
     };
-    if (ADM._undoStack.length > 0) {
-        obj = ADM._undoStack.pop();
-        undo(obj);
+
+    if (obj = ADM._undoStack.pop()) {
         ADM._redoStack.push(obj);
+        if (obj.type === "end") {
+            while (obj = ADM._undoStack.pop()) {
+                ADM._redoStack.push(obj);
+                if (obj.type === "begin") {
+                    break;
+                }
+                undo(obj);
+            }
+        }
+        else {
+            undo(obj);
+        }
     }
 };
 
@@ -857,7 +896,6 @@ ADM.undo = function () {
  */
 ADM.redo = function () {
     var obj, redo = function (obj) {
-        var i;
         if (obj.type === "add") {
             obj.parent.addChild(obj.child);
         }
@@ -874,19 +912,26 @@ ADM.redo = function () {
             // TODO: this could require deeper copy of complex properties
             obj.node.setProperty(obj.property, obj.value, obj.data);
         }
-        else if (obj.type === "composite") {
-            for ( i = obj.operations.length - 1; i >=0; i --)
-                redo(obj.operations[i]);
-        }
         else {
             console.warn("Warning: Unexpected REDO transaction");
             return;
         }
     };
-    if (ADM._redoStack.length > 0) {
-        obj = ADM._redoStack.pop();
-        redo(obj);
+
+    if (obj = ADM._redoStack.pop()) {
         ADM._undoStack.push(obj);
+        if (obj.type === "begin") {
+            while (obj = ADM._redoStack.pop()) {
+                ADM._undoStack.push(obj);
+                if (obj.type === "end") {
+                    break;
+                }
+                redo(obj);
+            }
+        }
+        else {
+            redo(obj);
+        }
     }
 };
 
