@@ -940,18 +940,35 @@ body.ui-tabs.ui-widget {
     background-image: url('images/pageSelectorBackground.png');
     background-repeat: repeat-x;
     background-size: cover;
+    padding: 5px 0px 5px 0px;
 }
 .page-arrow.left {
-    background-image: url("images/pageArrow_dimmed.png");
     float: left;
-    margin: 7px 5px 7px 10px;
-    width: 10px;
+    margin: 3px 0.5%;
+    padding:0px;
+    width: 9%;
+    border:0px;
+    height:24px;
+    -webkit-transform: rotate(180deg);
+    background:url("images/pageArrow_dimmed.png") no-repeat 0px;
 }
 .page-arrow.right {
-    background-image: url("images/pageArrow_dimmed.png");
-    float: right;
-    margin: 7px 10px 7px 5px;
-    width: 10px;
+    float: left;
+    margin: 3px 0.5%;
+    padding:0px;
+    border:0px;
+    width: 9%;
+    height:24px;
+    background:url("images/pageArrow_dimmed.png") no-repeat 0px;
+}
+.pageView .allwidth {
+    width:1000%;
+}
+.pageView .pages-box {
+    float:left;
+    overflow: hidden;
+    width:80%;
+    padding:0px;
 }
 .page-arrow.ui-state-active {
     background-image: url("images/pageArrow_up.png");

@@ -21,7 +21,8 @@
 
         _create: function() {
             var o = this.options,
-                e = this.element;
+                e = this.element,
+                self = this;
 
             o.designReset = this._designResetHandler;
             o.selectionChanged = null;
@@ -50,14 +51,44 @@
                         .append('<a id="copyPage">Duplicate Page</a>')
                     .end()
                 .end()
-                .children(':last')
-                    .attr({id: 'pages'})
+                .children().last()
+                    .attr({id: 'pages-wrap'})
                     .addClass('panel-section-contents')
-                    .end();
-
-            this.element.find('#addPage').click(this, this._addPageHandler);
+                    .append('<div/>')
+                    .children().first()
+                        .addClass('page-arrow left')
+                        .click( function(e) {
+                            self._scrollPage(false);
+                            e.stopPropagation();
+                            return false;
+                         })
+                    .end().end()
+                    .append('<div/>')
+                    .append('<div/>')
+                    .children().eq(2)
+                        .addClass('page-arrow right')
+                        .click( function(e) {
+                            self._scrollPage(true);
+                            e.stopPropagation();
+                            return false;
+                         })
+                    .end().end()
+                .end();
+            this.element.find('#pages-wrap')
+                .children().eq(1)
+                    .attr({id:'box'})
+                    .addClass('pages-box')
+                    .append('<div/>')
+                    .children().first()
+                        .addClass('allwidth')
+                        .append('<div/>')
+                        .children().first()
+                            .attr({id:'pages'})
+                        .end().end()
+                    .end().end()
+                .end().end();
             this.element.find('#copyPage').click(this, this._copyPageHandler);
-
+            this.element.find('#addPage').click(this, this._addPageHandler);
             this.options.primaryTools = this._createPrimaryTools();
             this.options.secondaryTools = this._createSecondaryTools();
             this.options.newPageDialog = $('#pageDialog');
@@ -90,7 +121,27 @@
             this.options.primaryTools.remove();
             this.options.secondaryTools.remove();
         },
+        /*
+         * scroll page view
+         * direction: boolean. if true, scroll right; false, scroll left.
+         */
+        _scrollPage: function(side) {
+            var box = this.element.find('#box'),
+                length = this.element.find('.pageIcon').outerWidth(true),
+                scroller = this.element.find('#pages'),
+                pageCount = this.options.model.getDesignRoot().getChildren().length,
+                scrollLeft = box.scrollLeft();
 
+            if(side){
+                if (scrollLeft < pageCount * length){
+                    box.scrollLeft(scrollLeft + length);
+                }
+            } else {
+                if(scrollLeft !== 0){
+                    box.scrollLeft(scrollLeft-length);
+                }
+            }
+        },
         refresh: function(event, widget) {
             var pageWidgets,
                 model = this.options.model,
@@ -133,6 +184,11 @@
                         .end()
                         .appendTo(pages);
                 }
+            }
+            if (!event || !event.name || event.name !== 'activePageChanged'|| !event.page) {
+                return;
+            } else {
+                ($('.pageIcon')[event.page.getZoneIndex()]).scrollIntoView();
             }
         },
 
@@ -229,7 +285,7 @@
 
             // FIXME: This should just toggle 'ui-selected' class, not
             //        cause a complete re-creation of the page list
-            widget.refresh();
+            widget.refresh(event,widget);
         },
 
         _modelUpdatedHandler: function(event, widget) {
