@@ -706,7 +706,7 @@ ADM.removeChild = function (childRef, dryrun) {
     }
 
     if (!ADM.ensurePageInactive(child)) {
-        console.warn("Warning: attempted to remove the only page: ", childRef);
+        console.warn("Warning: attempted to remove the only page: ", child);
     }
 
     zone = child.getZone();
@@ -895,11 +895,15 @@ ADM.undo = function () {
  * transaction is then added to the undo stack.
  */
 ADM.redo = function () {
-    var obj, redo = function (obj) {
+    var obj, that = this, redo = function (obj) {
         if (obj.type === "add") {
             obj.parent.addChild(obj.child);
+            if (obj.child.getType() == 'Page') {
+                that.setActivePage(obj.child);
+            }
         }
         else if (obj.type === "remove") {
+            ADM.ensurePageInactive(obj.child);
             obj.parent.removeChild(obj.child);
         }
         else if (obj.type === "move") {

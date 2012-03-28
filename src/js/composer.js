@@ -577,6 +577,7 @@ $(function() {
     window.addEventListener('message', messageHandler, false);
 
     function reloadPage() {
+        var aPage, pageNode;
         $('.nrc-dropped-widget').each( function () {
             // Hide the hint text
             $(this).parent().children('.nrc-hint-text').remove();
@@ -590,9 +591,17 @@ $(function() {
                 this.readOnly=true;
             }
         });
-        var aPage = top.ADM.getActivePage();
+        aPage = top.ADM.getActivePage();
         if (aPage) {
-            $.mobile.changePage($('#' + aPage.getProperty('id')));
+            pageNode = $('#' + aPage.getProperty('id'));
+            if (pageNode.length) {
+                $.mobile.changePage(pageNode);
+            } else {
+                // TODO: this is okay when last page is deleted, so
+                //       maybe this warning can be removed
+                console.warn("No such page found: ",
+                             aPage.getProperty('id'));
+            }
         } else {
             $.mobile.initializePage();
         }

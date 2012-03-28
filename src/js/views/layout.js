@@ -347,7 +347,7 @@
         },
 
         _modelUpdatedHandler: function(event, widget) {
-            var win;
+            var win, aPage, pageNode;
 
             widget = widget || this;
 
@@ -355,9 +355,17 @@
 
             win = widget.options.contentDocument[0].defaultView;
             if (win && win.$ && win.$.mobile) {
-                var aPage = widget.options.model.getActivePage();
+                aPage = widget.options.model.getActivePage();
                 if (aPage) {
-                    win.$.mobile.changePage(win.$('#' + aPage.getProperty('id')));
+                    pageNode = win.$('#' + aPage.getProperty('id'));
+                    if (pageNode.length) {
+                        win.$.mobile.changePage(pageNode);
+                    } else {
+                        // TODO: this is okay when last page is deleted, so
+                        //       maybe this warning can be removed
+                        console.warn("No such page found: ",
+                                     aPage.getProperty('id'));
+                    }
                 } else {
                     win.$.mobile.initializePage();
                 }
