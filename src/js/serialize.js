@@ -184,8 +184,15 @@ var DEBUG = true,
             }
         }
 
-        if (domNodes.length === 0)
-            $(parentNode).append(widget);
+        if (domNodes.length === 0) {
+            var zone = BWidget.getZone(node.getParent().getType(), node.getZone());
+            if (zone.itemWrapper)
+                widget = $(zone.itemWrapper).append(widget);
+            if (zone.locator)
+                $(parentNode).find(zone.locator).append(widget);
+            else
+                $(parentNode).append(widget);
+        }
         else {
             //The template of some widgets may have multiple root tags
             //and there are also possible delegated nodes, we will remove all
