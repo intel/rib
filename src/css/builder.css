@@ -618,9 +618,6 @@ body.ui-tabs.ui-widget {
     border: none;
 }
 
-.treeView:focus {
-    background: #F9F9F9;
-}
 .treeView ul {
     padding-left: 0px;
     margin: 0px 0px 0px -2px;
@@ -648,9 +645,16 @@ body.ui-tabs.ui-widget {
     background: #4ae57b;
     color: #424242;
 }
-.treeView li > a.focused {
-    border: 1px solid #2c7a94;
+.treeView li > a.focused.ui-selected,
+.treeView li > a.focused:not(.ui-selected) > span:first-child {
     color: #424242;
+}
+.treeView li > a.focused.ui-selected {
+    border: 1px solid #2c7a94;
+    padding: 0px 4px 2px 4px;
+}
+.treeView li > a.focused:not(.ui-selected) > span:first-child {
+    outline: 1px solid #2c7a94;
 }
 .treeView span.widgetType {
     font-size: 12px;
