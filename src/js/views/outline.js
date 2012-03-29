@@ -175,25 +175,22 @@
         _modelUpdatedHandler: function(event, widget) {
             widget = widget || this;
             switch (event.type) {
-                case "nodeAdded":
-                    widget.addNode(event.node);
+            case "nodeAdded":
+                widget.addNode(event.node);
                 break;
-                case "nodeRemoved":
-                    widget.removeNode(event.node);
+            case "nodeRemoved":
+                widget.removeNode(event.node);
                 break;
-                case "nodeMoved":
-                    widget.moveNode(event.node);
+            case "nodeMoved":
+                widget.moveNode(event.node);
                 break;
-                case "propertyChanged":
-                    if (event.property === "id" &&
-                            event.node.getType() === "Page")
-                        widget._renderPageNode
-                            (widget.findDomNode(event.node).parent(),
-                            event.node);
+            case "propertyChanged":
+                widget.removeNode(event.node);
+                widget.addNode(event.node);
                 break;
-                default:
-                    console.warning('Unknown type of modelUpdated event:'
-                        + event.type);
+            default:
+                console.warning('Unknown type of modelUpdated event:'
+                                + event.type);
                 break;
             }
         },
