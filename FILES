@@ -36,7 +36,6 @@ Intel     src/js/views/property.js             APLv2          N/A
 Intel     src/js/views/page.js                 APLv2          N/A
 Intel     src/assets/devices.json              APLv2          N/A
 Intel     src/assets/groups.json               APLv2          N/A
-Intel     src/assets/serializeText.json        APLv2          N/A
 Intel     src/css/builder.css                  APLv2          N/A
 Intel     src/css/composer.css                 APLv2          N/A
 Intel     src/css/fonts.css                    APLv2          N/A
