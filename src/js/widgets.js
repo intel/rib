@@ -438,6 +438,47 @@ var BWidgetRegistry = {
 
             }
         ],
+        events: {
+            sortchange: function (e, ui) {
+                BWidget.getWidgetAttribute("Navbar", "rearrange")($(this),
+                    ui.placeholder, ui.placeholder.parent()
+                    .closest('.nrc-sortable-container')[0] !== this);
+            },
+            sortout: function (e, ui) {
+                BWidget.getWidgetAttribute("Navbar", "rearrange")
+                    ($(this), ui.placeholder, true);
+            },
+            sortover: function (e, ui) {
+                BWidget.getWidgetAttribute("Navbar", "rearrange")
+                    ($(this), ui.placeholder);
+            },
+        },
+        rearrange: function (sortable, placeholder, excludePlaceholder) {
+            var classes = ['a', 'b', 'c', 'd', 'e', 'solo'], i = 0, blocks, zone,
+                replaceClass = function (elem, oldClassSuffix, newClass) {
+                    var reg = new RegExp ('\\b' + oldClassSuffix +  '\\S+', 'g');
+                    elem.removeClass(function (index, css) {
+                        return (css.match (reg) || []).join(' ');
+                    })
+                    .addClass(newClass);
+                };
+
+            if (sortable.is('[data-role="navbar"]')){
+                zone = sortable.find('ul');
+                if (excludePlaceholder)
+                    replaceClass(placeholder, 'ui-block-', '');
+                else
+                    placeholder.addClass('ui-block-a');
+                blocks = zone.children('[class*=ui-block-]:visible');
+                blocks.each( function () {
+                    if (blocks.length > 5)
+                        i = i % 2;
+                    replaceClass($(this), 'ui-block-', 'ui-block-' + classes[i++]);
+                });
+                replaceClass(zone, 'ui-grid-', 'ui-grid-' +
+                        classes[blocks.length > 5 ? 0 : (i - 2 < 0 ? 5 : i - 2)]);
+            }
+        }
     },
 
     /**
