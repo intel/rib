@@ -1,25 +1,24 @@
 Prerequisites:
 ==============
-1) Ubuntu (or other Linux) host OS
+1) The GUI Builder supports running only in a Chromium/Chrome browser at this
+   time. Does not work on Firefox.
+2) Should work on Linux, Windows, and Mac. Primarily tested on Ubuntu 11.04,
+   Windows 7, and Windows XP, with some testing on other Ubuntu versions and
+   Mac.
 
-2) Chromium browser
-
-   The GUI Builder supports running only in Chromium at this time. Firefox
-   no longer fully functions for this.
-
-   To install Chromium on an Ubunut 11.04 system:
-
-   $ sudo apt-get install chromium-browser
+To install Chromium on an Ubuntu 11.04 system:
+$ sudo apt-get install chromium-browser
 
 Running:
 ========
 To run the GUI Builder application, you have two options:
 
 1) Start your Chromium browser with the "--allow-file-access-from-files"
-   option and point it to file://<builder.git dir>/index.html
+   and "--enable-file-cookies" options and point it to
+   file:///path/to/gui-builder/index.html
 
 For example:
-$ chromium-browser --allow-file-access-from-files file:///index.html
+$ chromium-browser --allow-file-access-from-files --enable-file-cookies index.html
 
 2) Point a locally running webserver to the directory you've cloned the
    builder project to (may be just a symlink, depending on your web server
@@ -34,7 +33,7 @@ You may need to configure thttpd to start up.
 
 Legal Stuff:
 ============
-Copyright (C) 2011-2012, Intel Corporation.
+Copyright (c) 2011-2012, Intel Corporation.
 
 Unless otherwise noted below, all code is Licensed under the Apache Public
 License version 2.0 (LICENSE-APLv2.txt).  For a complete list of files and
