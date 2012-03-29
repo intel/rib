@@ -509,8 +509,12 @@ $(function() {
                         idx = ui.item.parent().children('.adm-node')
                                               .index(ui.item);
                         cid = ui.item.attr('data-uid');
-                        pid = ui.item.closest('.adm-node.ui-sortable,' +
-                                 '.orig-adm-node.ui-sortable').attr('data-uid');
+                        // closest() will select current element if it matches
+                        // the selector, so we start with its parent.
+                        pid = ui.item.parent()
+                                     .closest('.adm-node.ui-sortable,'+
+                                              '.orig-adm-node.ui-sortable')
+                                     .attr('data-uid');
                         node = cid && root.findNodeByUid(cid);
                         newParent = pid && root.findNodeByUid(pid);
                         zones = newParent && bw.getZones(newParent.getType());
