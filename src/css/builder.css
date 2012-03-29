@@ -1000,6 +1000,13 @@ body.ui-tabs.ui-widget {
     font-weight: bold;
     color: #333333 !important;
 }
+#liveView .pageView .tool {
+    display: none;
+}
+.pageIcon:hover,
+#addPage:hover, #copyPage:hover {
+    cursor: pointer;
+}
 .pageIcon:hover {
     background-image: url("images/pageIcon_hover.png");
 }
