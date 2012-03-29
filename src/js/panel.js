@@ -115,6 +115,13 @@
 
             self.refresh();
 
+            $(window).resize(this, function(event) {
+                var el = event.data.element;
+                if (el.parent().height() === 0)
+                    return;
+                // Force resize of the stage when containing window resizes
+                el.height(el.parent().height());
+             });
             // Be sure to refresh sized if the document resizes
             if ($(document).hasOwnProperty('resize')) {
                 $(document).resize( function() { this.refresh(); });
