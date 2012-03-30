@@ -182,27 +182,11 @@
                         }, function (e) {
                             $(this).children(':first').hide();
                         })
-                        .append('<div/>')
-                        .children(':first')
-                        .addClass('deleteTag')
-                        .click(function (e) {
-                            try {
-                                var result, page = $(this).parent().data('page'),
-                                    pageUtils = $.gb.pageUtils;
-
-                                result = pageUtils.deletePage(page.getUid());
-                            }
-                            catch (err) {
-                                console.error(err.message);
-                            }
-                            e.stopPropagation();
-                            return false;
-                        })
-                        .end()
                         .appendTo(pages);
                 }
             }
-            if (!event || !event.name || event.name !== 'activePageChanged'|| !event.page) {
+            if (!event || !event.name ||
+                event.name !== 'activePageChanged'|| !event.page) {
                 return;
             } else {
                 ($('.pageIcon')[event.page.getZoneIndex()]).scrollIntoView();

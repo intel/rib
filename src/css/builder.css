@@ -1006,41 +1006,6 @@ body.ui-tabs.ui-widget {
 .pageIcon.ui-selected:hover {
     background-image: url("images/pageIcon_on.png");
 }
-.deleteTag {
-    display: none;
-    position: relative;
-    left: 20px;
-    top: -26px;
-    min-width: 10px;
-    min-height: 10px;
-    width: 10px;
-    height: 10px;
-    margin-right: 0px;
-    border-radius: 50%;
-    border-width: 1px;
-    color: rgba(255, 255, 255, 0.75);
-    border-color: rgba(160, 160, 160, 0.75);
-    background-image: -webkit-radial-gradient(circle,
-                                              rgba(160, 160, 160, 0.75),
-                                              rgba(160, 160, 160, 0.75));
-    line-height: 1;
-    font-size: 10px;
-    font-weight: bold;
-    text-align: center;
-    text-indent: 0px;
-    font-family: monospace;
-    -webkit-text-stroke-width: 0px;
-}
-.deleteTag:after {
-    content: 'X';
-}
-.deleteTag:hover {
-    border-width: 2px;
-    color: white;
-    border-color: red;
-    background-image: -webkit-radial-gradient(circle, red, red);
-    -webkit-text-stroke-color: white;
-}
 
 /*
   Drag and Sort behavior and state styles
