@@ -109,9 +109,13 @@
                 attachment = attachment || 'appendTo';
             if (attachment === 'appendTo') {
                 container = attachingNode.children('ul');
-                if (container.length === 0)
-                   container = $('<ul/>').addClass('widgetGroup')
-                       .appendTo(attachingNode);
+                if (container.length === 0) {
+                    container = $('<ul/>').appendTo(attachingNode);
+                    if (!attachingNode.hasClass('treeView')) {
+                        // do not add this class to the top level list
+                        container.addClass('widgetGroup');
+                    }
+                }
                 parentDomNode = attachingNode;
             }
             $.each(node, function(i, v) {
