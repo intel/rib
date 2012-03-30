@@ -148,6 +148,31 @@ $(function() {
         });
     };
 
+    var adjustMargins = function (p) {
+        if (!p.is('.ui-sortable-placeholder')) {
+            return;
+        }
+
+        if (p.parent().is('.ui-content')) {
+            var s = p.siblings(':visible').andSelf();
+            // Placeholder is last visible sibling
+            if (s.index(p) === s.length-1) {
+                p.css({ 'margin-top': '-6px',
+                        'margin-bottom': '5px' });
+            // Placeholder is first visible sibling
+            } else if (s.index(p) === 0) {
+                p.css({ 'margin-top': '5px',
+                        'margin-bottom': '-6px' });
+            } else {
+                p.css({ 'margin-top': '-6px',
+                        'margin-bottom': '-5px' });
+            }
+        } else {
+            p.css({ 'margin-top': '',
+                    'margin-bottom': '' });
+        }
+    };
+
     window.top.$.gb = window.top.$.gb || {};
     window.top.$.gb.dndfilter = dndfilter;
 
@@ -269,7 +294,6 @@ $(function() {
                 forceHelperSize: true,
                 forcePlaceholderSize: true,
                 placeholder: 'ui-sortable-placeholder',
-                tolerance: 'pointer',
                 appendTo: 'body',
                 helper: 'clone',
                 connectWith:
@@ -297,6 +321,11 @@ $(function() {
                     $(this).sortable('refreshPositions');
 
                     applyMasking($('.ui-sortable-connected'));
+                    adjustMargins(ui.placeholder);
+                },
+                change: function(event, ui){
+                    trackOffsets('change:  ',ui,$(this).data('sortable'));
+                    adjustMargins(ui.placeholder);
                 },
                 sort: function(event, ui){
                     // Workaround a jQuery UI bug which doesn't take scrollTop
