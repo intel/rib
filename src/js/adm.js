@@ -1784,7 +1784,13 @@ ADMNode.prototype.generateUniqueProperty = function (property) {
 
     // generate using the next higher suffix
     generate = generate + (max + 1);
+
+    // Since there should be no one who knows the previous value of this
+    // property (as it didn't exist), we don't have to fire a propertyChanged
+    // event at this time.
+    this.getDesign().suppressEvents(true);
     this.setProperty(property, generate);
+    this.getDesign().suppressEvents(false);
     return generate;
 };
 
