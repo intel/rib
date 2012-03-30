@@ -147,17 +147,22 @@
                                 .click(function (e) {
                                     e.stopPropagation();
                                     widget._nodeSelected(value, v._origin_node,
-                                                         $(this));
+                                                         folderNode);
                                     return false;
                                 })
-                                .each(function () {
-                                    var origin_node = v._origin_node||value;
-                                    $(this).data('origin_node', origin_node);
-                                })
-                            );
+                            )
+                            .each(function () {
+                                var origin_node = v._origin_node||value;
+                                $(this).data('origin_node', origin_node);
+                            });
 
                         if (typeof widget._render === "function") {
-                            widget._render(folderNode, v._origin_node);
+                                var newTopLevelNodes =
+                                    widget._render(folderNode, v._origin_node);
+                                // Store _origin_node in newly created top level
+                                // nodes so that findDomNode can find it
+                                newTopLevelNodes && newTopLevelNodes
+                                    .data('origin_node', v._origin_node);
                         }
                         widget._createTreeView(folderNode, value);
                     });
@@ -170,15 +175,15 @@
                 this.element.find('.ui-selected')
                     .removeClass('ui-selected')
                     .removeClass('ui-state-active');
-                domNode.addClass('ui-state-active')
+                domNode.find('> a').addClass('ui-state-active')
                     .addClass('ui-selected')
                     [0].scrollIntoViewIfNeeded();
-                domNode.parent()[0].scrollIntoViewIfNeeded();
+                domNode[0].scrollIntoViewIfNeeded();
             }
         },
 
         findDomNode: function (node) {
-           return $('a', this.element).filter( function() {
+           return $('*', this.element).filter( function() {
                return $(this).data("origin_node") === node; });
         },
 
@@ -190,7 +195,7 @@
             var siblings, parentDomNode, index, widget = this,
                 parentNode = widget._getParent(node);
             while (parentNode &&
-                    (parentDomNode = widget.findDomNode(parentNode).parent())
+                    (parentDomNode = widget.findDomNode(parentNode))
                     .length === 0)
                 parentNode = widget._getParent(parentNode);
             siblings = widget._getChildTreeNodes(parentNode);
@@ -205,19 +210,19 @@
             else {
                 if ( index === 0)
                     widget._createTreeView(widget.findDomNode
-                            (siblings[index + 1]._origin_node).parent()
+                            (siblings[index + 1]._origin_node)
                             .parent().children(':first'), [siblings[index]],
                             'insertBefore');
                 else
                     widget._createTreeView(widget.findDomNode
-                            (siblings[index - 1]._origin_node).parent(),
+                            (siblings[index - 1]._origin_node).last(),
                             [siblings[index]], 'insertAfter');
 
 
             }
         },
         removeNode: function (node) {
-            this.findDomNode(node).parent().remove();
+            this.findDomNode(node).remove();
         },
         moveNode: function (node) {
             this.removeNode(node);

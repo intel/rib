@@ -38,7 +38,7 @@
                 resolveRefs(groups, groups);
                 widget._setOption("model", groups);
                 widget.findDomNode(groups[0]['Functional Groups'])
-                      .trigger('click');
+                    .find('> a').trigger('click');
             });
             this.enableKeyNavigation();
             return this;

@@ -159,7 +159,7 @@
             // and ensure the selected pages' subtree is opened
             if (node.getType() === 'Page') {
                 // node is <a> element, need the "folder" <span> before it
-                var fldr = widget.findDomNode(node).prev('.folder').eq(0);
+                var fldr = widget.findDomNode(node).find('> .folder').eq(0);
                 // "Close" all other page folders
                 $('>ul>li>span.folder:not(.close)', widget.element).not(fldr)
                     .trigger('click');
@@ -255,16 +255,17 @@
             }
         },
         _render: function (domNode, data) {
-            var labelFunc, parentNode = data.getParent();
+            var labelFunc, parentNode = data.getParent(), newTopLevelNode;
             labelFunc = BWidget.getOutlineLabelFunction(parentNode.getType());
             if (labelFunc) {
                 var label = labelFunc(parentNode);
                 if (label) {
-                    domNode.before($('<li class="label">' +
-                                        label + '</li>'));
+                    newTopLevelNode = $('<li class="label">' +
+                                        label + '</li>').insertBefore(domNode);
                 }
             }
             this._renderPageNode(domNode, data);
+            return  newTopLevelNode;
         },
         _nodeSelected: function (treeModelNode, data) {
             this.options.model.setSelected(data.getUid());
