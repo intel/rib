@@ -187,6 +187,14 @@
                return $(this).data("origin_node") === node; });
         },
 
+        findChildDomNodes: function (node) {
+            var widget = this;
+            return $('*', this.element).filter( function() {
+                var origin_node = $(this).data("origin_node");
+                    return origin_node &&
+                        widget._getParent(origin_node) === node});
+        },
+
         setSelected: function (node) {
            this._setSelected(this.findDomNode(node));
         },
@@ -210,9 +218,8 @@
             else {
                 if ( index === 0)
                     widget._createTreeView(widget.findDomNode
-                            (siblings[index + 1]._origin_node)
-                            .parent().children(':first'), [siblings[index]],
-                            'insertBefore');
+                            (siblings[index + 1]._origin_node).first(),
+                            [siblings[index]], 'insertBefore');
                 else
                     widget._createTreeView(widget.findDomNode
                             (siblings[index - 1]._origin_node).last(),

@@ -180,6 +180,10 @@
                 break;
             case "nodeRemoved":
                 widget.removeNode(event.node);
+                if (event.parent.getChildren().length === 0)
+                    widget.element.find('li.label').filter( function () {
+                        return $(this).data('adm-node') === event.parent;
+                    }).remove();
                 break;
             case "nodeMoved":
                 widget.moveNode(event.node);
@@ -258,14 +262,19 @@
             var labelFunc, parentNode = data.getParent(), newTopLevelNode;
             labelFunc = BWidget.getOutlineLabelFunction(parentNode.getType());
             if (labelFunc) {
-                var label = labelFunc(parentNode);
-                if (label) {
-                    newTopLevelNode = $('<li class="label">' +
-                                        label + '</li>').insertBefore(domNode);
-                }
+                var label = labelFunc(parentNode), prev=domNode.prev(),
+                    next = domNode.next();
+
+                // Make sure "border" nodes are not put into other blocks
+                if (prev.is('li.label') && prev.data('adm-node') !== parentNode)
+                    domNode.insertBefore(prev);
+                if (next.is('li.label') && next.data('adm-node') === parentNode)
+                    domNode.insertAfter(next);
+                if (label && this.findChildDomNodes(parentNode).length === 1)
+                    $('<li class="label">' + label + '</li>')
+                        .insertBefore(domNode).data('adm-node', parentNode);
             }
             this._renderPageNode(domNode, data);
-            return  newTopLevelNode;
         },
         _nodeSelected: function (treeModelNode, data) {
             this.options.model.setSelected(data.getUid());
