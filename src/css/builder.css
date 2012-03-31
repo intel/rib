@@ -711,7 +711,6 @@ body.ui-tabs.ui-widget {
 .propertyView {
     overflow-y: auto;
     overflow-x: hidden;
-    min-width: 300px;
 }
 .propertyView .property_title {
     background-image: url('images/propertiesTitleBar.png');
@@ -732,23 +731,14 @@ body.ui-tabs.ui-widget {
 }
 .propertyView .property_content {
     background: #c8ced0;
-    min-height:80%;
-    position: relative;
 }
-.propertyView input.PropertyCheckBox {
-    text-align: right;
-    width: 35px;
-    margin: 0px;
-    margin-left:50px;
-    padding; 0px;
-    height: 23px;
-    border: 0px;
+.propertyView input[type='checkbox'] {
     vertical-align: middle;
 }
 .propertyView .propertyItems {
     margin: 0px;
     border: 0px;
-    padding: 0px 10px 50px 10px;
+    padding: 10px;
 }
 .propertyView ul {
     margin: 0;
@@ -760,24 +750,9 @@ body.ui-tabs.ui-widget {
     line-height: 23px;
     padding-top: 11px;
 }
-.propertyView .rightLabel {
-    margin: 0px 0px 0px 20px;
-    padding: 0px;
-    border: 0px;
-    text-align: left;
-    width: 173px;
-}
-.propertyView .leftLabel {
-    margin: 0px;
-    padding: 0px;
-    border: 0px;
-    text-align: right;
-    width: 80px;
-}
-.propertyView input {
+.propertyView input[type='text'] {
     height: 23px;
-    width: 140px;
-    margin: 0px 0px 0px 20px;
+    width: 100%;
     padding: 2px 5px;
     border: none;
     -webkit-border-radius: 5px;
@@ -785,7 +760,6 @@ body.ui-tabs.ui-widget {
 .propertyView select {
     width: 100px;
     height: 23px;
-    margin: 0px 0px 0px 20px;
 }
 .propertyView fieldset {
     position: relative;
@@ -801,7 +775,6 @@ body.ui-tabs.ui-widget {
 }
 .propertyView .labelText {
     margin: 0px;
-    margin-left: 20px;
     padding: 0px;
     border: 0px;
     text-align: center;
@@ -847,32 +820,23 @@ body.ui-tabs.ui-widget {
     height: 23px;
 }
 .propertyView .property_footer {
-    position: absolute;
-    bottom: 0px;
-    padding: 10px 0;
-    width: 100%;
+    padding-bottom: 10px;
+    text-align: center;
 }
 .propertyView .buttonStyle {
-    display:block;
-    width:200px;
     height:27px;
-    margin-left: 45px;
-    margin-right: 45px;
     font-size: 0.8em;
-    text-align:center;
-    color:#424242;
-    border:1px solid #a1a1a1;
-    line-height:12px;
-    padding:8px 20px 7px 20px;
+    text-align: center;
+    color: #424242;
+    border: 1px solid #a1a1a1;
+    line-height: 12px;
+    padding: 8px 20px 7px 20px;
     background-color: #fbfbfb;
     background-image: -webkit-gradient(linear, left top, left bottom, from(#fbfbfb), to(#ececec));
     -webkit-border-radius: 6px;
     -moz-border-radius: 6px;
     border-radius: 6px;
-    -moz-background-clip: padding;
-    -webkit-background-clip: padding-box;
-    background-clip: padding-box;
-    text-decoration:none;
+    text-decoration: none;
 }
 .propertyView .buttonStyle:focus,
 .propertyView .buttonStyle:hover {
@@ -880,6 +844,24 @@ body.ui-tabs.ui-widget {
     background-color: #cccccc;
     border-color:#424242;
     background-image: -webkit-linear-gradient(top, #cccccc, #777777);
+}
+div.propertyItems {
+    display: table;
+    width: 100%;
+}
+div.propertyItems > div {
+    display: table-row;
+}
+div.propertyItems > div > label {
+    text-align: right;
+    padding-right: 10px;
+}
+div.propertyItems > div > div {
+    padding-right: 10px;
+}
+div.propertyItems > div > * {
+    display: table-cell;
+    padding-bottom: 8px;
 }
 
 /*

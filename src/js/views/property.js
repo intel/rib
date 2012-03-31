@@ -39,8 +39,7 @@
                 .addClass(this.widgetName)
                 .append('<div/>')
                 .children(':last')
-                    .addClass('property_content')
-                    .addClass('flex1');
+                .addClass('property_content');
 
             this.options.primaryTools = this._createPrimaryTools();
             this.options.secondaryTools = this._createSecondaryTools();
@@ -206,7 +205,7 @@
             var node = event.node,
                 labelId, labelVal, valueId, valueVal, count,
                 widget = this, type,  i, child, index, propType,
-                p, props, options, code, o, propertyList,
+                p, props, options, code, o, propertyItems, label, value,
                 title = this.element.parent().find('.property_title'),
                 content = this.element.find('.property_content');
 
@@ -227,13 +226,12 @@
                     .addClass('title')
                     .text(BWidget.getDisplayLabel(type)+' Properties');
             content.empty()
-                .append('<div class="propertyItems"><ul/></div>')
-                .find('ul')
-                .addClass("propertyList");
-            propertyList = content.find(".propertyList");
+                .append('<div class="propertyItems"></div>');
+            propertyItems = content.find('div')
+                .addClass("propertyItems");
             props = node.getProperties();
             options = node.getPropertyOptions();
-            //iterate property of node
+            // iterate property of node
             for (p in props) {
                 labelVal = p.replace(/_/g,'-');
                 labelVal = labelVal.charAt(0).toUpperCase()+labelVal.substring(1);
@@ -243,39 +241,38 @@
                 valueId = p+'-value';
                 valueVal = props[p];
                 propType = BWidget.getPropertyType(type, p);
-                code = $('<li/>')
-                    .appendTo(propertyList);
-                //display property of widget
+                code = $('<div/>')
+                    .appendTo(propertyItems);
+                label = $('<label/>').appendTo(code)
+                    .attr('for', valueId)
+                    .text(labelVal)
+                    .addClass('title');
+                value = $('<div/>').appendTo(code);
+                // display property of widget
                 switch (propType) {
                     case "boolean":
                         $('<input type="checkbox"/>')
                             .attr('id', valueId)
-                            .addClass('PropertyCheckBox fl')
-                            .appendTo(code);
-                        $('<label for=' + p + '>' + labelVal + '</label>')
-                            .addClass('rightLabel title')
-                            .appendTo(code);
-                        //initial value of checkbox
-                        if(node.getProperty (p) === true) {
-                            $("#"+valueId).attr("checked", true);
+                            .appendTo(value);
+
+                        // initial value of checkbox
+                        if (node.getProperty (p) === true) {
+                            $("#" + valueId).attr("checked", true);
                         }
                         break;
                     case "record-array":
-                        $('<label for=' + p + '>' + labelVal + '</label>')
-                            .addClass('fl leftLabel title')
-                            .appendTo(code);
                         $('<label for=text> Text </label>')
-                             .addClass('labelText title')
-                             .appendTo(code);
+                            .addClass('labelText title')
+                            .appendTo(value);
                         $('<label for=value> Value </label>')
                             .addClass('labelValue title')
-                            .appendTo(code);
+                            .appendTo(value);
                         $('<fieldset><ul/></fieldset>')
                             .children('ul')
                             .attr('id', 'optionList')
                             .end()
-                            .appendTo(code);
-                        //insert options into select menu
+                            .appendTo(value);
+                        // insert options into select menu
                         for (i = 0; i< props[p].children.length; i ++){
                             child = props[p].children[i];
                             $('<li/>').data('index', i)
@@ -307,7 +304,7 @@
                                 })
                                 .end()
                                 .append('<span class="deleteOption"/>')
-                                //add delete option handler
+                                // add delete option handler
                                 .children(':last')
                                 .click(function(e) {
                                     try {
@@ -325,17 +322,17 @@
                                     return false;
                                 })
                                 .end()
-                                .appendTo(code.find('#optionList'));
+                                .appendTo(value.find('#optionList'));
                         }
 
-                        //add add items handler
+                        // add add items handler
                         $('<li><label for=items><u>+ add item</u></label></li>')
                             .children(':first')
-                            .addClass('rightLabel fl title')
+                            .addClass('rightLabel title')
                             .attr('id', 'addOptionItem')
                             .end()
-                            .appendTo(code.find('#optionList'));
-                        code.find('#addOptionItem')
+                            .appendTo(value.find('#optionList'));
+                        value.find('#addOptionItem')
                             .click(function(e) {
                                 try {
                                     var optionItem = {};
@@ -375,30 +372,27 @@
                         });
                         break;
                     default:
-                        $('<label for=' + p + '>' + labelVal + '</label>')
-                            .addClass('fl leftLabel title')
-                            .appendTo(code);
-                        //handle property has options
+                        // handle property has options
                         if (options[p]) {
                             $('<select size="1">')
                                 .attr('id', valueId)
                                 .addClass('title')
-                                .appendTo(code);
+                                .appendTo(value);
                             //add options to select list
                             for (o in options[p]) {
                                 //TODO make it simple
                                 $('<option value="' + options[p][o] +
-                                        '">' +options[p][o] + '</option>')
-                                    .appendTo(code.find("#" + valueId));
-                                code.find('#'+ valueId).val(valueVal);
+                                  '">' +options[p][o] + '</option>')
+                                    .appendTo(value.find("#" + valueId));
+                                value.find('#'+ valueId).val(valueVal);
                             }
                         } else {
                             $('<input type ="text" value="">')
                                 .attr('id', valueId)
                                 .addClass('title')
-                                .appendTo(code);
+                                .appendTo(value);
                             //set default value
-                            code.find('#' + valueId).val(valueVal);
+                            value.find('#' + valueId).val(valueVal);
                         }
                         break;
                 }
