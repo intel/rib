@@ -388,7 +388,7 @@ $(function() {
                         node, zones, newParent, newZone,
                         rdx, idx, cid, pid, sid,
                         sibling, children, parent,
-                        role;
+                        role, card;
 
                     role = $(this).attr('data-role') || '';
 
@@ -509,14 +509,17 @@ $(function() {
                         idx = ui.item.parent().children('.adm-node')
                                               .index(ui.item);
                         cid = ui.item.attr('data-uid');
-                        pid = ui.item.closest('.adm-node.ui-sortable').attr('data-uid');
-                        node = root.findNodeByUid(cid);
-                        newParent = root.findNodeByUid(pid);
-                        zones = bw.getZones(newParent.getType());
+                        pid = ui.item.closest('.adm-node.ui-sortable,' +
+                                 '.orig-adm-node.ui-sortable').attr('data-uid');
+                        node = cid && root.findNodeByUid(cid);
+                        newParent = pid && root.findNodeByUid(pid);
+                        zones = newParent && bw.getZones(newParent.getType());
+                        card = newParent && zones &&
+                               bw.getZoneCardinality(newParent.getType(),
+                                                     zones[0]);
 
                         // Notify the ADM that element has been moved
-                        if ((zones && zones.length===1 &&
-                                      zones[0].cardinality!=='1')) {
+                        if ((zones && zones.length===1 && card !== '1')) {
                             if (!node ||
                                 !adm.moveNode(node, newParent, zones[0],
                                               idx)) {
