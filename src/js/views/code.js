@@ -112,7 +112,7 @@
                 self.element.append(textCode);
                 self.element.css('overflow','visible');
                 widget._editor = CodeMirror.fromTextArea(textCode[0],
-                        {mode: "text/gbsrc", tabMode: "indent", readOnly: true});
+                        {mode: "text/gbsrc", tabMode: "indent", readOnly: 'nocursor'});
                 $(window).resize(function() {
                     widget.resize();
                 });
