@@ -25,6 +25,9 @@ $(document).bind('mobileinit', function() {
             node = (window.parent !== window)?window.parent.ADM.getDesignRoot().findNodeByUid(pageId):null,
             currentPage = (window.parent !== window)?window.parent.ADM.getActivePage():null;
 
+        // Stop "Processingbar", which "turns on" at every pageshow event
+        $('.adm-node[data-role=processingbar]').processingbar('stop');
+
         // No change so do nothing
         if (currentPage && currentPage.getUid() === pageId) {
             return;
