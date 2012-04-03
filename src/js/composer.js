@@ -117,7 +117,7 @@ $(function() {
             .removeClass('ui-masked ui-unmasked');
     };
 
-    var applyMasking = function (els) {
+    var applyMasking = function (els, helper) {
 
         if (els.length <= 0) return;
 
@@ -127,8 +127,8 @@ $(function() {
             .andSelf()
             .addClass('ui-masked');
 
-        // Then unmark all valid targets
-        els.removeClass('ui-masked').addClass('ui-unmasked');
+        // Then unmark all valid targets, and any passed helper
+        els.add(helper).removeClass('ui-masked').addClass('ui-unmasked');
 
         // Also unmark adm-node descendants of valid targets
         // that are not also children of a masked container
@@ -320,7 +320,7 @@ $(function() {
                     //and creating placeholder.
                     $(this).sortable('refreshPositions');
 
-                    applyMasking($('.ui-sortable-connected'));
+                    applyMasking($('.ui-sortable-connected'), ui.helper);
                     adjustMargins(ui.placeholder);
                 },
                 change: function(event, ui){

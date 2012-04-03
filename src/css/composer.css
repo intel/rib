@@ -147,17 +147,17 @@
                         startColorstr=#99FCFCC7,
                         endColorstr=#99FCFCC7);
 }
-ul.adm-node.ui-unmasked,
-ol.adm-node.ui-unmasked,
-fieldset.adm-node.ui-unmasked,
-.orig-adm-node.nrc-sortable-container.ui-unmasked {
+ul.adm-node.ui-unmasked:not(.ui-sortable-helper),
+ol.adm-node.ui-unmasked:not(.ui-sortable-helper),
+fieldset.adm-node.ui-unmasked:not(.ui-sortable-helper),
+.orig-adm-node.nrc-sortable-container.ui-unmasked:not(.ui-sortable-helper) {
     background: #fff;
 }
-.orig-adm-node.nrc-sortable-container.ui-unmasked,
-.adm-node.nrc-sortable-container.ui-unmasked {
+.orig-adm-node.nrc-sortable-container.ui-unmasked:not(.ui-sortable-helper),
+.adm-node.nrc-sortable-container.ui-unmasked:not(.ui-sortable-helper) {
     opacity: 1.0;
 }
-.adm-node.ui-unmasked:not(.nrc-sortable-container) {
+.adm-node.ui-unmasked:not(.nrc-sortable-container,.ui-sortable-helper) {
     opacity: 1.0;
 }
 
