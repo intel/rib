@@ -97,6 +97,10 @@
 /********************************************/
 /* Necessary to override some jQM css rules */
 /********************************************/
+.adm-node >.ui-processingbar-container {
+    height: auto;
+}
+.adm-node.ui-selected[data-role=processingbar],
 .adm-node.ui-selected.ui-radio,
 .adm-node.ui-selected.ui-checkbox {
     outline-offset: 0px;
