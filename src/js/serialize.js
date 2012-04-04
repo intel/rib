@@ -317,7 +317,12 @@ $(function() {
                     if (!val){
                         val = child.getPropertyDefault(item);
                     }
-                    child.setProperty(item, properties[item]);
+
+                    // NOTE: It's important that we pass "true" for the fourth
+                    // parameter here (raw) to disable "property hook"
+                    // functions like the grid one that adds or removes child
+                    // Block elements based on the property change
+                    child.setProperty(item, properties[item], null, true);
                 }
 
                 if (node.children.length !== 0) {
