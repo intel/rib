@@ -687,9 +687,15 @@ var BWidgetRegistry = {
                 options: [ "default", "a", "b", "c", "d", "e" ],
                 defaultValue: "default",
                 htmlAttribute: "data-theme"
+            },
+            value: {
+                // FIXME: Probably value should be removed, setting initial
+                //        static text is not a common thing to do
+                type: "string",
+                defaultValue: "",
             }
         },
-        template: '<textarea></textarea>'
+        template: '<textarea>%VALUE%</textarea>'
     },
 
     /**
