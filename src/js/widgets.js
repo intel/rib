@@ -823,12 +823,6 @@ var BWidgetRegistry = {
             value: {
                 type: "string",
                 defaultValue: ""
-            },
-            theme: {
-                type: "string",
-                options: [ "default", "a", "b", "c", "d", "e" ],
-                defaultValue: "default",
-                htmlAttribute: "data-theme"
             }
         },
         template: '<option>%TEXT%</option>'
@@ -1151,6 +1145,12 @@ var BWidgetRegistry = {
             text: {
                 type: "string",
                 defaultValue: "List Item",
+            },
+            theme: {
+                type: "string",
+                options: [ "default", "a", "b", "c", "d", "e" ],
+                defaultValue: "default",
+                htmlAttribute: "data-theme"
             }
         },
         template: '<li>%TEXT%</li>'
@@ -1168,6 +1168,12 @@ var BWidgetRegistry = {
             text: {
                 type: "string",
                 defaultValue: "List Divider"
+            },
+            theme: {
+                type: "string",
+                options: [ "default", "a", "b", "c", "d", "e" ],
+                defaultValue: "default",
+                htmlAttribute: "data-theme"
             }
         },
         template: '<li data-role="list-divider">%TEXT%</li>'
@@ -1359,12 +1365,6 @@ var BWidgetRegistry = {
                     }
                     root.suppressEvents(false);
                 }
-            },
-            theme: {
-                type: "string",
-                options: [ "default", "a", "b", "c", "d", "e" ],
-                defaultValue: "default",
-                htmlAttribute: "data-theme"
             }
         },
         zones: [
@@ -1467,6 +1467,19 @@ var BWidgetRegistry = {
                 type: "string",
                 defaultValue: "Collapsible Area",
             },
+            theme: {
+                type: "string",
+                options: [ "default", "a", "b", "c", "d", "e" ],
+                defaultValue: "default",
+                htmlAttribute: "data-theme"
+            },
+            content_theme: {
+                displayName: "content theme",
+                type: "string",
+                options: [ "default", "a", "b", "c", "d", "e" ],
+                defaultValue: "default",
+                htmlAttribute: "data-content-theme"
+            }
         },
         zones: [
             {
@@ -1501,6 +1514,21 @@ var BWidgetRegistry = {
         dragHeader: true,
         paletteImageName: "jqm_accordian.svg",
         template: '<div data-role="collapsible-set"></div>',
+        properties: {
+            theme: {
+                type: "string",
+                options: [ "default", "a", "b", "c", "d", "e" ],
+                defaultValue: "default",
+                htmlAttribute: "data-theme"
+            },
+            content_theme: {
+                displayName: "content theme",
+                type: "string",
+                options: [ "default", "a", "b", "c", "d", "e" ],
+                defaultValue: "default",
+                htmlAttribute: "data-content-theme"
+            }
+        },
         zones: [
             {
                 name: "default",
