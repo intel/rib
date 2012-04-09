@@ -630,4 +630,44 @@ $(function() {
     fsUtils.initFS(window.TEMPORARY, 10, function () {
         fsUtils.initFS(fsUtils.fsType, fsUtils.fsSize, fsInitSuccess, fsInitFailed);
     }, fsInitFailed);
+
+    $.rib.thumbnail = $('<svg class="test-thumbnail" xmlns="http://www.w3.org/2000/svg"><foreignObject id="svg-container" width="100%" height="100%"><html class="thumbnail-content" xmlns="http://www.w3.org/1999/xhtml"><head></head><body><em>SVG</em></body></html></foreignObject></svg>')
+        .width('320px')
+        .height('480px')
+        .draggable()
+        .appendTo('body #projectView .stage');
+
+    $.rib.updateThumbnail = function() {
+        var f = $.rib.thumbnail && $('#svg-container', $.rib.thumbnail),
+            c = $(':rib-liveView').liveView('option','contentDocument'),
+            p = $('.ui-page-active',c[0].body).clone();
+
+        if (f && f.length && c && c.length && p && p.length) {
+var usedefs = false;
+if (usedefs) {
+            if (!$('defs',$.rib.thumbnail).length) {
+                $.rib.thumbnail.prepend(
+                '<defs>\n' +
+                    '<link href="src/css/jquery.mobile.structure-1.0.css" type="text/css" rel="stylesheet" xmlns="http://www.w3.org/1999/xhtml"/>\n'+
+                    '<link href="src/css/jquery.mobile-1.0.css" type="text/css" rel="stylesheet" xmlns="http://www.w3.org/1999/xhtml"/>\n'+
+                    '<link href="src/css/web-ui-fw-theme.css" type="text/css" rel="stylesheet" xmlns="http://www.w3.org/1999/xhtml"/>\n'+
+                    '<link href="src/css/web-ui-fw-widget.css" type="text/css" rel="stylesheet" xmlns="http://www.w3.org/1999/xhtml"/>\n'+
+                '</defs>');
+            }
+}
+            f.empty();
+//            f.append('<html class="thumbnail-content" xmlns="http://www.w3.org/1999/xhtml"><head></head></html>');
+if (!usedefs) {
+            f.append(
+                '<style>\n' +
+                    '@import url("src/css/jquery.mobile.structure-1.0.css");\n'+
+                    '@import url("src/css/jquery.mobile-1.0.css");\n'+
+                    '@import url("src/css/web-ui-fw-theme.css");\n'+
+                    '@import url("src/css/web-ui-fw-widget.css");\n'+
+                '</style>');
+}
+            f.append(p);
+        }
+    };
+
 });

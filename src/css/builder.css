@@ -7,6 +7,14 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  *
  */
+.test-thumbnail {
+    border: 1px dashed purple;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    display: inline-block;
+    background-color: white;
+}
 /*******************************/
 /* DOM Element specific tweaks */
 /*******************************/

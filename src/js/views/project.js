@@ -97,6 +97,9 @@
             // Mark the active project box
             $('#'+$.rib.pmUtils.getActive(), container)
                 .addClass('ui-state-active');
+
+            // Update the thumbnail
+//            $.rib.updateThumbnail && $.rib.updateThumbnail();
         },
 
         // Private functions

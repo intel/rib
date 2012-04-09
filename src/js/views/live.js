@@ -370,6 +370,23 @@
                     win.$.mobile.activePage.attr('id') !== id) {
                     win.$.mobile.changePage("#"+id, {transition: "none"});
                 }
+                if ($.rib && $.rib.thumbnail) {
+                    var links = $('link', win.document.head),
+                        page = win.$.mobile.activePage.clone(),
+                        style = $('<style/>'), imports = '';
+
+                    links.each(function() {
+                        imports += '@import url('+$(this).attr('href')+');\n';
+                    });
+                    style.text(imports);
+                    $.rib.thumbnail
+                        .width(widget.options.iframe.width())
+                        .height(widget.options.iframe.height());
+                    $.rib.thumbnail.find('.thumbnail-content')
+                        .empty()
+                        .append(style)
+                        .append(page);
+                }
             }
         },
 
