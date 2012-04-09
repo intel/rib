@@ -183,6 +183,10 @@
 
             widget._deviceWrapper = $('<div>').appendTo(this.element)
                 .append('<img/>');
+
+            //Placeholder to force the deviceWrapper in the center of the stage.
+            this.element.append('<div>');
+
             this.options.iframe = $('<iframe/>')
                 .attr({id:'deviceScreen'})
                 .addClass('flex1')
