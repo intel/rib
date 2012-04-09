@@ -740,84 +740,22 @@ body.ui-tabs.ui-widget {
     border: 0px;
     padding: 10px;
 }
-.propertyView ul {
-    margin: 0;
-    padding: 0;
-    list-style-type: none;
-}
-.propertyView ul li {
-    clear: both;
-    line-height: 23px;
-    padding-top: 11px;
-}
-.propertyView input[type='text'] {
+.propertyView input {
     height: 23px;
-    width: 100%;
     padding: 2px 5px;
     border: none;
     -webkit-border-radius: 5px;
 }
+.propertyView .optionInput {
+    width: 80%;
+}
+.propertyView .labelInput {
+    width: 100%;
+}
 .propertyView select {
-    width: 100px;
+    width: 60%;
     height: 23px;
-}
-.propertyView fieldset {
-    position: relative;
-    width: 180px;
-    left: 80px;
-    border: 0px;
-    margin: 0px;
-    padding: 0px;
-}
-.propertyView #optionList li {
-    padding-top: 5px;
-    line-height: 20px;
-}
-.propertyView .labelText {
-    margin: 0px;
-    padding: 0px;
-    border: 0px;
-    text-align: center;
-    width: 60px;
-}
-.propertyView .labelValue {
-    margin: 0px;
-    margin-left: 50px;
-    padding: 0px;
-    border: 0px;
-    text-align: center;
-    width: 50px;
-}
-.propertyView #optionList li {
-    padding: 0px;
-    margin: 0px;
-    border: 0px;
-    margin-top: 5px;
-}
-.propertyView .optionText {
-    width: 50px;
-    margin-left: 10px;
-}
-.propertyView .optionValue {
-    width: 40px;
-    margin-left: 15px;
-}
-.propertyView .sortOption {
-    background-image: url("images/propertiesDragIconSmall.png");
-    background-repeat: no-repeat;
-    background-position: center;
-    float: left;
-    width: 10px;
-    height: 23px;
-}
-.propertyView .deleteOption {
-    background-image: url("images/deleteButton_up.png");
-    background-repeat: no-repeat;
-    background-position: center;
-    float: right;
-    margin: 0px 10px 0px 0px;
-    width: 10px;
-    height: 23px;
+    -webkit-border-radius: 5px;
 }
 .propertyView .property_footer {
     padding-bottom: 10px;
@@ -862,6 +800,9 @@ div.propertyItems > div > div {
 div.propertyItems > div > * {
     display: table-cell;
     padding-bottom: 8px;
+}
+table#selectOption {
+    width: 100%;
 }
 
 /*

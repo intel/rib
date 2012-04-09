@@ -261,77 +261,99 @@
                         }
                         break;
                     case "record-array":
-                        $('<label for=text> Text </label>')
-                            .addClass('labelText title')
+                        $('<table/>')
+                            .attr('id', 'selectOption')
+                            .attr('cellspacing', '5')
                             .appendTo(value);
-                        $('<label for=value> Value </label>')
-                            .addClass('labelValue title')
-                            .appendTo(value);
-                        $('<fieldset><ul/></fieldset>')
-                            .children('ul')
-                            .attr('id', 'optionList')
-                            .end()
-                            .appendTo(value);
-                        // insert options into select menu
+                        var selectOption = value.find('#selectOption');
+                        $('<tr/>')
+                            .append('<td width="5%"></td>')
+                            .append('<td width="45%"> Text </td>')
+                                .children().eq(1)
+                                .addClass('title')
+                                .end().end()
+                            .append('<td width="45%"> Value </td>')
+                                .children().eq(2)
+                                .addClass('title')
+                                .end().end()
+                            .append('<td width="5%"></td>')
+                            .appendTo(selectOption);
                         for (i = 0; i< props[p].children.length; i ++){
                             child = props[p].children[i];
-                            $('<li/>').data('index', i)
-                                .append('<span class="sortOption"/>')
-                                .append('<input type="text"/>')
-                                .children(':last')
-                                .val(child.text)
-                                .addClass('optionText title')
-                                .change(node, function (event) {
-                                     index = $(this).parent().data('index');
-                                     props[p].children[index].text = $(this).val();
-                                     node.fireEvent("modelUpdated",
-                                                   {type: "propertyChanged",
-                                                    node: node,
+                            $('<tr/>').data('index', i)
+                                .addClass("options")
+                                .append('<td/>')
+                                    .children().eq(0)
+                                    .append('<img/>')
+                                    .children(':first')
+                                    .attr('src', "src/css/images/propertiesDragIconSmall.png")
+                                    .end()
+                                    .end().end()
+                                .append('<td/>')
+                                    .children().eq(1)
+                                    .append('<input type="text"/>')
+                                        .children().eq(0)
+                                        .val(child.text)
+                                        .addClass('title optionInput')
+                                        .change(node, function (event) {
+                                            index = $(this).parent().parent().data('index');
+                                            props[p].children[index].text = $(this).val();
+                                            node.fireEvent("modelUpdated",
+                                                {type: "propertyChanged",
+                                                 node: node,
+                                                 property: p});
+                                        })
+                                        .end().end()
+                                    .end().end()
+                                .append('<td/>')
+                                    .children().eq(2)
+                                    .append('<input type="text"/>')
+                                        .children().eq(0)
+                                        .val(child.value)
+                                        .addClass('title optionInput')
+                                        .change(node, function (event) {
+                                            index = $(this).parent().parent().data('index');
+                                            props[p].children[index].value = $(this).val();
+                                            node.fireEvent("modelUpdated",
+                                                {type: "propertyChanged",
+                                                 node: node,
+                                                 property: p});
+                                        })
+                                        .end().end()
+                                    .end().end()
+                                .append('<td/>')
+                                    .children().eq(3)
+                                    .append('<img/>')
+                                        .children(':first')
+                                        .attr('src', "src/css/images/deleteButton_up.png")
+                                        // add delete option handler
+                                        .click(function(e) {
+                                            try {
+                                                index = $(this).parent().parent().data('index');
+                                                props[p].children.splice(index, 1);
+                                                node.fireEvent("modelUpdated",
+                                                    {type: "propertyChanged",
+                                                        node: node,
                                                     property: p});
-                                })
-                                .end()
-                                .append('<input type="text"/>')
-                                .children(':last')
-                                .val(child.value)
-                                .addClass('optionValue title')
-                                .change(node, function (event) {
-                                    index = $(this).parent().data('index');
-                                    props[p].children[index].value = $(this).val();
-                                    node.fireEvent("modelUpdated",
-                                                  {type: "propertyChanged",
-                                                   node: node,
-                                                   property: p});
-                                })
-                                .end()
-                                .append('<span class="deleteOption"/>')
-                                // add delete option handler
-                                .children(':last')
-                                .click(function(e) {
-                                    try {
-                                        index = $(this).parent().data('index');
-                                        props[p].children.splice(index, 1);
-                                        node.fireEvent("modelUpdated",
-                                                      {type: "propertyChanged",
-                                                       node: node,
-                                                       property: p});
-                                    }
-                                    catch (err) {
-                                        console.error(err.message);
-                                    }
-                                    e.stopPropagation();
-                                    return false;
-                                })
-                                .end()
-                                .appendTo(value.find('#optionList'));
+                                            }
+                                            catch (err) {
+                                                console.error(err.message);
+                                            }
+                                            e.stopPropagation();
+                                            return false;
+                                        })
+                                        .end()
+                                    .end().end()
+                               .appendTo(selectOption);
                         }
 
                         // add add items handler
-                        $('<li><label for=items><u>+ add item</u></label></li>')
+                        $('<label for=items><u>+ add item</u></label>')
                             .children(':first')
                             .addClass('rightLabel title')
                             .attr('id', 'addOptionItem')
                             .end()
-                            .appendTo(value.find('#optionList'));
+                            .appendTo(value);
                         value.find('#addOptionItem')
                             .click(function(e) {
                                 try {
@@ -352,14 +374,15 @@
                             });
 
                         // make option sortable
-                        content.find('#optionList').sortable({
+                        value.find('#selectOption tbody').sortable({
                             axis: 'y',
-                            containment: content.find('#optionList'),
+                            items: '.options',
+                            containment: value.find('#selectOption tbody'),
                             start: function(event, ui) {
-                                widget.origRowIndex = ui.item.index();
+                                widget.origRowIndex = ui.item.index() - 1;
                             },
                             stop: function(event, ui) {
-                                var optionItem, curIndex = ui.item.index(),
+                                var optionItem, curIndex = ui.item.index() - 1,
                                     origIndex = widget.origRowIndex;
                                     optionItem = props[p].children.splice(origIndex,1)[0];
 
@@ -389,7 +412,7 @@
                         } else {
                             $('<input type ="text" value="">')
                                 .attr('id', valueId)
-                                .addClass('title')
+                                .addClass('title labelInput')
                                 .appendTo(value);
                             //set default value
                             value.find('#' + valueId).val(valueVal);
