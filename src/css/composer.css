@@ -60,6 +60,7 @@
 }
 .nrc-sortable-container.ui-content {
     padding: 0px 10px;
+    min-height: 80px;
 }
 .nrc-sortable-container.empty:after,
 .nrc-sortable-container:empty:after {
