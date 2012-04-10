@@ -551,7 +551,8 @@ $(function() {
     // create a notice Dialog for user to configure the browser, so that
     // a native dialog can be shown when exporting design or HTML code
     function  createExportNoticeDialog () {
-        var dialogStr, dialogOpts, $exportNoticeDialog;
+        var dialogStr, dialogOpts, $exportNoticeDialog, cookieExpires;
+        cookieExpires = new Date("January 1, 2042");
         dialogStr = '<div id="exportNoticeDialog">';
         dialogStr += 'Note: Files will be saved in the default download path of the Browser.';
         dialogStr += '<p>To configure the Browser to ask you to where to save files, go to:<br>';
