@@ -4,19 +4,19 @@ Owner:    File:                                License:       Source:
 -----     -----                                --------       -------
 Intel     index.html                           APLv2          N/A
 Intel     README                               APLv2          N/A
-jQuery    lib/jquery-1.6.4.js                  MIT & GPLv2    [1]
-jQuery    lib/jquery-1.6.4.min.js              MIT & GPLv2    [2]
-jQuery    lib/jquery-ui-1.8.16.custom.js       MIT & GPLv2    [3]
-jQuery    lib/jquery-ui-1.8.16.custom.min.js   MIT & GPLv2    [4]
-jQuery    lib/jquery.mobile-1.0.js             MIT & GPLv2    [5]
-jQuery    lib/jquery.mobile-1.0.min.js         MIT & GPLv2    [6]
+jQuery    lib/jquery-1.6.4.js                  MIT or GPLv2   [1]
+jQuery    lib/jquery-1.6.4.min.js              MIT or GPLv2   [2]
+jQuery    lib/jquery-ui-1.8.16.custom.js       MIT or GPLv2   [3]
+jQuery    lib/jquery-ui-1.8.16.custom.min.js   MIT or GPLv2   [3]
+jQuery    lib/jquery.mobile-1.0.js             MIT or GPLv2   [4]
+jQuery    lib/jquery.mobile-1.0.min.js         MIT or GPLv2   [5]
 Intel     src/js/serialize.js                  APLv2          N/A
 Intel     src/js/fs.js                         APLv2          N/A
 Intel     src/js/widgets.js                    APLv2          N/A
 Intel     src/js/adm.js                        APLv2          N/A
 Intel     src/js/pageTemplate.js               APLv2          N/A
 Intel     src/js/panel.js                      APLv2          N/A
-jQuery    src/js/jquery-workarounds.js         MIT, GPLv2     [8]
+jQuery    src/js/jquery-workarounds.js         MIT, GPLv2     [6]
 & Intel                                        & APLv2
 Intel     src/js/main.js                       APLv2          N/A
 Intel     src/js/composer.js                   APLv2          N/A
@@ -40,15 +40,19 @@ Intel     src/css/builder.css                  APLv2          N/A
 Intel     src/css/composer.css                 APLv2          N/A
 Intel     src/css/fonts.css                    APLv2          N/A
 Intel     src/css/panel.css                    APLv2          N/A
-jQuery    src/css/jquery.mobile-1.0.css        MIT & GPLv2    [9]
-jQuery    src/css/jquery.mobile-1.0.min.css    MIT & GPLv2    [10]
+jQuery    src/css/jquery-ui.css                MIT or GPLv2   [3]
+jQuery    src/css/jquery.mobile-1.0.css        MIT or GPLv2   [7]
+jQuery    src/css/jquery.mobile-1.0.min.css    MIT or GPLv2   [8]
+jQuery    src/css/jquery.mobile.structure-1.0.css             MIT or GPLv2 [9]
+jQuery    src/css/jquery.mobile.structure-1.0.min.css         MIT or GPLv2 [10]
 Einar     lib/js-beautify/beautify-html.js     MIT            [13]
 Lielmanis
 Einar     lib/js-beautify/beautify.js          MIT            [13]
 Lielmanis
 Intel     lib/web-ui-fw.js                     MIT            [14]
-Intel     lib/web-ui-fw-libs.js                MIT            [14]
-Intel     src/css/web-ui-fw-theme.css          MIT            [14]
+Bram
+Stein     lib/web-ui-fw-libs.js                BSD            [18,19]
+jQuery    src/css/web-ui-fw-theme.css          MIT or GPLv2   [14]
 Intel     src/css/web-ui-fw-widgets.css        MIT            [14]
 Stuart    lib/jszip.js                         MIT or GPLv3   [15]
 Knightley
@@ -89,13 +93,14 @@ Notes:
 [1] http://code.jquery.com/jquery-1.6.4.js
 [2] http://code.jquery.com/jquery-1.6.4.min.js
 [3] http://jqueryui.com/download/?themeparams=%3fctl%3dthemeroller
-[4] http://jqueryui.com/download/?themeparams=%3fctl%3dthemeroller
-[5] http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.js
-[6] http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.js
-[8] Portions of this file contains jQuery-UI functions copied from original
+[4] http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.js
+[5] http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.js
+[6] Portions of this file contains jQuery-UI functions copied from original
     sources ([3]) and modified by Intel to override default behaviors.
-[9] http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.css
-[10] http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.css
+[7] http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.css
+[8] http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.css
+[9] http://code.jquery.com/mobile/1.0/jquery.mobile.structure-1.0.css
+[10] http://code.jquery.com/mobile/1.0/jquery.mobile.structure-1.0.min.css
 [11] https://github.com/douglascrockford/JSLint/blob/master/jslint.js
 [12] Portions of the file (jslint.js) are copyright Intel Corporation, 2011-2012
 [13] https://github.com/einars/js-beautify
@@ -103,3 +108,5 @@ Notes:
 [15] http://jszip.stuartk.co.uk
 [16] http://codemirror.net
 [17] https://github.com/arenevier/zipfile/blob/master/zipfile.js
+[18] http://www.bramstein.com/projects/jlayout/
+[19] http://www.bramstein.com/projects/jsizes/
