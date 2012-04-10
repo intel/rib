@@ -34,7 +34,7 @@ $(function() {
                 // "ctrl+v" for "past"
                 'v':'paste',
             };
-            if (e.ctrlKey) {
+            if (e.ctrlKey && !navUtils.ignoreText()) {
                 charItem = String.fromCharCode(e.which).toLowerCase();
                 if (shortKeys[charItem]) {
                     $('#btn' + shortKeys[charItem] + ':visible').trigger("click");
@@ -65,7 +65,7 @@ $(function() {
         },
         // for "delete"
         deleteHandler: function (e) {
-            if (e.which !== 46) {
+            if (e.which !== 46 || navUtils.ignoreText()) {
                 return true;
             } else {
                 $('#deleteElement:visible').trigger("click");
@@ -89,7 +89,11 @@ $(function() {
             navItems = $(navItems).add($(".pageIcon:visible"));
             navItems.attr("tabindex", 1);
             return navItems;
-        }
+        },
+        ignoreText: function () {
+            return Boolean($('input[type="text"]:focus, textarea:focus',
+                             '.property_content').length);
+        },
     };
 
     /*******************  export pageUtils to $.rib **********************/
