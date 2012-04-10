@@ -1389,12 +1389,6 @@ var BWidgetRegistry = {
             }
             code.attr("class", classname);
 
-            // don't write data-theme if it's using the default
-            prop = node.getProperty("theme");
-            if (prop !== node.getPropertyDefault("theme")) {
-                code.attr("data-theme", prop);
-            }
-
             return code;
         },
         init: function (node) {
