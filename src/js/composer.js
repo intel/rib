@@ -26,7 +26,10 @@ $(document).bind('mobileinit', function() {
             currentPage = (window.parent !== window)?window.parent.ADM.getActivePage():null;
 
         // Stop "Processingbar", which "turns on" at every pageshow event
-        $('.adm-node[data-role=processingbar]').processingbar('stop');
+        if ($('.adm-node[data-role=processingbar]',this).length &&
+            $('.adm-node[data-role=processingbar]',this).data().processingbar) {
+            $('.adm-node[data-role=processingbar]',this).processingbar('stop');
+        }
 
         // No change so do nothing
         if (currentPage && currentPage.getUid() === pageId) {
