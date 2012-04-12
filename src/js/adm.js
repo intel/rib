@@ -1045,6 +1045,7 @@ ADM.paste = function () {
     }
 
     ADM.addChildRecursive(target, node);
+    ADM.setSelected(node);
 }
 
 /**
