@@ -301,28 +301,36 @@ $(function() {
                 childType = node.type;
                 zone = node.zone;
                 properties = node.properties;
-                child =  ADM.createNode(childType, true);
+                try {
+                    child =  ADM.createNode(childType, true);
 
-                // add child node to current node
-                if (!parent.addChildToZone(child, zone)) {
-                    dumplog("add child type "+ childType + " failed");
-                    return false;
-                }
-
-                // set properties of child
-                for (item in properties) {
-                    // parser the properties and set the value to the node
-                    val = properties[item];
-                    // if we can't get value, we set item's value as default
-                    if (!val){
-                        val = child.getPropertyDefault(item);
+                    // add child node to current node
+                    if (!parent.addChildToZone(child, zone)) {
+                        dumplog("add child type "+ childType + " failed");
+                        return false;
                     }
 
-                    // NOTE: It's important that we pass "true" for the fourth
-                    // parameter here (raw) to disable "property hook"
-                    // functions like the grid one that adds or removes child
-                    // Block elements based on the property change
-                    child.setProperty(item, properties[item], null, true);
+                    // set properties of child
+                    for (item in properties) {
+                        // parser the properties and set the value to the node
+                        val = properties[item];
+                        // if we can't get value, we set item's value as default
+                        if (!val){
+                            val = child.getPropertyDefault(item);
+                        }
+
+                        // NOTE: It's important that we pass "true" for the fourth
+                        // parameter here (raw) to disable "property hook"
+                        // functions like the grid one that adds or removes child
+                        // Block elements based on the property change
+                        child.setProperty(item, properties[item], null, true);
+                    }
+                }catch (e) {
+                    if (!confirm("Error creating " + childType +
+                                (item ? " when setting property '" +
+                                item + "'" : "") + " - " + e +
+                                ".\n\nContinue loading the design?"))
+                        return false;
                 }
 
                 if (node.children.length !== 0) {
