@@ -18,7 +18,6 @@ $(function() {
         options :{
             design: null,
             pageTemplate: "Blank Page",
-            pageTitle: "Default",
             layout: ['Content']
         },
         /**
@@ -30,7 +29,6 @@ $(function() {
         createNewPage: function(config) {
             var design = config.design || ADM.getDesignRoot(),
                 pageTemplate = config.pageTemplate || this.options[pageTemplate],
-                pageTitle = config.pageTitle || this.options[pageTitle],
                 layout = this.options.layout.concat(config.layout),
                 newPage, result;
 

@@ -340,7 +340,6 @@
         _dialogOpenHandler: function (e, ui) {
             try {
                 var dialog = $('#pageDialog') || $(this).dialog('option', 'newPageDialog');
-                dialog.find("#pageTitle").val("");
                 dialog.find('#pagePicker').get(0).selectedIndex = 0;
                 dialog.find('#header_layout').attr("checked", true);
                 dialog.find('#footer_layout').attr("checked", true);
@@ -356,7 +355,6 @@
                 var options = {}, layout = [], newPage,
                     dialog = $('#pageDialog');
 
-                options.pageTitle = dialog.find("#pageTitle").val() || "NewPage";
                 options.pageTemplate = dialog.find("#pagePicker").val();
                 //get checkbox value
                 if (dialog.find('#header_layout').is(":checked")) {
@@ -395,8 +393,6 @@
                 .children(':first')
                 .addClass('flex1 vbox wrap_left')
                 .append('<form><ul><li/>' +
-                        '<li> <label for="title">Page Title</label>' +
-                        '<input type ="text" id="pageTitle" value=""></li>' +
                         '<li class="mt23"><label for="Template">page Template</label>' +
                         '<select id="pagePicker" size="1"></select></li>' +
                         '<li class="m150 mt30"><label for="Layout">Layout</label>' +
