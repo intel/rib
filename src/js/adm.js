@@ -1243,6 +1243,15 @@ ADMNode.prototype.getZoneIndex = function () {
 };
 
 /**
+ * Gets the zone array for the given zone name
+ * zoneName The name of the zone
+ * @return {Array} Array of the zone name of this object.
+ */
+ADMNode.prototype.getZoneArray = function (zoneName) {
+    return this._zones[zoneName];
+}
+
+/**
  * Returns whether this node is selected.
  *
  * @return {Boolean} True if this node is selected.
@@ -1692,7 +1701,7 @@ ADMNode.prototype.removeChild = function (child, dryrun) {
  * @return {ADMNode} The removed child, or null if not found.
  */
 ADMNode.prototype.removeChildFromZone = function (zoneName, index, dryrun) {
-    var zone, removed, child;
+    var zone, removed, child, parentNode;
     zone = this._zones[zoneName];
     if (!zone) {
         console.error("Error: no such zone found while removing child: " +
