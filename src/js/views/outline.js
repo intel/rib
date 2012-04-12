@@ -171,6 +171,17 @@
             widget.setSelected(node);
         },
 
+        removeNode: function(node, parentNode) {
+            $.rib.treeView.prototype.removeNode.call(this, node);
+            parentNode = parentNode || node.getParent();
+            if (parentNode.getChildren().length === 0 ||
+                (parentNode.getChildren().length === 1 &&
+                 parentNode.getChildren()[0] === node)) {
+                this.element.find('li.label').filter( function () {
+                    return $(this).data('adm-node') === parentNode;
+                }).remove();
+            }
+        },
 
         _modelUpdatedHandler: function(event, widget) {
             widget = widget || this;
@@ -179,14 +190,10 @@
                 widget.addNode(event.node);
                 break;
             case "nodeRemoved":
-                widget.removeNode(event.node);
-                if (event.parent.getChildren().length === 0)
-                    widget.element.find('li.label').filter( function () {
-                        return $(this).data('adm-node') === event.parent;
-                    }).remove();
+                widget.removeNode(event.node, event.parent);
                 break;
             case "nodeMoved":
-                widget.moveNode(event.node);
+                widget.moveNode(event.node, event.oldParent);
                 break;
             case "propertyChanged":
                 widget.removeNode(event.node);

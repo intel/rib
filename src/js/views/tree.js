@@ -231,8 +231,8 @@
         removeNode: function (node) {
             this.findDomNode(node).remove();
         },
-        moveNode: function (node) {
-            this.removeNode(node);
+        moveNode: function (node, oldParent) {
+            this.removeNode(node, oldParent);
             this.addNode(node);
         },
     });
