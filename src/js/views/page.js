@@ -401,12 +401,14 @@
                         '<select id="pagePicker" size="1"></select></li>' +
                         '<li class="m150 mt30"><label for="Layout">Layout</label>' +
                         '<fieldset><ul>' +
+                        /*
                         '<li>' +
                         '<input class="fieldInput" type="radio" name="Layout"/>' +
                         '<label class="fieldLabel" for="layout">Normal Page</label></li>' +
                         '<li>' +
                         '<input class="fieldInput" type="radio" name="Layout"/>' +
                         '<label class="fieldLabel" for="layout">Dialog</label></li>' +
+                        */
                         '<li>' +
                         '<input id="header_layout" class="fieldInput" type="checkbox" name="Header"/>' +
                         '<label class="fieldLabel" for="layout">Header</label></li>' +
