@@ -366,6 +366,8 @@
                 .append('<a id="setProj">project settings</a>')
                 .append('<p class="centerImage"><img src="src/css/images/projectExportDivider.png"/></p>')
                 .append('<a id="exportProj">export</a>')
+                .append('<p class="centerImage"><img src="src/css/images/projectExportDivider.png"/></p>')
+                .append('<a id="about">About</a>')
                 .appendTo(this.ui.extras);
             $(window).trigger('resize');
         },
@@ -551,8 +553,28 @@ $(function() {
             }
         }
         // bind handlers for import and export buttons
-        $(document).delegate('#importProj', "click", function () { $("#importFile").click(); });
-        $(document).delegate('#exportProj', "click", $.rib.pmUtils.exportProject);
+        $(document).delegate('#importProj', "click", function () {
+            $("#importFile").click();
+        });
+        $(document).delegate('#exportProj', "click",
+            $.rib.pmUtils.exportProject);
+        $.rib.about = $('<iframe src="about.html">').dialog({
+            title: "About Rapid Interface Builder",
+            width: Number($(document).width()/3),
+            height: Number($(document).height()/3),
+            dialogClass: "aboutDlg",
+            show: "fade",
+            hide: "fade",
+            resizable: false,
+            autoOpen: false,
+            modal: true
+        }).width('33%').height('33%');
+        $(document).delegate('#about', "click", function() {
+            if (!$.rib.about.dialog('isOpen')) {
+                $.rib.about.dialog('open');
+            }
+            return false;
+        });
 
         // init pmUtils
         $.rib.pmUtils.init(function () {

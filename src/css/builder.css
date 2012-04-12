@@ -1396,3 +1396,11 @@ input.screenCoordinate::-webkit-inner-spin-button {
     margin-top: 8px;
     margin-bottom: 0px;
 }
+.aboutDlg > .ui-dialog-content {
+    min-width: 100%;
+    min-height: 100%;
+}
+.aboutDlg +.ui-widget-overlay {
+    top: -1em;
+    left: -1em;
+}
