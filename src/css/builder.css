@@ -711,6 +711,7 @@ body.ui-tabs.ui-widget {
 .propertyView {
     overflow-y: auto;
     overflow-x: hidden;
+    background: #c8ced0;
 }
 .propertyView .property_title {
     background-image: url('images/propertiesTitleBar.png');
@@ -728,9 +729,6 @@ body.ui-tabs.ui-widget {
     font-family: OpenSans-SB;
     font-weight: 600; /* semi-bold */
     font-color: #333333;
-}
-.propertyView .property_content {
-    background: #c8ced0;
 }
 .propertyView input[type='checkbox'] {
     vertical-align: middle;
