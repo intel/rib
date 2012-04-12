@@ -191,6 +191,7 @@
             case "propertyChanged":
                 widget.removeNode(event.node);
                 widget.addNode(event.node);
+                widget.setSelected(widget._getSelected());
                 break;
             default:
                 console.warning('Unknown type of modelUpdated event:'
