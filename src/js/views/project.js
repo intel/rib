@@ -1,5 +1,5 @@
 /*
- * gui-builder - A simple WYSIWYG HTML5 app creator
+ * Rapid Interface Builder (RIB) - A simple WYSIWYG HTML5 app creator
  * Copyright (c) 2011-2012, Intel Corporation.
  *
  * This program is licensed under the terms and conditions of the
@@ -13,7 +13,7 @@
 
 (function($, undefined) {
 
-    $.widget('gb.projectView', {
+    $.widget('rib.projectView', {
 
         options: {
             model: null,
@@ -43,7 +43,7 @@
 
             // Add a hidden file input element, used to trigger the browsers
             // native file browse/find dialog when user wants to import a new
-            // project file into the GUI Builder application
+            // project file into the RIB application
             $('<input type="file"/>')
                 .attr({id:'importFile'})
                 .addClass('hidden-accessible')
@@ -66,7 +66,7 @@
             var file;
             if (e.currentTarget.files.length === 1) {
                 file = e.currentTarget.files[0];
-                $.gb.pmUtils.importProject(file, function () {
+                $.rib.pmUtils.importProject(file, function () {
                     // show the layout tab
                     $(document.body).tabs('select', 1);
                 });
@@ -105,7 +105,7 @@
             container = $('.projectView');
             container.empty();
             //get project counts from PM-API
-            pidArr = $.gb.pmUtils.listAllProject();
+            pidArr = $.rib.pmUtils.listAllProject();
             if(!pidArr){
                 console.error("Error: failed to list all projects.");
             }
@@ -114,7 +114,7 @@
                 widget.createProjectBox(value.pid, container, widget);
             });
             // Mark the active project box
-            $('#'+$.gb.pmUtils.getActive(), container)
+            $('#'+$.rib.pmUtils.getActive(), container)
                 .addClass('ui-state-active');
         },
 
@@ -125,7 +125,7 @@
                 dialog = this.options && this.options.projectDialog;
                 dialog = dialog || $(this).dialog('option', 'projectDialog');
                 isCreate = dialog.data('new-project-dialog');
-                name = $.gb.pmUtils.getName( $.gb.pmUtils.getActive()) ||
+                name = $.rib.pmUtils.getName( $.rib.pmUtils.getActive()) ||
                        'Untitled';
 
                 $("#projectName", dialog).val((isCreate)?'':name);
@@ -149,14 +149,14 @@
 
                 if (isCreate) {
                     //call project API to create a new project
-                    $.gb.pmUtils.createProject(opts, function() {
+                    $.rib.pmUtils.createProject(opts, function() {
                         // show the layout tab
                         $(document.body).tabs('select', 1);
                     });
                 } else {
                     //call project API to update current project
-                    $.gb.pmUtils.setProject(null, opts);
-                    $(':gb-projectView').projectView('refresh');
+                    $.rib.pmUtils.setProject(null, opts);
+                    $(':rib-projectView').projectView('refresh');
                 }
                 // Blank out the title
                 dialog && $('#projectName', dialog).val('');
@@ -288,8 +288,8 @@
         _modelUpdatedHandler: function(event, widget) {
             widget = widget || this;
             // if the designDirty is false, then set it
-            if (!($.gb.pmUtils.designDirty)) {
-                $.gb.pmUtils.designDirty = true;
+            if (!($.rib.pmUtils.designDirty)) {
+                $.rib.pmUtils.designDirty = true;
             }
         },
 
@@ -305,7 +305,7 @@
                                'Blue Meanies'];
 
             projectDialog = $('<div/>')
-                .addClass('gbDialog')
+                .addClass('ribDialog')
                 .appendTo(this.element[0].ownerDocument.body);
             $('<div/>').addClass('hbox')
                 .append('<div/>')
@@ -376,13 +376,13 @@
                     // show the layout tab
                     $(document.body).tabs('select', 1);
                 };
-                $.gb.pmUtils.openProject(pid, success);
+                $.rib.pmUtils.openProject(pid, success);
             };
             cloneHandler = function () {
                 var success = function (destPid) {
                     widget.refresh();
                 };
-                $.gb.pmUtils.cloneProject(pid, success);
+                $.rib.pmUtils.cloneProject(pid, success);
             };
             deleteHandler = function () {
                 var success = function (pid) {
@@ -390,22 +390,22 @@
                     // If the deleted project it the active project
                     // or there is no project then find the last opened project
                     // and open it, create a new project in no project case
-                    if (!$.gb.pmUtils.getActive()) {
+                    if (!$.rib.pmUtils.getActive()) {
                         $(document.body).one("tabsselect", function (e, tab) {
                             if (tab.index === 1) {
-                                $.gb.pmUtils.showLastOpened();
+                                $.rib.pmUtils.showLastOpened();
                             }
                         });
                     }
                 };
-                $.gb.pmUtils.deleteProject(pid, success);
+                $.rib.pmUtils.deleteProject(pid, success);
             };
             // draw project box
             box = $('<div/>').attr('id',pid)
                              .addClass('projectBox vbox')
                              .appendTo(container);
             title = $('<div />').addClass('titleBar flex0')
-                        .append('<span>' + $.gb.pmUtils.getName(pid) + '</span>')
+                        .append('<span>' + $.rib.pmUtils.getName(pid) + '</span>')
                         .append($('<div class="openButton"></div>').click(openHandler))
                         .appendTo(box);
             content = $('<div />').addClass('content flex1 hbox')
@@ -418,7 +418,7 @@
                         .appendTo(content);
             $('<div />').addClass("rightSide flex1")
                         .append('<b>LAST OPENED</b><br />')
-                        .append('<span>' + ($.gb.pmUtils.getAccessDate(pid)).toString().slice(4, 24) + '</span>')
+                        .append('<span>' + ($.rib.pmUtils.getAccessDate(pid)).toString().slice(4, 24) + '</span>')
                         // apend clone button
                         .append($('<div>Clone</div>').addClass("clone button").click(cloneHandler))
                         // apend delete button

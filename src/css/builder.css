@@ -1,5 +1,5 @@
 /*
- * gui-builder - A simple WYSIWYG HTML5 app creator
+ * Rapid Interface Builder (RIB) - A simple WYSIWYG HTML5 app creator
  * Copyright (c) 2011-2012, Intel Corporation.
  *
  * This program is licensed under the terms and conditions of the
@@ -59,7 +59,7 @@ body.ui-tabs.ui-widget {
 #coord > div:last-child {
     padding-bottom: 0.25em;
 }
-#coord div.gb-drag-handle {
+#coord div.rib-drag-handle {
     display: block;
     background-image: -webkit-linear-gradient(top, darkgray, lightgray, gray);
     height: .75em;
@@ -946,7 +946,7 @@ table#selectOption {
     border: 1px solid #da1c2e !important;
 }
 
-.gbDialog {
+.ribDialog {
     background-color: transparent;
     background-color: rgba(21, 28, 34, 0.85);
     padding: 0;
@@ -969,7 +969,7 @@ table#selectOption {
     padding: 0px;
 }
 
-.gbDialog > div {
+.ribDialog > div {
     -webkit-border-radius: 12px;
     margin: 0px;
     padding: 0px;
@@ -984,14 +984,14 @@ table#selectOption {
     width: 100%;
     overflow:hidden;
 }
-.gbDialog .wrap_left {
+.ribDialog .wrap_left {
     width: 385px;
     height: 100%;
     margin: 0px;
     padding: 0px;
     background: #fff;
 }
-.gbDialog .wrap_right {
+.ribDialog .wrap_right {
     width: 385px;
     height: 100%;
     margin: 0px;
@@ -1001,37 +1001,37 @@ table#selectOption {
     background-position: center;
     background-repeat: no-repeat;
 }
-.gbDialog .div-bottom{
+.ribDialog .div-bottom{
     position:absolute;
     bottom:0px;
     width:385px;
     height:80px;
 }
-.gbDialog .ui-dialog-buttonpane {
+.ribDialog .ui-dialog-buttonpane {
     border-top-width: 0px;
 }
-#pageDialog.gbDialog .ui-dialog-buttonpane {
+#pageDialog.ribDialog .ui-dialog-buttonpane {
     margin-left: 115px;
 }
-.gbDialog .ui-dialog-buttonpane .ui-dialog-buttonset {
+.ribDialog .ui-dialog-buttonpane .ui-dialog-buttonset {
     float: none;
     display: -webkit-box;
     -webkit-box-pack: center;
 }
-.gbDialog fieldset {
+.ribDialog fieldset {
     padding: 0px;
     margin: 0px;
     border: 0px;
 }
-.gbDialog legend {
+.ribDialog legend {
     height: 10px;
 }
-.gbDialog .bottom {
+.ribDialog .bottom {
     position:absolute;
     bottom:32px;
     left:145px;
 }
-.gbDialog label {
+.ribDialog label {
     float: left;
     text-align: right;
     width: 125px;
@@ -1040,22 +1040,22 @@ table#selectOption {
     border: 0px;
     padding: 0px;
 }
-.gbDialog input[type="text"] {
+.ribDialog input[type="text"] {
     padding:0px;
     margin-left: 0px;
     height: 19px;
     width: 216px;
 }
-.gbDialog form {
+.ribDialog form {
     height:100%;
 }
-.gbDialog select {
+.ribDialog select {
     margin-left: 0px;
     width: 220px;
     height:23px;
     background: #eaf1f4;
 }
-.gbDialog .uploadStyle {
+.ribDialog .uploadStyle {
     text-decoration: underline;
     font-size: 11px;
     font-weight: Regular;
@@ -1094,7 +1094,7 @@ table#selectOption {
 .fr {
     float: right;
 }
-.gbDialog .buttonStyle {
+.ribDialog .buttonStyle {
     display:block;
     width:60px;
     height:12px;
@@ -1121,7 +1121,7 @@ table#selectOption {
     -moz-background-clip: padding; -webkit-background-clip: padding-box; background-clip: padding-box;
     text-decoration:none;
 }
-.gbDialog .buttonStyle:hover {
+.ribDialog .buttonStyle:hover {
     color:#eee;
     background-color: #cccccc;
     border-color:#424242;
@@ -1136,27 +1136,27 @@ table#selectOption {
     background-image:
     linear-gradient(to bottom, #cccccc, #777777);
 }
-.gbDialog .linkStyle {
+.ribDialog .linkStyle {
     background: none !important;
     border: none !important;
     text-decoration: underline;
 }
-.gbDialog .linkStyle:hover {
+.ribDialog .linkStyle:hover {
     color: #888;
 }
-.gbDialog ul {
+.ribDialog ul {
     margin: 0;
     padding: 0;
     list-style-type: none;
 }
-.gbDialog li {
+.ribDialog li {
     clear: both;
     height: 23px;
 }
-.gbDialog fieldset {
+.ribDialog fieldset {
     display: inline;
 }
-.gbDialog .fieldLi {
+.ribDialog .fieldLi {
     clear: both;
     margin: 0px;
     height: 23px;
@@ -1164,7 +1164,7 @@ table#selectOption {
     vertical-align:middle;
     line-height: 23px;
 }
-.gbDialog .fieldLabel {
+.ribDialog .fieldLabel {
     width: 100px;
     float: left;
     margin: 0px;
@@ -1172,7 +1172,7 @@ table#selectOption {
     padding: 0px;
     text-align: left;
 }
-.gbDialog .fieldInput {
+.ribDialog .fieldInput {
     float: left;
     width: 10px;
     margin: 0px;

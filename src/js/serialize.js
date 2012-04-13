@@ -1,5 +1,5 @@
 /*
- * gui-builder - A simple WYSIWYG HTML5 app creator
+ * Rapid Interface Builder (RIB) - A simple WYSIWYG HTML5 app creator
  * Copyright (c) 2011-2012, Intel Corporation.
  *
  * This program is licensed under the terms and conditions of the
@@ -30,7 +30,7 @@ var DEBUG = true,
     },
 
     generateHTML = function () {
-        var doc = constructNewDocument($.gb.getDefaultHeaders());
+        var doc = constructNewDocument($.rib.getDefaultHeaders());
 
         serializeADMSubtreeToDOM(ADM.getDesignRoot(), $(doc).find('body'),
                                  function (admNode, domNode) {
@@ -78,7 +78,7 @@ var DEBUG = true,
         if (domParent) {
             parentNode = $(domParent);
         } else {
-            parentNode = $(':gb-layoutView')
+            parentNode = $(':rib-layoutView')
                 .layoutView('option','contentDocument').find(parentSelector)
                 .last();
         }
@@ -165,7 +165,7 @@ var DEBUG = true,
                         attrValue = attrValue.replace(/</g, "&lt;");
                         attrValue = attrValue.replace(/>/g, "&gt;");
                         // Append UID to assist with debugging
-                        if ($.gb.debug('showuid') && p === 'text') {
+                        if ($.rib.debug('showuid') && p === 'text') {
                             attrValue += ' '+uid;
                         }
                     }
@@ -419,10 +419,10 @@ $(function() {
     function getDefaultHeaders() {
         var i, props, el;
 
-        $.gb.defaultHeaders = $.gb.defaultHeaders || [];
+        $.rib.defaultHeaders = $.rib.defaultHeaders || [];
 
-        if ($.gb.defaultHeaders.length > 0)
-            return $.gb.defaultHeaders;
+        if ($.rib.defaultHeaders.length > 0)
+            return $.rib.defaultHeaders;
 
         props = ADM.getDesignRoot().getProperty('metas');
         for (i in props) {
@@ -441,7 +441,7 @@ $(function() {
                 el = el + ' content="' + props[i].content + '"';
             }
             el = el + '>';
-            $.gb.defaultHeaders.push(el);
+            $.rib.defaultHeaders.push(el);
         }
         props = ADM.getDesignRoot().getProperty('libs');
         for (i in props) {
@@ -454,7 +454,7 @@ $(function() {
                 el = el + 'src="' + props[i].value + '"';
             }
             el = el + '></script>';
-            $.gb.defaultHeaders.push(el);
+            $.rib.defaultHeaders.push(el);
         }
         props = ADM.getDesignRoot().getProperty('css');
         for (i in props) {
@@ -467,17 +467,17 @@ $(function() {
                 el = el + 'href="' + props[i].value + '"';
             }
             el = el + ' rel="stylesheet">';
-            $.gb.defaultHeaders.push(el);
+            $.rib.defaultHeaders.push(el);
         }
-        return $.gb.defaultHeaders;
+        return $.rib.defaultHeaders;
     }
 
     function getDesignHeaders() {
         var i, props, el;
 
-        $.gb.designHeaders = $.gb.designHeaders || [];
-        if ($.gb.designHeaders.length > 0)
-            return $.gb.designHeaders;
+        $.rib.designHeaders = $.rib.designHeaders || [];
+        if ($.rib.designHeaders.length > 0)
+            return $.rib.designHeaders;
 
         props = ADM.getDesignRoot().getProperty('metas');
         for (i in props) {
@@ -492,7 +492,7 @@ $(function() {
                 el = el + ' content="' + props[i].content + '"';
             }
             el = el + '>';
-            $.gb.designHeaders.push(el);
+            $.rib.designHeaders.push(el);
         }
         props = ADM.getDesignRoot().getProperty('libs');
         for (i in props) {
@@ -501,7 +501,7 @@ $(function() {
                 el = el + 'src="' + props[i].value + '"';
             }
             el = el + '></script>';
-            $.gb.designHeaders.push(el);
+            $.rib.designHeaders.push(el);
         }
         props = ADM.getDesignRoot().getProperty('css');
         for (i in props) {
@@ -510,17 +510,17 @@ $(function() {
                 el = el + 'href="' + props[i].value + '"';
             }
             el = el + ' rel="stylesheet">';
-            $.gb.designHeaders.push(el);
+            $.rib.designHeaders.push(el);
         }
-        return $.gb.designHeaders;
+        return $.rib.designHeaders;
     }
 
    function  exportFile (fileName, content, binary) {
-        var cookieValue = $.gb.cookieUtils.get("exportNotice"),
+        var cookieValue = $.rib.cookieUtils.get("exportNotice"),
             $exportNoticeDialog = createExportNoticeDialog(),
             saveAndExportFile = function () {
-                $.gb.fsUtils.write(fileName, content, function(fileEntry){
-                    $.gb.fsUtils.exportToTarget(fileEntry.fullPath);
+                $.rib.fsUtils.write(fileName, content, function(fileEntry){
+                    $.rib.fsUtils.exportToTarget(fileEntry.fullPath);
                 }, null, false, binary);
             };
 
@@ -557,7 +557,7 @@ $(function() {
             width: 500,
             resizable: false,
             height: 400,
-            title: "GUI Builder",
+            title: "RIB",
         };
         $(dialogStr).dialog(dialogOpts);
         $exportNoticeDialog = $("#exportNoticeDialog");
@@ -568,7 +568,7 @@ $(function() {
         $exportNoticeDialog.find("input:checkbox").click(function () {
             var notice = this.checked ? "false" : "true";
             // set cookie
-            if(!$.gb.cookieUtils.set("exportNotice", notice, cookieExpires)) {
+            if(!$.rib.cookieUtils.set("exportNotice", notice, cookieExpires)) {
                 console.error("Set exportNotice cookie failed.");
             }
         });
@@ -638,13 +638,13 @@ $(function() {
     }
 
     /***************** export functions out *********************/
-    // Export serialization functions into $.gb namespace
-    $.gb.ADMToJSONObj = ADMToJSONObj;
-    $.gb.JSONToProj = JSONToProj;
-    $.gb.zipToProj = zipToProj;
+    // Export serialization functions into $.rib namespace
+    $.rib.ADMToJSONObj = ADMToJSONObj;
+    $.rib.JSONToProj = JSONToProj;
+    $.rib.zipToProj = zipToProj;
 
-    $.gb.getDefaultHeaders = getDefaultHeaders;
-    $.gb.getDesignHeaders = getDesignHeaders;
+    $.rib.getDefaultHeaders = getDefaultHeaders;
+    $.rib.getDesignHeaders = getDesignHeaders;
 
-    $.gb.exportPackage = exportPackage;
+    $.rib.exportPackage = exportPackage;
 });

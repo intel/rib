@@ -1,5 +1,5 @@
 /*
- * gui-builder - A simple WYSIWYG HTML5 app creator
+ * Rapid Interface Builder (RIB) - A simple WYSIWYG HTML5 app creator
  * Copyright (c) 2011-2012, Intel Corporation.
  *
  * This program is licensed under the terms and conditions of the
@@ -47,7 +47,7 @@ var print = require("sys").print,
 	report = "<!DOCTYPE HTML>\n" +
 		"<html>\n" +
 		"<head>\n" +
-		"<title>GUI Builder JSLint Report</title>\n" +
+		"<title>RIB JSLint Report</title>\n" +
 		"<link rel=\"stylesheet\" type=\"text/css\" href=\"report.css\" />\n" +
 		"</head>\n" +
 		"<body>\n" +

@@ -1,7 +1,7 @@
 Prerequisites:
 ==============
-1) The GUI Builder supports running only in a Chromium/Chrome browser at this
-   time. Does not work on Firefox.
+1) RIB supports running only in a Chromium/Chrome browser at this time. It
+   Does not work on Firefox.
 2) Should work on Linux, Windows, and Mac. Primarily tested on Ubuntu 11.04,
    Windows 7, and Windows XP, with some testing on other Ubuntu versions and
    Mac.
@@ -11,11 +11,11 @@ $ sudo apt-get install chromium-browser
 
 Running:
 ========
-To run the GUI Builder application, you have two options:
+To run RIB, you have two options:
 
 1) Start your Chromium browser with the "--allow-file-access-from-files"
    and "--enable-file-cookies" options and point it to
-   file:///path/to/gui-builder/index.html
+   file:///path/to/rib/index.html
 
 For example:
 $ chromium-browser --allow-file-access-from-files --enable-file-cookies index.html

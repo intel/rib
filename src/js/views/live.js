@@ -1,5 +1,5 @@
 /*
- * gui-builder - A simple WYSIWYG HTML5 app creator
+ * Rapid Interface Builder (RIB) - A simple WYSIWYG HTML5 app creator
  * Copyright (c) 2011-2012, Intel Corporation.
  *
  * This program is licensed under the terms and conditions of the
@@ -13,7 +13,7 @@
 
 (function($, undefined) {
 
-    $.widget('gb.liveView', {
+    $.widget('rib.liveView', {
 
         options: {
             model: null,
@@ -96,7 +96,7 @@
             $.getJSON("src/assets/devices.json", function (data) {
                 widget._sysDevices = data;
                 widget._refreshDeviceList(widget._deviceSelect);
-                $.gb.fsUtils.read("devices.json", function(result) {
+                $.rib.fsUtils.read("devices.json", function(result) {
                     try {
                         widget._userDevices = $.parseJSON(result);
                         widget._refreshDeviceList(widget._deviceSelect);
@@ -130,7 +130,7 @@
                                 widget._userDevices[values.name] = widget._cloneSelectedDeviceInfo();
                                 widget._modifyScreenSize(widget._userDevices[values.name], values.screenWidth, values.screenHeight);
                                 widget._refreshDeviceList(widget._deviceSelect);
-                                $.gb.fsUtils.write("devices.json", JSON.stringify(widget._userDevices), function(fileEntry){
+                                $.rib.fsUtils.write("devices.json", JSON.stringify(widget._userDevices), function(fileEntry){
                                     alert("New device " + values.name + " sucessfully created!");
                                     $(form).dialog('close');
                                 });

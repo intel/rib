@@ -1,5 +1,5 @@
 /*
- * gui-builder - A simple WYSIWYG HTML5 app creator
+ * Rapid Interface Builder (RIB) - A simple WYSIWYG HTML5 app creator
  * Copyright (c) 2011-2012, Intel Corporation.
  *
  * This program is licensed under the terms and conditions of the
@@ -566,8 +566,8 @@ $(function() {
                  }
         };
 
-    /*******************  export fsUtils and cookieUtils to $.gb **********************/
-    $.gb = $.gb || {};
+    /*******************  export fsUtils and cookieUtils to $.rib **********************/
+    $.rib = $.rib || {};
     $.each(["ls", "touch","rm","mkdir", "read", "write"], function (i, opName) {
         var oldOp = fsUtils[opName];
         fsUtils[opName] = function () {
@@ -580,6 +580,6 @@ $(function() {
                 return oldOp.apply(this, arguments);
         };
     });
-    $.gb.fsUtils = fsUtils;
-    $.gb.cookieUtils = cookieUtils;
+    $.rib.fsUtils = fsUtils;
+    $.rib.cookieUtils = cookieUtils;
 });

@@ -1,5 +1,5 @@
 /*
- * gui-builder - A simple WYSIWYG HTML5 app creator
+ * Rapid Interface Builder (RIB) - A simple WYSIWYG HTML5 app creator
  * Copyright (c) 2011-2012, Intel Corporation.
  *
  * This program is licensed under the terms and conditions of the
@@ -7,7 +7,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  *
  */
-CodeMirror.defineMode("gbsrc", function(config, parserConfig) {
+CodeMirror.defineMode("ribsrc", function(config, parserConfig) {
 
     var htmlMixedMode, regActivePage;
 
@@ -54,4 +54,4 @@ CodeMirror.defineMode("gbsrc", function(config, parserConfig) {
     }
 });
 
-CodeMirror.defineMIME("text/gbsrc", "gbsrc");
+CodeMirror.defineMIME("text/ribsrc", "ribsrc");

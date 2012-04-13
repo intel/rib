@@ -51,7 +51,7 @@ P2 - Make all DOM interactions into a "framework" class with well
 =========
 P2 - Rename template.js to something more appropriate for what it actually
   does, which is handling the embedded design view contents styling and
-  behaviors in the framework context as opposed to the GUI Builder JS/CSS
+  behaviors in the framework context as opposed to the RIB JS/CSS
   context
 
 P1 - Separate "controller" and "design view" logic in js/builder.js.  For

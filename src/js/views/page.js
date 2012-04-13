@@ -1,5 +1,5 @@
 /*
- * gui-builder - A simple WYSIWYG HTML5 app creator
+ * Rapid Interface Builder (RIB) - A simple WYSIWYG HTML5 app creator
  * Copyright (c) 2011-2012, Intel Corporation.
  *
  * This program is licensed under the terms and conditions of the
@@ -13,7 +13,7 @@
 
 (function($, undefined) {
 
-    $.widget('gb.pageView', {
+    $.widget('rib.pageView', {
 
         options: {
             model: null,
@@ -366,7 +366,7 @@
                     layout.push('Footer');
                 }
                 options.layout = layout;
-                newPage = $.gb.pageUtils.createNewPage(options);
+                newPage = $.rib.pageUtils.createNewPage(options);
                 ADM.setActivePage(newPage);
                 dialog.dialog("close");
                 return true;
@@ -385,10 +385,10 @@
                 ptNames = ['JQuery Mobile Page',
                            'Recently Used Page',
                            'Blank Page'],
-                pageUtils = $.gb.pageUtils;
+                pageUtils = $.rib.pageUtils;
             newPageDialog = $('<div/>')
                 .attr('id', 'pageDialog')
-                .addClass('gbDialog')
+                .addClass('ribDialog')
                 .appendTo(this.element[0].ownerDocument.body);
             $('<div/>').addClass('hbox')
                 .append('<div/>')

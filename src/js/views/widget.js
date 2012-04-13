@@ -1,5 +1,5 @@
 /*
- * gui-builder - A simple WYSIWYG HTML5 app creator
+ * Rapid Interface Builder (RIB) - A simple WYSIWYG HTML5 app creator
  * Copyright (c) 2011-2012, Intel Corporation.
  *
  * This program is licensed under the terms and conditions of the
@@ -14,7 +14,7 @@
 
 (function($, undefined) {
 
-    $.widget('gb.widgetView',  $.gb.treeView, {
+    $.widget('rib.widgetView',  $.rib.treeView, {
 
         _create: function() {
             var widget = this;
@@ -46,7 +46,7 @@
 
         _nodeSelected: function (treeModelNode, data, domNode) {
             this._setSelected(domNode);
-            $(':gb-paletteView').paletteView('option', "model", treeModelNode);
+            $(':rib-paletteView').paletteView('option', "model", treeModelNode);
         },
 
         resize: function(event, widget) {

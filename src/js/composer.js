@@ -1,5 +1,5 @@
 /*
- * gui-builder - A simple WYSIWYG HTML5 app creator
+ * Rapid Interface Builder (RIB) - A simple WYSIWYG HTML5 app creator
  * Copyright (c) 2011-2012, Intel Corporation.
  *
  * This program is licensed under the terms and conditions of the
@@ -10,7 +10,7 @@
 "use strict";
 
 // Fixes PTSDK-130: Block right-click context menu in design-view iframe
-if (!top.$.gb.debug())
+if (!top.$.rib.debug())
     $(document).bind('contextmenu', function(e) { e.preventDefault(); });
 
 // In order to get the very first instance of page change events,
@@ -77,8 +77,8 @@ $(function() {
     };
 
     var dndfilter = function (el) {
-        var o = top.$.gb && top.$.gb.layoutView &&
-                top.$(':gb-layoutView').layoutView('option'),
+        var o = top.$.rib && top.$.rib.layoutView &&
+                top.$(':rib-layoutView').layoutView('option'),
             f = (o)?o.contentDocument:$(document),
             a = (o)?o.model:window.top.ADM,
             t, s = {}, id;
@@ -179,16 +179,16 @@ $(function() {
         }
     };
 
-    window.top.$.gb = window.top.$.gb || {};
-    window.top.$.gb.dndfilter = dndfilter;
+    window.top.$.rib = window.top.$.rib || {};
+    window.top.$.rib.dndfilter = dndfilter;
 
     window.handleSelect = handleSelect;
     window.ADM = window.parent.ADM;
     $('div:jqmData(role="page")').live('pageinit', function(e) {
         var targets,
-            debug = (window.top.$.gb && window.top.$.gb.debug()),
+            debug = (window.top.$.rib && window.top.$.rib.debug()),
 
-            debugOffsets = (debug && window.top.$.gb.debug('offsets')),
+            debugOffsets = (debug && window.top.$.rib.debug('offsets')),
 
             trackOffsets = function (msg, ui, data) {
                 var o = ui && ui.offset,

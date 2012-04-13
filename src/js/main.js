@@ -1,5 +1,5 @@
 /*
- * gui-builder - A simple WYSIWYG HTML5 app creator
+ * Rapid Interface Builder (RIB) - A simple WYSIWYG HTML5 app creator
  * Copyright (c) 2011-2012, Intel Corporation.
  *
  * This program is licensed under the terms and conditions of the
@@ -9,10 +9,10 @@
  */
 "use strict";
 
-// GUI Builder jQuery Plugin
+// RIB jQuery Plugin
 (function($, undefined) {
 
-    $.widget('gb.guibuilder', {
+    $.widget('rib.builder', {
 
         options: {
             debugMode: false,
@@ -25,8 +25,8 @@
             var e = this.element,
                 o = this.options;
 
-            $.gb = $.gb || {};
-            $.gb.debug = (this.options.debugMode) ? this._debugEnabled :
+            $.rib = $.rib || {};
+            $.rib.debug = (this.options.debugMode) ? this._debugEnabled :
                 function(){return false;};
 
             this._parseOptions();
@@ -48,7 +48,7 @@
             o.model.bind('activePageChanged', this._activePageChanged, this);
 
             // Title the document
-            document.title = 'GUI Builder';
+            document.title = 'Rapid Interface Builder';
 
             // Make sure the body is empty
             $(document.body).empty();
@@ -57,7 +57,7 @@
 
             // Fixes PTSDK-130: Block right-click context menu in code and
             // preview div wrappers
-            if (!$.gb.debug())
+            if (!$.rib.debug())
                 $('.stage').bind('contextmenu', function(e) {
                     e.preventDefault();
                 });
@@ -66,10 +66,10 @@
             this._bindViewPlugins();
 
 
-            if ($.gb.debug('mousetrack')) {
+            if ($.rib.debug('mousetrack')) {
                 this._createMouseTracker($(document.body));
             }
-            $.gb.enableKeys($(document));
+            $.rib.enableKeys($(document));
         },
 
         _setOption: function(key, value) {
@@ -105,7 +105,7 @@
                 // $.widget plugins provide thier own selectors, so we
                 // use that to call the plugins "refresh" method on all
                 // elements it has been instantiated on...
-                $(':gb-'+val)[val]('refresh');
+                $(':rib-'+val)[val]('refresh');
             });
         },
 
@@ -117,14 +117,14 @@
                     'debug',
                 ];
             // If option(s) are passed on URL, parse into a set of options
-            // objects in the '$.gb' namespace.  Parsing rules as follows:
+            // objects in the '$.rib' namespace.  Parsing rules as follows:
             //
             // For Example, given the following URL,
             //     http://hostname.org/?debug=foo=2,bar&whiz&bang=baz
             //
             // We would get the following object:
             //
-            //     $.gb.options: {
+            //     $.rib.options: {
             //         debug: {
             //             foo: '2',
             //             bar: true
@@ -134,7 +134,7 @@
             //     }
             //
             if (document.location.search.length) {
-                $.gb.options = $.gb.options || {};
+                $.rib.options = $.rib.options || {};
                 // Iterate over array of options, for example, with the exmaple
                 // above, we would get the following array:
                 //
@@ -181,7 +181,7 @@
                             opts = args;
                         }
                         // Assign this option its value, or make it true
-                        $.gb.options[name] = opts || true;
+                        $.rib.options[name] = opts || true;
                     }
                 );
             }
@@ -189,15 +189,15 @@
 
         _createMouseTracker: function(container) {
             var coord, offset = {};
-            if (!$.gb.debug('mousetrack'))
+            if (!$.rib.debug('mousetrack'))
                 return;
 
             coord = $('<div/>')
                 .attr({id:'coord'})
                 .appendTo(container)
-                .append('<div class="gb-drag-handle"/>')
+                .append('<div class="rib-drag-handle"/>')
                 .draggable({
-                    handle: '.gb-drag-handle',
+                    handle: '.rib-drag-handle',
                     scroll: false,
                     stack: 'body',
                 });
@@ -209,13 +209,13 @@
                 $('#windowCoords').text('x='+e.pageX+', y='+e.pageY);
             });
             coord.height($('#windowCoords').parent().outerHeight() +
-                         $('.gb-drag-handle').outerHeight());
+                         $('.rib-drag-handle').outerHeight());
 
-            if ($(':gb-layoutView').length) {
+            if ($(':rib-layoutView').length) {
                 $('<div/>').appendTo(coord).hide(0)
                     .append('<label>Layout: </label>')
                     .append('<span id="layoutCoords"/>');
-                $(':gb-layoutView').layoutView('option','contentDocument')
+                $(':rib-layoutView').layoutView('option','contentDocument')
                     .bind('mousemove', function (e) {
                         $('#layoutCoords').text('x='+e.pageX+', y='+e.pageY);
                     })
@@ -231,11 +231,11 @@
                     });
             }
 
-            if ($(':gb-liveView').length) {
+            if ($(':rib-liveView').length) {
                 $('<div/>').appendTo(coord).hide(0)
                     .append('<label>Live: </label>')
                     .append('<span id="liveCoords"/>');
-                $(':gb-liveView').liveView('option','contentDocument')
+                $(':rib-liveView').liveView('option','contentDocument')
                     .bind('mousemove', function (e) {
                         $('#liveCoords').text('x='+e.pageX+', y='+e.pageY);
                     })
@@ -380,7 +380,7 @@
 
             // save current project when change to project view
             if (type === "projectView") {
-                $.gb.pmUtils.syncCurrentProject();
+                $.rib.pmUtils.syncCurrentProject();
             }
             // Expose any primary tools for this view
             tools = $(el)[type]('option', 'primaryTools');
@@ -520,17 +520,17 @@
             });
         },
         _debugEnabled: function(flag) {
-            if (!$.gb || !$.gb.options || !$.gb.options.debug) {
+            if (!$.rib || !$.rib.options || !$.rib.options.debug) {
                 return false;
             }
             flag = flag && flag.toString();
-            if ($.gb.options.debug && !flag) {
+            if ($.rib.options.debug && !flag) {
                 return true;
             } else {
-                if ($.gb.options.debug[flag]) {
-                    return $.gb.options.debug[flag];
+                if ($.rib.options.debug[flag]) {
+                    return $.rib.options.debug[flag];
                 } else {
-                    return ($.gb.options.debug === flag);
+                    return ($.rib.options.debug === flag);
                 }
             }
         }
@@ -538,15 +538,11 @@
 })(jQuery);
 
 $(function() {
-
-    // FIXME: Remove all this fake ADM setup code once the remainder of
-    //        the code for guibuilder has been merged with this new plugin
-    //        model of coding...
     var fsUtils;
     /***************** handler functions ************************/
 
     function fsInitSuccess(fs) {
-        var cookieUtils = $.gb.cookieUtils,
+        var cookieUtils = $.rib.cookieUtils,
             cookieExpires = new Date("January 1, 2042");
         // if can't get the cookie(no this record), then add exportNotice cookie
         if (!cookieUtils.get("exportNotice")) {
@@ -556,12 +552,12 @@ $(function() {
         }
         // bind handlers for import and export buttons
         $(document).delegate('#importProj', "click", function () { $("#importFile").click(); });
-        $(document).delegate('#exportProj', "click", $.gb.pmUtils.exportProject);
+        $(document).delegate('#exportProj', "click", $.rib.pmUtils.exportProject);
 
         // init pmUtils
-        $.gb.pmUtils.init(function () {
+        $.rib.pmUtils.init(function () {
             var autoSave = function () {
-                $.gb.pmUtils.syncCurrentProject(function () {
+                $.rib.pmUtils.syncCurrentProject(function () {
                     setTimeout(autoSave, 3000);
                 });
             };
@@ -576,9 +572,9 @@ $(function() {
     /***************** handler functions end ************************/
 
     // init the sandbox file system
-    fsUtils = $.gb.fsUtils;
+    fsUtils = $.rib.fsUtils;
     fsUtils.initFS(fsUtils.fsType, fsUtils.fsSize, fsInitSuccess, fsInitFailed);
 
     // Actually invoke the plugin that sets up our app UI
-    $(document).guibuilder({debugMode: true, model: ADM});
+    $(document).builder({debugMode: true, model: ADM});
 });

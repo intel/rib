@@ -1,5 +1,5 @@
 /*
- * gui-builder - A simple WYSIWYG HTML5 app creator
+ * Rapid Interface Builder (RIB) - A simple WYSIWYG HTML5 app creator
  * Copyright (c) 2011-2012, Intel Corporation.
  *
  * This program is licensed under the terms and conditions of the
@@ -14,7 +14,7 @@
  *
  */
 $(function () {
-    var fsUtils = $.gb.fsUtils,
+    var fsUtils = $.rib.fsUtils,
     pmUtils = {
         _projectsInfo: {},
         _lastPid: 0,
@@ -44,7 +44,7 @@ $(function () {
             var allHandled;
             allHandled = brokenList.length + fineList.length;
             if (allHandled === dirCount) {
-                $.gb.pmUtils.showLastOpened(success, error);
+                $.rib.pmUtils.showLastOpened(success, error);
             }
         };
         // success handler for reading projects directory
@@ -119,7 +119,7 @@ $(function () {
     pmUtils.showLastOpened = function (success, error) {
         var pid, pInfos, lastOpened;
         lastOpened = null;
-        pInfos = $.gb.pmUtils._projectsInfo;
+        pInfos = $.rib.pmUtils._projectsInfo;
         // Go through pInfos to get the last opened
         for (pid in pInfos) {
             if (pInfos.hasOwnProperty(pid)) {
@@ -129,10 +129,10 @@ $(function () {
             }
         }
         if (lastOpened) {
-            $.gb.pmUtils.openProject(lastOpened, success, error);
+            $.rib.pmUtils.openProject(lastOpened, success, error);
         } else {
             // No project, create a default "Untitled" project
-            $.gb.pmUtils.createProject({"name": "Untitled"}, function () {
+            $.rib.pmUtils.createProject({"name": "Untitled"}, function () {
                 success && success();
             });
         }
@@ -192,7 +192,7 @@ $(function () {
             };
             config.design = newDesign;
             // TODO: Will we need to show a default page here?
-            newPage = $.gb.pageUtils.createNewPage(config);
+            newPage = $.rib.pageUtils.createNewPage(config);
             if (!newPage) {
                 console.log("Warning: create new page failed");
             }
@@ -260,7 +260,7 @@ $(function () {
      */
     pmUtils.setProject = function (pid, options) {
         var i, pInfo;
-        pid = pid || $.gb.pmUtils._activeProject;
+        pid = pid || $.rib.pmUtils._activeProject;
         pInfo = pmUtils._projectsInfo[pid];
         if (!(pid && pInfo)) {
             console.error("Invalid project to set");
@@ -344,7 +344,7 @@ $(function () {
 
         successHandler = function (result) {
             var design, project;
-            project = $.gb.JSONToProj(result);
+            project = $.rib.JSONToProj(result);
             design = project.design;
             if (design && (design instanceof ADMNode)) {
                 // set current pid as active pid
@@ -361,7 +361,7 @@ $(function () {
         // save current design
         pmUtils.syncCurrentProject(function() {
             // read the design file and build ADM design according it
-            $.gb.fsUtils.read(designPath, successHandler);
+            $.rib.fsUtils.read(designPath, successHandler);
         });
         return;
     };
@@ -532,13 +532,13 @@ $(function () {
             console.error("Error: Invalid pid for project");
         }
         design = ADM.getDesignRoot();
-        obj = $.gb.ADMToJSONObj(design);
+        obj = $.rib.ADMToJSONObj(design);
         // Following is for the serializing part
         if (typeof obj === "object") {
             obj.pInfo = pInfo;
             resultProject = JSON.stringify(obj);
             try {
-                $.gb.exportPackage(resultProject);
+                $.rib.exportPackage(resultProject);
             } catch (e) {
                 console.error("Export to package failed");
                 return false;
@@ -568,7 +568,7 @@ $(function () {
 
         reader.onloadend = function(e) {
             var options, design, resultProject;
-            resultProject = $.gb.zipToProj(e.target.result);
+            resultProject = $.rib.zipToProj(e.target.result);
             if (!resultProject) {
                 alert("Invalid imported project.");
                 return;
@@ -578,7 +578,7 @@ $(function () {
             design = resultProject.design;
 
             if (design && (design instanceof ADMNode)) {
-                $.gb.pmUtils.createProject(options, success, error, design);
+                $.rib.pmUtils.createProject(options, success, error, design);
             } else {
                 console.error("Imported project failed");
                 error && error();
@@ -625,13 +625,13 @@ $(function () {
                     fileEntry.moveTo(dirEntry, newName, success, error)
                 });
             };
-            $.gb.fsUtils.write(swap, data, successHandler, error);
+            $.rib.fsUtils.write(swap, data, successHandler, error);
         };
         // define callbacks
         syncDesign = function (pid, design, successHandler, error) {
             var designPath, data, obj;
             designPath = pmUtils.getDesignPath(pid);
-            obj = $.gb.ADMToJSONObj(design);
+            obj = $.rib.ADMToJSONObj(design);
             if (typeof obj === "object") {
                 data = JSON.stringify(obj);
                 saveWrite(designPath, data, successHandler, error);
@@ -715,6 +715,6 @@ $(function () {
         return arr.sort(orderFunc);
     };
 
-    /************ export pmUtils to $.gb **************/
-    $.gb.pmUtils = pmUtils;
+    /************ export pmUtils to $.rib **************/
+    $.rib.pmUtils = pmUtils;
 });

@@ -1,5 +1,5 @@
 /*
- * gui-builder - A simple WYSIWYG HTML5 app creator
+ * Rapid Interface Builder (RIB) - A simple WYSIWYG HTML5 app creator
  * Copyright (c) 2011-2012, Intel Corporation.
  *
  * This program is licensed under the terms and conditions of the
@@ -14,7 +14,7 @@
 
 (function($, undefined) {
 
-    $.widget('gb.paletteView', {
+    $.widget('rib.paletteView', {
 
         options: {
             model: null,
@@ -83,17 +83,17 @@
                     appendTo: 'body',
                     iframeFix: true,
                     containment: false,
-                    connectToSortable: $(':gb-layoutView')
+                    connectToSortable: $(':rib-layoutView')
                                        .layoutView('option', 'contentDocument')
                                        .find('.ui-page-active'),
                     helper: 'clone',
                     refreshPositions: true,
                     stack: '.layoutView iframe',
                     revertDuration: 0,
-                    filter: function() { return $.gb.dndfilter($(this)); },
+                    filter: function() { return $.rib.dndfilter($(this)); },
                     start: function(event,ui){
                         var d = $(this).draggable('option','connectToSortable'),
-                            f = $(':gb-layoutView')
+                            f = $(':rib-layoutView')
                                     .layoutView('option','contentDocument'),
                             s = [], id;
 
@@ -140,7 +140,7 @@
                         });
                     },
                     stop: function(event,ui){
-                        var f = $(':gb-layoutView')
+                        var f = $(':rib-layoutView')
                                     .layoutView('option','contentDocument');
                         f = f.find('#'+ADM.getActivePage().getProperty('id'));
 
