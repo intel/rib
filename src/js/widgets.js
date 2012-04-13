@@ -1491,11 +1491,6 @@ var BWidgetRegistry = {
             e.node = ADM.getDesignRoot().findNodeByUid(ADM.getSelected());
             toggleCollapse(e);
             ADM.bind("selectionChanged", toggleCollapse);
-            // Fixup "Collapsible" to make the content div jQM adds at runtime
-            // be a "sortable" as well
-            $('.ui-collapsible-content', domNode)
-                .addClass('nrc-sortable-container')
-                .attr('data-uid', admNode.getUid());
             return domNode;
         },
     },
