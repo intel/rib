@@ -354,11 +354,14 @@ $(function() {
                         s.overflowOffset.left = sP.offsetWidth/2
                             - s.options.scrollSensitivity;
                     }
+
+                    targets.removeClass('ui-state-active');
+                    // The highlighted container should always be where the
+                    // placeholder is located
+                    ui.placeholder.closest('.nrc-sortable-container')
+                        .addClass('ui-state-active');
                 },
                 over: function(event, ui){
-                    $('.ui-sortable.ui-state-active')
-                        .removeClass('ui-state-active');
-                    $(this).addClass('ui-state-active');
                     trackOffsets('over:    ',ui,$(this).data('sortable'));
 
                     if (ui && ui.placeholder) {
