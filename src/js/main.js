@@ -541,25 +541,6 @@
 
 $(function() {
     /***************** handler functions ************************/
-    function showErrorDialog(extraMsg) {
-        var errorMessage = "<div style='padding:0.5em;line-height:180%;font-size:0.85em'>" +
-                "RIB now only supports 'google-chrome' and 'Chromium-browser'.<br>" +
-                "Please Open Chrome or Chromium with <b>'--allow-file-access-from-files --enable-file-cookies'</b> options.<br>" +
-                "Close the browser if you have already opened it before.<br>";
-        if (extraMsg) {
-            errorMessage += extraMsg;
-        }
-        errorMessage += "</div>";
-        $(errorMessage).dialog({
-                autoOpen: true,
-                modal: true,
-                width: Number($(document).width()/3),
-                height: Number($(document).height()/3),
-                resizable: false,
-                title: "RIB"
-        });
-    }
-
     function fsInitSuccess(fs) {
         // bind handlers for import and export buttons
         $(document).delegate('#importProj', "click", function () {
@@ -606,17 +587,23 @@ $(function() {
     }
     /***************** handler functions end ************************/
 
-    var fsUtils, cookieUtils, supportedBrowser, supportedOS;
+    var fsUtils, cookieUtils, supportedBrowser, supportedOS,
+        errorMsg, redirect = 'https://01.org/rib';
     // Detect browser and platform
     supportedBrowser = /(Chrome|Chromium)\/(\S+)/;
     supportedOS = /(Win|Linux|Mac)/;
-    if (!supportedBrowser.test(navigator.userAgent) || !supportedOS.test(navigator.platform)) {
-        if (!confirm("Warning: Unsupported browser!\n" +
-                    "The browser and/or OS you are using is not one" +
-                    " we have tested and know to work properly.\n\n" +
-                    "We can not ensure the application will function as expected." +
-                    "\nContinue anyway?")) {
-            showErrorDialog("Access <a href=https://www.google.com/chrome>Here to download Chrome</a> please.");
+    if (!supportedBrowser.test(navigator.userAgent) ||
+        !supportedOS.test(navigator.platform)) {
+        errorMsg = 'Only Google Chrome or Chromium are supported right now.  ' +
+                   'Unfortunately, it seems you are not using one of these, ' +
+                   'but instead:\n\n\t' + navigator.userAgent + '\n\n' +
+                   'To learn more about Rapid Interface Builder and how to ' +
+                   'use it, please visit our project website at:\n\n\t' +
+                    redirect + '\n\n' +
+                   'You will be redirected there now (or press "Cancel" to ' +
+                   'try Rapid Interface Builder at your own risk).';
+        if (confirm(errorMsg)) {
+            document.location = redirect;
             return;
         }
     }
