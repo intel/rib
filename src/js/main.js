@@ -540,18 +540,27 @@
 })(jQuery);
 
 $(function() {
-    var fsUtils;
     /***************** handler functions ************************/
+    function showErrorDialog(extraMsg) {
+        var errorMessage = "<div style='padding:0.5em;line-height:180%;font-size:0.85em'>" +
+                "RIB now only supports 'google-chrome' and 'Chromium-browser'.<br>" +
+                "Please Open Chrome or Chromium with <b>'--allow-file-access-from-files --enable-file-cookies'</b> options.<br>" +
+                "Close the browser if you have already opened it before.<br>";
+        if (extraMsg) {
+            errorMessage += extraMsg;
+        }
+        errorMessage += "</div>";
+        $(errorMessage).dialog({
+                autoOpen: true,
+                modal: true,
+                width: Number($(document).width()/3),
+                height: Number($(document).height()/3),
+                resizable: false,
+                title: "RIB"
+        });
+    }
 
     function fsInitSuccess(fs) {
-        var cookieUtils = $.rib.cookieUtils,
-            cookieExpires = new Date("January 1, 2042");
-        // if can't get the cookie(no this record), then add exportNotice cookie
-        if (!cookieUtils.get("exportNotice")) {
-            if(!cookieUtils.set("exportNotice", "true", cookieExpires)) {
-                console.error("Set exportNotice cookie failed.");
-            }
-        }
         // bind handlers for import and export buttons
         $(document).delegate('#importProj', "click", function () {
             $("#importFile").click();
@@ -589,14 +598,48 @@ $(function() {
     }
 
     function fsInitFailed() {
-        alert('File system initiation failed."Import" and "Export" feature can not work.');
+        if (window.location.protocol === "file:") {
+            showErrorDialog();
+        } else {
+            alert('Unable to init filesystem.');
+        }
     }
     /***************** handler functions end ************************/
 
-    // init the sandbox file system
-    fsUtils = $.rib.fsUtils;
-    fsUtils.initFS(fsUtils.fsType, fsUtils.fsSize, fsInitSuccess, fsInitFailed);
-
+    var fsUtils, cookieUtils, supportedBrowser, supportedOS;
+    // Detect browser and platform
+    supportedBrowser = /(Chrome|Chromium)\/(\S+)/;
+    supportedOS = /(Win|Linux|Mac)/;
+    if (!supportedBrowser.test(navigator.userAgent) || !supportedOS.test(navigator.platform)) {
+        if (!confirm("Warning: Unsupported browser!\n" +
+                    "The browser and/or OS you are using is not one" +
+                    " we have tested and know to work properly.\n\n" +
+                    "We can not ensure the application will function as expected." +
+                    "\nContinue anyway?")) {
+            showErrorDialog("Access <a href=https://www.google.com/chrome>Here to download Chrome</a> please.");
+            return;
+        }
+    }
+    cookieUtils = $.rib.cookieUtils;
+    // if can't get the cookie(no this record), then add exportNotice cookie
+    if (!cookieUtils.get("exportNotice")) {
+        if(!cookieUtils.set("exportNotice", "true")) {
+            // Failed to set the cookie
+            if (window.location.protocol === "file:") {
+                console.error("Browser needs '--allow-file-access-from-files --enable-file-cookies' option." +
+                        "\nClose the browser if you have already opened it before.");
+            } else {
+                console.error("Set exportNotice cookie failed.");
+            }
+        }
+    }
     // Actually invoke the plugin that sets up our app UI
     $(document).builder({debugMode: true, model: ADM});
+
+    // init the sandbox file system
+    fsUtils = $.rib.fsUtils;
+    // Try to init a temporary filesystem to test '--allow-file-access-from-files' option
+    fsUtils.initFS(window.TEMPORARY, 10, function () {
+        fsUtils.initFS(fsUtils.fsType, fsUtils.fsSize, fsInitSuccess, fsInitFailed);
+    }, fsInitFailed);
 });

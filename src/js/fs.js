@@ -515,7 +515,7 @@ $(function() {
             get:function (name) {
                     var cookies, record, value = null, i;
                     if(typeof name !== "string") {
-                        alert("Invalid cookie name.");
+                        console.error("Invalid cookie name.");
                         return value;
                     }
                     if(document.cookie && document.cookie !== "") {
@@ -548,7 +548,7 @@ $(function() {
             set: function (name, value, expires) {
                      var text;
                      if(typeof name !== "string" || typeof value !== "string") {
-                         alert("Invalid cookie name or name.");
+                         console.error("Invalid cookie name or value.");
                          return false;
                      }
                      text = encodeURIComponent(name) + "=" + encodeURIComponent(value);
@@ -559,8 +559,7 @@ $(function() {
                      if(document.cookie && document.cookie !== "") {
                          return true;
                      } else {
-                         alert("Open Chrome with '--enable-file-cookies' please." +
-                                 "\nClose the browser if you have already opened it before.");
+                         console.warn("Failed to set cookie.");
                          return false;
                      }
                  }
