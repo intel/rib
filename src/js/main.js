@@ -18,7 +18,7 @@
             debugMode: false,
             embedded: false,
             locale: 'en_US',
-            model: undefined,
+            model: undefined
         },
 
         _create: function() {
@@ -199,7 +199,7 @@
                 .draggable({
                     handle: '.rib-drag-handle',
                     scroll: false,
-                    stack: 'body',
+                    stack: 'body'
                 });
 
             $('<div/>').appendTo(coord)
@@ -276,7 +276,7 @@
                 .panel({
                     position: 'left',
                     maxSize: '480',
-                    minSize: '160',
+                    minSize: '160'
                 })
                 .append('<div class="pageView flex0 vbox"></div>')
                 .append('<div class="outlineView flex0 vbox"></div>')
@@ -287,7 +287,7 @@
                 .panel({
                     position: 'right',
                     maxSize: '480',
-                    minSize: '160',
+                    minSize: '160'
                 })
                 .append('<div class="panel-section-header flex0 vbox"><span class="title">Widget Categories</span></div>')
                 .append('<div class="widgetView flex0 vbox"></div>')
@@ -303,7 +303,7 @@
                 .panel({
                     position: 'left',
                     maxSize: '480',
-                    minSize: '160',
+                    minSize: '160'
                 })
                 .append('<div class="pageView flex0 vbox"></div>')
                 .append('<div class="outlineView flex0 vbox"></div>')
@@ -344,7 +344,7 @@
             // TODO: Get starting tab from session cookie
             container.tabs({
                 selected: 1,
-                show: $.proxy(this._tabChanged, this),
+                show: $.proxy(this._tabChanged, this)
             });
 
             // Create the navbar
