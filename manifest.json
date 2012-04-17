@@ -1,0 +1,19 @@
+{
+  "name": "Rapid Interface Builder",
+  "version": "0.0.1",
+  "description": "Rapid Interface Builder (RIB) is a browser-based design tool for quickly prototyping and creating the user interface for web applications. Layout your UI by dropping widgets onto a canvas. Run the UI in an interactive 'Preview mode'. Export the generated HTML and Javascript. It's that simple!",
+  "icons": {
+    "16": "src/assets/rib-16.png",
+    "48": "src/assets/rib-48.png",
+    "128": "src/assets/rib-128.png" },
+  "offline_enabled": true,
+  "homepage_url": "https://01.org/rib",
+  "app": {
+    "launch": {
+        "local_path": "index.html",
+        "container": "panel",
+        "height": 1024,
+        "width": 1280
+    }
+  }
+}

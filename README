@@ -78,6 +78,7 @@ File:					License:	Copyright Holder:
 -----					--------	-----------------
 build/jslint.js				BSD-like	Douglas Crockford[2,3]
 					(w/ conditions)
+build/crxmake.sh			BSD		Google[7]
 
 Notes:
 [2] douglas@crockford.com
@@ -85,3 +86,4 @@ Notes:
 [4] einar@jsbeautifier.org
 [5] stuart@stuartk.co.uk
 [6] arno@renevier.net
+[7] Copyright 2011 Google (http://code.google.com/chrome/extensions/crx.html)
