@@ -1838,6 +1838,13 @@ ADMNode.prototype.getProperties = function () {
     defaults = BWidget.getPropertyDefaults(this.getType());
     for (i in defaults) {
         if (defaults.hasOwnProperty(i)) {
+            var validIn = BWidget.getPropertySchema(this.getType(), i).validIn,
+                invalidIn =
+                    BWidget.getPropertySchema(this.getType(), i).invalidIn;
+            if (validIn && this.getParent().getType() !== validIn)
+                continue;
+            if (invalidIn && this.getParent().getType() === invalidIn)
+                continue;
             props[i] = this._properties[i];
             if (props[i] === undefined) {
                 props[i] = this.generateUniqueProperty(i);
