@@ -422,7 +422,7 @@
 
                 content.find('#' + valueId)
                     .change(node, function (event) {
-                        var updated, node, element, type, value;
+                        var updated, node, element, type, value, ret;
                         updated = event.target.id.replace(/-value/,''),
                         node = event.data;
 
@@ -432,7 +432,10 @@
                         }
                         value = validValue($(this),
                             BWidget.getPropertyType(node.getType(), updated));
-                        ADM.setProperty(node, updated, value);
+                        ret = ADM.setProperty(node, updated, value);
+                        if(ret.result === false) {
+                            $(this).val(node.getProperty(updated));
+                        }
                         event.stopPropagation();
                         return false;
                     });

@@ -1938,6 +1938,11 @@ ADMNode.prototype.setProperty = function (property, value, data, raw) {
             console.error("Error: attempted to set invalid id");
             return rval;
         }
+
+        if (value === "" && this._inheritance[0] === "Page") {
+            console.error("Error: page id cannot be null");
+            return rval;
+        }
     }
 
     if (this._properties[property] !== value) {
