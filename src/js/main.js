@@ -580,7 +580,8 @@ $(function() {
 
     function fsInitFailed() {
         if (window.location.protocol === "file:") {
-            showErrorDialog();
+            alert("Please open browser with '--allow-file-access-from-files --enable-file-cookies' options.\n" +
+                    "\nClose the browser if you have already opened it before.");
         } else {
             alert('Unable to init filesystem.');
         }
