@@ -77,6 +77,8 @@
                     console.warn("Multiple file import not supported");
                 }
             }
+            // Clear the value
+            $(e.currentTarget).val('');
         },
         _setOption: function(key, value) {
             switch (key) {
