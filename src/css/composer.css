@@ -222,6 +222,7 @@ div.ui-drag-header[data-role="collapsible-set"]:before,
 }
 .ui-header[class*="ui-bar-"],
 .ui-footer[class*="ui-bar-"] {
+    color: #333;
     background: #ffffff;
     font-weight: normal;
     text-shadow: none;
