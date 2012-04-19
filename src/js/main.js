@@ -627,7 +627,7 @@ $(function() {
     // init the sandbox file system
     fsUtils = $.rib.fsUtils;
     // Try to init a temporary filesystem to test '--allow-file-access-from-files' option
-    fsUtils.initFS(window.TEMPORARY, 10, function () {
+    requestFileSystem(window.TEMPORARY, 10,  function(filesystem) {
         fsUtils.initFS(fsUtils.fsType, fsUtils.fsSize, fsInitSuccess, fsInitFailed);
     }, fsInitFailed);
 });
