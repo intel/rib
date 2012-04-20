@@ -31,7 +31,7 @@ Intel     src/js/views/project.js              APLv2          N/A
 Intel     src/js/views/code.js                 APLv2          N/A
 Intel     src/js/views/layout.js               APLv2          N/A
 Intel     src/js/views/palette.js              APLv2          N/A
-Intel     src/js/views/view-core.js            APLv2          N/A
+Intel     src/js/views/base.js                 APLv2          N/A
 Intel     src/js/views/property.js             APLv2          N/A
 Intel     src/js/views/page.js                 APLv2          N/A
 Intel     src/assets/devices.json              APLv2          N/A

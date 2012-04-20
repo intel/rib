@@ -36,26 +36,35 @@
                 this._bindADMEvents(o.model);
             }
 
-            $('<div/>').addClass(this.widgetName)
-                .text(this.widgetName)
-                .appendTo(this.element);
+            this.element.addClass(this.widgetName)
 
-            this.options.primaryTools = this._createPrimaryTools();
-            this.options.secondaryTools = this._createSecondaryTools();
-
-            this.refresh(null, this);
+            if (this._createPrimaryTools)
+                this.options.primaryTools = this._createPrimaryTools();
+            if (this._createSecondaryTools)
+                this.options.secondaryTools = this._createSecondaryTools();
 
             return this;
         },
 
+        _init: function() {
+            var o = this.options,
+                e = this.element;
+
+            this.refresh && this.refresh(null, this);
+        },
+
         _setOption: function(key, value) {
+            // Chain up to $.Widget _setOptions()
+            // FIXME: In jquery UI 1.9 and above, instead use
+            //    this._super('_setOption', key, value)
+            $.Widget.prototype._setOption.apply(this, arguments);
+
             switch (key) {
                 // Should this REALLY be done here, or plugin registration in
                 // the "host"... using the functions mapped in widget options?
                 case 'model':
                     this._unbindADMEvents();
                     this._bindADMEvents(value);
-                    this.refresh(null, this);
                     break;
                 default:
                     break;
@@ -67,24 +76,6 @@
             $(this.element).find('.'+this.widgetName).remove();
             this.options.primaryTools.remove();
             this.options.secondaryTools.remove();
-        },
-
-        refresh: function(event, widget) {
-            widget = widget || this;
-
-            // Update the UI here...
-
-        },
-
-        // Private functions
-        _createPrimaryTools: function() {
-            return $('<div/>').addClass('hbox').hide()
-                .append('<button">Primary Tools</button>');
-        },
-
-        _createSecondaryTools: function() {
-            return $('<div/>').addClass('hbox').hide()
-                .append('<button">Secondary Tools</button>');
         },
 
         _bindADMEvents: function(a) {
@@ -162,22 +153,7 @@
             widget.designRoot = d;
 
             // Finally, redraw our view since the ADMDesign root has changed
-            widget.refresh(event, widget);
-        },
-
-        _selectionChangedHandler: function(event, widget) {
-            widget = widget || this;
-            widget.refresh(event, widget);
-        },
-
-        _activePageChangedHandler: function(event, widget) {
-            widget = widget || this;
-            widget.refresh(event, widget);
-        },
-
-        _modelUpdatedHandler: function(event, widget) {
-            widget = widget || this;
-            widget.refresh(event, widget);
+            widget.refresh && widget.refresh(event, widget);
         },
     });
 })(jQuery);

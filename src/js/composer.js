@@ -239,9 +239,11 @@ $(function() {
             if (adm && bw) {
                 admNode = adm.getDesignRoot()
                     .findNodeByUid($(node).attr('data-uid')),
-                widgetType = admNode.getType(),
-                delegate = bw.getWidgetAttribute(widgetType, 'delegate'),
-                events = bw.getWidgetAttribute(widgetType, 'events');
+                widgetType = admNode && admNode.getType(),
+                delegate = widgetType &&
+                           bw.getWidgetAttribute(widgetType, 'delegate'),
+                events = widgetType &&
+                         bw.getWidgetAttribute(widgetType, 'events');
 
                 if (delegate) {
                     if (typeof delegate === "function") {

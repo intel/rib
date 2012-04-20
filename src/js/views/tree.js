@@ -14,11 +14,7 @@
 
 (function($, undefined) {
 
-    $.widget('rib.treeView', {
-
-        options: {
-            model: null
-        },
+    $.widget('rib.treeView', $.rib.baseView, {
 
         enableKeyNavigation: function() {
             var o = this.options,
@@ -34,6 +30,7 @@
             });
 
         },
+
         _keydownHandler: function (e) {
             var selected, focused, focusedIndex, items, focusing;
             selected = $(this).find(".ui-selected");
@@ -74,9 +71,13 @@
         },
 
         _setOption: function(key, value) {
+            // Chain up to $.Widget _setOptions()
+            // FIXME: In jquery UI 1.9 and above, instead use
+            //    this._super('_setOption', key, value)
+            $.rib.baseView.prototype._setOption.apply(this, arguments);
+
             switch (key) {
                 case 'model':
-                    this.options.model = value;
                     this.refresh();
                     break;
                 default:
@@ -86,11 +87,6 @@
 
         _toTreeModel: function(model) {
             return model;
-        },
-
-        destroy: function() {
-            // TODO: unbind any ADM event handlers
-            $(this.element).find('.'+this.widgetName).remove();
         },
 
         refresh: function(event, widget) {
