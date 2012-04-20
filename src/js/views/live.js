@@ -87,14 +87,20 @@
                     $("option:selected", this).each(function () {
                         widget._screenHeight.val($(this).data('deviceInfo').screen.height);
                         widget._screenWidth.val($(this).data('deviceInfo').screen.width);
-                        widget._rotating = false;
+                        widget._projectDevice.screenHeight = widget._screenHeight.val();
+                        widget._projectDevice.screenWidth = widget._screenWidth.val();
+                        widget._projectDevice.rotating = false;
+                        widget._projectDevice.name = $(this).text();
+                        $.rib.pmUtils.pInfoDirty = true;
                         widget._setDevice();
                         if (widget._recentDevices) {
                             var recentDevices = {},
-                                recentOptions = widget._recentDevices.find("option");
-                            widget._findOptionByText(widget._recentDevices,
-                                $(this).text())
-                                .insertAfter(recentOptions.first());
+                                recentOptions = widget._recentDevices.find("option"),
+                                recentOption = widget._findOptionByText(widget._recentDevices,
+                                $(this).text());
+                            if (recentOption.length == 0 )
+                                recentOption = $('<option/>').text($(this).text());
+                            recentOption.insertAfter(recentOptions.first());
                             if (recentOptions.length > 6)
                                 recentOptions.last().remove();
                             recentDevices.devices = [];
@@ -121,11 +127,11 @@
             });
             $.getJSON("src/assets/devices.json", function (data) {
                 widget._sysDevices = data;
-                widget._refreshDeviceList();
+                widget._refreshDeviceList(widget._projectDevice.name);
                 $.rib.fsUtils.read("devices.json", function(result) {
                     try {
                         widget._userDevices = $.parseJSON(result);
-                        widget._refreshDeviceList();
+                        widget._refreshDeviceList(widget._projectDevice.name);
                     } catch(e) {
                         alert(e.stack);
                         return false;
@@ -177,7 +183,8 @@
                 .appendTo(deviceToolbar)
                 .click( function () {
                     var screenWidth = widget._screenWidth.val();
-                    widget._rotating = !widget._rotating;
+                    widget._projectDevice.rotating = !widget._projectDevice.rotating;
+                    $.rib.pmUtils.pInfoDirty = true;
                     widget._screenWidth.val(widget._screenHeight.val());
                     widget._screenHeight.val(screenWidth);
                     widget._setDevice();
@@ -192,6 +199,8 @@
             widget._screenWidth =
                 $('<input name="screenWidth" type="number" min="0" class="screenCoordinate"/>')
                 .change( function () {
+                    widget._projectDevice.screenWidth = $(this).val();
+                    $.rib.pmUtils.pInfoDirty = true;
                     widget._setDevice();
                 })
                 .appendTo(deviceToolbar);
@@ -199,6 +208,8 @@
             widget._screenHeight =
                 $('<input name="screenHeight" type="number" min="0" class="screenCoordinate"/>')
                 .change( function () {
+                    widget._projectDevice.screenHeight = $(this).val();
+                    $.rib.pmUtils.pInfoDirty = true;
                     widget._screenWidth.trigger('change');
                 })
                 .appendTo(deviceToolbar);
@@ -309,9 +320,13 @@
                 deviceSelect.trigger('change');
             }
         },
+        _getSelectedDeviceInfo: function () {
+            return this._deviceSelect.find("option:selected")
+                .data('deviceInfo');
+        },
 
-        _cloneSelectedDeviceInfo: function (deviceInfo, screenWidth, screenHeight) {
-            return $.extend(true, {}, this._deviceSelect.find("option:selected").data('deviceInfo'));
+        _cloneSelectedDeviceInfo: function () {
+            return $.extend(true, {}, this._getSelectedDeviceInfo());
         },
 
         _modifyScreenSize: function (deviceInfo, screenWidth, screenHeight) {
@@ -334,7 +349,7 @@
             var deviceSkin, scaleW, scaleH,
             //First, we clone a device info and change screen property if rotated
                 deviceInfo = this._cloneSelectedDeviceInfo();
-            if (this._rotating) {
+            if (this._projectDevice.rotating) {
                 $.extend(true, deviceInfo, {
                     screen: {
                         width: deviceInfo.screen.height,
@@ -350,7 +365,8 @@
             }
 
             //If modified manully by user, scale screen offsets and recaculate skin size
-            this._modifyScreenSize(deviceInfo, this._screenWidth.val(), this._screenHeight.val());
+            this._modifyScreenSize(deviceInfo, this._projectDevice.screenWidth,
+                    this._projectDevice.screenHeight);
 
             // TODO: This may be better managed by reading and applying
             //       per-device CSS files from the filesystem at run time.
@@ -381,7 +397,7 @@
                 maxHeight: deviceInfo.skin.height + 'px',
             });
             deviceSkin = this._deviceWrapper.find('img').attr('src', deviceInfo.skin.href);
-            if (this._rotating)
+            if (this._projectDevice.rotating)
                 deviceSkin.css({
                     height: deviceInfo.skin.width + 'px',
                     width: deviceInfo.skin.height + 'px',
@@ -394,6 +410,7 @@
                     width: deviceInfo.skin.width + 'px',
                     '-webkit-transform': 'rotate(0deg)',
                 });
+
         },
 
         _createPrimaryTools: function() {
@@ -402,6 +419,40 @@
 
         _createSecondaryTools: function() {
             return $(null);
+        },
+
+        _designResetHandler: function(event, widget) {
+            var activeProject, selectedDeviceInfo;
+
+            widget = widget || this;
+            $.rib.baseView.prototype._designResetHandler.call(this, event, widget);
+            if (!widget._projectDevice)
+                widget._projectDevice = {name: "Phones",
+                    screenWidth: 320, screenHeight: 480};
+            activeProject = $.rib.pmUtils.getActive();
+            if (activeProject) {
+                if ($.rib.pmUtils._projectsInfo[activeProject].device)
+                    widget._projectDevice =
+                        $.rib.pmUtils._projectsInfo[activeProject].device;
+                else
+                    $.rib.pmUtils._projectsInfo[activeProject].device =
+                        widget._projectDevice;
+            }
+            widget._refreshDeviceList(widget._projectDevice.name);
+            selectedDeviceInfo = widget._getSelectedDeviceInfo();
+            if (selectedDeviceInfo) {
+                if (!widget._projectDevice.screenWidth)
+                    widget._projectDevice.screenWidth =
+                        selectedDeviceInfo.screen.widget;
+                if (!widget._projectDevice.screenHeight)
+                    widget._projectDevice.screenHeight =
+                        selectedDeviceInfo.screen.height;
+                widget._screenHeight.val(widget._projectDevice.screenHeight);
+                widget._screenWidth.val(widget._projectDevice.screenWidth);
+                widget._setDevice();
+            }
+            // Finally, redraw our view since the ADMDesign root has changed
+            widget.refresh(event, widget);
         },
 
         _activePageChangedHandler: function(event, widget) {
