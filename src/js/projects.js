@@ -266,11 +266,7 @@ $(function () {
             console.error("Invalid project to set");
         }
         // save setting info into design
-        for (i in options) {
-            if (options.hasOwnProperty(i)) {
-                pInfo[i] = options[i];
-            }
-        }
+        $.extend(true, pInfo, options);
         pmUtils._projectsInfo[pid] = pInfo;
         pmUtils.pInfoDirty = true;
         return true;
