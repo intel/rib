@@ -368,7 +368,7 @@
                  height: 454,
                  width: 770,
                  resizable: false,
-                 title: 'New Page',
+                 title: 'Add Page',
                  open: self._dialogOpenHandler,
                  buttons: { 'Add Page': this._dialogCloseHandler,
                             'Cancel': function() {
