@@ -213,7 +213,7 @@
             if (node === null || node === undefined) {
                 node = ADM.getActivePage();
                 if (node === null || node === undefined) {
-                    $('#property_content').empty()
+                    content.empty()
                         .append('<label>Nothing Selected</label>');
                     return;
                 }
@@ -225,10 +225,9 @@
                 .children(':first')
                     .addClass('title')
                     .text(BWidget.getDisplayLabel(type)+' Properties');
-            content.empty()
-                .append('<div class="propertyItems"></div>');
-            propertyItems = content.find('div')
-                .addClass("propertyItems");
+            content.empty();
+            propertyItems = $('<div/>').addClass("propertyItems")
+                                    .appendTo(content);
             props = node.getProperties();
             options = node.getPropertyOptions();
             // iterate property of node
@@ -254,7 +253,7 @@
                         // initial value of checkbox
                         if ((node.getProperty (p) === true) ||
                             (node.getProperty (p) === "true")) {
-                            $("#" + valueId).attr("checked", true);
+                            value.find("#" + valueId).attr("checked", true);
                         }
                         break;
                     case "record-array":
