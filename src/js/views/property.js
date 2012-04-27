@@ -234,10 +234,6 @@
             // iterate property of node
             for (p in props) {
                 labelVal = p.replace(/_/g,'-');
-                labelVal = labelVal.charAt(0).toUpperCase()+labelVal.substring(1);
-                if (labelVal === "Id") {
-                    labelVal = labelVal.toUpperCase(); 
-                }
                 valueId = p+'-value';
                 valueVal = props[p];
                 propType = BWidget.getPropertyType(type, p);

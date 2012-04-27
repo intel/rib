@@ -802,6 +802,12 @@ div.propertyItems > div > * {
 table#selectOption {
     width: 100%;
 }
+div.propertyItems label[for] {
+    text-transform: capitalize;
+}
+div.propertyItems label[for|=id] {
+    text-transform: uppercase;
+}
 
 /*
   Widget View widget styles
