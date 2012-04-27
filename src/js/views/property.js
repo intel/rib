@@ -252,7 +252,8 @@
                             .appendTo(value);
 
                         // initial value of checkbox
-                        if (node.getProperty (p) === true) {
+                        if ((node.getProperty (p) === true) ||
+                            (node.getProperty (p) === "true")) {
                             $("#" + valueId).attr("checked", true);
                         }
                         break;
