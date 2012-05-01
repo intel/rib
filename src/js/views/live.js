@@ -208,7 +208,10 @@
 
             widget = widget || this;
 
-            if (!widget.element.data('visible')) return;
+            if (!widget.element.data('visible') &&
+                (event && !event.name === 'designReset')) {
+                return;
+            }
 
             iframe = widget.options.iframe;
             if (iframe.length) {
@@ -363,6 +366,9 @@
                 return;
             }
 
+            widget._setPreviewPage(id);
+
+/*
             win = widget.options.contentDocument[0].defaultView;
 
             if (win && win.$ && win.$.mobile) {
@@ -388,6 +394,7 @@
                         .append(page);
                 }
             }
+*/
         },
 
         _modelUpdatedHandler: function(event, widget) {
@@ -402,7 +409,11 @@
             win = widget.options.contentDocument[0].defaultView;
 
             if (win && win.$ && win.$.mobile) {
-                win.$.mobile.changePage("#" + pageId, {transition: "none"});
+                if (win.$.mobile.activePage &&
+                    win.$.mobile.activePage.attr('id') !== pageId) {
+                    win.$.mobile.changePage("#" + pageId, {transition: "none"});
+                }
+                $.rib && $.rib.updateThumbnail && $.rib.updateThumbnail();
             }
         },
     });

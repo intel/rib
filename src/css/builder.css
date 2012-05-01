@@ -8,10 +8,9 @@
  *
  */
 .test-thumbnail {
-    border: 1px dashed purple;
-    position: absolute;
+    position: relative;
     top: 0px;
-    right: 0px;
+    left: 0px;
     display: inline-block;
     background-color: white;
 }

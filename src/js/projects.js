@@ -458,6 +458,39 @@ $(function () {
     };
 
     /**
+     * Get project Thumbnail
+     *
+     * @param {String} project id
+     * @return {String/null} return project thumbnail uri or null if fails
+     */
+    pmUtils.getThumbnail = function (pid) {
+        var pInfo = pmUtils._projectsInfo[pid];
+        if (!pInfo) {
+            console.error("Error: Invalid pid for project");
+            return null;
+        }
+        return pmUtils._projectsInfo[pid].thumbnail;
+    };
+
+    /**
+     * Set project Thumbnail
+     *
+     * @param {String} project id
+     * @param {String} thumbnail URI
+     * @return {Bool} return true if success, false when fails
+     */
+    pmUtils.setThumbnail = function (pid, uri) {
+        var pInfo = pmUtils._projectsInfo[pid];
+        if (!pInfo) {
+            console.error("Error: Invalid pid for project");
+            return false;
+        }
+        pInfo.thumbnail = uri.toString();
+        pmUtils.pInfoDirty = true;
+        return true;
+    };
+
+    /**
      * Get project tags
      *
      * @param {String} project id

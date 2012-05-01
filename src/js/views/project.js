@@ -90,6 +90,10 @@
             if(!pidArr){
                 console.error("Error: failed to list all projects.");
             }
+
+            // Update the thumbnail
+            $.rib.updateThumbnail && $.rib.updateThumbnail();
+
             $.each(pidArr, function(index, value){
                 // value is an object contains {"pid":XX, "date":XXX}
                 widget.createProjectBox(value.pid, container, widget);
@@ -97,9 +101,6 @@
             // Mark the active project box
             $('#'+$.rib.pmUtils.getActive(), container)
                 .addClass('ui-state-active');
-
-            // Update the thumbnail
-//            $.rib.updateThumbnail && $.rib.updateThumbnail();
         },
 
         // Private functions
@@ -305,8 +306,8 @@
                         .appendTo(box);
             content = $('<div />').addClass('content flex1 hbox')
                       .appendTo(box);
-            //TODO: imgPath = pmUtils.getThumbnail(pid);
-            imgPath = 'src/css/images/emptyProjectThumbnail.png';
+            imgPath = $.rib.pmUtils.getThumbnail(pid);
+            imgPath = imgPath || 'src/css/images/emptyProjectThumbnail.png';
             thumbnail= $('<img />').attr('src', imgPath);
             $('<div />').addClass('thumbnail flex1')
                         .append(thumbnail)

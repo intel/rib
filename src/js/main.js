@@ -631,43 +631,95 @@ $(function() {
         fsUtils.initFS(fsUtils.fsType, fsUtils.fsSize, fsInitSuccess, fsInitFailed);
     }, fsInitFailed);
 
-    $.rib.thumbnail = $('<svg class="test-thumbnail" xmlns="http://www.w3.org/2000/svg"><foreignObject id="svg-container" width="100%" height="100%"><html class="thumbnail-content" xmlns="http://www.w3.org/1999/xhtml"><head></head><body><em>SVG</em></body></html></foreignObject></svg>')
-        .width('320px')
-        .height('480px')
-        .draggable()
-        .appendTo('body #projectView .stage');
+    $.rib.thumbnail = $('<svg class="test-thumbnail" xmlns="http://www.w3.org/2000/svg"><style type="text/css" ><![CDATA[ @import url("src/css/jquery.mobile.structure-1.0.css"); @import url("src/css/jquery.mobile-1.0.css"); @import url("src/css/web-ui-fw-theme.css"); @import url("src/css/web-ui-fw-widget.css"); ]]> </style><foreignObject id="svg-container" width="100%" height="100%"><em>SVG</em></foreignObject></svg>');
+    $.rib.tnWrapper = $('<div class="thumbnail-wrapper" />')
+         .append($.rib.thumbnail).appendTo('#projectView .stage');
 
     $.rib.updateThumbnail = function() {
         var f = $.rib.thumbnail && $('#svg-container', $.rib.thumbnail),
-            c = $(':rib-liveView').liveView('option','contentDocument'),
+            o = $(':rib-liveView').liveView('option'),
+            c = o.contentDocument,
+            i = o.iframe,
+            d = $(c[0].documentElement).clone(), s, w, h, sX, sY, oX, oY,
+            tn = $.rib.tnWrapper,
             p = $('.ui-page-active',c[0].body).clone();
 
-        if (f && f.length && c && c.length && p && p.length) {
-var usedefs = false;
-if (usedefs) {
-            if (!$('defs',$.rib.thumbnail).length) {
-                $.rib.thumbnail.prepend(
-                '<defs>\n' +
-                    '<link href="src/css/jquery.mobile.structure-1.0.css" type="text/css" rel="stylesheet" xmlns="http://www.w3.org/1999/xhtml"/>\n'+
-                    '<link href="src/css/jquery.mobile-1.0.css" type="text/css" rel="stylesheet" xmlns="http://www.w3.org/1999/xhtml"/>\n'+
-                    '<link href="src/css/web-ui-fw-theme.css" type="text/css" rel="stylesheet" xmlns="http://www.w3.org/1999/xhtml"/>\n'+
-                    '<link href="src/css/web-ui-fw-widget.css" type="text/css" rel="stylesheet" xmlns="http://www.w3.org/1999/xhtml"/>\n'+
-                '</defs>');
-            }
-}
+
+        $('body',d).children(':not(.ui-page-active)').remove(),
+        $('head',d).remove(),
+        s = d[0].outerHTML;
+        s = s.replace(/<(html|body)/ig,'<div');
+        s = s.replace(/(html|body)>/ig,'div>');
+
+        if (f && f.length && d && d.length && s && s.length) {
+            $.rib.thumbnail.width(i.width())
+            $.rib.thumbnail.height(i.height());
             f.empty();
-//            f.append('<html class="thumbnail-content" xmlns="http://www.w3.org/1999/xhtml"><head></head></html>');
-if (!usedefs) {
-            f.append(
-                '<style>\n' +
-                    '@import url("src/css/jquery.mobile.structure-1.0.css");\n'+
-                    '@import url("src/css/jquery.mobile-1.0.css");\n'+
-                    '@import url("src/css/web-ui-fw-theme.css");\n'+
-                    '@import url("src/css/web-ui-fw-widget.css");\n'+
-                '</style>');
-}
-            f.append(p);
+            f.append(s);
+            w = tn.width(), h = tn.height();
+            sX = w/i.width();
+            sY = h/i.height();
+            oX = (1 - w*sX);
+            oY = (1 - h*sY);
+/*
+            tn.empty().append(
+                $.rib.thumbnail.clone()
+                               .css('-webkit-transform','scale('+sX+','+sY+')')
+                               .offset({top:oY, left:oX}));
+*/
+
+            $.rib.saveThumbnailToImage(tn.html());
         }
+    };
+
+    $.rib.saveThumbnailToImage = function(svgString) {
+        var builder, DOMURL, image, dataURL;
+
+        if (!svgString) return;
+
+        // 2. create blob builder
+        builder = new (window.BlobBuilder || window.WebKitBlobBuilder);
+
+        // 3. create URL object
+        DOMURL = window.URL || window.webkitURL || window;
+
+        // 5. append svg data to blob builder
+        builder.append(svgString);
+
+        // 6. capture the dataUrl of the blob as 'image/svg+xml'
+        dataURL = DOMURL.createObjectURL(
+                         builder.getBlob('image/svg+xml;charset=utf-8'));
+
+/*
+        // 7. set up an onload handler for the image
+        image.one('load', function(event) {
+            var canvas, context;
+
+            console.log('onload(): drawing image to canvas...');
+            // 1. create canvas
+            canvas = document.createElement('CANVAS');
+            // 2. get canvas context
+            context = canvas.getContext('2d');
+            // 3. draw the image into the canvas
+            context.drawImage(image, 0, 0);
+            // 4. revoke the object URL (why?)
+            //DOMURL.revokeObjectURL(dataURL);
+            // 5. add the canvas to our DOM
+            $('#projectView > .stage').append(canvas);
+        };
+*/
+
+        // 8. save it to the project
+        if ($.rib.pmUtils.getActive())
+            $.rib.pmUtils.setThumbnail($.rib.pmUtils.getActive(),dataURL);
+
+/*
+        // 4. remove the old and create a new IMG element
+        $('.projectBox.ui-state-active .thumbnail')
+            .empty()
+            .append('<img src="',+dataURL+'">');
+        image = $('.projectBox.ui-state-active .thumbnail > img');
+*/
     };
 
 });

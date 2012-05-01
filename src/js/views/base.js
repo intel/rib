@@ -153,6 +153,8 @@
             widget.designRoot = d;
 
             // Finally, redraw our view since the ADMDesign root has changed
+            event.id = event.id || d.getUid();
+            event.name = event.name || 'designReset';
             widget.refresh && widget.refresh(event, widget);
         },
     });
