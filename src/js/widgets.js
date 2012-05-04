@@ -645,26 +645,45 @@ var BWidgetRegistry = {
         displayLabel: "Text Input",
         paletteImageName: "jqm_text_input.svg",
         properties: {
+            id: {
+                type: "string",
+                htmlSelector: "input",
+                htmlAttribute: "id",
+                autoGenerate: "text"
+            },
+            name: {
+                type: "string",
+                htmlSelector: "input",
+                htmlAttribute: "name",
+                autoGenerate: "text"
+            },
             hint: {
                 type: "string",
                 defaultValue: "",
+                htmlSelector: "input",
                 htmlAttribute: "placeholder"
             },
             theme: {
                 type: "string",
                 options: [ "default", "a", "b", "c", "d", "e" ],
                 defaultValue: "default",
+                htmlSelector: "input",
                 htmlAttribute: "data-theme"
+            },
+            title: {
+                type: "string",
+                autoGenerate: "Text",
             },
             value: {
                 // FIXME: Probably value should be removed, setting initial
                 //        static text is not a common thing to do
                 type: "string",
                 defaultValue: "",
+                htmlSelector: "input",
                 htmlAttribute: "value"
             }
         },
-        template: '<input type="text">',
+        template: '<div data-role="fieldcontain"><label for="%ID%">%TITLE%</label><input type="text"/></div>',
     },
 
     /**
