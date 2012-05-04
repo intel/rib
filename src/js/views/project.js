@@ -90,6 +90,10 @@
             if(!pidArr){
                 console.error("Error: failed to list all projects.");
             }
+
+            // Update the thumbnail
+            //$.rib.updateThumbnail && $.rib.updateThumbnail();
+
             $.each(pidArr, function(index, value){
                 // value is an object contains {"pid":XX, "date":XXX}
                 widget.createProjectBox(value.pid, container, widget);
@@ -259,10 +263,67 @@
         },
 
         createProjectBox: function(pid, container, widget) {
-            var box, title, content, thumbnail, imgPath, rightSide,
-                openHandler, cloneHandler, deleteHandler;
+            var box, title, content, thumbnail, tnWrapper, rightSide,
+                svgContainer, foreignHTML;
             widget = widget || this;
             container = container || $('.projectView').last();
+            // draw project box
+            box = $('<div/>').attr('id',pid)
+                             .addClass('projectBox vbox')
+                             .appendTo(container);
+            title = $('<div />').addClass('titleBar flex0')
+                        .append('<span>' + $.rib.pmUtils.getName(pid) + '</span>')
+                        .append('<div class="openButton"></div>')
+                        .appendTo(box);
+            content = $('<div />').addClass('content flex1 hbox')
+                      .appendTo(box);
+            tnWrapper = $('<div />').addClass('thumbnail-wrapper flex0')
+                        .appendTo(content);
+            foreignHTML = $.rib.pmUtils.getThumbnail(pid);
+            if (foreignHTML) {
+                // get a new SVG
+                thumbnail = widget._newSVG();
+                svgContainer = $('#svg-container', thumbnail);
+                svgContainer.append(foreignHTML);
+                tnWrapper.append(thumbnail);
+                widget._scaleSVG(tnWrapper);
+            } else {
+                tnWrapper.append('<img class="thumbnail" src="src/css/images/emptyProjectThumbnail.png" />');
+            }
+            $('<div />').addClass("rightSide flex1")
+                        .append('<b>LAST OPENED</b><br />')
+                        .append('<span>' + ($.rib.pmUtils.getAccessDate(pid)).toString().slice(4, 24) + '</span>')
+                        // apend clone button
+                        .append($('<div>Clone</div>').addClass("clone button"))
+                        // apend delete button
+                        .append($('<div>Delete</div>').addClass("delete button"))
+                        .appendTo(content);
+            widget._buttonEvents(box, pid);
+        },
+        // create a thumbnail SVG
+        _newSVG: function() {
+            var thumbnail, i;
+            thumbnail = $('<svg class="thumbnail" xmlns="http://www.w3.org/2000/svg"><style type="text/css" ><![CDATA[ @import url("src/css/jquery.mobile.structure-1.0.css"); @import url("src/css/jquery.mobile-1.0.css"); @import url("src/css/web-ui-fw-theme.css"); @import url("src/css/web-ui-fw-widget.css"); ]]> </style><foreignObject id="svg-container" width="100%" height="100%"></foreignObject></svg>');
+            // get the iframe of liveView
+            i = $(':rib-liveView').liveView('option', 'iframe');
+            thumbnail.width(i.width());
+            thumbnail.height(i.height());
+            return thumbnail;
+        },
+        _scaleSVG: function(tnWrapper) {
+            var thumbnail, sX, sY;
+            thumbnail = tnWrapper.find('svg.thumbnail');
+            if (thumbnail.length !== 1) {
+                console.error("Requrie only one svg in thumbnail wrapper.");
+                return false;
+            }
+            sX = tnWrapper.width()/thumbnail.width();
+            sY = tnWrapper.height()/thumbnail.height();
+            thumbnail.css({'-webkit-transform':'scale('+sX+','+sY+')',
+                           '-webkit-transform-origin':'0 0'});
+        },
+        _buttonEvents: function(box, pid) {
+            var openHandler, cloneHandler, deleteHandler;
             openHandler = function () {
                 var success = function () {
                     // show the layout tab
@@ -292,30 +353,9 @@
                 };
                 $.rib.pmUtils.deleteProject(pid, success);
             };
-            // draw project box
-            box = $('<div/>').attr('id',pid)
-                             .addClass('projectBox vbox')
-                             .appendTo(container);
-            title = $('<div />').addClass('titleBar flex0')
-                        .append('<span>' + $.rib.pmUtils.getName(pid) + '</span>')
-                        .append($('<div class="openButton"></div>').click(openHandler))
-                        .appendTo(box);
-            content = $('<div />').addClass('content flex1 hbox')
-                      .appendTo(box);
-            //TODO: imgPath = pmUtils.getThumbnail(pid);
-            imgPath = 'src/css/images/emptyProjectThumbnail.png';
-            thumbnail= $('<img />').attr('src', imgPath);
-            $('<div />').addClass('thumbnail flex1')
-                        .append(thumbnail)
-                        .appendTo(content);
-            $('<div />').addClass("rightSide flex1")
-                        .append('<b>LAST OPENED</b><br />')
-                        .append('<span>' + ($.rib.pmUtils.getAccessDate(pid)).toString().slice(4, 24) + '</span>')
-                        // apend clone button
-                        .append($('<div>Clone</div>').addClass("clone button").click(cloneHandler))
-                        // apend delete button
-                        .append($('<div>Delete</div>').addClass("delete button").click(deleteHandler))
-                        .appendTo(content);
+            box.find('.openButton').click(openHandler);
+            box.find('.clone.button').click(cloneHandler);
+            box.find('.delete.button').click(deleteHandler);
         },
     });
 })(jQuery);

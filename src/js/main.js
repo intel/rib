@@ -630,4 +630,27 @@ $(function() {
     fsUtils.initFS(window.TEMPORARY, 10, function () {
         fsUtils.initFS(fsUtils.fsType, fsUtils.fsSize, fsInitSuccess, fsInitFailed);
     }, fsInitFailed);
+
+    $.rib.updateThumbnail = function() {
+        var c, d, s, pid;
+        pid = $.rib.pmUtils.getActive();
+        if (!pid) {
+            console.warn("No active project to update thumbnail.");
+            return false;
+        }
+        c = $(':rib-liveView').liveView('option', 'contentDocument');
+        d = $(c[0].documentElement).clone();
+
+        $('body',d).children(':not(.ui-page-active)').remove();
+        $('head',d).remove();
+        s = d[0].outerHTML;
+        s = s.replace(/<(html|body)/ig,'<div');
+        s = s.replace(/(html|body)>/ig,'div>');
+
+        // update the thumbnail in project box
+        if (d.length && s && s.length) {
+            // save it to the project
+            $.rib.pmUtils.setThumbnail(pid, s);
+        }
+    };
 });
