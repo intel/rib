@@ -303,7 +303,7 @@
         // create a thumbnail SVG
         _newSVG: function() {
             var thumbnail, i;
-            thumbnail = $('<svg class="thumbnail" xmlns="http://www.w3.org/2000/svg"><style type="text/css" ><![CDATA[ @import url("src/css/jquery.mobile.structure-1.0.css"); @import url("src/css/jquery.mobile-1.0.css"); @import url("src/css/web-ui-fw-theme.css"); @import url("src/css/web-ui-fw-widget.css"); ]]> </style><foreignObject id="svg-container" width="100%" height="100%"></foreignObject></svg>');
+            thumbnail = $('<svg class="thumbnail" xmlns="http://www.w3.org/2000/svg"><style type="text/css" ><![CDATA[ @import url("src/css/thumb-jquery.mobile.structure-1.0.css"); @import url("src/css/thumb-jquery.mobile-1.0.css"); ]]> </style><foreignObject id="svg-container" width="100%" height="100%"></foreignObject></svg>');
             // get the iframe of liveView
             i = $(':rib-liveView').liveView('option', 'iframe');
             thumbnail.width(i.width());
