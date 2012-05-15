@@ -1252,6 +1252,15 @@ ADMNode.prototype.getZoneArray = function (zoneName) {
 }
 
 /**
+ * Tests whether this node is allowed to be edited.
+ *
+ * @return {Object} if the node is allowed to be edited.
+ */
+ADMNode.prototype.isEditable = function () {
+    return BWidget.isEditable(this.getType());
+};
+
+/**
  * Returns whether this node is selected.
  *
  * @return {Boolean} True if this node is selected.

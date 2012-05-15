@@ -52,6 +52,10 @@
  *                     two default child Blocks)
  *  16)  outlineLabel: optional function(ADMNode) that returns a label to show
  *                     (intended even for widgets w/ showInPalette false)
+ *  17)      editable: optional object, containing an optional selector and a
+ *                     a required property name (see #3 above).  Existance of
+ *                     this object implies the textContent node of the
+ *                     resulting DOM element is editable in-line
  *
  * Each zone description in the array should be an object with:
  *   1) name identifying the zone point
@@ -449,6 +453,10 @@ var BWidgetRegistry = {
     Button: {
         parent: "Base",
         paletteImageName: "jqm_button.svg",
+        editable: {
+            selector: "> span > .ui-btn-text",
+            propertyName: "text"
+        },
         properties: {
             text: {
                 type: "string",
@@ -2400,6 +2408,20 @@ var BWidget = {
             }
         }
         return array;
+    },
+
+    /**
+     * Tests whether this BWidget is allowed to have it's textContent edited.
+     *
+     * @return {Object} if this BWidget is editable, null if not.
+     * @throws {Error} If widgetType is invalid.
+     */
+    isEditable: function (widgetType) {
+        var widget = BWidgetRegistry[widgetType];
+        if (typeof widget !== "object") {
+            throw new Error("widget type invalid in isEditable");
+        }
+        return widget.hasOwnProperty("editable") ? widget.editable : null;
     },
 
     /**
