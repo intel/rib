@@ -92,7 +92,9 @@ $(function() {
         },
         ignoreText: function () {
             return Boolean($('input[type="text"]:focus, textarea:focus',
-                             '.property_content').length);
+                             '.property_content').length) ||
+                   Boolean($(':focus',$(':rib-layoutView')
+                             .layoutView('option','contentDocument')).length);
         },
     };
 
