@@ -360,8 +360,10 @@ $(function() {
                         // enable editing...
                         enableEditing(e.target);
 
-                        // pre-select the text
-                        if (rng && sel) {
+                        // pre-select the text contents/value
+                        if (e.target.select) {   // Text input/area
+                            e.target.select();
+                        } else if (rng && sel) { // Everything else
                             rng.selectNodeContents(e.target);
                             sel.removeAllRanges();
                             sel.addRange(rng);
