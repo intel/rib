@@ -1208,6 +1208,7 @@ div.propertyItems label[for|=id] {
 
 .projectBox.ui-state-active {
     border: 3px solid #4ae57b;
+    -webkit-border-radius: 13px;
 }
 
 .titleBar {
@@ -1242,6 +1243,7 @@ div.propertyItems label[for|=id] {
     height: 22px;
     min-width: 71px;
     cursor: pointer;
+    -webkit-border-top-right-radius: 9px;
 }
 
 .openButton:hover, .openButton:focus {
