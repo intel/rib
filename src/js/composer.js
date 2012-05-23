@@ -231,6 +231,7 @@ $(function() {
         $(e.target).subtree('.adm-node:not(.delegation),.orig-adm-node').each(
         function (index, node) {
             var admNode, widgetType, delegate, events,
+                editable,
                 delegateNode,
                 adm = window.parent.ADM,
                 bw = window.parent.BWidget;
@@ -239,6 +240,7 @@ $(function() {
             if (adm && bw) {
                 admNode = adm.getDesignRoot()
                     .findNodeByUid($(node).attr('data-uid')),
+                editable = admNode && admNode.isEditable(),
                 widgetType = admNode && admNode.getType(),
                 delegate = widgetType &&
                            bw.getWidgetAttribute(widgetType, 'delegate'),
@@ -287,6 +289,112 @@ $(function() {
 
                 if (events) {
                     $(node).bind(events);
+                }
+            }
+        });
+
+        // For nodes marked as "editable", attach double-click and blur handlers
+        $(e.target).subtree('.adm-editable').each( function (index, node) {
+            var admNode, editable,
+                adm = window.parent.ADM,
+                bw = window.parent.BWidget;
+
+            var isText = function (element) {
+                return element && element.type in {text:0, textarea:0};
+            };
+            var enableEditing = function (element) {
+                isText(element) && $(element).removeAttr('readonly');
+                element.contentEditable = true;
+                $(element).focus();
+            };
+            var disableEditing = function (element) {
+                isText(element) && $(element).attr('readonly', true);
+                $(element).removeAttr('contentEditable');
+                $(element.ownerDocument.body).focus();
+            };
+            var getTextNodeContents = function (element) {
+                if (isText(element)) {
+                    // Text[area] nodes store string in value, not textContent
+                    return element.value;
+                } else {
+                    // Only return text of TEXT_NODE elements, not other
+                    // potential child nodes
+                    return $(element).contents().filter( function() {
+                        return (this.nodeType === 3);
+                    }).text();
+                }
+            };
+            var setTextNodeContents = function (element, string) {
+                var children;
+                if (isText(element)) {
+                    // Text[area] nodes need to set value, not textContent
+                    element.value = string;
+                } else {
+                    // Need to make sure we don't overwrite child nodes, so
+                    // first, detach them...
+                    children = $(element).children().detach();
+                    // next, set the text node string...
+                    element.textContents = string;
+                    // finally, re-attach (append) the children...
+                    $(element).append(children);
+                }
+            };
+
+            if (adm && bw) {
+                admNode = adm.getDesignRoot()
+                    .findNodeByUid($(node).attr('data-uid')),
+                editable = admNode && admNode.isEditable();
+
+                if (editable && typeof(editable) === 'object') {
+                    if (editable.selector &&
+                        $(editable.selector,node).length) {
+                        node = $(editable.selector,node)[0];
+                    }
+                    $(node).addClass('adm-text-content');
+
+                    // Bind double-click handler
+                    $(node).dblclick(function(e) {
+                        var rng= document.createRange && document.createRange(),
+                            sel= window.getSelection && window.getSelection();
+
+                        // enable editing...
+                        enableEditing(e.target);
+
+                        // pre-select the text
+                        if (rng && sel) {
+                            rng.selectNodeContents(e.target);
+                            sel.removeAllRanges();
+                            sel.addRange(rng);
+                        }
+
+                        // TODO: Set timeout to capture edits?
+                    });
+
+                    // Bind blur handler
+                    // When focus is lost, unset contentEditable and save
+                    $(node).blur(admNode, function(e) {
+                        var editable = e && e.data && e.data.isEditable(),
+                            prop, text;
+
+                        if (!e.data || !editable) return;
+
+                        if (this.contentEditable === 'true') {
+                            text = getTextNodeContents(e.target);
+                            prop = editable.propertyName;
+
+                            // Only update if values differ
+                            if (e.data.getProperty(prop) !== text) {
+                                if (!e.data.setProperty(prop,text).result) {
+                                    // Revert if setProperty fails
+                                    setTextNodeContents(e.target,
+                                        e.data.getProperty(prop));
+                                }
+                            }
+
+                            // Turn off editing...
+                            disableEditing(e.target);
+                        }
+                    });
                 }
             }
         });
