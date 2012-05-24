@@ -43,6 +43,51 @@ $(document).bind('mobileinit', function() {
 });
 
 $(function() {
+    var isText = function (element) {
+        return element && element.type in {text:0, textarea:0};
+    };
+
+    var enableEditing = function (element) {
+        isText(element) && $(element).removeAttr('readonly');
+        element.contentEditable = true;
+        $(element).focus();
+    };
+
+    var disableEditing = function (element) {
+        isText(element) && $(element).attr('readonly', true);
+        $(element).removeAttr('contentEditable');
+        $(element.ownerDocument.body).focus();
+    };
+
+    var getTextNodeContents = function (element) {
+        if (isText(element)) {
+            // Text[area] nodes store string in value, not textContent
+            return element.value;
+        } else {
+            // Only return text of TEXT_NODE elements, not other
+            // potential child nodes
+            return $(element).contents().filter( function() {
+                return (this.nodeType === 3);
+            }).text();
+        }
+    };
+
+    var setTextNodeContents = function (element, string) {
+        var children;
+        if (isText(element)) {
+            // Text[area] nodes need to set value, not textContent
+            element.value = string;
+        } else {
+            // Need to make sure we don't overwrite child nodes, so
+            // first, detach them...
+            children = $(element).children().detach();
+            // next, set the text node string...
+            element.textContents = string;
+            // finally, re-attach (append) the children...
+            $(element).append(children);
+        }
+    };
+
     var handleSelect = function (e, ui){
         if ($(ui).data('role') === 'content' ||
             $(ui).data('role') === 'page') {
@@ -299,47 +344,6 @@ $(function() {
                 adm = window.parent.ADM,
                 bw = window.parent.BWidget;
 
-            var isText = function (element) {
-                return element && element.type in {text:0, textarea:0};
-            };
-            var enableEditing = function (element) {
-                isText(element) && $(element).removeAttr('readonly');
-                element.contentEditable = true;
-                $(element).focus();
-            };
-            var disableEditing = function (element) {
-                isText(element) && $(element).attr('readonly', true);
-                $(element).removeAttr('contentEditable');
-                $(element.ownerDocument.body).focus();
-            };
-            var getTextNodeContents = function (element) {
-                if (isText(element)) {
-                    // Text[area] nodes store string in value, not textContent
-                    return element.value;
-                } else {
-                    // Only return text of TEXT_NODE elements, not other
-                    // potential child nodes
-                    return $(element).contents().filter( function() {
-                        return (this.nodeType === 3);
-                    }).text();
-                }
-            };
-            var setTextNodeContents = function (element, string) {
-                var children;
-                if (isText(element)) {
-                    // Text[area] nodes need to set value, not textContent
-                    element.value = string;
-                } else {
-                    // Need to make sure we don't overwrite child nodes, so
-                    // first, detach them...
-                    children = $(element).children().detach();
-                    // next, set the text node string...
-                    element.textContents = string;
-                    // finally, re-attach (append) the children...
-                    $(element).append(children);
-                }
-            };
-
             if (adm && bw) {
                 admNode = adm.getDesignRoot()
                     .findNodeByUid($(node).attr('data-uid')),
@@ -350,7 +354,16 @@ $(function() {
                         $(editable.selector,node).length) {
                         node = $(editable.selector,node)[0];
                     }
+                    // LABELs don't cause blur when we focuse them, and they
+                    // never match the ':focus' pseudo selector, so we must
+                    // wrap their textContents in a span so we can get the
+                    // desired focus and tabindex behaviors
+                    if (node.nodeName === "LABEL") {
+                        node = $(node).wrapInner('<span>').find('span');
+                    }
                     $(node).addClass('adm-text-content');
+                    // Set the tabindex explicitly, and ordered...
+                    $(node).attr('tabindex',index+1);
 
                     // Bind double-click handler
                     $(node).dblclick(function(e) {
