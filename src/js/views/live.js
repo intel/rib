@@ -91,7 +91,6 @@
                         widget._projectDevice.screenWidth = widget._screenWidth.val();
                         widget._projectDevice.rotating = false;
                         widget._projectDevice.name = $(this).text();
-                        $.rib.pmUtils.pInfoDirty = true;
                         widget._setDevice();
                         if (widget._recentDevices) {
                             var recentDevices = {},
@@ -184,7 +183,6 @@
                 .click( function () {
                     var screenWidth = widget._screenWidth.val();
                     widget._projectDevice.rotating = !widget._projectDevice.rotating;
-                    $.rib.pmUtils.pInfoDirty = true;
                     widget._screenWidth.val(widget._screenHeight.val());
                     widget._screenHeight.val(screenWidth);
                     widget._setDevice();
@@ -200,7 +198,6 @@
                 $('<input name="screenWidth" type="number" min="0" class="screenCoordinate"/>')
                 .change( function () {
                     widget._projectDevice.screenWidth = $(this).val();
-                    $.rib.pmUtils.pInfoDirty = true;
                     widget._setDevice();
                 })
                 .appendTo(deviceToolbar);
@@ -209,7 +206,6 @@
                 $('<input name="screenHeight" type="number" min="0" class="screenCoordinate"/>')
                 .change( function () {
                     widget._projectDevice.screenHeight = $(this).val();
-                    $.rib.pmUtils.pInfoDirty = true;
                     widget._screenWidth.trigger('change');
                 })
                 .appendTo(deviceToolbar);
@@ -348,7 +344,10 @@
         _setDevice: function () {
             var deviceSkin, scaleW, scaleH,
             //First, we clone a device info and change screen property if rotated
-                deviceInfo = this._cloneSelectedDeviceInfo();
+                deviceInfo = this._cloneSelectedDeviceInfo(),
+                activeProject = $.rib.pmUtils.getActive();
+            // set device info for the current active project
+            activeProject && $.rib.pmUtils.setProperty(activeProject, "device", this._projectDevice);
             if (this._projectDevice.rotating) {
                 $.extend(true, deviceInfo, {
                     screen: {
@@ -427,16 +426,11 @@
             widget = widget || this;
             $.rib.baseView.prototype._designResetHandler.call(this, event, widget);
             if (!widget._projectDevice)
-                widget._projectDevice = {name: "Phones",
-                    screenWidth: 320, screenHeight: 480};
+                widget._projectDevice = $.rib.pmUtils.getPropertyDefault("device");
             activeProject = $.rib.pmUtils.getActive();
             if (activeProject) {
-                if ($.rib.pmUtils._projectsInfo[activeProject].device)
-                    widget._projectDevice =
-                        $.rib.pmUtils._projectsInfo[activeProject].device;
-                else
-                    $.rib.pmUtils._projectsInfo[activeProject].device =
-                        widget._projectDevice;
+                widget._projectDevice =
+                    $.rib.pmUtils.getProperty(activeProject, "device");
             }
             widget._refreshDeviceList(widget._projectDevice.name);
             selectedDeviceInfo = widget._getSelectedDeviceInfo();

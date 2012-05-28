@@ -106,8 +106,7 @@
                 dialog = this.options && this.options.projectDialog;
                 dialog = dialog || $(this).dialog('option', 'projectDialog');
                 isCreate = dialog.data('new-project-dialog');
-                name = $.rib.pmUtils.getName( $.rib.pmUtils.getActive()) ||
-                       'Untitled';
+                name = $.rib.pmUtils.getProperty( $.rib.pmUtils.getActive(), "name");
 
                 $("#projectName", dialog).val((isCreate)?'':name);
                 $(".ui-button-text", dialog).text((isCreate)?'Next':'Done')
@@ -136,7 +135,7 @@
                     });
                 } else {
                     //call project API to update current project
-                    $.rib.pmUtils.setProject(null, opts);
+                    $.rib.pmUtils.setProperties($.rib.pmUtils.getActive(), opts);
                     $(':rib-projectView').projectView('refresh');
                 }
                 // Blank out the title
@@ -297,12 +296,12 @@
                              .addClass('projectBox vbox')
                              .appendTo(container);
             title = $('<div />').addClass('titleBar flex0')
-                        .append('<span>' + $.rib.pmUtils.getName(pid) + '</span>')
+                        .append('<span>' + $.rib.pmUtils.getProperty(pid, "name") + '</span>')
                         .append($('<div class="openButton"></div>').click(openHandler))
                         .appendTo(box);
             content = $('<div />').addClass('content flex1 hbox')
                       .appendTo(box);
-            //TODO: imgPath = pmUtils.getThumbnail(pid);
+            //TODO: imgPath = pmUtils.getProperty(pid, "thumbnail");
             imgPath = 'src/css/images/emptyProjectThumbnail.png';
             thumbnail= $('<img />').attr('src', imgPath);
             $('<div />').addClass('thumbnail flex1')
@@ -310,7 +309,7 @@
                         .appendTo(content);
             $('<div />').addClass("rightSide flex1")
                         .append('<b>LAST OPENED</b><br />')
-                        .append('<span>' + ($.rib.pmUtils.getAccessDate(pid)).toString().slice(4, 24) + '</span>')
+                        .append('<span>' + ($.rib.pmUtils.getProperty(pid, "accessDate")).toString().slice(4, 24) + '</span>')
                         // apend clone button
                         .append($('<div>Clone</div>').addClass("clone button").click(cloneHandler))
                         // apend delete button
