@@ -1902,6 +1902,17 @@ ADMNode.prototype.getPropertyDefault = function (property) {
 };
 
 /**
+ * Gets the display name for the named property for this widget type.
+ *
+ * @param {String} property The name of the requested property.
+ * @return {String} The display name of the property, or the property instance
+ *                  name if the property has no the attribute.
+ */
+ADMNode.prototype.getPropertyDisplayName = function (property) {
+    return BWidget.getPropertyDisplayName(this.getType(), property);
+};
+
+/**
  * Returns whether the property is explicitly set or not. Properties that are
  * explicitly set should be serialized to disk.
  *

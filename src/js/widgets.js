@@ -2148,6 +2148,23 @@ var BWidget = {
     },
 
     /**
+     * Gets the display name for a given instance property.
+     *
+     * @param {String} widgetType The type of the widget.
+     * @param {String} property The name of the requested property.
+     * @return {String} The display name for the given property, or
+     *                  the property instance name if this property has
+     *                  no the attribute.
+     */
+    getPropertyDisplayName: function (widgetType, property) {
+        var schema = BWidget.getPropertySchema(widgetType, property);
+        if (schema && schema.displayName) {
+            return schema.displayName;
+        }
+        return property.replace(/_/g,'-');
+    },
+
+    /**
      * Gets the HTML attribute associated with this property.
      *
      * @param {String} widgetType The type of the widget.

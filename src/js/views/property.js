@@ -129,7 +129,7 @@
             options = node.getPropertyOptions();
             // iterate property of node
             for (p in props) {
-                labelVal = p.replace(/_/g,'-');
+                labelVal = node.getPropertyDisplayName(p);
                 valueId = p+'-value';
                 valueVal = props[p];
                 propType = BWidget.getPropertyType(type, p);
