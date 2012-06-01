@@ -24,6 +24,28 @@ $(function () {
         allTags: [],
         ProjectDir: "/projects",
         pidPrefix: "p",
+        propertySchema: {
+            name: {
+                type: "string",
+                defaultValue: "Untitled"
+            },
+            accessDate: {
+                type: "number",
+                defaultValue:""
+            },
+            device: {
+                type: "object",
+                defaultValue: {
+                    name: "Phones",
+                    screenWidth: 320,
+                    screenHeight: 480
+                }
+            },
+            thumbnail: {
+                type: "string",
+                defaultValue: ""
+            },
+        }
     };
 
     /* Asynchronous. init pmUtils.
@@ -108,6 +130,155 @@ $(function () {
      */
     pmUtils.getActive = function () {
         return pmUtils._activeProject;
+    };
+
+    /**
+     * Get properties of a specified project
+     *
+     * @param {String} project id
+     * @return {Object} Object which contains all of the project properties, or null if failed
+     */
+    pmUtils.getProperties = function (pid) {
+        var pInfo;
+        pid && (pInfo = pmUtils._projectsInfo[pid]);
+        if (!(pid && pInfo)) {
+            console.error("Invalid pid in getProperties, pid:" + pid);
+            return null;
+        }
+        return $.extend(true, {}, pInfo);
+    };
+
+    /**
+     * Get the schema of a specified property
+     *
+     * @param {String} property name
+     * @return {Object} Object of property schema, or null if failed
+     */
+    pmUtils.getPropertySchema = function (property) {
+        var schema = pmUtils.propertySchema[property];
+        if (typeof schema != "object") {
+            throw new Error("Undefined schema for property:" + property);
+            return null;
+        } else {
+            return $.extend(true, {}, schema);
+        }
+    };
+
+    /**
+     * Get the default value of a specified property item
+     *
+     * @param {String} property name
+     * @return the default value or null if failed
+     */
+    pmUtils.getPropertyDefault = function (property) {
+        var schema = pmUtils.getPropertySchema(property);
+        if (schema) {
+            if (property === 'accessDate') {
+                // return the current time
+                return (new Date());
+            }
+            return schema.defaultValue;
+        }
+        return schema;
+    }
+
+    /**
+     * Get the value of a specified property
+     *
+     * @param {String} project id
+     * @param {String} property
+     * @return {} value of the property or null if failed
+     */
+    pmUtils.getProperty = function (pid, property) {
+        var schema, pInfo, value;
+        // get an copy of pInfo
+        pInfo = pmUtils.getProperties(pid);
+        if (pInfo.hasOwnProperty(property)) {
+            value = pInfo[property];
+        } else {
+            value = pmUtils.getPropertyDefault(property);
+        }
+        if (property === 'accessDate') {
+            return (new Date(value));
+        }
+        return value;
+    };
+
+    /**
+     * Set value of a specified property
+     *
+     * @param {String} project id
+     * @param {String} property
+     * @param {} the give value for property
+     * @return {Bool} return true if success, false when fails
+     */
+    pmUtils.setProperty = function (pid, property, value) {
+        var schema, pInfo, temp;
+        // get the original object of pInfo
+        pid && (pInfo = pmUtils._projectsInfo[pid]);
+        if (!(pid && pInfo)) {
+            console.error("Invalid pid in setProperty, pid:" + pid);
+            return null;
+        }
+        schema = pmUtils.getPropertySchema(property);
+        if (property === 'accessDate') {
+            value = (new Date(value)).getTime();
+        }
+        if (!(pInfo && schema.type)) {
+            console.error("Error: Invalid pid: " + pid +
+                    " or property: " + property + " in pmUtils.setProperty");
+            return false;
+        }
+        if (typeof value !== schema.type) {
+            console.error("Error: attempted to set property " + property +
+                    " (" + schema.type + ") with wrong type (" +
+                    typeof value + ")");
+            return false;
+        }
+        if (pInfo[property] !== value) {
+            // just copy and over write the value
+            temp = new Object();
+            temp[property] = value;
+            $.extend(true, pInfo, temp);
+            pmUtils.pInfoDirty = true;
+        }
+        return true;
+    };
+
+    /**
+     * Set properties for a specified project:
+     * This function just extends pInfo object using given options object,
+     * pInfo will not completely replaced by the given object.
+     * Items in the given object will be merged with the original pInfo,
+     * and the property items in the given object can has no schema in propertySchema,
+     * for example:
+     *              { "template": XXX, "theme":XXXX }
+     *
+     * @param {String} project id
+     * @param {Object} setting options
+     * @return
+     */
+    pmUtils.setProperties = function (pid, options) {
+        var i, pInfo, temp;
+        // get the original object of pInfo
+        pid && (pInfo = pmUtils._projectsInfo[pid]);
+        if (!(pid && pInfo) || typeof options !== "object") {
+            console.error("Invalid project or options in setProperties");
+            return false;
+        }
+        for ( i in options) {
+            if (pmUtils.propertySchema.hasOwnProperty(i)) {
+                // if the item has schema then check the type
+                pmUtils.setProperty(pid, i, options[i]);
+            } else {
+                // extend the item having no schema directly
+                temp = new Object();
+                temp[i] = options[i];
+                $.extend(true, pInfo, temp);
+                pmUtils.pInfoDirty || (pmUtils.pInfoDirty = true);
+            }
+        }
+        return true;
     };
 
     /* Asynchronous. find the last opened project and show it, if there is no
@@ -203,8 +374,8 @@ $(function () {
                 // if the design has no page when setDesignRoot, a empty page will be added in
                 pmUtils._activeProject = newPid;
                 pmUtils._projectsInfo[newPid] = {};
-                pmUtils.setProject(newPid, options);
-                pmUtils.setAccessDate(newPid, new Date());
+                pmUtils.setProperties(newPid, options);
+                pmUtils.setProperty(newPid, "accessDate", new Date());
 
                 if (design && (design instanceof ADMNode)) {
                     ADM.setDesignRoot(design);
@@ -291,10 +462,10 @@ $(function () {
         fsUtils.cp(basePath + srcPid, basePath + destPid, function (copy) {
             pmUtils._projectsInfo[destPid] = {};
             // copy the source project infomation
-            pmUtils.setProject(destPid, pmUtils._projectsInfo[srcPid]);
+            pmUtils.setProperties(destPid, pmUtils._projectsInfo[srcPid]);
 
             // update access date for the new project
-            pmUtils.setAccessDate(destPid, new Date());
+            pmUtils.setProperty(destPid, "accessDate", new Date());
 
             // just sync project info only
             pmUtils.syncProject(destPid, null, success, error);
@@ -346,7 +517,7 @@ $(function () {
                 // set current pid as active pid
                 pmUtils._activeProject = pid;
                 // update access time
-                pmUtils.setAccessDate(pid, new Date());
+                pmUtils.setProperty(pid, "accessDate", new Date());
                 // set the new design as design root
                 ADM.setDesignRoot(design);
                 success && success();
