@@ -430,28 +430,6 @@ $(function () {
     };
 
     /**
-     * Set options and preferences of the project
-     *
-     * @param {String} project id
-     * @param {Object} setting options, currently, like:
-     *                 { "name": XXX, "theme":XXXX }
-     * @return
-     */
-    pmUtils.setProject = function (pid, options) {
-        var i, pInfo;
-        pid = pid || $.rib.pmUtils._activeProject;
-        pInfo = pmUtils._projectsInfo[pid];
-        if (!(pid && pInfo)) {
-            console.error("Invalid project to set");
-        }
-        // save setting info into design
-        $.extend(true, pInfo, options);
-        pmUtils._projectsInfo[pid] = pInfo;
-        pmUtils.pInfoDirty = true;
-        return true;
-    };
-
-    /**
      * Asynchronous. Clone an existing project, just clone, but not open
      *
      * @param {String} srcPid Project id of the source project.
@@ -565,86 +543,6 @@ $(function () {
             };
         // delete the project folder
         fsUtils.rm(ProjectPath, successHandler, error, true)
-    };
-
-    /**
-     * Get access Date of a project
-     *
-     * @param {String} project id
-     * @return {Date/null} return access date of the project or null if fails
-     */
-    pmUtils.getAccessDate = function (pid) {
-        var pInfo = pmUtils._projectsInfo[pid];
-        if (!pInfo) {
-            console.error("Error: Invalid pid for project");
-            return null;
-        }
-        return (new Date(pInfo.accessDate));
-    };
-
-    /**
-     * delete an existing project
-     *
-     * @param {String} project id
-     * @return {Bool} return true if success, false when fails
-     */
-    pmUtils.setAccessDate = function (pid, date) {
-        var pInfo = pmUtils._projectsInfo[pid];
-        if (!pInfo) {
-            console.error("Error: Invalid pid for project");
-            return false;
-        }
-        pInfo.accessDate = (new Date(date)).getTime();
-        pmUtils.pInfoDirty = true;
-        return true;
-    };
-
-    /**
-     * Get project Name
-     *
-     * @param {String} project id
-     * @return {String/null} return project name or null if fails
-     */
-    pmUtils.getName = function (pid) {
-        var pInfo = pmUtils._projectsInfo[pid];
-        if (!pInfo) {
-            console.error("Error: Invalid pid for project");
-            return null;
-        }
-        return pmUtils._projectsInfo[pid].name;
-    };
-
-    /**
-     * Set project Name
-     *
-     * @param {String} project id
-     * @param {String} the given name
-     * @return {Bool} return true if success, false when fails
-     */
-    pmUtils.setName = function (pid, name) {
-        var pInfo = pmUtils._projectsInfo[pid];
-        if (!pInfo) {
-            console.error("Error: Invalid pid for project");
-            return false;
-        }
-        pInfo.name = name.toString();
-        pmUtils.pInfoDirty = true;
-        return true;
-    };
-
-    /**
-     * Get project tags
-     *
-     * @param {String} project id
-     * @return {String/null} return project name or null if fails
-     */
-    pmUtils.getTags = function (pid) {
-        var pInfo = pmUtils._projectsInfo[pid];
-        if (!pInfo) {
-            console.error("Error: Invalid pid for project");
-            return null;
-        }
-        return pInfo.tags;
     };
 
     /**
