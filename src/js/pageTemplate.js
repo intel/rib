@@ -18,7 +18,8 @@ $(function() {
         options :{
             design: null,
             pageTemplate: "Blank Page",
-            layout: ['Content']
+            layout: ['Content'],
+            isDialog: false
         },
         /**
          * Creates an new page according to page configure.
@@ -30,6 +31,7 @@ $(function() {
             var design = config.design || ADM.getDesignRoot(),
                 pageTemplate = config.pageTemplate || this.options[pageTemplate],
                 layout = this.options.layout.concat(config.layout),
+                isDialog = config.isDialog || this.options.isDialog,
                 newPage, result;
 
             if (!design.instanceOf("Design")) {
@@ -37,12 +39,18 @@ $(function() {
                 return null;
             }
 
+            ADM.startTransaction();
             // create New ADM page node
-            newPage = ADM.createNode('Page');
+            newPage = new ADMNode("Page");
             if (!newPage) {
                 return null;
             }
-
+            ADM.addChild(design, newPage);
+            //set dialog property of page
+            result = ADM.setProperty(newPage, 'dialog', isDialog);
+            if (!result.result) {
+                return null;
+            }
             //set page layout
             result = setPageLayout(newPage, layout);
             //TODO: if we have some specfic logic to handle with template,
@@ -61,7 +69,7 @@ $(function() {
                 }
             }
             */
-            ADM.addChild(design, newPage);
+            ADM.endTransaction();
             return result? newPage: null;
 
             /**
