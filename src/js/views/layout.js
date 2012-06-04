@@ -395,6 +395,11 @@
                 $(domNode).addClass('adm-editable');
             }
 
+            // If this node is a "dialog", make it display as "page" in layout view
+            if (admNode.getType() === "Page" && admNode.getProperty("dialog") === true) {
+                $(domNode).attr('data-role', 'page');
+            }
+
             // FIXME: This is a bit of a hack; we're removing the disabled
             // attribute from widgets because when they're disabled, they
             // lose mouse clicks and can't be selected. This code is assuming
