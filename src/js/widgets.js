@@ -914,7 +914,7 @@ var BWidgetRegistry = {
         paletteImageName: "jqm_radio_button.svg",
         allowIn: "RadioGroup",
         editable: {
-            selector: "label",
+            selector: "span > .ui-btn-text",
             propertyName: "label"
         },
         properties: {
@@ -1042,7 +1042,7 @@ var BWidgetRegistry = {
         parent: "Base",
         paletteImageName: "jqm_checkbox.svg",
         editable: {
-            selector: "label",
+            selector: "span > .ui-btn-text",
             propertyName: "label"
         },
         properties: {
