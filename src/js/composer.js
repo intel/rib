@@ -50,13 +50,15 @@ $(function() {
     var enableEditing = function (element) {
         isText(element) && $(element).removeAttr('readonly');
         element.contentEditable = true;
+        $(element).toggleClass('adm-editing');
         $(element).focus();
     };
 
     var disableEditing = function (element) {
         isText(element) && $(element).attr('readonly', true);
         $(element).removeAttr('contentEditable');
-        $(element.ownerDocument.body).focus();
+        $(element).toggleClass('adm-editing');
+        window.getSelection().removeAllRanges();
     };
 
     var getTextNodeContents = function (element) {
@@ -82,7 +84,7 @@ $(function() {
             // first, detach them...
             children = $(element).children().detach();
             // next, set the text node string...
-            element.textContents = string;
+            element.textContent = string;
             // finally, re-attach (append) the children...
             $(element).append(children);
         }
@@ -363,12 +365,14 @@ $(function() {
                     }
                     $(node).addClass('adm-text-content');
                     // Set the tabindex explicitly, and ordered...
-                    $(node).attr('tabindex',index+1);
+                    $(node).attr('tabindex','-1');
 
                     // Bind double-click handler
                     $(node).dblclick(function(e) {
                         var rng= document.createRange && document.createRange(),
                             sel= window.getSelection && window.getSelection();
+
+                        if (!admNode.isSelected()) return true;
 
                         // enable editing...
                         enableEditing(e.target);
@@ -383,32 +387,95 @@ $(function() {
                         }
 
                         // TODO: Set timeout to capture edits?
-                    });
 
-                    // Bind blur handler
-                    // When focus is lost, unset contentEditable and save
-                    $(node).blur(admNode, function(e) {
-                        var editable = e && e.data && e.data.isEditable(),
-                            prop, text;
+                        // Bind to keydown to capture esc, tab and enter keys
+                        $(e.target).bind('keydown.editing',
+                                         admNode, function(ev) {
+                            var editable=ev && ev.data && ev.data.isEditable(),
+                                prop, text;
 
-                        if (!e.data || !editable) return;
+                            if (!ev || !ev.keyCode || !editable) {return true;}
+                            if (this.contentEditable !== 'true') {return true;}
 
-                        if (this.contentEditable === 'true') {
-                            text = getTextNodeContents(e.target);
+                            text = getTextNodeContents(ev.target);
                             prop = editable.propertyName;
 
-                            // Only update if values differ
-                            if (e.data.getProperty(prop) !== text) {
-                                if (!e.data.setProperty(prop,text).result) {
-                                    // Revert if setProperty fails
-                                    setTextNodeContents(e.target,
-                                        e.data.getProperty(prop));
+                            switch (ev.keyCode) {
+                            // Save and exit edit mode
+                            case 13: // ENTER
+                            case 9:  // TAB
+                                // Only update if values differ
+                                if (ev.data.getProperty(prop) === text) {
+                                    break;
                                 }
+
+                                // Attempt to set the ADM property
+                                if (!ev.data.setProperty(prop,text).result) {
+                                    // Revert if setProperty fails
+                                    setTextNodeContents(ev.target,
+                                        ev.data.getProperty(prop));
+                                }
+                                if (ev.keyCode === 9) {
+                                    ev.stopImmediatePropagation();
+                                    ev.stopPropagation();
+                                    ev.preventDefault();
+                                }
+                                break;
+                            // Revert and exit edit mode
+                            case 27: // ESC
+                                setTextNodeContents(ev.target,
+                                                    ev.data.getProperty(prop));
+                                break;
+                            // Do nothing for other keys
+                            default: // Everything else
+                                return true;
                             }
 
                             // Turn off editing...
-                            disableEditing(e.target);
-                        }
+                            disableEditing(ev.target);
+                            $(ev.target).unbind('.editing');
+                        });
+
+                        // Bind to mousedown on window to handle "focus" changes
+                        $(e.view).bind('mousedown.editing',
+                                       admNode, function(ev) {
+                            var editable=ev && ev.data && ev.data.isEditable(),
+                                elem, prop, text;
+
+                            if (!ev.data || !editable) return true;
+
+                            elem=$('.adm-editing[contenteditable]',
+                                   ev.view.document)[0];
+
+                            if (elem && elem.contentEditable === 'true' &&
+                                ev.target !== elem) {
+                                text = getTextNodeContents(elem);
+                                prop = editable.propertyName;
+
+                                // Only update if values differ
+                                if (ev.data.getProperty(prop) !== text) {
+                                    if (!ev.data.setProperty(prop,text).result){
+                                        // Revert if setProperty fails
+                                        setTextNodeContents(elem,
+                                            ev.data.getProperty(prop));
+                                    }
+                                }
+                                // Turn off editing...
+                                disableEditing(elem);
+                                $(ev.view).unbind('.editing');
+
+                                ev.stopImmediatePropagation();
+                                ev.stopPropagation();
+                                ev.preventDefault();
+                                return false;
+                            } else if (elem && ev.target === elem) {
+                                //ev.preventDefault();
+                                return true;
+                            }
+                        });
+
+                        e.preventDefault();
+                        return true;
                     });
                 }
             }
@@ -833,6 +900,13 @@ $(function() {
         $(item).removeClass('ui-unselecting')
                .removeClass('ui-selecting')
                .addClass('ui-selected');
+
+        // Force focus
+        window.getSelection().removeAllRanges();
+        var foo = $('.adm-text-content', item)[0] || window.top;
+        var bar = $(':focus')[0] || document.activeElement;
+        $(foo).focus();
+        $(bar).blur();
 
         adm.setSelected((item?$(item).attr('data-uid'):item));
     }
