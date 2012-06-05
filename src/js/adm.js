@@ -13,6 +13,15 @@ var ADMEvent = {
     _lastEventId: 0
 };
 
+var ADMEventQueue = [];
+
+ADMEventQueue.processEvents = function () {
+    var queuedEvent = ADMEventQueue.shift();
+    if (queuedEvent) {
+        queuedEvent.handler(queuedEvent.event, queuedEvent.data);
+    }
+}
+
 /**
  * Base class for objects that support sending ADM events.
  *
@@ -120,7 +129,12 @@ var ADMEventSource = {
 
         length = listeners.length;
         for (i = 0; i < length; i++) {
-            listeners[i].handler(event, listeners[i].data);
+            ADMEventQueue.push({
+                handler: listeners[i].handler,
+                event: event,
+                data: listeners[i].data
+            });
+            setTimeout("ADMEventQueue.processEvents()", 0);
         }
     },
 
