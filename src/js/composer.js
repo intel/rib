@@ -59,6 +59,7 @@ $(function() {
         $(element).removeAttr('contentEditable');
         $(element).toggleClass('adm-editing');
         window.getSelection().removeAllRanges();
+        $(element).add(window).unbind('.editing');
     };
 
     var getTextNodeContents = function (element) {
@@ -88,6 +89,58 @@ $(function() {
             // finally, re-attach (append) the children...
             $(element).append(children);
         }
+    };
+
+    var finishEditing = function (ev) {
+        var editable = ev && ev.data && ev.data.isEditable(),
+            exitKeys = {9:'TAB',13:'ENTER',27:'ESC'},
+            prop, text, elem;
+
+        if (ev && ev.currentTarget === window && ev.type === 'mousedown') {
+            elem = $('.adm-editing[contenteditable]', ev.view.document)[0];
+        } else {
+            elem = ev.target;
+        }
+
+        if (!editable || (elem.contentEditable !== 'true') ||
+            (ev.type === 'keydown' && !(ev.which in exitKeys))) {
+            return true;
+        }
+
+        text = getTextNodeContents(elem);
+        prop = editable.propertyName;
+
+        // Save and exit edit mode
+        if (ev.which === 13 || ev.which === 9 ||
+            ev.type === 'focusout' || ev.type === 'mousedown') {
+            // Only update if values differ
+            if (ev.data.getProperty(prop) !== text) {
+                // Attempt to set the ADM property
+                if (!ev.data.setProperty(prop,text).result){
+                    // Revert if setProperty fails
+                    setTextNodeContents(elem, ev.data.getProperty(prop));
+                }
+            }
+
+            // Special case for TAB key
+            if (ev.which === 9 && ev.type === 'keydown') {
+                ev.view.top.focus();
+                ev.stopImmediatePropagation();
+                ev.stopPropagation();
+                ev.preventDefault();
+            }
+
+        // Revert and exit edit mode
+        } else if (ev.which === 27 && ev.type === 'keydown') {
+            setTextNodeContents(elem, ev.data.getProperty(prop));
+
+        // Do nothing for other keys
+        } else {
+            return true;
+        }
+
+        // Turn off editing...
+        disableEditing(elem);
     };
 
     var handleSelect = function (e, ui){
@@ -386,93 +439,13 @@ $(function() {
                             sel.addRange(rng);
                         }
 
-                        // TODO: Set timeout to capture edits?
-
                         // Bind to keydown to capture esc, tab and enter keys
-                        $(e.target).bind('keydown.editing',
-                                         admNode, function(ev) {
-                            var editable=ev && ev.data && ev.data.isEditable(),
-                                prop, text;
-
-                            if (!ev || !ev.keyCode || !editable) {return true;}
-                            if (this.contentEditable !== 'true') {return true;}
-
-                            text = getTextNodeContents(ev.target);
-                            prop = editable.propertyName;
-
-                            switch (ev.keyCode) {
-                            // Save and exit edit mode
-                            case 13: // ENTER
-                            case 9:  // TAB
-                                // Only update if values differ
-                                if (ev.data.getProperty(prop) === text) {
-                                    break;
-                                }
-
-                                // Attempt to set the ADM property
-                                if (!ev.data.setProperty(prop,text).result) {
-                                    // Revert if setProperty fails
-                                    setTextNodeContents(ev.target,
-                                        ev.data.getProperty(prop));
-                                }
-                                if (ev.keyCode === 9) {
-                                    ev.stopImmediatePropagation();
-                                    ev.stopPropagation();
-                                    ev.preventDefault();
-                                }
-                                break;
-                            // Revert and exit edit mode
-                            case 27: // ESC
-                                setTextNodeContents(ev.target,
-                                                    ev.data.getProperty(prop));
-                                break;
-                            // Do nothing for other keys
-                            default: // Everything else
-                                return true;
-                            }
-
-                            // Turn off editing...
-                            disableEditing(ev.target);
-                            $(ev.target).unbind('.editing');
-                        });
+                        $(e.target).bind('keydown.editing focusout.editing',
+                                         admNode, finishEditing);
 
                         // Bind to mousedown on window to handle "focus" changes
                         $(e.view).bind('mousedown.editing',
-                                       admNode, function(ev) {
-                            var editable=ev && ev.data && ev.data.isEditable(),
-                                elem, prop, text;
-
-                            if (!ev.data || !editable) return true;
-
-                            elem=$('.adm-editing[contenteditable]',
-                                   ev.view.document)[0];
-
-                            if (elem && elem.contentEditable === 'true' &&
-                                ev.target !== elem) {
-                                text = getTextNodeContents(elem);
-                                prop = editable.propertyName;
-
-                                // Only update if values differ
-                                if (ev.data.getProperty(prop) !== text) {
-                                    if (!ev.data.setProperty(prop,text).result){
-                                        // Revert if setProperty fails
-                                        setTextNodeContents(elem,
-                                            ev.data.getProperty(prop));
-                                    }
-                                }
-                                // Turn off editing...
-                                disableEditing(elem);
-                                $(ev.view).unbind('.editing');
-
-                                ev.stopImmediatePropagation();
-                                ev.stopPropagation();
-                                ev.preventDefault();
-                                return false;
-                            } else if (elem && ev.target === elem) {
-                                //ev.preventDefault();
-                                return true;
-                            }
-                        });
+                                       admNode, finishEditing);
 
                         e.preventDefault();
                         return true;
