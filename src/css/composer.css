@@ -233,9 +233,14 @@ div.ui-drag-header[data-role="collapsible-set"]:before,
 }
 
 .adm-text-content:focus {
-    /*outline: 5px auto -webkit-focus-ring-color !important; */
     outline: none !important;
 }
 .adm-text-content.adm-editing:focus {
-    outline: 5px auto -webkit-focus-ring-color !important;
+    background-image: none !important;
+    background-color: #FAFBCA !important;
+    color: black !important;
+    font-weight: normal !important;
+    text-shadow: none !important;
+    outline: 1px dashed -webkit-focus-ring-color !important;
+    -webkit-box-shadow: 0em 0em 1em -2px rgba(0,0,0,0.8);
 }
