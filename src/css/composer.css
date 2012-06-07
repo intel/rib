@@ -145,6 +145,7 @@ Add some padding some that outline can be seen when selected.
     padding: 0px;
     background-color: #da1c2e;
     border: 0px none transparent;
+    list-style: none;
 }
 .nrc-sortable-container:empty > .ui-draggable-placeholder:only-child {
     margin-top: 33px;
@@ -265,4 +266,10 @@ label.adm-editable span.adm-text-content:empty::before,
 label.adm-editable span.adm-text-content::before,
 .adm-editable > label > span.adm-text-content::before {
     content: normal;
+}
+
+/* Prevent li "bullet" from showing on navbar buttons during sort */
+body > li.ui-sortable-helper[class*="ui-block-"]
+{
+    list-style: none;
 }
