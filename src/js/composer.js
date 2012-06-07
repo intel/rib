@@ -395,7 +395,7 @@ $(function() {
 
         // For nodes marked as "editable", attach double-click and blur handlers
         $(e.target).subtree('.adm-editable').each( function (index, node) {
-            var admNode, editable,
+            var admNode, editable, theNode = node,
                 adm = window.parent.ADM,
                 bw = window.parent.BWidget;
 
@@ -407,40 +407,44 @@ $(function() {
                 if (editable && typeof(editable) === 'object') {
                     if (editable.selector &&
                         $(editable.selector,node).length) {
-                        node = $(editable.selector,node)[0];
+                        theNode = $(editable.selector,node)[0];
                     }
                     // LABELs don't cause blur when we focuse them, and they
                     // never match the ':focus' pseudo selector, so we must
                     // wrap their textContents in a span so we can get the
                     // desired focus and tabindex behaviors
-                    if (node.nodeName === "LABEL") {
-                        node = $(node).wrapInner('<span>').find('span');
+                    if (theNode.nodeName === "LABEL") {
+                        theNode = $(theNode).wrapInner('<span>').find('span');
                     }
-                    $(node).addClass('adm-text-content');
+                    $(theNode).addClass('adm-text-content');
                     // Set the tabindex explicitly, and ordered...
-                    $(node).attr('tabindex','-1');
+                    $(theNode).attr('tabindex','-1');
 
                     // Bind double-click handler
                     $(node).dblclick(function(e) {
                         var rng= document.createRange && document.createRange(),
-                            sel= window.getSelection && window.getSelection();
+                            sel= window.getSelection && window.getSelection(),
+                            content;
 
                         if (!admNode.isSelected()) return true;
 
+                        content = $(e.currentTarget)
+                                      .subtree('.adm-text-content')[0];
+
                         // enable editing...
-                        enableEditing(e.target);
+                        enableEditing(content);
 
                         // pre-select the text contents/value
-                        if (e.target.select) {   // Text input/area
-                            e.target.select();
+                        if (content.select) {   // Text input/area
+                            content.select();
                         } else if (rng && sel) { // Everything else
-                            rng.selectNodeContents(e.target);
+                            rng.selectNodeContents(content);
                             sel.removeAllRanges();
                             sel.addRange(rng);
                         }
 
                         // Bind to keydown to capture esc, tab and enter keys
-                        $(e.target).bind('keydown.editing focusout.editing',
+                        $(content).bind('keydown.editing focusout.editing',
                                          admNode, finishEditing);
 
                         // Bind to mousedown on window to handle "focus" changes
