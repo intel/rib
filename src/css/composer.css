@@ -244,3 +244,13 @@ div.ui-drag-header[data-role="collapsible-set"]:before,
     outline: 1px dashed -webkit-focus-ring-color !important;
     -webkit-box-shadow: 0em 0em 1em -2px rgba(0,0,0,0.8);
 }
+label.adm-editable span.adm-text-content:empty::before,
+.adm-editable > label > span.adm-text-content:empty::before {
+    content: "Label";
+    color: darkGray !important; /* Chrome ::-webkit-input-placeholder style */
+    opacity: 0.5 !important;
+}
+label.adm-editable span.adm-text-content::before,
+.adm-editable > label > span.adm-text-content::before {
+    content: normal;
+}

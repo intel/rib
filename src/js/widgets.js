@@ -604,16 +604,12 @@ var BWidgetRegistry = {
             idstr = prop + "-range";
 
             label = node.getProperty("label");
-            if (label) {
-                code.append($('<label for="$1">$2</label>'
-                              .replace(/\$1/, idstr)
-                              .replace(/\$2/, label)));
-            }
+            code.append($('<label for="$1">$2</label>'
+                          .replace(/\$1/, idstr)
+                          .replace(/\$2/, label||"")));
 
             input = $('<input type="range">');
-            if (label) {
-                input.attr("id", idstr);
-            }
+            input.attr("id", idstr);
 
             prop = node.getProperty("value");
             input.attr("value", prop);
