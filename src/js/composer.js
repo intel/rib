@@ -424,7 +424,7 @@ $(function() {
                     $(node).dblclick(function(e) {
                         var rng= document.createRange && document.createRange(),
                             sel= window.getSelection && window.getSelection(),
-                            content;
+                            content, children;
 
                         if (!admNode.isSelected()) return true;
 
@@ -438,9 +438,16 @@ $(function() {
                         if (content.select) {   // Text input/area
                             content.select();
                         } else if (rng && sel) { // Everything else
+                            // Temp. detach children, leaving only TEXT_NODEs.
+                            // We need to do this for elements that have no
+                            // text themseleves, but do have children that do,
+                            // we don't want the descendant TEXT_NODE contents
+                            children = $(content).children().detach();
                             rng.selectNodeContents(content);
                             sel.removeAllRanges();
                             sel.addRange(rng);
+                            // Re-attach children, if there were any
+                            children.length && $(content).append(children);
                         }
 
                         // Bind to keydown to capture esc, tab and enter keys
