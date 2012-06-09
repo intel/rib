@@ -156,6 +156,7 @@
             event.data.loaded = true;
             event.data.refresh(null, event.data);
             $.rib.enableKeys(event.data.options.contentDocument);
+            event.data.options.contentDocument[0].contentEditable = false;
         },
 
         _createPrimaryTools: function() {
@@ -387,6 +388,11 @@
                     $(domNode).attr('header-label',
                                     BWidget.getDisplayLabel(admNode.getType()));
                 }
+            }
+
+            // If this node is "editable", make sure it's class reflects this
+            if (admNode.isEditable()) {
+                $(domNode).addClass('adm-editable');
             }
         },
     });

@@ -91,8 +91,11 @@ $(function() {
             return navItems;
         },
         ignoreText: function () {
-            return Boolean($('input[type="text"]:focus, textarea:focus',
-                             '.property_content').length);
+            var i = Boolean($('input[type="text"]:focus, textarea:focus',
+                             '.property_content').length),
+                f = Boolean($('.adm-editing:focus',$(':rib-layoutView')
+                             .layoutView('option','contentDocument')).length);
+            return i||f;
         },
     };
 

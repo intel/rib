@@ -43,6 +43,106 @@ $(document).bind('mobileinit', function() {
 });
 
 $(function() {
+    var isText = function (element) {
+        return element && element.type in {text:0, textarea:0};
+    };
+
+    var enableEditing = function (element) {
+        isText(element) && $(element).removeAttr('readonly');
+        element.contentEditable = true;
+        $(element).toggleClass('adm-editing');
+        $(element).focus();
+    };
+
+    var disableEditing = function (element) {
+        isText(element) && $(element).attr('readonly', true);
+        $(element).removeAttr('contentEditable');
+        $(element).toggleClass('adm-editing');
+        window.getSelection().removeAllRanges();
+        $(element).add(window).unbind('.editing');
+    };
+
+    var getTextNodeContents = function (element) {
+        if (isText(element)) {
+            // Text[area] nodes store string in value, not textContent
+            return element.value;
+        } else {
+            // Only return text of TEXT_NODE elements, not other
+            // potential child nodes
+            return $(element).contents().filter( function() {
+                return (this.nodeType === 3);
+            }).text();
+        }
+    };
+
+    var setTextNodeContents = function (element, string) {
+        var children;
+        if (isText(element)) {
+            // Text[area] nodes need to set value, not textContent
+            element.value = string;
+        } else {
+            // Need to make sure we don't overwrite child nodes, so
+            // first, detach them...
+            children = $(element).children().detach();
+            // next, set the text node string...
+            element.textContent = string;
+            // finally, re-attach (append) the children...
+            $(element).append(children);
+        }
+    };
+
+    var finishEditing = function (ev) {
+        var editable = ev && ev.data && ev.data.isEditable(),
+            exitKeys = {9:'TAB',13:'ENTER',27:'ESC'},
+            prop, text, elem;
+
+        if (ev && ev.currentTarget === window && ev.type === 'mousedown') {
+            elem = $('.adm-editing[contenteditable]', ev.view.document)[0];
+        } else {
+            elem = ev.target;
+        }
+
+        if (!editable || (elem.contentEditable !== 'true') ||
+            (ev.type === 'keydown' && !(ev.which in exitKeys))) {
+            return true;
+        }
+
+        text = getTextNodeContents(elem);
+        prop = editable.propertyName;
+
+        // Save and exit edit mode
+        if (ev.which === 13 || ev.which === 9 ||
+            ev.type === 'focusout' || ev.type === 'mousedown') {
+            // Only update if values differ
+            if (ev.data.getProperty(prop) !== text) {
+                // Attempt to set the ADM property
+                if (!ev.data.setProperty(prop,text).result){
+                    // Revert if setProperty fails
+                    setTextNodeContents(elem, ev.data.getProperty(prop));
+                }
+            }
+
+            // Special case for TAB key
+            if (ev.which === 9 && ev.type === 'keydown') {
+                ev.view.top.focus();
+                ev.stopImmediatePropagation();
+                ev.stopPropagation();
+                ev.preventDefault();
+            }
+
+        // Revert and exit edit mode
+        } else if (ev.which === 27 && ev.type === 'keydown') {
+            setTextNodeContents(elem, ev.data.getProperty(prop));
+
+        // Do nothing for other keys
+        } else {
+            return true;
+        }
+
+        // Turn off editing...
+        disableEditing(elem);
+    };
+
     var handleSelect = function (e, ui){
         if ($(ui).data('role') === 'content' ||
             $(ui).data('role') === 'page') {
@@ -231,6 +331,7 @@ $(function() {
         $(e.target).subtree('.adm-node:not(.delegation),.orig-adm-node').each(
         function (index, node) {
             var admNode, widgetType, delegate, events,
+                editable,
                 delegateNode,
                 adm = window.parent.ADM,
                 bw = window.parent.BWidget;
@@ -239,6 +340,7 @@ $(function() {
             if (adm && bw) {
                 admNode = adm.getDesignRoot()
                     .findNodeByUid($(node).attr('data-uid')),
+                editable = admNode && admNode.isEditable(),
                 widgetType = admNode && admNode.getType(),
                 delegate = widgetType &&
                            bw.getWidgetAttribute(widgetType, 'delegate'),
@@ -287,6 +389,78 @@ $(function() {
 
                 if (events) {
                     $(node).bind(events);
+                }
+            }
+        });
+
+        // For nodes marked as "editable", attach double-click and blur handlers
+        $(e.target).subtree('.adm-editable').each( function (index, node) {
+            var admNode, editable, theNode = node,
+                adm = window.parent.ADM,
+                bw = window.parent.BWidget;
+
+            if (adm && bw) {
+                admNode = adm.getDesignRoot()
+                    .findNodeByUid($(node).attr('data-uid')),
+                editable = admNode && admNode.isEditable();
+
+                if (editable && typeof(editable) === 'object') {
+                    if (editable.selector &&
+                        $(editable.selector,node).length) {
+                        theNode = $(editable.selector,node)[0];
+                    }
+                    // LABELs don't cause blur when we focuse them, and they
+                    // never match the ':focus' pseudo selector, so we must
+                    // wrap their textContents in a span so we can get the
+                    // desired focus and tabindex behaviors
+                    if (theNode.nodeName === "LABEL") {
+                        theNode = $(theNode).wrapInner('<span>').find('span');
+                    }
+                    $(theNode).addClass('adm-text-content');
+                    // Set the tabindex explicitly, and ordered...
+                    $(theNode).attr('tabindex','-1');
+
+                    // Bind double-click handler
+                    $(node).dblclick(function(e) {
+                        var rng= document.createRange && document.createRange(),
+                            sel= window.getSelection && window.getSelection(),
+                            content, children;
+
+                        if (!admNode.isSelected()) return true;
+
+                        content = $(e.currentTarget)
+                                      .subtree('.adm-text-content')[0];
+
+                        // enable editing...
+                        enableEditing(content);
+
+                        // pre-select the text contents/value
+                        if (content.select) {   // Text input/area
+                            content.select();
+                        } else if (rng && sel) { // Everything else
+                            // Temp. detach children, leaving only TEXT_NODEs.
+                            // We need to do this for elements that have no
+                            // text themseleves, but do have children that do,
+                            // we don't want the descendant TEXT_NODE contents
+                            children = $(content).children().detach();
+                            rng.selectNodeContents(content);
+                            sel.removeAllRanges();
+                            sel.addRange(rng);
+                            // Re-attach children, if there were any
+                            children.length && $(content).append(children);
+                        }
+
+                        // Bind to keydown to capture esc, tab and enter keys
+                        $(content).bind('keydown.editing focusout.editing',
+                                         admNode, finishEditing);
+
+                        // Bind to mousedown on window to handle "focus" changes
+                        $(e.view).bind('mousedown.editing',
+                                       admNode, finishEditing);
+
+                        e.preventDefault();
+                        return true;
+                    });
                 }
             }
         });
@@ -710,6 +884,13 @@ $(function() {
         $(item).removeClass('ui-unselecting')
                .removeClass('ui-selecting')
                .addClass('ui-selected');
+
+        // Force focus
+        window.getSelection().removeAllRanges();
+        var foo = $('.adm-text-content', item)[0] || window.top;
+        var bar = $(':focus')[0] || document.activeElement;
+        $(foo).focus();
+        $(bar).blur();
 
         adm.setSelected((item?$(item).attr('data-uid'):item));
     }

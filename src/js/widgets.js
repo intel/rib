@@ -52,6 +52,10 @@
  *                     two default child Blocks)
  *  16)  outlineLabel: optional function(ADMNode) that returns a label to show
  *                     (intended even for widgets w/ showInPalette false)
+ *  17)      editable: optional object, containing an optional selector and a
+ *                     a required property name (see #3 above).  Existance of
+ *                     this object implies the textContent node of the
+ *                     resulting DOM element is editable in-line
  *
  * Each zone description in the array should be an object with:
  *   1) name identifying the zone point
@@ -293,6 +297,10 @@ var BWidgetRegistry = {
         },
 
         moveable: false,
+        editable: {
+            selector: "h1",
+            propertyName: "text"
+        },
         properties: {
             text: {
                 type: "string",
@@ -360,6 +368,10 @@ var BWidgetRegistry = {
         },
 
         moveable: false,
+        editable: {
+            selector: "h1",
+            propertyName: "text"
+        },
         properties: {
             text: {
                 type: "string",
@@ -449,6 +461,10 @@ var BWidgetRegistry = {
     Button: {
         parent: "Base",
         paletteImageName: "jqm_button.svg",
+        editable: {
+            selector: "span > .ui-btn-text",
+            propertyName: "text"
+        },
         properties: {
             text: {
                 type: "string",
@@ -576,6 +592,10 @@ var BWidgetRegistry = {
                 defaultValue: "default"
             }
         },
+        editable: {
+            selector: "label",
+            propertyName: "label"
+        },
         template: function (node) {
             var label, idstr, prop, input,
                 code = $('<div data-role="fieldcontain"></div>');
@@ -584,16 +604,12 @@ var BWidgetRegistry = {
             idstr = prop + "-range";
 
             label = node.getProperty("label");
-            if (label) {
-                code.append($('<label for="$1">$2</label>'
-                              .replace(/\$1/, idstr)
-                              .replace(/\$2/, label)));
-            }
+            code.append($('<label for="$1">$2</label>'
+                          .replace(/\$1/, idstr)
+                          .replace(/\$2/, label||"")));
 
             input = $('<input type="range">');
-            if (label) {
-                input.attr("id", idstr);
-            }
+            input.attr("id", idstr);
 
             prop = node.getProperty("value");
             input.attr("value", prop);
@@ -634,6 +650,10 @@ var BWidgetRegistry = {
                 defaultValue: "Label"
             }
         },
+        editable: {
+            selector: "",
+            propertyName: "text"
+        },
         template: '<label>%TEXT%</label>',
     },
 
@@ -644,6 +664,10 @@ var BWidgetRegistry = {
         parent: "Base",
         displayLabel: "Text Input",
         paletteImageName: "jqm_text_input.svg",
+        editable: {
+            selector: "",
+            propertyName: "value"
+        },
         properties: {
             hint: {
                 type: "string",
@@ -676,6 +700,10 @@ var BWidgetRegistry = {
         parent: "Base",
         displayLabel: "Text Area",
         paletteImageName: "jqm_text_area.svg",
+        editable: {
+            selector: "",
+            propertyName: "value"
+        },
         properties: {
             hint: {
                 type: "string",
@@ -881,6 +909,10 @@ var BWidgetRegistry = {
         displayLabel: "Radio Button",
         paletteImageName: "jqm_radio_button.svg",
         allowIn: "RadioGroup",
+        editable: {
+            selector: "span > .ui-btn-text",
+            propertyName: "label"
+        },
         properties: {
             // FIXME: All the radio buttons in a group need to have a common
             //        "name" field in order to work correctly
@@ -1005,6 +1037,10 @@ var BWidgetRegistry = {
     Checkbox: {
         parent: "Base",
         paletteImageName: "jqm_checkbox.svg",
+        editable: {
+            selector: "span > .ui-btn-text",
+            propertyName: "label"
+        },
         properties: {
             id: {
                 type: "string",
@@ -1141,6 +1177,10 @@ var BWidgetRegistry = {
         displayLabel: "List Item",
         paletteImageName: "jqm_list_item.svg",
         allowIn: [ "List", "OrderedList" ],
+        editable: {
+            selector: "",
+            propertyName: "text"
+        },
         properties: {
             text: {
                 type: "string",
@@ -1164,6 +1204,10 @@ var BWidgetRegistry = {
         displayLabel: "List Divider",
         paletteImageName: "jqm_list_divider.svg",
         allowIn: [ "List", "OrderedList" ],
+        editable: {
+            selector: "",
+            propertyName: "text"
+        },
         properties: {
             text: {
                 type: "string",
@@ -1187,6 +1231,10 @@ var BWidgetRegistry = {
         displayLabel: "List Button",
         paletteImageName: "jqm_list_button.svg",
         allowIn: [ "List", "OrderedList" ],
+        editable: {
+            selector: "a",
+            propertyName: "text"
+        },
         properties: {
             text: {
                 type: "string",
@@ -1448,6 +1496,10 @@ var BWidgetRegistry = {
         paletteImageName: "jqm_collapsible.svg",
         template: '<div data-role="collapsible"><h1>%HEADING%</h1></div>',
         newGroup: true,
+        editable: {
+            selector: "span.ui-btn-text",
+            propertyName: "heading"
+        },
         properties: {
             // NOTE: Removed "size" (h1 - h6) for the same reason we don't
             //       provide that option in header/footer currently. jQM
@@ -2400,6 +2452,20 @@ var BWidget = {
             }
         }
         return array;
+    },
+
+    /**
+     * Tests whether this BWidget is allowed to have it's textContent edited.
+     *
+     * @return {Object} if this BWidget is editable, null if not.
+     * @throws {Error} If widgetType is invalid.
+     */
+    isEditable: function (widgetType) {
+        var widget = BWidgetRegistry[widgetType];
+        if (typeof widget !== "object") {
+            throw new Error("widget type invalid in isEditable");
+        }
+        return widget.hasOwnProperty("editable") ? widget.editable : null;
     },
 
     /**
