@@ -290,7 +290,10 @@
                         });
                     }
                 };
-                $.rib.pmUtils.deleteProject(pid, success);
+                var continueToDelete = confirm("Are you sure to delete it?");
+                if(continueToDelete) {
+                    $.rib.pmUtils.deleteProject(pid, success);
+                }
             };
             // draw project box
             box = $('<div/>').attr('id',pid)
