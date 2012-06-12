@@ -4,7 +4,6 @@
         "jqm_input_boolean":["ToggleSwitch", "RadioButton", "RadioGroup", "Checkbox", "CheckboxGroup"],
         "jqm_other_inputs":[ {
                     "Form": ["Form"],
-                    "Label": ["Label"],
                     "Text": ["TextInput", "TextArea"],
                     "Select": ["SelectMenu"],
                     "Number": ["Slider"]
@@ -20,14 +19,14 @@
             "Buttons": ["Button","ButtonGroup"],
             "Content Formatting": ["Grid", "Collapsible", "Accordion"],
             "Form Elements": [
-                "#0._hidden_node.jqm_other_inputs.0",
+                "#0._hidden_node.jqm_other_inputs.0", "Text",
                 {
                     "Boolean": ["#0._hidden_node.jqm_input_boolean", "Switch"],
                     "Date & Time": ["#0._hidden_node.tizen_input_date"],
                     "Color": ["#0._hidden_node.tizen_input_color"]
                 }
             ],
-            "List views": [
+            "List Views": [
                  "List", "OrderedList", "ListItem", "ListDivider", "ListButton"
             ],
             "Output": ["ProgressBar"]
@@ -36,13 +35,14 @@
 
     "Widget Sets": [
         {
+            "Simple HTML": [ "Text" ],
             "jQuery Mobile": [ 
                 "#0._hidden_node.jqm_toolbars",
                 "#0.Functional Groups.0.Buttons",
                 "#0.Functional Groups.0.Content Formatting",
                 "#0._hidden_node.jqm_other_inputs",
                 "#0._hidden_node.jqm_input_boolean",
-                "#0.Functional Groups.0.List views"
+                "#0.Functional Groups.0.List Views"
             ],
             "Tizen Widgets": [ "OptionHeader",  "Switch",
                 "#0._hidden_node.tizen_input_date",

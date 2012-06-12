@@ -24,18 +24,23 @@ var DEBUG = true,
     xmlserializer = new XMLSerializer(),
     formatHTML  = function (rawHTML) {
         return style_html(rawHTML, {
-                              'max_char': 80,
-                              'unformatted': ['a', 'h1', 'script', 'title']
-                          });
+            'max_char': 80,
+            'unformatted': ['a', 'script', 'title']
+        });
     },
 
     generateHTML = function () {
         var doc = constructNewDocument($.rib.getDefaultHeaders());
 
+        function renderClean(admNode, domNode) {
+            $(domNode).data('uid', admNode.getUid());
+            if (domNode.hasClass("rib-remove")) {
+                domNode.replaceWith(domNode.text());
+            }
+        };
+
         serializeADMSubtreeToDOM(ADM.getDesignRoot(), $(doc).find('body'),
-                                 function (admNode, domNode) {
-                                    $(domNode).data('uid', admNode.getUid());
-                                 });
+                                 renderClean);
         return { doc: doc,
                  html: formatHTML(xmlserializer.serializeToString(doc))
         };

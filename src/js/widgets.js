@@ -419,6 +419,45 @@ var BWidgetRegistry = {
     },
 
     /**
+     * Represents simple text in the layout, possibly wrapped with a tag like
+     * <h1> ... <h6>, <p>, <em>, etc.
+     */
+    Text: {
+        parent: "Base",
+        paletteImageName: "jqm_text.svg",
+        template: function(node) {
+            var type, code;
+
+            type = node.getProperty("type");
+            code = $('<' + type + '>');
+
+            // FIXME: including a space here because the beautify script
+            // adds whitespace between adjacent inline tags; this forces the
+            // layout canvas to match the preview, and we just lose the ability
+            // to have adjacent text sections without whitespace
+            code.text(node.getProperty("text") + ' ');
+
+            return BWidgetRegistry.Base.applyProperties(node, code);
+        },
+        properties: {
+            text: {
+                type: "string",
+                defaultValue: "Text"
+            },
+            type: {
+                type: "string",
+                options: [ "span", "h1", "h2", "h3", "h4", "h5", "h6",
+                           "label", "p", "em", "strong" ],
+                defaultValue: "span"
+            }
+        },
+        editable: {
+            selector: "",
+            propertyName: "text"
+        }
+    },
+
+    /**
      * Represents a Control Group object. Includes an "data-type" property
      * that should be "vertical" or "horizontal"
      */
@@ -633,28 +672,6 @@ var BWidgetRegistry = {
             code.append(input);
             return code;
         }
-    },
-
-    /**
-     * Represents a text label. A "text" string property holds the text.
-     */
-    Label: {
-        // FIXME: I'm not sure we should really have this. Instead we make
-        //        label text a property of other form elements and the
-        //        <label> part of their templates.
-        parent: "Base",
-        paletteImageName: "jqm_label.svg",
-        properties: {
-            text: {
-                type: "string",
-                defaultValue: "Label"
-            }
-        },
-        editable: {
-            selector: "",
-            propertyName: "text"
-        },
-        template: '<label>%TEXT%</label>',
     },
 
     /**
