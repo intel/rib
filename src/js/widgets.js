@@ -713,6 +713,11 @@ var BWidgetRegistry = {
                 type: "string",
                 options: [ "default", "a", "b", "c", "d", "e" ],
                 defaultValue: "default"
+            },
+            disabled: {
+                type: "boolean",
+                defaultValue: "false",
+                htmlAttribute: "disabled",
             }
         },
         editable: {
@@ -753,6 +758,11 @@ var BWidgetRegistry = {
                 input.attr("data-track-theme", prop);
             }
 
+            prop = node.getProperty("disabled");
+            if (prop == true) {
+                input.attr("disabled", "disabled");
+            }
+
             code.append(input);
             return code;
         }
@@ -787,6 +797,11 @@ var BWidgetRegistry = {
                 type: "string",
                 defaultValue: "",
                 htmlAttribute: "value"
+            },
+            disabled: {
+                type: "boolean",
+                defaultValue: "false",
+                htmlAttribute: "disabled",
             }
         },
         template: '<input type="text">',
@@ -822,6 +837,11 @@ var BWidgetRegistry = {
                 //        static text is not a common thing to do
                 type: "string",
                 defaultValue: "",
+            },
+            disabled: {
+                type: "boolean",
+                defaultValue: "false",
+                htmlAttribute: "disabled",
             }
         },
         template: '<textarea>%VALUE%</textarea>'
@@ -856,6 +876,11 @@ var BWidgetRegistry = {
                 options: [ "default", "a", "b", "c", "d", "e" ],
                 defaultValue: "default",
                 htmlAttribute: "data-theme"
+            },
+            disabled: {
+                type: "boolean",
+                defaultValue: "false",
+                htmlAttribute: "disabled",
             }
         },
         template: '<select data-role="slider"><option value="%VALUE1%">%LABEL1%</option><option value="%VALUE2%">%LABEL2%</option></select>',
@@ -870,8 +895,13 @@ var BWidgetRegistry = {
         parent: "Base",
         paletteImageName: "jqm_select.svg",
         template: function(node) {
-            var prop, length, i, child,
-            code = $('<select></select>');
+            var prop, code, length, i, child;
+            prop = node.getProperty("disabled");
+            if(prop == true) {
+                code = $('<select disabled="disabled"></select>');
+            } else {
+                code = $('<select></select>');
+            }
             prop = node.getProperty("options");
             length = prop.children.length;
             for (i = 0; i< length; i++) {
@@ -912,7 +942,12 @@ var BWidgetRegistry = {
                      },
                      children : []
                  }
-             }
+            },
+            disabled: {
+                type: "boolean",
+                defaultValue: "false",
+                htmlAttribute: "disabled",
+            }
         },
         zones: [
             {
@@ -1040,12 +1075,23 @@ var BWidgetRegistry = {
                 options: [ "default", "a", "b", "c", "d", "e" ],
                 defaultValue: "default",
                 htmlAttribute: "data-theme"
+            },
+            disabled: {
+                type: "boolean",
+                defaultValue: "false",
+                htmlAttribute: "disabled",
             }
         },
         delegate: 'parent',
         template: function (node) {
             //var prop, code = $('<div data-role="header"><h1></h1></div>');
-            var prop, label, code = $('<input type="radio"><label></label>');
+            var prop, label, code;
+            
+            if(node.getProperty("disabled") == true) {
+                code = $('<input type="radio" disabled="disabled"><label></label>');
+            } else {
+                code = $('<input type="radio"><label></label>');
+            }
 
             // always include id property on input
             code.filter('input').attr("id", node.getProperty("id"));
@@ -1165,6 +1211,11 @@ var BWidgetRegistry = {
                 options: [ "default", "a", "b", "c", "d", "e" ],
                 defaultValue: "default",
                 htmlAttribute: "data-theme"
+            },
+            disabled: {
+                type: "boolean",
+                defaultValue: "false",
+                htmlAttribute: "disabled",
             }
         },
         template: '<input type="checkbox"><label for="%ID%">%LABEL%</label>',

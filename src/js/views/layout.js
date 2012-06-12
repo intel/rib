@@ -394,6 +394,8 @@
             if (admNode.isEditable()) {
                 $(domNode).addClass('adm-editable');
             }
+
+            $(domNode).removeAttr('disabled');
         },
     });
 })(jQuery);
