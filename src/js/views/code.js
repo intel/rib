@@ -124,6 +124,14 @@
             widget._selectCode(widget._htmlDoc.doc, event.page.getUid());
         },
 
+        _modelUpdatedHandler: function(event, widget) {
+            widget = widget || this;
+
+            if (!widget.element.data('visible')) return;
+
+            widget.refresh();
+        },
+
         _selectCode: function (resultDoc, selectedUid) {
             var widget = this;
             $(resultDoc).find(':data(uid)').each(function () {
