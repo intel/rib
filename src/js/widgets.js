@@ -170,7 +170,7 @@ var BWidgetRegistry = {
                       value: 'src/js/template.js'
                     },
                     { designOnly: false,
-                      value: 'lib/jquery.mobile-1.0.js'
+                      value: 'lib/jquery.mobile-1.1.0.js'
                     },
                     { designOnly: false,
                       value: 'lib/web-ui-fw-libs.js'
@@ -184,10 +184,10 @@ var BWidgetRegistry = {
                 type: "array",
                 defaultValue: [
                     { designOnly: false,
-                      value: 'src/css/jquery.mobile.structure-1.0.css'
+                      value: 'src/css/jquery.mobile.structure-1.1.0.css'
                     },
                     { designOnly: false,
-                      value: 'src/css/jquery.mobile-1.0.css'
+                      value: 'src/css/jquery.mobile.theme-1.1.0.css'
                     },
                     { designOnly: false,
                       value: 'src/css/web-ui-fw-theme.css'
