@@ -104,7 +104,8 @@
                 widget = this, type,  i, child, index, propType,
                 p, props, options, code, o, propertyItems, label, value,
                 title = this.element.parent().find('.property_title'),
-                content = this.element.find('.property_content');
+                content = this.element.find('.property_content'),
+                continueToDelete;
 
             // Clear the properties pane when nothing is selected
             if (node === null || node === undefined) {
@@ -350,6 +351,10 @@
                         parent = node.getParent();
                         zone = parent.getZoneArray(node.getZone());
                         if (type === "Page") {
+                            continueToDelete = confirm("Are you sure to delete the page?");
+                            if(!continueToDelete) {
+                                return false;
+                            }
                             $.rib.pageUtils.deletePage(node.getUid(), false);
                         } else {
                             ADM.removeChild(node.getUid(), false);
