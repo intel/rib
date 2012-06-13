@@ -33,26 +33,19 @@
  *                     widget is attempted to be added to this widget, instead
  *                     add it to the given zone, inside the widget type
  *                     (first creating that widget if it doesn't exist)
- *  10)      newGroup: [DEPRECATED] boolean, indicating that this is the first
- *                     widget in a conceptual group of widgets (default: false),
- *                     this should go away soon in favor of a better system for
- *                     classifying/presenting widgets
- *  11)  newAccordion: [DEPRECATED] boolean, indicating that this is the first
- *                     widget within a new high-level widget set (default:
- *                     false), should go away soon (see newGroup above)
- *  12)  displayLabel: the name to be displayed to the user for this widget, if
+ *  10)  displayLabel: the name to be displayed to the user for this widget, if
  *                     different from the raw name (eventually this should be
  *                     overwritten by localized values)
- *  13)      delegate: [FIXME] something to do with which node in the generated
+ *  11)      delegate: [FIXME] something to do with which node in the generated
  *                     template is used for event handling (string or function)
- *  14)        events: [FIXME] something to do with handling events
- *  15)          init: function to be called after a new widget is created with
+ *  12)        events: [FIXME] something to do with handling events
+ *  13)          init: function to be called after a new widget is created with
  *                     default properties, e.g. when dragged onto the canvas
  *                     from the palette (i.e. Grid uses this to generate its
  *                     two default child Blocks)
- *  16)  outlineLabel: optional function(ADMNode) that returns a label to show
+ *  14)  outlineLabel: optional function(ADMNode) that returns a label to show
  *                     (intended even for widgets w/ showInPalette false)
- *  17)      editable: optional object, containing an optional selector and a
+ *  15)      editable: optional object, containing an optional selector and a
  *                     a required property name (see #3 above).  Existance of
  *                     this object implies the textContent node of the
  *                     resulting DOM element is editable in-line
@@ -466,7 +459,6 @@ var BWidgetRegistry = {
         dragHeader: true,
         paletteImageName: "jqm_vertical_button_group.svg",
         template: '<div data-role="controlgroup"></div>',
-        newGroup: true,
         displayLabel: "Button Group",
         zones: [
             {
@@ -564,7 +556,6 @@ var BWidgetRegistry = {
         dragHeader: true,
         paletteImageName: "jqm_form.svg",
         template: '<form></form>',
-        newGroup: true,
         zones: [
             {
                 name: "default",
@@ -809,7 +800,6 @@ var BWidgetRegistry = {
                 prop.children.push(optionItem);
             }
         },
-        newGroup: true,
         displayLabel: "Select Menu",
         properties: {
             options: {
@@ -879,7 +869,6 @@ var BWidgetRegistry = {
     RadioGroup: {
         parent: "ButtonGroup",
         dragHeader: true,
-        newGroup: true,
         displayLabel: "Radio Group",
         paletteImageName: "jqm_radio_group.svg",
         properties: {
@@ -1013,7 +1002,6 @@ var BWidgetRegistry = {
     CheckboxGroup: {
         parent: "ButtonGroup",
         dragHeader: true,
-        newGroup: true,
         displayLabel: "Checkbox Group",
         paletteImageName: "jqm_checkbox_group.svg",
         properties: {
@@ -1097,7 +1085,6 @@ var BWidgetRegistry = {
         parent: "Base",
         paletteImageName: "jqm_list.svg",
         dragHeader: true,
-        newGroup: true,
         properties: {
             inset: {
                 type: "boolean",
@@ -1289,7 +1276,6 @@ var BWidgetRegistry = {
         parent: "Base",
         dragHeader: true,
         paletteImageName: "jqm_grid.svg",
-        newGroup: true,
         properties: {
             rows: {
                 type: "integer",
@@ -1512,7 +1498,6 @@ var BWidgetRegistry = {
         parent: "Base",
         paletteImageName: "jqm_collapsible.svg",
         template: '<div data-role="collapsible"><h1>%HEADING%</h1></div>',
-        newGroup: true,
         editable: {
             selector: "span.ui-btn-text",
             propertyName: "heading"
@@ -1600,8 +1585,6 @@ var BWidgetRegistry = {
         parent: "Base",
         paletteImageName: "tizen_date_picker.svg",
         template: '<input type="date" />',
-        newGroup: true,
-        newAccordion: true,
         delegate: 'next'
     },
 
@@ -1616,7 +1599,6 @@ var BWidgetRegistry = {
         parent: "Base",
         paletteImageName: "tizen_color_picker.svg",
         template: '<div data-role="colorpicker" />',
-        newGroup: true,
         properties: {
             data_color: {
                 type: "string",
@@ -1683,7 +1665,6 @@ var BWidgetRegistry = {
     ProgressBar: {
         parent: "Base",
         paletteImageName: "tizen_progress_bar.svg",
-        newGroup: true,
         template: '<div data-role="processingbar" />',
     },
 
@@ -2511,34 +2492,6 @@ var BWidget = {
             throw new Error("widget type invalid in isMoveable");
         }
         return widget.hasOwnProperty("moveable") ? widget.moveable : true;
-    },
-
-    /**
-     * Tests whether this BWidget begins a new widget group.
-     *
-     * @return {Boolean} True if this BWidget is the first in a new group.
-     * @throws {Error} If widgetType is invalid.
-     */
-    startsNewGroup: function (widgetType) {
-        var widget = BWidgetRegistry[widgetType];
-        if (typeof widget !== "object") {
-            throw new Error("widget type invalid in startsNewGroup");
-        }
-        return widget.newGroup ? true : false;
-    },
-
-    /**
-     * Tests whether this BWidget begins a new accordion.
-     *
-     * @return {Boolean} True if this BWidget is the first in a new group.
-     * @throws {Error} If widgetType is invalid.
-     */
-    startsNewAccordion: function (widgetType) {
-        var widget = BWidgetRegistry[widgetType];
-        if (typeof widget !== "object") {
-            throw new Error("widget type invalid in startsNewAccordion");
-        }
-        return widget.newAccordion ? true : false;
     },
 
     /**
