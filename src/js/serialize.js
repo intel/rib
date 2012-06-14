@@ -213,7 +213,7 @@ var DEBUG = true,
             //to be handled in the delegate function of the corresponding widget
             //e.g. To add a special class to these tags so that they can be selected
             //to remove here.
-            for (var i = 1; i < domNodes.lenght; i ++)
+            for (var i = 1; i < domNodes.length; i ++)
                 $(domNodes[i]).remove();
             $(domNodes[0]).replaceWith(widget);
         }
