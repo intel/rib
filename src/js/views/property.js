@@ -147,10 +147,16 @@
                             .attr('id', valueId)
                             .appendTo(value);
 
+                        // FIXME: Boolean values should be actual booleans, not
+                        // "true" and "false" strings; but because of bugs we
+                        // had previously, data files were written out with the
+                        // wrong values, so the following test helps them keep
+                        // working correctly. Someday, we should remove it.
+
                         // initial value of checkbox
                         if ((node.getProperty (p) === true) ||
                             (node.getProperty (p) === "true")) {
-                            value.find("#" + valueId).attr("checked", true);
+                            value.find("#" + valueId).attr("checked", "checked");
                         }
                         break;
                     case "record-array":

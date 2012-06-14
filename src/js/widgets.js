@@ -529,7 +529,7 @@ var BWidgetRegistry = {
             },
             inline: {
                 type: "boolean",
-                defaultValue: "false",
+                defaultValue: false,
                 htmlAttribute: "data-inline"
             },
             transition: {
@@ -1088,7 +1088,7 @@ var BWidgetRegistry = {
         properties: {
             inset: {
                 type: "boolean",
-                defaultValue: "true",
+                defaultValue: true,
                 htmlAttribute: "data-inset",
                 // because data-inset="false" is the real default, do this:
                 forceAttribute: true
@@ -1098,7 +1098,7 @@ var BWidgetRegistry = {
             },
             filter: {
                 type: "boolean",
-                defaultValue: "false",
+                defaultValue: false,
                 htmlAttribute: "data-filter"
             },
             theme: {
@@ -1136,7 +1136,7 @@ var BWidgetRegistry = {
         properties: {
             inset: {
                 type: "boolean",
-                defaultValue: "true",
+                defaultValue: true,
                 htmlAttribute: "data-inset",
                 // because data-inset="false" is the real default, do this:
                 forceAttribute: true
@@ -1146,7 +1146,7 @@ var BWidgetRegistry = {
             },
             filter: {
                 type: "boolean",
-                defaultValue: "false",
+                defaultValue: false,
                 htmlAttribute: "data-filter"
             },
             theme: {
@@ -1631,7 +1631,7 @@ var BWidgetRegistry = {
             },
             show_preview: {
                 type: "boolean",
-                defaultValue: "false",
+                defaultValue: false,
                 htmlAttribute: "data-show-preview"
             }
         },
