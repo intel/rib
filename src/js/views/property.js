@@ -344,7 +344,7 @@
                 .end()
                 .appendTo(content);
             content.find('#deleteElement')
-                .one('click', function (e) {
+                .bind('click', function (e) {
                     var parent, zone, index;
                     try {
                         index = node.getZoneIndex();
