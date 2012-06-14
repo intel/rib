@@ -59,14 +59,15 @@
         },
 
         refresh: function(event, widget) {
+            var node;
             widget = widget || this;
             if (event) {
                 if (event.node && !(event.name === "modelUpdated" &&
                     event.type === "nodeRemoved")) {
-                    widget._showProperties(event);
+                    widget._showProperties(event.node);
                 } else {
-                    event.node = ADM.getActivePage();
-                    widget._showProperties(event);
+                    node = ADM.getActivePage();
+                    widget._showProperties(node);
                 }
             }
         },
@@ -98,9 +99,8 @@
             widget.refresh(event,widget);
         },
 
-        _showProperties: function(event) {
-            var node = event.node,
-                labelId, labelVal, valueId, valueVal, count,
+        _showProperties: function(node) {
+            var labelId, labelVal, valueId, valueVal, count,
                 widget = this, type,  i, child, index, propType,
                 p, props, options, code, o, propertyItems, label, value,
                 title = this.element.parent().find('.property_title'),
