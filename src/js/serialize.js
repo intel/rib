@@ -19,7 +19,6 @@
  * General functions for two directions
  ******************************************************/
 var DEBUG = true,
-    blockModelUpdated = false,
     blockActivePageChanged = false,
     xmlserializer = new XMLSerializer(),
     formatHTML  = function (rawHTML) {
@@ -108,15 +107,7 @@ var DEBUG = true,
             }
         }
 
-        // The ADMNode.getProperties() call will trigger a modelUpdated
-        // event due to any property being set to autogenerate
-        node.suppressEvents(true);
-        node.getDesign().suppressEvents(true);
-
-        blockModelUpdated = true;
         props = node.getProperties();
-        id = node.getProperty('id');
-        blockModelUpdated = false;
 
         if (typeof template === "function") {
             widget = template(node);
@@ -217,10 +208,6 @@ var DEBUG = true,
                 $(domNodes[i]).remove();
             $(domNodes[0]).replaceWith(widget);
         }
-
-
-        node.getDesign().suppressEvents(false);
-        node.suppressEvents(false);
 
         return widget;
     },
