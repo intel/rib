@@ -52,7 +52,7 @@ var DEBUG = true,
             parentNode = null,
             template, props, id,
             selMap = {},  // maps selectors to attribute maps
-            attrName, attrValue, propValue, propDefault,
+            attrName, attrValue, propDefault,
             widget, regEx, wrapper, domNodes;
 
         // Check for valid node
@@ -129,7 +129,7 @@ var DEBUG = true,
             // Apply any special ADMNode properties to the template before we
             // create the DOM Element instance
             for (var p in props) {
-                propValue = node.getProperty(p);
+                attrValue = node.getProperty(p);
 
                 switch (p) {
                 case "type":
@@ -139,12 +139,12 @@ var DEBUG = true,
                     if (typeof attrName  === "object") {
                         var attrMap = attrName;
                         attrName = attrMap.name;
-                        attrValue = attrMap.value[propValue];
+                        attrValue = attrMap.value[attrValue];
                     }
                     if (attrName) {
                         propDefault = BWidget.getPropertyDefault(type, p);
 
-                        if (propValue !== propDefault ||
+                        if (attrValue !== propDefault ||
                             BWidget.getPropertyForceAttribute(type, p)) {
                             selector = BWidget.getPropertyHTMLSelector(type, p);
                             if (!selector) {
@@ -164,22 +164,22 @@ var DEBUG = true,
                     break;
                 }
 
-                if (typeof propValue === "string" ||
-                    typeof propValue === "number") {
+                if (typeof attrValue === "string" ||
+                    typeof attrValue === "number") {
                     // reasonable value to substitute in template
                     regEx = new RegExp('%' + p.toUpperCase() + '%', 'g');
-                    if(typeof propValue === "string") {
-                        propValue = propValue.replace(/&/g, "&amp;");
-                        propValue = propValue.replace(/"/g, "&quot;");
-                        propValue = propValue.replace(/'/g, "&#39;");
-                        propValue = propValue.replace(/</g, "&lt;");
-                        propValue = propValue.replace(/>/g, "&gt;");
+                    if(typeof attrValue === "string") {
+                        attrValue = attrValue.replace(/&/g, "&amp;");
+                        attrValue = attrValue.replace(/"/g, "&quot;");
+                        attrValue = attrValue.replace(/'/g, "&#39;");
+                        attrValue = attrValue.replace(/</g, "&lt;");
+                        attrValue = attrValue.replace(/>/g, "&gt;");
                         // Append UID to assist with debugging
                         if ($.rib.debug('showuid') && p === 'text') {
-                            propValue += ' '+uid;
+                            attrValue += ' '+uid;
                         }
                     }
-                    template = template.replace(regEx, propValue);
+                    template = template.replace(regEx, attrValue);
                 }
             }
 

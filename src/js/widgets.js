@@ -467,29 +467,26 @@ var BWidgetRegistry = {
             },
         },
         rearrange: function (sortable, placeholder, excludePlaceholder) {
-            var classes = ['a', 'b', 'c', 'd', 'e', 'solo'], i = 0, blocks, zone,
-                replaceClass = function (elem, oldClassSuffix, newClass) {
-                    var reg = new RegExp ('\\b' + oldClassSuffix +  '\\S+', 'g');
-                    elem.removeClass(function (index, css) {
-                        return (css.match (reg) || []).join(' ');
-                    })
-                    .addClass(newClass);
-                };
+            var classes = ['a', 'b', 'c', 'd', 'e', 'solo'],
+                gridClasses = 'ui-grid-a ui-grid-b ui-grid-c ' +
+                              'ui-grid-d ui-grid-e ui-grid-solo',
+                blockClasses = 'ui-block-a ui-block-b ui-block-c ' +
+                               'ui-block-d ui-block-e ui-block-solo',
+                i = 0, j, pClass, blocks, zone;
 
-            if (sortable.is('[data-role="navbar"]')){
+            if (sortable.is('.ui-navbar')){
                 zone = sortable.find('ul');
-                if (excludePlaceholder)
-                    replaceClass(placeholder, 'ui-block-', '');
-                else
-                    placeholder.addClass('ui-block-a');
+                pClass = excludePlaceholder ? blockClasses : 'ui-block-a';
+                placeholder.toggleClass(pClass, !excludePlaceholder);
                 blocks = zone.children('[class*=ui-block-]:visible');
                 blocks.each( function () {
-                    if (blocks.length > 5)
-                        i = i % 2;
-                    replaceClass($(this), 'ui-block-', 'ui-block-' + classes[i++]);
+                    if (blocks.length > 5) i = i % 2;
+                    $(this).toggleClass(blockClasses, false)
+                           .toggleClass('ui-block-'+classes[i++], true);
                 });
-                replaceClass(zone, 'ui-grid-', 'ui-grid-' +
-                        classes[blocks.length > 5 ? 0 : (i - 2 < 0 ? 5 : i - 2)]);
+                j = (blocks.length>5) ? 0 : (i-2 < 0) ? 5 : i-2;
+                zone.toggleClass(gridClasses, false)
+                    .toggleClass('ui-grid-'+classes[j]);
             }
         }
     },

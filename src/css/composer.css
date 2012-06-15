@@ -111,9 +111,8 @@
 /*
 Add some padding some that outline can be seen when selected.
 */
-[data-role="navbar"] li.adm-node {
-    padding: 2px;
-    box-sizing: border-box;
+.ui-navbar li.adm-node.ui-selected a {
+    position: static;
 }
 
 .adm-node.ui-selected,
@@ -155,7 +154,7 @@ Add some padding some that outline can be seen when selected.
 .ui-footer[class*="ui-bar-"].ui-masked,
 .ui-select.ui-masked span,
 .ui-masked > .orig-adm-node:not(.ui-unmasked),
-[data-role=navbar] > ul > li.ui-masked > a,
+.ui-navbar > ul > li.ui-masked > a,
 .ui-masked {
     outline-width: 1px !important;
     outline-style: solid !important;
@@ -167,7 +166,7 @@ Add some padding some that outline can be seen when selected.
                         startColorstr=#99FCFCC7,
                         endColorstr=#99FCFCC7);
 }
-[data-role=navbar].ui-unmasked:not(.ui-sortable-helper),
+.ui-navbar.ui-unmasked:not(.ui-sortable-helper),
 ul.adm-node.ui-unmasked:not(.ui-sortable-helper),
 ol.adm-node.ui-unmasked:not(.ui-sortable-helper),
 fieldset.adm-node.ui-unmasked:not(.ui-sortable-helper),
@@ -220,7 +219,7 @@ form.ui-drag-header:before,
 div.ui-drag-header[class*="ui-grid"]:before,
 div.ui-drag-header[data-role="controlgroup"]:before,
 div.ui-drag-header[data-role="collapsible-set"]:before,
-div.ui-drag-header[data-role="navbar"]:before,
+div.ui-drag-header.ui-navbar:before,
 [data-role="listview"]:not([data-inset="false"]).ui-drag-header:before {
     margin-top: -10px;
     margin-left: -10px;
@@ -269,7 +268,6 @@ label.adm-editable span.adm-text-content::before,
 }
 
 /* Prevent li "bullet" from showing on navbar buttons during sort */
-body > li.ui-sortable-helper[class*="ui-block-"]
-{
+body > li.ui-sortable-helper[class*="ui-block-"] {
     list-style: none;
 }
