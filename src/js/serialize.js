@@ -52,7 +52,7 @@ var DEBUG = true,
             parentNode = null,
             template, props, id,
             selMap = {},  // maps selectors to attribute maps
-            attrName, attrValue, propDefault,
+            attrName, attrValue, propValue, propDefault,
             widget, regEx, wrapper, domNodes;
 
         // Check for valid node
@@ -129,17 +129,22 @@ var DEBUG = true,
             // Apply any special ADMNode properties to the template before we
             // create the DOM Element instance
             for (var p in props) {
-                attrValue = node.getProperty(p);
+                propValue = node.getProperty(p);
 
                 switch (p) {
                 case "type":
                     break;
                 default:
                     attrName = BWidget.getPropertyHTMLAttribute(type, p);
+                    if (typeof attrName  === "object") {
+                        var attrMap = attrName;
+                        attrName = attrMap.name;
+                        attrValue = attrMap.value[propValue];
+                    }
                     if (attrName) {
                         propDefault = BWidget.getPropertyDefault(type, p);
 
-                        if (attrValue !== propDefault ||
+                        if (propValue !== propDefault ||
                             BWidget.getPropertyForceAttribute(type, p)) {
                             selector = BWidget.getPropertyHTMLSelector(type, p);
                             if (!selector) {
@@ -159,22 +164,22 @@ var DEBUG = true,
                     break;
                 }
 
-                if (typeof attrValue === "string" ||
-                    typeof attrValue === "number") {
+                if (typeof propValue === "string" ||
+                    typeof propValue === "number") {
                     // reasonable value to substitute in template
                     regEx = new RegExp('%' + p.toUpperCase() + '%', 'g');
-                    if(typeof attrValue === "string") {
-                        attrValue = attrValue.replace(/&/g, "&amp;");
-                        attrValue = attrValue.replace(/"/g, "&quot;");
-                        attrValue = attrValue.replace(/'/g, "&#39;");
-                        attrValue = attrValue.replace(/</g, "&lt;");
-                        attrValue = attrValue.replace(/>/g, "&gt;");
+                    if(typeof propValue === "string") {
+                        propValue = propValue.replace(/&/g, "&amp;");
+                        propValue = propValue.replace(/"/g, "&quot;");
+                        propValue = propValue.replace(/'/g, "&#39;");
+                        propValue = propValue.replace(/</g, "&lt;");
+                        propValue = propValue.replace(/>/g, "&gt;");
                         // Append UID to assist with debugging
                         if ($.rib.debug('showuid') && p === 'text') {
-                            attrValue += ' '+uid;
+                            propValue += ' '+uid;
                         }
                     }
-                    template = template.replace(regEx, attrValue);
+                    template = template.replace(regEx, propValue);
                 }
             }
 
@@ -189,8 +194,15 @@ var DEBUG = true,
             }
         }
 
-        if (domNodes.length === 0)
-            $(parentNode).append(widget);
+        if (domNodes.length === 0) {
+            var zone = BWidget.getZone(node.getParent().getType(), node.getZone());
+            if (zone.itemWrapper)
+                widget = $(zone.itemWrapper).append(widget);
+            if (zone.locator)
+                $(parentNode).find(zone.locator).append(widget);
+            else
+                $(parentNode).append(widget);
+        }
         else {
             //The template of some widgets may have multiple root tags
             //and there are also possible delegated nodes, we will remove all

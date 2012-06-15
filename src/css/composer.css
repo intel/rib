@@ -107,6 +107,15 @@
 .adm-node.ui-selected.ui-checkbox {
     outline-offset: 0px !important;
 }
+
+/*
+Add some padding some that outline can be seen when selected.
+*/
+[data-role="navbar"] li.adm-node {
+    padding: 2px;
+    box-sizing: border-box;
+}
+
 .adm-node.ui-selected,
 .nrc-sortable-container.ui-selected:not([data-role=footer]):not([data-role=header]),
 .nrc-sortable-container.ui-selected:not([data-role=footer]):not([data-role=header]).nrc-empty {
@@ -136,6 +145,7 @@
     padding: 0px;
     background-color: #da1c2e;
     border: 0px none transparent;
+    list-style: none;
 }
 .nrc-sortable-container:empty > .ui-draggable-placeholder:only-child {
     margin-top: 33px;
@@ -145,6 +155,7 @@
 .ui-footer[class*="ui-bar-"].ui-masked,
 .ui-select.ui-masked span,
 .ui-masked > .orig-adm-node:not(.ui-unmasked),
+[data-role=navbar] > ul > li.ui-masked > a,
 .ui-masked {
     outline-width: 1px !important;
     outline-style: solid !important;
@@ -156,6 +167,7 @@
                         startColorstr=#99FCFCC7,
                         endColorstr=#99FCFCC7);
 }
+[data-role=navbar].ui-unmasked:not(.ui-sortable-helper),
 ul.adm-node.ui-unmasked:not(.ui-sortable-helper),
 ol.adm-node.ui-unmasked:not(.ui-sortable-helper),
 fieldset.adm-node.ui-unmasked:not(.ui-sortable-helper),
@@ -208,6 +220,7 @@ form.ui-drag-header:before,
 div.ui-drag-header[class*="ui-grid"]:before,
 div.ui-drag-header[data-role="controlgroup"]:before,
 div.ui-drag-header[data-role="collapsible-set"]:before,
+div.ui-drag-header[data-role="navbar"]:before,
 [data-role="listview"]:not([data-inset="false"]).ui-drag-header:before {
     margin-top: -10px;
     margin-left: -10px;
@@ -253,4 +266,10 @@ label.adm-editable span.adm-text-content:empty::before,
 label.adm-editable span.adm-text-content::before,
 .adm-editable > label > span.adm-text-content::before {
     content: normal;
+}
+
+/* Prevent li "bullet" from showing on navbar buttons during sort */
+body > li.ui-sortable-helper[class*="ui-block-"]
+{
+    list-style: none;
 }

@@ -489,6 +489,7 @@ $(function() {
                     '> .ui-collapsible-content,' +
                     // Collapsible's items are under .ui-collapsible-content
                     '> .ui-collapsible-content > .adm-node,' +
+                    '> ul > li.adm-node,' +
                     '> *.orig-adm-node:not(.ui-header,.ui-content,.ui-footer)',
                 start: function(event, ui){
                     trackOffsets('start:   ',ui,$(this).data('sortable'));
@@ -646,7 +647,7 @@ $(function() {
                             return false;
                         }
 
-                        children = $(this).children('.adm-node')
+                        children = $($(this).sortable('option', 'items'), this)
                                           .add(ui.item);
                         idx = children.index(ui.item);
 
@@ -682,7 +683,7 @@ $(function() {
                                 }
                             } else {
                                 // Insert 1st child into non-empty container
-                                sibling = $(this).children('.adm-node:first');
+                                sibling = children.not(ui.item).first();
                                 sid = sibling.attr('data-uid');
                                 if (adm.insertChildBefore(sid, type, true)) {
                                     node = adm.insertChildBefore(sid, type);

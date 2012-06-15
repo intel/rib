@@ -58,6 +58,10 @@
  *   4) deny: string or array of string names of disallowed widgets
  *             (all others will be allowed)
  *   Only one of allow or deny should be set, if neither than all are allowed.
+ *   5) locator:  a selector used to find the html tag to append child node
+ *                 of this zone.
+ *   6) itemWrapper: an HTML tag used to wrapp a child node before appending
+ *                   to the zone
  *
  * The "properties" of each widget definition is an object, each property of
  * which names a property of the widget. These are objects with the following
@@ -67,7 +71,9 @@
  *   2)    defaultValue: optional default value for the property, of the type
  *                       specified above
  *   3)   htmlAttribute: optional string with an HTML attribute name that this
- *                       property should be written to
+ *                       property should be written to or an object that
+ *                       contains the name and value mapping of the HTML
+ *                       attribute
  *   4)  forceAttribute: if true, always write out the HTML attribute even when
  *                       it is equal to the default value (default: false)
  *   5)    htmlSelector: optional selector to find the DOM nodes on which to
@@ -95,6 +101,9 @@
  *                       guaranteed that if you see data X again, you will be
  *                       going from 3 to 5 rows, and can make sense of the
  *                       data.)
+ *   9)        validIn:  Parent widget in which this property is valid
+ *
+ *  10)      invalidIn:  Parent widget in which this property is not valid
  *
  * @class
  */
@@ -324,7 +333,7 @@ var BWidgetRegistry = {
             {
                 name: "bottom",
                 cardinality: "1",
-                allow: "Navbar, OptionHeader"
+                allow: ["Navbar", "OptionHeader"]
             }
         ],
     },
@@ -409,6 +418,80 @@ var BWidgetRegistry = {
                 cardinality: "N"
             }
         ],
+    },
+
+    Navbar: {
+        parent: "Base",
+        template: '<div data-role="navbar"><ul/></div>',
+        paletteImageName: "jqm_navbar.svg",
+        dragHeader: true,
+        allowIn: [ "Header", "Footer" ],
+        zones: [
+            {
+                name: "default",
+                locator: 'ul',
+                itemWrapper: '<li/>',
+                cardinality: "N",
+                allow: "Button"
+
+            }
+        ],
+        properties: {
+            iconpos: {
+                type: "string",
+                options: [ "left", "top", "bottom", "right", "notext" ],
+                defaultValue: "top",
+                htmlAttribute: "data-iconpos",
+            }
+        },
+        init: function (node) {
+            // initial state is three buttons
+            var i;
+            for (i = 0; i < 3; i++) {
+                node.addChild(new ADMNode("Button"));
+            }
+        },
+        events: {
+            sortchange: function (e, ui) {
+                BWidget.getWidgetAttribute("Navbar", "rearrange")($(this),
+                    ui.placeholder, ui.placeholder.parent()
+                    .closest('.nrc-sortable-container')[0] !== this);
+            },
+            sortout: function (e, ui) {
+                BWidget.getWidgetAttribute("Navbar", "rearrange")
+                    ($(this), ui.placeholder, true);
+            },
+            sortover: function (e, ui) {
+                BWidget.getWidgetAttribute("Navbar", "rearrange")
+                    ($(this), ui.placeholder);
+            },
+        },
+        rearrange: function (sortable, placeholder, excludePlaceholder) {
+            var classes = ['a', 'b', 'c', 'd', 'e', 'solo'], i = 0, blocks, zone,
+                replaceClass = function (elem, oldClassSuffix, newClass) {
+                    var reg = new RegExp ('\\b' + oldClassSuffix +  '\\S+', 'g');
+                    elem.removeClass(function (index, css) {
+                        return (css.match (reg) || []).join(' ');
+                    })
+                    .addClass(newClass);
+                };
+
+            if (sortable.is('[data-role="navbar"]')){
+                zone = sortable.find('ul');
+                if (excludePlaceholder)
+                    replaceClass(placeholder, 'ui-block-', '');
+                else
+                    placeholder.addClass('ui-block-a');
+                blocks = zone.children('[class*=ui-block-]:visible');
+                blocks.each( function () {
+                    if (blocks.length > 5)
+                        i = i % 2;
+                    replaceClass($(this), 'ui-block-', 'ui-block-' + classes[i++]);
+                });
+                replaceClass(zone, 'ui-grid-', 'ui-grid-' +
+                        classes[blocks.length > 5 ? 0 : (i - 2 < 0 ? 5 : i - 2)]);
+            }
+        }
     },
 
     /**
@@ -519,7 +602,19 @@ var BWidgetRegistry = {
                 type: "string",
                 options: [ "left", "top", "bottom", "right", "notext" ],
                 defaultValue: "left",
-                htmlAttribute: "data-iconpos"
+                htmlAttribute: "data-iconpos",
+                invalidIn: "Navbar"
+            },
+            active: {
+                type: "boolean",
+                defaultValue: false,
+                htmlAttribute: {
+                    name: "class",
+                    value: {
+                        true: "ui-btn-active",
+                        false: ""
+                    }
+                }
             },
             theme: {
                 type: "string",
@@ -530,7 +625,8 @@ var BWidgetRegistry = {
             inline: {
                 type: "boolean",
                 defaultValue: false,
-                htmlAttribute: "data-inline"
+                htmlAttribute: "data-inline",
+                invalidIn: "Navbar"
             },
             transition: {
                 type: "string",
@@ -2301,6 +2397,35 @@ var BWidget = {
             }
         }
         throw new Error("no such zone found in getZoneCardinality: " +
+                        zoneName);
+    },
+
+    /**
+     * Get the zone information for the given zone in the given widget type.
+     *
+     * @param {String} widgetType The type of the widget.
+     * @param {String} zoneName The name of the zone.
+     * @return {Ojbect} Returns the whole object of this zone.
+     * @throws {Error} If widgetType is invalid or the zone is not found.
+     */
+    getZone: function (widgetType, zoneName) {
+        var widget, zones, length, i;
+        widget = BWidgetRegistry[widgetType];
+        if (typeof widget !== "object") {
+            throw new Error("undefined widget type in getZone: " +
+                            widgetType);
+        }
+
+        zones = widget.zones;
+        if (zones && zones.length) {
+            length = zones.length;
+            for (i = 0; i < length; i++) {
+                if (zones[i].name === zoneName) {
+                    return zones[i];
+                }
+            }
+        }
+        throw new Error("no such zone found in getZone: " +
                         zoneName);
     },
 
