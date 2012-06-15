@@ -716,8 +716,7 @@ var BWidgetRegistry = {
             },
             disabled: {
                 type: "boolean",
-                defaultValue: "false",
-                htmlAttribute: "disabled",
+                defaultValue: false
             }
         },
         editable: {
@@ -800,8 +799,8 @@ var BWidgetRegistry = {
             },
             disabled: {
                 type: "boolean",
-                defaultValue: "false",
-                htmlAttribute: "disabled",
+                defaultValue: false,
+                htmlAttribute: "disabled"
             }
         },
         template: '<input type="text">',
@@ -840,8 +839,8 @@ var BWidgetRegistry = {
             },
             disabled: {
                 type: "boolean",
-                defaultValue: "false",
-                htmlAttribute: "disabled",
+                defaultValue: false,
+                htmlAttribute: "disabled"
             }
         },
         template: '<textarea>%VALUE%</textarea>'
@@ -879,8 +878,8 @@ var BWidgetRegistry = {
             },
             disabled: {
                 type: "boolean",
-                defaultValue: "false",
-                htmlAttribute: "disabled",
+                defaultValue: false,
+                htmlAttribute: "disabled"
             }
         },
         template: '<select data-role="slider"><option value="%VALUE1%">%LABEL1%</option><option value="%VALUE2%">%LABEL2%</option></select>',
@@ -945,8 +944,7 @@ var BWidgetRegistry = {
             },
             disabled: {
                 type: "boolean",
-                defaultValue: "false",
-                htmlAttribute: "disabled",
+                defaultValue: false
             }
         },
         zones: [
@@ -1052,8 +1050,7 @@ var BWidgetRegistry = {
             //        "name" field in order to work correctly
             id: {
                 type: "string",
-                autoGenerate: "radio",
-                htmlAttribute: "id"
+                autoGenerate: "radio"
             },
             label: {
                 type: "string",
@@ -1061,36 +1058,31 @@ var BWidgetRegistry = {
             },
             value: {
                 type: "string",
-                defaultValue: "",
-                htmlAttribute: "value"
+                defaultValue: ""
             },
             checked: {
                 type: "string",
                 options: [ "not checked", "checked" ],
-                defaultValue: "not checked",
-                htmlAttribute: "checked"
+                defaultValue: "not checked"
             },
             theme: {
                 type: "string",
                 options: [ "default", "a", "b", "c", "d", "e" ],
-                defaultValue: "default",
-                htmlAttribute: "data-theme"
+                defaultValue: "default"
             },
             disabled: {
                 type: "boolean",
-                defaultValue: "false",
-                htmlAttribute: "disabled",
+                defaultValue: false
             }
         },
         delegate: 'parent',
         template: function (node) {
             //var prop, code = $('<div data-role="header"><h1></h1></div>');
             var prop, label, code;
-            
-            if(node.getProperty("disabled") == true) {
-                code = $('<input type="radio" disabled="disabled"><label></label>');
-            } else {
-                code = $('<input type="radio"><label></label>');
+
+            code = $('<input type="radio"><label/>');
+            if (node.getProperty("disabled")) {
+                code.attr("disabled", "disabled");
             }
 
             // always include id property on input
@@ -1214,8 +1206,8 @@ var BWidgetRegistry = {
             },
             disabled: {
                 type: "boolean",
-                defaultValue: "false",
-                htmlAttribute: "disabled",
+                defaultValue: false,
+                htmlAttribute: "disabled"
             }
         },
         template: '<input type="checkbox"><label for="%ID%">%LABEL%</label>',

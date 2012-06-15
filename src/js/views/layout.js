@@ -395,7 +395,19 @@
                 $(domNode).addClass('adm-editable');
             }
 
+            // FIXME: This is a bit of a hack; we're removing the disabled
+            // attribute from widgets because when they're disabled, they
+            // lose mouse clicks and can't be selected. This code is assuming
+            // the top level dom node in the object is the one with the disabled
+            // attribute, which is not true for Slider, so I've removed the
+            // attribute from the children, too. But this should really be done
+            // accurately and intentionally by a selector for where the
+            // attribute should be applied.
+            // The best solution would be to display the widgets as disabled,
+            // but be able to still capture clicks on them somehow, and remove
+            // these lines.
             $(domNode).removeAttr('disabled');
+            $(domNode).children().removeAttr('disabled');
         },
     });
 })(jQuery);
