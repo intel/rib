@@ -181,10 +181,11 @@
                 .addClass("rotateDevice separated")
                 .appendTo(deviceToolbar)
                 .click( function () {
-                    var screenWidth = widget._screenWidth.val();
                     widget._projectDevice.rotating = !widget._projectDevice.rotating;
-                    widget._screenWidth.val(widget._screenHeight.val());
-                    widget._screenHeight.val(screenWidth);
+                    widget._projectDevice.screenWidth = widget._screenHeight.val();
+                    widget._projectDevice.screenHeight = widget._screenWidth.val();
+                    widget._screenWidth.val(widget._projectDevice.screenWidth);
+                    widget._screenHeight.val(widget._projectDevice.screenHeight);
                     widget._setDevice();
                 });
             $('<a href="javascript:void(0)">Rotate</a>').appendTo(deviceToolbar).click(function () {
