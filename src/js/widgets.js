@@ -586,6 +586,13 @@ var BWidgetRegistry = {
                 defaultValue: "",
                 htmlAttribute: "href"
             },
+            opentargetas : {
+                type: "string",
+                displayName: "open target as",
+                options: ["page", "dialog"],
+                defaultValue: "page",
+                htmlAttribute: "data-rel"
+            },
             icon: {
                 type: "string",
                 options: [ "none", "alert", "arrow-d", "arrow-l", "arrow-r",
