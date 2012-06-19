@@ -710,6 +710,10 @@ var BWidgetRegistry = {
                 type: "integer",
                 defaultValue: 100
             },
+            step: {
+                type: "integer",
+                defaultValue: 1
+            },
             theme: {
                 type: "string",
                 options: [ "default", "a", "b", "c", "d", "e" ],
@@ -753,6 +757,9 @@ var BWidgetRegistry = {
 
             prop = node.getProperty("max");
             input.attr("max", prop);
+
+            prop = node.getProperty("step");
+            input.attr("step", prop);
 
             prop = node.getProperty("theme");
             if (prop !== "default") {
