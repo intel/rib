@@ -795,8 +795,7 @@ var BWidgetRegistry = {
             name: {
                 type: "string",
                 htmlSelector: "input",
-                htmlAttribute: "name",
-                autoGenerate: "text"
+                htmlAttribute: "name"
             },
             hint: {
                 type: "string",
@@ -811,9 +810,9 @@ var BWidgetRegistry = {
                 htmlSelector: "input",
                 htmlAttribute: "data-theme"
             },
-            title: {
+            label: {
                 type: "string",
-                autoGenerate: "Text",
+                defaultValue: "Label"
             },
             value: {
                 // FIXME: Probably value should be removed, setting initial
@@ -829,7 +828,7 @@ var BWidgetRegistry = {
                 htmlAttribute: "disabled"
             }
         },
-        template: '<div data-role="fieldcontain"><label for="%ID%">%TITLE%</label><input type="text"/></div>',
+        template: '<div data-role="fieldcontain"><label for="%ID%">%LABEL%</label><input type="text"/></div>',
     },
 
     /**
