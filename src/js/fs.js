@@ -245,6 +245,7 @@ $(function() {
                var onError = error || fsUtils.onError;
                function write(fileEntry) {
                    fileEntry.createWriter(function (fileWriter) {
+                       var bb, mimeString, ab, ia;
 
                        fileWriter.onwriteend = function (progressEvent) {
                            success && success(fileEntry);
@@ -260,12 +261,12 @@ $(function() {
                              fileWriter.write(contents);
                        // Case 2: string contents, create a blob
                        } else {
-                           var bb = new BlobBuilder(); // Create a new Blob on-the-fly.
-                           var mimeString = "text/plain";
+                           bb = new BlobBuilder(); // Create a new Blob on-the-fly.
+                           mimeString = "text/plain";
                            if (binary) {
                                // write the bytes of the string to an ArrayBuffer
-                               var ab = new ArrayBuffer(contents.length);
-                               var ia = new Uint8Array(ab);
+                               ab = new ArrayBuffer(contents.length);
+                               ia = new Uint8Array(ab);
                                for (var i = 0; i < contents.length; i++) {
                                    ia[i] = contents.charCodeAt(i);
                                }
