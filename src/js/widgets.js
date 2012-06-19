@@ -113,7 +113,6 @@ var BWidgetRegistry = {
      */
     Base: {
         parent: null,
-        allowIn: [],
         applyProperties: function (node, code) {
             var id = node.getProperty("id");
             if (id && node.isPropertyExplicit("id")) {
@@ -121,9 +120,8 @@ var BWidgetRegistry = {
             }
             return code;
         },
-        showInPalette: false,
-        selectable: false,
-        moveable: false,
+        selectable: true,
+        moveable: true,
         properties: {
             id: {
                 type: "string",
@@ -2053,7 +2051,7 @@ var BWidget = {
     init: function () {
         // effects: add the type and displayLabel properties to widget
         //          registry objects
-        var type;
+        var type, parentName;
         for (type in BWidgetRegistry) {
             if (BWidgetRegistry.hasOwnProperty(type)) {
                 BWidgetRegistry[type].type = type;
@@ -2088,6 +2086,11 @@ var BWidget = {
                 }
                 if (type === "OptionHeader") {
                     BWidgetRegistry[type].displayLabel = "Option Header";
+                }
+                parentName = BWidgetRegistry[type].parent;
+                while (parentName) {
+                    BWidgetRegistry[type] = $.extend(true, true, {}, BWidgetRegistry[parentName], BWidgetRegistry[type]);
+                    parentName = BWidgetRegistry[parentName].parent;
                 }
             }
         }
