@@ -1443,9 +1443,29 @@ var BWidgetRegistry = {
                 options: [ "default", "a", "b", "c", "d", "e" ],
                 defaultValue: "default",
                 htmlAttribute: "data-theme"
+            },
+            countbubble: {
+                type: "string",
+                displayName: "count bubble",
             }
         },
-        template: '<li><a>%TEXT%</a></li>'
+        template: function (node) {
+            var prop, countBubble, code = $('<li><a></a></li>');
+            var container = code.find('a');
+            container
+                .html(node.getProperty("text"))
+                .attr('href', node.getProperty("target"));
+            prop = node.getProperty("countbubble");
+            // Add the count bubble if countbubble property is not blank
+            if (prop.trim() != '') {
+                countBubble = $('<span>')
+                    .attr('class', 'ui-li-count')
+                    .html(prop);
+                container.append(countBubble);
+            };
+            return code;
+        }
+        
     },
 
     /**
