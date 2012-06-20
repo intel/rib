@@ -357,7 +357,7 @@
                         parent = node.getParent();
                         zone = parent.getZoneArray(node.getZone());
                         if (type === "Page") {
-                            continueToDelete = confirm("Are you sure to delete the page?");
+                            continueToDelete = confirm("Are you sure you want to delete the page?");
                             if(!continueToDelete) {
                                 return false;
                             }

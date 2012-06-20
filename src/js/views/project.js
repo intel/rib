@@ -289,7 +289,7 @@
                         });
                     }
                 };
-                var continueToDelete = confirm("Are you sure to delete it?");
+                var continueToDelete = confirm("Are you sure you want to delete it?");
                 if(continueToDelete) {
                     $.rib.pmUtils.deleteProject(pid, success);
                 }
