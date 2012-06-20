@@ -62,7 +62,6 @@
                                 .appendTo(container);
                             $(li).disableSelection()
                                 .addClass('nrc-palette-widget')
-                                .data("code", BWidget.getTemplate(value))
                                 .data("adm-node", {type: value});
                         }
                     }

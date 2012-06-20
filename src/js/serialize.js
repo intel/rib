@@ -51,7 +51,7 @@ var DEBUG = true,
             parentNode = null,
             template, props, id,
             selMap = {},  // maps selectors to attribute maps
-            attrName, attrValue, propDefault,
+            attrName, attrValue, propValue, propDefault,
             widget, regEx, wrapper, domNodes;
 
         // Check for valid node
@@ -110,79 +110,77 @@ var DEBUG = true,
         props = node.getProperties();
 
         if (typeof template === "function") {
-            widget = template(node);
+            template =  $('<div/>').append(template(node)).html();
         }
-        else {
-            if (typeof template === "object") {
-                template = template[props["type"]];
-            }
+        else if (typeof template === "object") {
+            template = template[props["type"]];
+        }
 
-            // Apply any special ADMNode properties to the template before we
-            // create the DOM Element instance
-            for (var p in props) {
-                attrValue = node.getProperty(p);
+        // Apply any special ADMNode properties to the template before we
+        // create the DOM Element instance
+        for (var p in props) {
+            propValue = attrValue = node.getProperty(p);
 
-                switch (p) {
-                case "type":
-                    break;
-                default:
-                    attrName = BWidget.getPropertyHTMLAttribute(type, p);
-                    if (typeof attrName  === "object") {
-                        var attrMap = attrName;
-                        attrName = attrMap.name;
-                        attrValue = attrMap.value[attrValue];
-                    }
-                    if (attrName) {
-                        propDefault = BWidget.getPropertyDefault(type, p);
-
-                        if (attrValue !== propDefault ||
-                            BWidget.getPropertyForceAttribute(type, p)) {
-                            selector = BWidget.getPropertyHTMLSelector(type, p);
-                            if (!selector) {
-                                // by default apply attributes to first element
-                                selector = ":first";
-                            }
-
-                            if (!selMap[selector]) {
-                                // create a new select map entry
-                                selMap[selector] = {};
-                            }
-
-                            // add attribute mapping to corresponding selector
-                            selMap[selector][attrName] = attrValue;
-                        }
-                    }
-                    break;
+            switch (p) {
+            case "type":
+                break;
+            default:
+                attrName = BWidget.getPropertyHTMLAttribute(type, p);
+                if (typeof attrName  === "object") {
+                    var attrMap = attrName;
+                    attrName = attrMap.name;
+                    attrValue = attrMap.value[propValue];
                 }
+                if (attrName) {
+                    propDefault = BWidget.getPropertyDefault(type, p);
 
-                if (typeof attrValue === "string" ||
-                    typeof attrValue === "number") {
-                    // reasonable value to substitute in template
-                    regEx = new RegExp('%' + p.toUpperCase() + '%', 'g');
-                    if(typeof attrValue === "string") {
-                        attrValue = attrValue.replace(/&/g, "&amp;");
-                        attrValue = attrValue.replace(/"/g, "&quot;");
-                        attrValue = attrValue.replace(/'/g, "&#39;");
-                        attrValue = attrValue.replace(/</g, "&lt;");
-                        attrValue = attrValue.replace(/>/g, "&gt;");
-                        // Append UID to assist with debugging
-                        if ($.rib.debug('showuid') && p === 'text') {
-                            attrValue += ' '+uid;
+                    if (propValue !== propDefault ||
+                        BWidget.getPropertyForceAttribute(type, p)) {
+                        selector = BWidget.getPropertyHTMLSelector(type, p);
+                        if (!selector) {
+                            // by default apply attributes to first element
+                            selector = ":first";
                         }
+
+                        if (!selMap[selector]) {
+                            // create a new select map entry
+                            selMap[selector] = {};
+                        }
+
+                        // add attribute mapping to corresponding selector
+                        selMap[selector][attrName] = attrValue;
                     }
-                    template = template.replace(regEx, attrValue);
                 }
+                break;
             }
 
-            // Turn the template into an element instance, via jQuery
-            widget = $(template);
-
-            // apply the HTML attributes
-            wrapper = $("<div>").append(widget);
-            for (selector in selMap) {
-                wrapper.find(selector)
-                    .attr(selMap[selector]);
+            if (typeof propValue === "string" ||
+                typeof propValue === "number") {
+                // reasonable value to substitute in template
+                regEx = new RegExp('%' + p.toUpperCase() + '%', 'g');
+                if(typeof propValue === "string") {
+                    propValue = propValue.replace(/&/g, "&amp;");
+                    propValue = propValue.replace(/"/g, "&quot;");
+                    propValue = propValue.replace(/'/g, "&#39;");
+                    propValue = propValue.replace(/</g, "&lt;");
+                    propValue = propValue.replace(/>/g, "&gt;");
+                    // Append UID to assist with debugging
+                    if ($.rib.debug('showuid') && p === 'text') {
+                        propValue += ' '+uid;
+                    }
+                }
+                template = template.replace(regEx, propValue);
             }
+        }
+
+        // Turn the template into an element instance, via jQuery
+        widget = $(template);
+
+        // apply the HTML attributes
+        wrapper = $("<div>").append(widget);
+        for (selector in selMap) {
+            wrapper.find(selector)
+                .attr(selMap[selector]);
         }
 
         if (domNodes.length === 0) {

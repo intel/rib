@@ -27,10 +27,74 @@
                 devicePanel,
                 deviceToolbar,
                 deviceSelect,
-                addDeviceButton,
                 deviceWrapper,
                 rotateDeviceButton,
-                widget = this;
+                widget = this,
+                createDeviceButton = function (className) {
+                    var label = (className === "editDevice"?"Edit":"Add") +  " Device";
+                    var deviceButton = $('<a/>')
+                        .addClass(className + " separated")
+                        .appendTo(deviceToolbar)
+                        .click( function () {
+                            var deviceForm = $("<form/>")
+                                .addClass("deviceSetting")
+                                .append('<label for="name">Device Name</label>')
+                                .append('<input name="name" />')
+                                .append('<label for="screenWidth">Screen</label>')
+                                .append('<input name="screenWidth" type="number" max="10000"  style="width:4em" required size="4"/>').append('x')
+                                .append('<input name="screenHeight" type="number" max="10000" style="width:4em" required size="4"/>')
+                                .append('<br/>');
+                            if (className === "editDevice") {
+                                if (widget._sysDevices[widget._projectDevice.name]) {
+                                    alert("Can't edit system device!");
+                                    return;
+                                }
+                                deviceForm.append($('<input type="button" class="delete" value="Delete"></input>').click(function () {
+                                    delete widget._userDevices[widget._projectDevice.name];
+                                    applyDeviceChange(deviceForm, widget._deviceSelect.find('option:first').text());
+                                }))
+                                .find('input[name=name]').val(widget._projectDevice.name)
+                                .end()
+                                .find('input[name=screenWidth]').val(widget._projectDevice.screenWidth)
+                                .end()
+                                .find('input[name=screenHeight]').val(widget._projectDevice.screenHeight)
+                                .end();
+                             };
+                             deviceForm
+                                .append('<input type="submit" class="submit' + (className !== 'editDevice'?' single':'') + '" value="Done"></input>')
+                                .append($('<a href="javascript:void(0)">Cancel</a>').click( function() { $(this).parent().dialog("close"); }))
+                                .submit( function () {
+                                    var values = {};
+                                    try{
+                                        $.each($(this).serializeArray(), function(i, field) {
+                                                values[field.name] = field.value;
+                                        });
+                                        if (values.name !== widget._projectDevice.name && className === "editDevice") {
+                                            //Name changed when editing device
+                                            widget._userDevices[values.name] = widget._userDevices[widget._projectDevice.name];
+                                            delete widget._userDevices[widget._projectDevice.name];
+                                        }
+                                        else
+                                            widget._userDevices[values.name] = widget._cloneSelectedDeviceInfo();
+                                        widget._modifyScreenSize(widget._userDevices[values.name], values.screenWidth, values.screenHeight);
+                                        applyDeviceChange(deviceForm, values.name);
+                                    }catch (e){
+                                       alert(e.stack);
+                                    }
+                                    return false;
+                                })
+                            deviceForm.dialog({title: label, modal:true, width: 400, height: 285, resizable:false });
+                        });
+                    $('<a href="javascript:void(0)">' + label +'</a>').appendTo(deviceToolbar).click(function () {
+                        deviceButton.trigger('click');
+                    });
+                },
+                applyDeviceChange = function (deviceForm, deviceName) {
+                    widget._refreshDeviceList(deviceName);
+                    $.rib.fsUtils.write("devices.json", JSON.stringify(widget._userDevices), function(fileEntry){
+                        deviceForm.dialog('close');
+                    });
+                };
 
             // Chain up to base class _create()
             $.rib.baseView.prototype._create.call(this);
@@ -138,45 +202,8 @@
                 });
             });
 
-            addDeviceButton = $('<a/>')
-                .addClass("addDevice separated")
-                .appendTo(deviceToolbar)
-                .click( function () {
-                    $("<form/>")
-                        .addClass("deviceSetting")
-                        .append('<label for="name">Device Name</label>')
-                        .append('<input required name="name"/>')
-                        .append('<label for="screenWidth">Screen</label>')
-                        .append('<input name="screenWidth" type="number" max="10000"  style="width:4em" required size="4"/>').append('x')
-                        .append('<input name="screenHeight" type="number" max="10000" style="width:4em" required size="4"/>')
-                        .append('<br/>')
-                        .append('<input type="submit" class="submit" value="Done"></input>')
-                        .append($('<a href="javascript:void(0)">Cancel</a>').click( function() { $(this).parent().dialog("close"); }))
-                        .submit( function () {
-                            var values = {},
-                                form = this;
-                            try{
-                                $.each($(this).serializeArray(), function(i, field) {
-                                        values[field.name] = field.value;
-                                });
-                                widget._userDevices[values.name] = widget._cloneSelectedDeviceInfo();
-                                widget._modifyScreenSize(widget._userDevices[values.name], values.screenWidth, values.screenHeight);
-                                widget._refreshDeviceList(values.name);
-                                $.rib.fsUtils.write("devices.json", JSON.stringify(widget._userDevices), function(fileEntry){
-                                    alert("New device " + values.name + " sucessfully created!");
-                                    $(form).dialog('close');
-                                });
-                            }catch (e){
-                               alert(e);
-                            }
-                            return false;
-                        })
-                        .dialog({title:"Add Device", modal:true, width: 400, height: 285, resizable:false });
-                });
-            $('<a href="javascript:void(0)">Add Device</a>').appendTo(deviceToolbar).click(function () {
-                addDeviceButton.trigger('click');
-            });
-
+            createDeviceButton('editDevice');
+            createDeviceButton('addDevice');
             rotateDeviceButton = $('<a/>')
                 .addClass("rotateDevice separated")
                 .appendTo(deviceToolbar)
