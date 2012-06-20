@@ -170,7 +170,7 @@ var BWidgetRegistry = {
                       value: 'src/js/template.js'
                     },
                     { designOnly: false,
-                      value: 'lib/jquery.mobile-1.0.js'
+                      value: 'lib/jquery.mobile-1.1.0.js'
                     },
                     { designOnly: false,
                       value: 'lib/web-ui-fw-libs.js'
@@ -184,10 +184,10 @@ var BWidgetRegistry = {
                 type: "array",
                 defaultValue: [
                     { designOnly: false,
-                      value: 'src/css/jquery.mobile.structure-1.0.css'
+                      value: 'src/css/jquery.mobile.structure-1.1.0.css'
                     },
                     { designOnly: false,
-                      value: 'src/css/jquery.mobile-1.0.css'
+                      value: 'src/css/jquery.mobile.theme-1.1.0.css'
                     },
                     { designOnly: false,
                       value: 'src/css/web-ui-fw-theme.css'
@@ -637,6 +637,17 @@ var BWidgetRegistry = {
                 options: [ "slide", "slideup", "slidedown", "pop", "fade", "flip" ],
                 defaultValue: "slide",
                 htmlAttribute: "data-transition"
+            },
+            back: {
+                type: "boolean",
+                defaultValue: false,
+                htmlAttribute: {
+                    name: "data-rel",
+                    value: {
+                        true: "back",
+                        false: ""
+                    }
+                }
             }
         },
         template: '<a data-role="button">%TEXT%</a>'
@@ -710,6 +721,10 @@ var BWidgetRegistry = {
                 type: "integer",
                 defaultValue: 100
             },
+            step: {
+                type: "integer",
+                defaultValue: 1
+            },
             theme: {
                 type: "string",
                 options: [ "default", "a", "b", "c", "d", "e" ],
@@ -754,6 +769,9 @@ var BWidgetRegistry = {
             prop = node.getProperty("max");
             input.attr("max", prop);
 
+            prop = node.getProperty("step");
+            input.attr("step", prop);
+
             prop = node.getProperty("theme");
             if (prop !== "default") {
                 input.attr("data-theme", prop);
@@ -786,22 +804,40 @@ var BWidgetRegistry = {
             propertyName: "value"
         },
         properties: {
+            id: {
+                type: "string",
+                htmlSelector: "input",
+                htmlAttribute: "id",
+                autoGenerate: "text"
+            },
+            name: {
+                type: "string",
+                htmlSelector: "input",
+                htmlAttribute: "name"
+            },
             hint: {
                 type: "string",
                 defaultValue: "",
+                htmlSelector: "input",
                 htmlAttribute: "placeholder"
             },
             theme: {
                 type: "string",
                 options: [ "default", "a", "b", "c", "d", "e" ],
                 defaultValue: "default",
+                htmlSelector: "input",
                 htmlAttribute: "data-theme"
+            },
+            label: {
+                type: "string",
+                defaultValue: "Label"
             },
             value: {
                 // FIXME: Probably value should be removed, setting initial
                 //        static text is not a common thing to do
                 type: "string",
                 defaultValue: "",
+                htmlSelector: "input",
                 htmlAttribute: "value"
             },
             disabled: {
@@ -810,7 +846,7 @@ var BWidgetRegistry = {
                 htmlAttribute: "disabled"
             }
         },
-        template: '<input type="text">',
+        template: '<div data-role="fieldcontain"><label for="%ID%">%LABEL%</label><input type="text"/></div>',
     },
 
     /**

@@ -169,7 +169,7 @@ $(function() {
             fsUtils.fs.root.getDirectory(dstPath, {}, function (dirEntry) {
                 var dirReader = dirEntry.createReader();
                 dirReader.readEntries(function (entries) {
-                    success(entries);
+                    success && success(entries);
                 }, onError);
             }, onError);
         },
@@ -231,7 +231,7 @@ $(function() {
      * If the file already exist, it will overwrite it.
      *
      * @param {string} path The given file path needs to be writed into.
-     * @param {string} contents Data needs to be written into the file.
+     * @param {string/File/Blob} contents Data needs to be written into the file.
      * @param {function(string)=} opt_successCallback An optional
      * @param {function(FileError)=} opt_errorCallback An optional
      * @param {bool} opt_append Flag for append mode An optinal
@@ -245,7 +245,7 @@ $(function() {
                var onError = error || fsUtils.onError;
                function write(fileEntry) {
                    fileEntry.createWriter(function (fileWriter) {
-                       var bb = new BlobBuilder(); // Create a new Blob on-the-fly.
+                       var bb, mimeString, ab, ia;
 
                        fileWriter.onwriteend = function (progressEvent) {
                            success && success(fileEntry);
@@ -255,22 +255,30 @@ $(function() {
                        if (opt_append) {
                            fileWriter.seek(fileWriter.length);
                        }
-
-                       var mimeString = "text/plain";
-                       if (binary) {
-                           // write the bytes of the string to an ArrayBuffer
-                           var ab = new ArrayBuffer(contents.length);
-                           var ia = new Uint8Array(ab);
-                           for (var i = 0; i < contents.length; i++) {
-                               ia[i] = contents.charCodeAt(i);
+                       // Note: write() can take a File or Blob object.
+                       // Case 1: a File or Blob, write directly, File is also an instanceof Blob
+                       if (contents instanceof Blob) {
+                             fileWriter.write(contents);
+                       // Case 2: string contents, create a blob
+                       } else {
+                           bb = new BlobBuilder(); // Create a new Blob on-the-fly.
+                           mimeString = "text/plain";
+                           if (binary) {
+                               // write the bytes of the string to an ArrayBuffer
+                               ab = new ArrayBuffer(contents.length);
+                               ia = new Uint8Array(ab);
+                               for (var i = 0; i < contents.length; i++) {
+                                   ia[i] = contents.charCodeAt(i);
+                               }
+                               // write the ArrayBuffer to a blob, and you're done
+                               bb.append(ab);
+                               mimeString = "";
                            }
-                           // write the ArrayBuffer to a blob, and you're done
-                           bb.append(ab);
-                           mimeString = "";
+                           else {
+                               bb.append(contents);
+                           }
+                           fileWriter.write(bb.getBlob(mimeString));
                        }
-                       else
-                           bb.append(contents);
-                       fileWriter.write(bb.getBlob(mimeString));
 
                    }, onError);
                }
@@ -389,66 +397,6 @@ $(function() {
                    }
                }, onError);
            },
-
-    /**
-     * Copy a local storage file into the sandbox file system.
-     *
-     * @param {FileEntry} localFileEntry The file entry referring to the local storage file.
-     * @param {string} dest The string path referring to the destination file.
-     *                      An optional, if "dest" is null, the new file will have the same name with the orginal one.
-     * @param {function(FileEntry)=} opt_successCallback An optional
-     * @param {function(FileError)=} opt_errorCallback An optional
-     *
-     * success callback passed FileEntry referring to the new file in the sandbox file system.
-     * error callback passed the generated error.
-     */
-    cpLocalFile: function (localFileEntry, dest, success, error){
-                     var onError = error || fsUtils.onError;
-                     var path;
-                     if(!localFileEntry){
-                         console.log("There is no local file to be copied.");
-                         return false;
-                     }
-                     // if dest is null, or its type is not string, orginal file name will be used.
-                     var destFileName = localFileEntry.name;
-                     if(dest !== null && typeof dest == "string"){
-                         path = dest.replace(/^\//, "").split("/");
-                         destFileName = path.splice(path.length - 1, 1).toString();
-                         path = path.length > 0 ? path.join("/") : "/";
-                     }
-                     path = path || "/";
-                     // write the contents to the new fileEntry
-                     function write(fileEntry) {
-                         fileEntry.createWriter(function(fileWriter) {
-                             //set the write end handler
-                             fileWriter.onwriteend = function(e) {
-                                 console.log('Copy local file to sandbox completed.');
-                                 if(success){
-                                     success(fileEntry);
-                                 }
-                             };
-
-                             fileWriter.onError = function(e) {
-                                 console.log('Write failed: ' + e.toString());
-                                 onError(e);
-                             };
-
-                             fileWriter.write(localFileEntry); // Note: write() can take a File or Blob object.
-
-                         }, onError);
-                     }
-                     // if the dest file is already exist, it will be removed, and then create a new file.
-                     fsUtils.rm(path+destFileName, function (){
-                         fsUtils.touch(path+destFileName, write, onError);
-                     }, function (e) {
-                         console.log("in error rm");
-                         if (e.code === FileError.NOT_FOUND_ERR) {
-                             fsUtils.touch(path+destFileName, write, onError);
-                         } else {
-                             onError(e);
-                         }
-                     }, false);
-                 },
 
     /**
      * Export file to a blank site: open the URL of the file in a blank site for items in "Export"
