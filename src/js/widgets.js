@@ -1447,6 +1447,7 @@ var BWidgetRegistry = {
             countbubble: {
                 type: "string",
                 displayName: "count bubble",
+                defaultValue: ""
             }
         },
         template: function (node) {
