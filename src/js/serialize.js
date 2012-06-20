@@ -112,9 +112,6 @@ var DEBUG = true,
         if (typeof template === "function") {
             template =  $('<div/>').append(template(node)).html();
         }
-        else if (typeof template === "object") {
-            template = template[props["type"]];
-        }
 
         // Apply any special ADMNode properties to the template before we
         // create the DOM Element instance
