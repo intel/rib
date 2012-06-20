@@ -1309,6 +1309,14 @@ div.propertyItems label[for|=id] {
 .addDevice:active {
     background-image: url("images/addDevice_down.png");
 }
+.editDevice {
+    cursor: pointer;
+    padding: 20px;
+    background: url("images/editDevice_up.png") no-repeat center;
+}
+.editDevice:active {
+    background-image: url("images/editDevice_down.png");
+}
 .deviceSetting label
 {
     width: 8em;
@@ -1322,11 +1330,22 @@ div.propertyItems label[for|=id] {
     margin-top: 2em
 }
 
+
 .deviceSetting input.submit
 {
-    margin-left: 4.5em;
-    margin-right: 0.5em;
-    min-width: 10em;
+    margin-left: 10px;
+    margin-right: 23px;
+    min-width: 110px;
+}
+
+.deviceSetting input.submit.single{
+    margin-left: 143px;
+}
+
+.deviceSetting input.delete
+{
+    margin-left: 23px;
+    min-width: 110px;
 }
 .rotateDevice {
     cursor: pointer;
