@@ -197,11 +197,11 @@
                                         .addClass('title optionInput')
                                         .change(node, function (event) {
                                             index = $(this).parent().parent().data('index');
-                                            props[p].children[index].text = $(this).val();
+                                            props['options'].children[index].text = $(this).val();
                                             node.fireEvent("modelUpdated",
                                                 {type: "propertyChanged",
                                                  node: node,
-                                                 property: p});
+                                                 property: 'options'});
                                         })
                                         .end().end()
                                     .end().end()
@@ -213,11 +213,11 @@
                                         .addClass('title optionInput')
                                         .change(node, function (event) {
                                             index = $(this).parent().parent().data('index');
-                                            props[p].children[index].value = $(this).val();
+                                            props['options'].children[index].value = $(this).val();
                                             node.fireEvent("modelUpdated",
                                                 {type: "propertyChanged",
                                                  node: node,
-                                                 property: p});
+                                                 property: 'options'});
                                         })
                                         .end().end()
                                     .end().end()
@@ -230,11 +230,11 @@
                                         .click(function(e) {
                                             try {
                                                 index = $(this).parent().parent().data('index');
-                                                props[p].children.splice(index, 1);
+                                                props['options'].children.splice(index, 1);
                                                 node.fireEvent("modelUpdated",
                                                     {type: "propertyChanged",
                                                         node: node,
-                                                    property: p});
+                                                    property: 'options'});
                                             }
                                             catch (err) {
                                                 console.error(err.message);
@@ -260,11 +260,11 @@
                                     var optionItem = {};
                                     optionItem.text = "Option";
                                     optionItem.value = "Value";
-                                    props[p].children.push(optionItem);
+                                    props['options'].children.push(optionItem);
                                     node.fireEvent("modelUpdated",
                                                   {type: "propertyChanged",
                                                    node: node,
-                                                   property: p});
+                                                   property: 'options'});
                                 }
                                 catch (err) {
                                     console.error(err.message);
@@ -284,13 +284,13 @@
                             stop: function(event, ui) {
                                 var optionItem, curIndex = ui.item.index() - 1,
                                     origIndex = widget.origRowIndex;
-                                    optionItem = props[p].children.splice(origIndex,1)[0];
+                                    optionItem = props['options'].children.splice(origIndex,1)[0];
 
-                                props[p].children.splice(curIndex, 0, optionItem);
+                                props['options'].children.splice(curIndex, 0, optionItem);
                                 node.fireEvent("modelUpdated",
                                               {type: "propertyChanged",
                                                node: node,
-                                               property: p});
+                                               property: 'options'});
                             },
                         });
                         break;

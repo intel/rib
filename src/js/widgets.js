@@ -938,17 +938,24 @@ var BWidgetRegistry = {
         paletteImageName: "jqm_select.svg",
         template: function(node) {
             var prop, code, length, i, child;
-            prop = node.getProperty("disabled");
-            if(prop == true) {
-                code = $('<select disabled="disabled"></select>');
-            } else {
-                code = $('<select></select>');
+            code = $('<select></select>');
+
+            code.attr('data-native-menu', false);
+
+            if(node.getProperty("disabled")) {
+                code.attr('disabled', true);
             }
+
+            if(node.getProperty("multiple")) {
+                code.attr('multiple', true);
+                code.append('<option>'+node.getProperty("label")+'</option>');
+            }
+
             prop = node.getProperty("options");
             length = prop.children.length;
             for (i = 0; i< length; i++) {
                 child = prop.children[i];
-                $('<option value="' + child.value + '">'+ child.text + '</option>')
+                $('<option value="' +child.value+ '">' +child.text+ '</option>')
                     .appendTo(code);
             }
             return code;
@@ -967,6 +974,15 @@ var BWidgetRegistry = {
         },
         displayLabel: "Select Menu",
         properties: {
+            label: {
+                type: "string",
+                defaultValue: "Choose option",
+            },
+            multiple: {
+                type: "boolean",
+                defaultValue: false,
+                displayName: "multiple select",
+            },
             options: {
                  type: "record-array",
                  sortable: true,
@@ -997,8 +1013,9 @@ var BWidgetRegistry = {
                 allow: [ "Option" ]
             }
         ],
-        //jQM generates two levels of divs for a select, the topmost one is what is clicked.
-        delegate: "grandparent",
+        delegate: function (domNode, admNode) {
+            return $(domNode).parent();
+        },
         events: {
             mousedown: function (e) {
                 e.preventDefault();
