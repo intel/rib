@@ -1326,26 +1326,25 @@ div.propertyItems label[for|=id] {
     margin-top: 2em
 }
 .deviceSetting input {
-    margin-top: 2em
+    margin-top: 2em;
+    margin-left: 1em;
+    margin-right: 1em;
+}
+.deviceSetting input[type='number'] {
+    width:5em;
+    size: 4;
 }
 
-
-.deviceSetting input.submit
-{
-    margin-left: 10px;
-    margin-right: 23px;
-    min-width: 110px;
+.deviceSetting #buttonSet{
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+}
+.deviceSetting #buttonSet * {
+    margin: 0 1em 3em 1em;
+    min-width: 25%;
 }
 
-.deviceSetting input.submit.single{
-    margin-left: 143px;
-}
-
-.deviceSetting input.delete
-{
-    margin-left: 23px;
-    min-width: 110px;
-}
 .rotateDevice {
     cursor: pointer;
     padding: 20px;
