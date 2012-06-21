@@ -29,13 +29,14 @@
             "List Views": [
                  "List", "OrderedList", "ListItem", "ListDivider", "ListButton"
             ],
-            "Output": ["ProgressBar"]
+            "Output": ["ProgressBar"],
+            "Image": ["Image"]
         }
     ],
 
     "Widget Sets": [
         {
-            "Simple HTML": [ "Text" ],
+            "Simple HTML": [ "Text", "Image" ],
             "jQuery Mobile": [ 
                 "#0._hidden_node.jqm_toolbars",
                 "#0.Functional Groups.0.Buttons",
