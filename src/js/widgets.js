@@ -634,7 +634,8 @@ var BWidgetRegistry = {
             },
             transition: {
                 type: "string",
-                options: [ "slide", "slideup", "slidedown", "pop", "fade", "flip" ],
+                options: [ "slide", "slideup", "slidedown", "pop", "fade", "flip",
+                           "turn", "flow", "slidefade", "none"],
                 defaultValue: "slide",
                 htmlAttribute: "data-transition"
             },
