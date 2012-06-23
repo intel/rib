@@ -1088,7 +1088,13 @@ var BWidgetRegistry = {
                 button = new ADMNode("RadioButton");
                 node.addChild(button);
                 if (i == 0) {
-                    button.setProperty("checked", true);
+                    // FIXME: this used to be setting the property to "true",
+                    // even though it's a string property, so it was showing up
+                    // wrong in the property view. We should do some better
+                    // type checking in setProperty so that we're alerted to
+                    // such errors in the console (which requires stifling a
+                    // a lot of invalid warnings they would now get lost in)
+                    button.setProperty("checked", "checked");
                 }
             }
         },
