@@ -218,30 +218,21 @@ var BWidgetRegistry = {
     Page: {
         parent: "Base",
         allowIn: "Design",
-        template: function (node) {
-            var prop, code = $('<div data-role="page"></div>');
-            code.attr("id", node.getProperty("id"));
-
-            // don't write data-theme if it's using the default
-            prop = node.getProperty("theme");
-            if (prop !== "default") {
-                code.attr("data-theme", prop);
-            }
-            return code;
-        },
-
         showInPalette: false,
         selectable: true,
         moveable: false,
+        template: '<div data-role="page"></div>',
         properties: {
             id: {
                 type: "string",
-                autoGenerate: "page"
+                autoGenerate: "page",
+                htmlAttribute: "id"
             },
             theme: {
                 type: "string",
                 options: [ "default", "a", "b", "c", "d", "e" ],
                 defaultValue: "default",
+                htmlAttribute: "data-theme"
             }
         },
         redirect: {
@@ -277,32 +268,12 @@ var BWidgetRegistry = {
         allowIn: "Page",
         dragHeader: true,
         paletteImageName: "jqm_header.svg",
-        template: function (node) {
-            var prop, code = $('<div data-role="header"><h1></h1></div>');
-            code = BWidgetRegistry.Base.applyProperties(node, code);
-
-            // only write data-position if it's being set to fixed
-            if (node.getProperty("position") === "fixed") {
-                code.attr("data-position", "fixed");
-            }
-
-            // don't write data-theme if it's using the default
-            prop = node.getProperty("theme");
-            if (prop !== "default") {
-                code.attr("data-theme", prop);
-            }
-
-            // always write the title
-            code.find("h1")
-                .text(node.getProperty("text"));
-            return code;
-        },
-
         moveable: false,
         editable: {
             selector: "h1",
             propertyName: "text"
         },
+        template: '<div data-role="header"><h1>%TEXT%</h1></div>',
         properties: {
             text: {
                 type: "string",
@@ -312,11 +283,13 @@ var BWidgetRegistry = {
                 type: "string",
                 options: [ "default", "fixed" ],
                 defaultValue: "default",
+                htmlAttribute: "data-position"
             },
             theme: {
                 type: "string",
                 options: [ "default", "a", "b", "c", "d", "e" ],
                 defaultValue: "default",
+                htmlAttribute: "data-theme"
             }
         },
         zones: [
@@ -350,16 +323,8 @@ var BWidgetRegistry = {
             var prop, code = $('<div data-role="footer"></div>');
             code = BWidgetRegistry.Base.applyProperties(node, code);
 
-            // only write data-position if it's being set to fixed
-            if (node.getProperty("position") === "fixed") {
-                code.attr("data-position", "fixed");
-            }
-
-            // don't write data-theme if it's using the default
-            prop = node.getProperty("theme");
-            if (prop !== "default") {
-                code.attr("data-theme", prop);
-            }
+            // TODO: Header always writes h1, here it's optional; perhaps
+            // both should be doing the same thing?
 
             // write the text if non-empty
             prop = node.getProperty("text");
@@ -383,11 +348,13 @@ var BWidgetRegistry = {
                 type: "string",
                 options: [ "default", "fixed" ],
                 defaultValue: "default",
+                htmlAttribute: "data-position"
             },
             theme: {
                 type: "string",
                 options: [ "default", "a", "b", "c", "d", "e" ],
                 defaultValue: "default",
+                htmlAttribute: "data-theme"
             }
         },
         zones: [
@@ -711,34 +678,52 @@ var BWidgetRegistry = {
             },
             value: {
                 type: "integer",
-                defaultValue: 50
+                defaultValue: 50,
+                forceAttribute: true,
+                htmlAttribute: "value",
+                htmlSelector: "input"
             },
             min: {
                 type: "integer",
-                defaultValue: 0
+                defaultValue: 0,
+                forceAttribute: true,
+                htmlAttribute: "min",
+                htmlSelector: "input"
             },
             max: {
                 type: "integer",
-                defaultValue: 100
+                defaultValue: 100,
+                forceAttribute: true,
+                htmlAttribute: "max",
+                htmlSelector: "input"
             },
             step: {
                 type: "integer",
-                defaultValue: 1
+                defaultValue: 1,
+                forceAttribute: true,
+                htmlAttribute: "step",
+                htmlSelector: "input"
             },
             theme: {
                 type: "string",
                 options: [ "default", "a", "b", "c", "d", "e" ],
-                defaultValue: "default"
+                defaultValue: "default",
+                htmlAttribute: "data-theme",
+                htmlSelector: "input"
             },
             track: {
                 displayName: "track theme",
                 type: "string",
                 options: [ "default", "a", "b", "c", "d", "e" ],
-                defaultValue: "default"
+                defaultValue: "default",
+                htmlAttribute: "data-track-theme",
+                htmlSelector: "input"
             },
             disabled: {
                 type: "boolean",
-                defaultValue: false
+                defaultValue: false,
+                htmlAttribute: "disabled",
+                htmlSelector: "input"
             }
         },
         editable: {
@@ -761,33 +746,6 @@ var BWidgetRegistry = {
 
             input = $('<input type="range">');
             input.attr("id", idstr);
-
-            prop = node.getProperty("value");
-            input.attr("value", prop);
-
-            prop = node.getProperty("min");
-            input.attr("min", prop);
-
-            prop = node.getProperty("max");
-            input.attr("max", prop);
-
-            prop = node.getProperty("step");
-            input.attr("step", prop);
-
-            prop = node.getProperty("theme");
-            if (prop !== "default") {
-                input.attr("data-theme", prop);
-            }
-
-            prop = node.getProperty("track");
-            if (prop !== "default") {
-                input.attr("data-track-theme", prop);
-            }
-
-            prop = node.getProperty("disabled");
-            if (prop == true) {
-                input.attr("disabled", "disabled");
-            }
 
             code.append(input);
             return code;
@@ -983,6 +941,7 @@ var BWidgetRegistry = {
                 type: "boolean",
                 defaultValue: false,
                 displayName: "multiple select",
+                htmlAttribute: "multiple"
             },
             options: {
                  type: "record-array",
@@ -1004,7 +963,8 @@ var BWidgetRegistry = {
             },
             disabled: {
                 type: "boolean",
-                defaultValue: false
+                defaultValue: false,
+                htmlAttribute: "disabled"
             }
         },
         zones: [
@@ -1125,21 +1085,25 @@ var BWidgetRegistry = {
             },
             value: {
                 type: "string",
-                defaultValue: ""
+                defaultValue: "",
+                htmlAttribute: "value"
             },
             checked: {
                 type: "string",
                 options: [ "not checked", "checked" ],
-                defaultValue: "not checked"
+                defaultValue: "not checked",
+                htmlAttribute: "checked"
             },
             theme: {
                 type: "string",
                 options: [ "default", "a", "b", "c", "d", "e" ],
-                defaultValue: "default"
+                defaultValue: "default",
+                htmlAttribute: "data-theme"
             },
             disabled: {
                 type: "boolean",
-                defaultValue: false
+                defaultValue: false,
+                htmlAttribute: "disabled"
             }
         },
         delegate: 'parent',
@@ -1148,30 +1112,9 @@ var BWidgetRegistry = {
             var prop, label, code;
 
             code = $('<input type="radio"><label/>');
-            if (node.getProperty("disabled")) {
-                code.attr("disabled", "disabled");
-            }
 
             // always include id property on input
             code.filter('input').attr("id", node.getProperty("id"));
-
-            // don't write value if it's using the default
-            prop = node.getProperty("value");
-            if (prop !== node.getPropertyDefault("value")) {
-                code.filter('input').attr("value", prop);
-            }
-
-            // don't write checked if it's using the default
-            prop = node.getProperty("checked");
-            if (prop !== node.getPropertyDefault("checked")) {
-                code.filter('input').attr("checked", prop);
-            }
-
-            // don't write data-theme if it's using the default
-            prop = node.getProperty("theme");
-            if (prop !== node.getPropertyDefault("theme")) {
-                code.filter('input').attr("data-theme", prop);
-            }
 
             // generate a "name" property for first child of ControlGroup
             if (!node.getParent().getChildrenCount()) {
@@ -1475,19 +1418,18 @@ var BWidgetRegistry = {
             }
         },
         template: function (node) {
-            var prop, countBubble, code = $('<li><a></a></li>');
-            var container = code.find('a');
-            container
-                .html(node.getProperty("text"))
-                .attr('href', node.getProperty("target"));
+            var prop, countBubble, code = $('<li><a>%TEXT%</a></li>');
+            var anchor = code.find('a');
+
             prop = node.getProperty("countbubble");
             // Add the count bubble if countbubble property is not blank
             if (prop.trim() != '') {
                 countBubble = $('<span>')
                     .attr('class', 'ui-li-count')
                     .html(prop);
-                container.append(countBubble);
+                anchor.append(countBubble);
             };
+
             return code;
         }
         
