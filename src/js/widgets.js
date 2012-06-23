@@ -394,8 +394,8 @@ var BWidgetRegistry = {
             {
                 name: "default",
                 cardinality: "N",
-                // deny Slider widgets because they render poorly; this may be
-                // a bug in jQuery Mobile
+                // FIXME: deny Slider widgets because they render poorly; this
+                // may be a bug in jQuery Mobile 1.0
                 deny: "Slider"
             }
         ],
@@ -433,7 +433,6 @@ var BWidgetRegistry = {
                 itemWrapper: '<li/>',
                 cardinality: "N",
                 allow: "Button"
-
             }
         ],
         properties: {
@@ -441,7 +440,7 @@ var BWidgetRegistry = {
                 type: "string",
                 options: [ "left", "top", "bottom", "right", "notext" ],
                 defaultValue: "top",
-                htmlAttribute: "data-iconpos",
+                htmlAttribute: "data-iconpos"
             }
         },
         init: function (node) {
@@ -498,7 +497,7 @@ var BWidgetRegistry = {
     Text: {
         parent: "Base",
         paletteImageName: "jqm_text.svg",
-        template: function(node) {
+        template: function (node) {
             var type, code;
 
             type = node.getProperty("type");
@@ -750,6 +749,8 @@ var BWidgetRegistry = {
             var label, idstr, prop, input,
                 code = $('<div data-role="fieldcontain"></div>');
 
+            // FIXME: this is broken, the id the user specifies should be used,
+            // not appended with -range
             prop = node.getProperty("id");
             idstr = prop + "-range";
 
@@ -927,7 +928,8 @@ var BWidgetRegistry = {
             }
         },
         template: '<select data-role="slider"><option value="%VALUE1%">%LABEL1%</option><option value="%VALUE2%">%LABEL2%</option></select>',
-        // jQM generates an div next to the slider, which is the actually clicked item when users try to click the flip toggle switch.
+        // jQM generates a div next to the slider, which is the element actually
+        // clicked when users try to click the flip toggle switch.
         delegate:"next",
     },
 
@@ -937,32 +939,30 @@ var BWidgetRegistry = {
     SelectMenu: {
         parent: "Base",
         paletteImageName: "jqm_select.svg",
-        template: function(node) {
+        template: function (node) {
             var prop, code, length, i, child;
             code = $('<select></select>');
 
+            // TODO: should probably expose this as a boolean property
             code.attr('data-native-menu', false);
 
-            if(node.getProperty("disabled")) {
-                code.attr('disabled', true);
-            }
-
-            if(node.getProperty("multiple")) {
-                code.attr('multiple', true);
-                code.append('<option>'+node.getProperty("label")+'</option>');
+            if (node.getProperty("multiple")) {
+                code.append('<option>' + node.getProperty("label") +
+                            '</option>');
             }
 
             prop = node.getProperty("options");
             length = prop.children.length;
             for (i = 0; i< length; i++) {
                 child = prop.children[i];
-                $('<option value="' +child.value+ '">' +child.text+ '</option>')
+                $('<option value="' + child.value+ '">' + child.text +
+                  '</option>')
                     .appendTo(code);
             }
             return code;
         },
         init: function (node) {
-            // initial state is three radio buttons
+            // initial state is three options
             var i, prop, optionItem;
             prop = node.getProperty("options");
             prop.children = [];
