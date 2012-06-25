@@ -290,70 +290,67 @@ $(function() {
      * AMD design root to this design, which sends a designReset event.
      *
      * @param {Object} obj The JSON object to parse
+     * @param {function(ADMNode, Object)=} eachHandler Extra handler for each pair of
+     *                                                 ADM node and the related object.
+     *
      * @return {ADMNode/null} the design build from the text if success, null if failed.
      */
-    function JSONToProj(text) {
-        var result, design, parsedObject, resultProject = {};
+    function JSONToProj(text, eachHandler) {
+        var result, design, parsedObject, resultProject = {}, JSObjectToADMNode;
 
-        function add_child(parent, nodes) {
-            if (typeof(nodes) !== "object") {
+        JSObjectToADMNode = function (admNode, jsObject) {
+            var children, child, zone,
+                properties, childNode,
+                item, val, result, i;
+
+            if ((typeof jsObject !== "object") || !(admNode instanceof ADMNode)) {
                 return false;
             }
+            properties = jsObject.properties;
+            try {
+                // Set properties for current ADM node
+                for (item in properties) {
+                    // parser the properties and set the value to the node
+                    val = properties[item];
+                    // if we can't get value, we set item's value as default
+                    if (!val){
+                        val = admNode.getPropertyDefault(item);
+                    }
 
-            if (typeof(nodes.length) == "undefined") {
-                return false;
-            }
-
-            var child, childType, zone,
-                properties = {},
-                item, val, node, result, i;
-
-            for (i = 0; i < nodes.length; i++) {
-                node = nodes[i];
-                childType = node.type;
-                zone = node.zone;
-                properties = node.properties;
-                try {
-                    child =  ADM.createNode(childType, true);
+                    // NOTE: It's important that we pass "true" for the fourth
+                    // parameter here (raw) to disable "property hook"
+                    // functions like the grid one that adds or removes child
+                    // Block elements based on the property change
+                    admNode.setProperty(item, val, null, true);
+                }
+                // Scan children nodes
+                children = jsObject.children;
+                for (i = 0; i < children.length; i++) {
+                    child = children[i];
+                    childNode = ADM.createNode(child.type, true);
 
                     // add child node to current node
-                    if (!parent.addChildToZone(child, zone)) {
-                        dumplog("add child type "+ childType + " failed");
+                    if (!admNode.addChildToZone(childNode, child.zone)) {
+                        dumplog("add child type "+ child.type + " failed");
                         return false;
                     }
-
-                    // set properties of child
-                    for (item in properties) {
-                        // parser the properties and set the value to the node
-                        val = properties[item];
-                        // if we can't get value, we set item's value as default
-                        if (!val){
-                            val = child.getPropertyDefault(item);
-                        }
-
-                        // NOTE: It's important that we pass "true" for the fourth
-                        // parameter here (raw) to disable "property hook"
-                        // functions like the grid one that adds or removes child
-                        // Block elements based on the property change
-                        child.setProperty(item, properties[item], null, true);
-                    }
-                }catch (e) {
-                    if (!confirm("Error creating " + childType +
-                                (item ? " when setting property '" +
-                                item + "'" : "") + " - " + e +
-                                ".\n\nContinue loading the design?"))
-                        return false;
-                }
-
-                if (node.children.length !== 0) {
-                    result = add_child(child, node.children);
+                    result = JSObjectToADMNode(childNode, child);
                     if (!result) {
                         return false;
                     }
                 }
+            }catch (e) {
+                if (!confirm("Error when " + (i ? " adding new child '" +
+                             child.type + "'" : "setting property '" +
+                             item + "'") + " - " + e +
+                            ".\n\nContinue loading the design?"))
+                    return false;
             }
+            // call extra handler for each relative pair
+            eachHandler && eachHandler(admNode, jsObject);
             return true;
-        }
+        };
+        /************************ JSObjectToADMNode function end *************************/
 
         try {
             parsedObject = $.parseJSON(text);
@@ -371,7 +368,7 @@ $(function() {
 
         // add children in ADM
         try {
-            result = add_child(design, parsedObject.children);
+            result = JSObjectToADMNode(design, parsedObject);
         } catch(e) {
             result = null;
             alert("Invalid design file.");
@@ -413,7 +410,15 @@ $(function() {
     /*******************************************************
      * ADM to JSON Direction
      ******************************************************/
-    function ADMToJSONObj(ADMTreeNode) {
+    /**
+     * Serialize ADMTree to an common javascript Object.
+     *
+     * @param {ADMNode} ADMTreeNode ADM node to be serialized.
+     * @param {function(ADMNode, Object)=} handler Extra handler for each pair of
+     *                                             ADM node and the related object.
+     * @return {Boolean} return the serialized Object if success, null when fails
+     */
+    function ADMToJSONObj(ADMTreeNode, handler) {
         ADMTreeNode = ADMTreeNode || ADM.getDesignRoot();
         if (ADMTreeNode instanceof ADMNode) {
             // Save staff in ADMNode
@@ -428,9 +433,11 @@ $(function() {
             children = ADMTreeNode.getChildren();
             if (children.length > 0) {
                 for (i = 0; i < children.length; i++) {
-                    JSObject.children[i] = ADMToJSONObj(children[i]);
+                    JSObject.children[i] = ADMToJSONObj(children[i], handler);
                 }
             }
+            // run handler to handle every node
+            handler && handler(ADMTreeNode, JSObject);
             return JSObject;
         } else {
             console.log("warning: children of ADMNode must be ADMNode");
