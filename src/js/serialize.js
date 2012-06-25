@@ -126,7 +126,10 @@ var DEBUG = true,
                 if (typeof attrName  === "object") {
                     var attrMap = attrName;
                     attrName = attrMap.name;
-                    attrValue = attrMap.value[propValue];
+                    if (typeof attrMap.value  === "function")
+                        attrValue = attrMap.value(propValue);
+                    else
+                        attrValue = attrMap.value[propValue];
                 }
                 if (attrName) {
                     propDefault = BWidget.getPropertyDefault(type, p);
