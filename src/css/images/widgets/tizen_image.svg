@@ -2,6 +2,16 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 width="128px" height="90px" viewBox="0 0 128 90" enable-background="new 0 0 128 90" xml:space="preserve">
+<defs>
+  <style>
+    <![CDATA[
+        @font-face {
+            font-family: OpenSans-SemiBold;
+            src: url('../../fonts/OpenSans-Semibold.ttf');
+        }
+    ]]>
+  </style>
+</defs>
 <g>
 	<rect fill="#FFFFFF" width="128" height="90"/>
 </g>
@@ -10,11 +20,11 @@
 	<rect x="12" y="24" fill="#6E909E" width="109" height="55"/>
 </g>
 <g>
-	<polygon fill="#526B75" points="121,79 12,79 12,52.667 27.667,42 33.667,46 39,45.333 61.667,61 74.667,56.333 89.667,62 
+	<polygon fill="#526B75" points="121,79 12,79 12,52.667 27.667,42 33.667,46 39,45.333 61.667,61 74.667,56.333 89.667,62
 		100.333,58 111.667,60 120.667,53.167 	"/>
 </g>
 <g>
-	<polygon fill="#4A6069" points="121,79 12,79 12,68.667 18,67.667 32.667,70 40.334,70.667 49,68.667 60.667,67.667 82.667,70.334 
+	<polygon fill="#4A6069" points="121,79 12,79 12,68.667 18,67.667 32.667,70 40.334,70.667 49,68.667 60.667,67.667 82.667,70.334
 		95,68.334 107,70 114.667,67 121,68 	"/>
 </g>
 <text transform="matrix(1 0 0 1 12 15.4258)" font-family="'OpenSans-Semibold'" font-size="11" id="tizen_image_title">Image</text>
