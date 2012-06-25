@@ -24,6 +24,7 @@ Intel     src/js/composer.js                   APLv2          N/A
 Intel     src/js/codeview-mode.js              APLv2          N/A
 Intel     src/js/devices.js                    APLv2          N/A
 Intel     src/js/projects.js                   APLv2          N/A
+Intel     src/js/msg-box.js                    APLv2          N/A
 Intel     src/js/views/live.js                 APLv2          N/A
 Intel     src/js/views/widget.js               APLv2          N/A
 Intel     src/js/views/outline.js              APLv2          N/A

@@ -99,7 +99,7 @@
                                     }
                                     return false;
                                 })
-                            deviceForm.dialog({title: label, modal:true, width: 360, height: 260, resizable:false });
+                            deviceForm.dialog({title: label, modal:true, width: 360, resizable:false });
                         });
                     $('<a href="javascript:void(0)">' + label +'</a>').appendTo(deviceToolbar).click(function () {
                         deviceButton.trigger('click');
