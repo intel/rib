@@ -768,6 +768,46 @@ body.ui-tabs.ui-widget {
     border-radius: 6px;
     text-decoration: none;
 }
+.propertyView .datalist {
+    background: #fff;
+    border-top: 0;
+    top: 27px;
+    left: 0;
+    -webkit-box-shadow: 0 4px 5px rgba(0,0,0,.15);
+    z-index: 999;
+    width: 100%;
+    border-radius: 0 0 5px 5px;
+    padding: 0px 5px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.propertyView .datalist li {
+    clear:both;
+    cursor: pointer;
+    line-height: 80%;
+    padding: 7px 0px 8px;
+    margin: 0;
+    list-style: none;
+    background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #eeeeee), color-stop(0.5, white));
+    background-image: -webkit-linear-gradient(center bottom, #eeeeee 0%, white 50%);
+}
+.propertyView .datalist li:hover {
+    background-image: none;
+    background-color:#b0c4de;
+}
+.propertyView .datalist > ul {
+    list-style-type: none ;
+    margin: 0px;
+    max-height: 200px;
+    padding: 0px;
+    position: relative;
+}
+.propertyView .datalist-input {
+    border-radius: 5px 5px 0px 0px;
+    outline-color: #E59700;
+    outline-style: auto;
+    outline-width: 5px;
+}
 .propertyView .buttonStyle:focus,
 .propertyView .buttonStyle:hover {
     color: #eee;
