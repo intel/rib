@@ -209,14 +209,34 @@ var BWidgetRegistry = {
             }
         ],
     },
-
+    /**
+    *Support background images using <div>
+    */
+    Background:{
+        parent: "Base",
+        properties: {
+            background: {
+                type: "string",
+                defaultValue: "",
+                htmlAttribute: {
+                    name: "style",
+                    value: function (propValue) {
+                        return "background-image:url('" + propValue + "');" +
+                            "background-attachment:scroll;" +
+                            "background-repeat:no-repeat;" +
+                            "background-size:cover;";
+                    }
+                }
+            }
+        }
+    },
     /**
      * Represents a page or dialog in the application. Includes "top" zone
      * for an optional header, "content" zone for the Content area, and "bottom"
      * zone for an optional footer.
      */
     Page: {
-        parent: "Base",
+        parent: "Background",
         allowIn: "Design",
         showInPalette: false,
         selectable: true,
@@ -264,7 +284,7 @@ var BWidgetRegistry = {
      * for optional buttons, and "bottom" zone for an optional navbar.
      */
     Header: {
-        parent: "Base",
+        parent: "Background",
         allowIn: "Page",
         dragHeader: true,
         paletteImageName: "jqm_header.svg",
@@ -315,7 +335,7 @@ var BWidgetRegistry = {
      * Represents a footer object at the bottom of a page.
      */
     Footer: {
-        parent: "Base",
+        parent: "Background",
         allowIn: "Page",
         dragHeader: true,
         paletteImageName: "jqm_footer.svg",
