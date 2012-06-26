@@ -47,24 +47,24 @@
             this.options.secondaryTools.remove();
         },
 
+        fontRegExp: new RegExp("src:\\s*url\\s*\\('../../"),
+
         refresh: function(event, widget) {
             var listWidgets, columns, generateWidget;
 
             widget = widget || this;
 
             generateWidget = function (container, name) {
-                var reg = new RegExp("src:\\s*url\\s*\\('../../"),
+                var href = location.href.replace(location.search, ''),
                     li = $('<img id="BWidget-' + name + '"></img>')
                         .appendTo(container);
-                $.get("src/css/images/widgets/" +
-                        BWidget.getPaletteImageName(name), function (data) {
-                    li.attr('src','data:image/svg+xml;utf8,'
-                        + new XMLSerializer().serializeToString(data)
-                            .replace(reg, "src: url('" + location.protocol
-                                + "//" + location.host + "/" + location.pathname
-                                + "/src/css/")
-                    );
-                });
+                name = BWidget.getPaletteImageName(name);
+                $.get("src/css/images/widgets/" + name,
+                    function (data, stat, resp) {
+                        li.attr('src', 'data:image/svg+xml;utf8,' +
+                            resp.responseText.replace(widget.fontRegExp,
+                                "src: url('" + href + "src/css/"));
+                    });
                 $(li).disableSelection()
                     .addClass('nrc-palette-widget')
                     .data("adm-node", {type: name});
