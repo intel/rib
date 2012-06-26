@@ -36,33 +36,38 @@
                         .addClass(className + " separated")
                         .appendTo(deviceToolbar)
                         .click( function () {
-                            var deviceForm = $("<form/>")
+                            var buttonSet, deviceForm;
+                            deviceForm= $("<form/>")
                                 .addClass("deviceSetting")
                                 .append('<label for="name">Device Name</label>')
-                                .append('<input name="name" />')
+                                .append('<input required name="name"/>')
+                                .append('<br/>')
                                 .append('<label for="screenWidth">Screen</label>')
-                                .append('<input name="screenWidth" type="number" max="10000"  style="width:4em" required size="4"/>').append('x')
-                                .append('<input name="screenHeight" type="number" max="10000" style="width:4em" required size="4"/>')
-                                .append('<br/>');
+                                .append('<input name="screenWidth" type="number" max="10000" required/>')
+                                .append('<span>x</span>')
+                                .append('<input name="screenHeight" type="number" max="10000" required/>');
+                            buttonSet = $('<div align="center" id="buttonSet" />').appendTo(deviceForm);
                             if (className === "editDevice") {
                                 if (widget._sysDevices[widget._projectDevice.name]) {
                                     alert("Can't edit system device!");
                                     return;
                                 }
-                                deviceForm.append($('<input type="button" class="delete" value="Delete"></input>').click(function () {
+                                buttonSet.append($('<input type="button" class="buttonStyle" value="Delete"></input>').click(function () {
                                     delete widget._userDevices[widget._projectDevice.name];
                                     applyDeviceChange(deviceForm, widget._deviceSelect.find('option:first').text());
-                                }))
+                                }));
+                                deviceForm
                                 .find('input[name=name]').val(widget._projectDevice.name)
                                 .end()
                                 .find('input[name=screenWidth]').val(widget._projectDevice.screenWidth)
                                 .end()
                                 .find('input[name=screenHeight]').val(widget._projectDevice.screenHeight)
                                 .end();
-                             };
-                             deviceForm
-                                .append('<input type="submit" class="submit' + (className !== 'editDevice'?' single':'') + '" value="Done"></input>')
-                                .append($('<a href="javascript:void(0)">Cancel</a>').click( function() { $(this).parent().dialog("close"); }))
+                            }
+                            buttonSet
+                                .append('<input type="submit" class="buttonStyle" value="Done"></input>')
+                                .append($('<a href="javascript:void(0)">Cancel</a>').click( function() { deviceForm.dialog("close"); }));
+                            deviceForm
                                 .submit( function () {
                                     var values = {};
                                     try{
@@ -83,7 +88,7 @@
                                     }
                                     return false;
                                 })
-                            deviceForm.dialog({title: label, modal:true, width: 400, height: 285, resizable:false });
+                            deviceForm.dialog({title: label, modal:true, width: 360, height: 260, resizable:false });
                         });
                     $('<a href="javascript:void(0)">' + label +'</a>').appendTo(deviceToolbar).click(function () {
                         deviceButton.trigger('click');

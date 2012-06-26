@@ -950,8 +950,6 @@ div.propertyItems label[for|=id] {
 }
 
 .ribDialog {
-    background-color: transparent;
-    background-color: rgba(21, 28, 34, 0.85);
     padding: 0;
     margin: 0;
     display: block;
@@ -959,19 +957,51 @@ div.propertyItems label[for|=id] {
     border-radius: 8px;
     -webkit-background-clip: padding-box;
     background-clip: padding-box;
-    font-size: 14px;
-    font-family: OpenSans-SB;
-    font-weight: 600; /* semi-bold */
-    font-color: #333;
-
 }
 .ui-dialog {
     padding: 0px;
 }
 .ui-dialog .ui-dialog-content{
     padding: 0px;
+    font-size: 14px;
+    font-family: OpenSans-SB;
+    font-weight: 600; /* semi-bold */
+    font-color: #333;
 }
 
+.ui-dialog .buttonStyle{
+    display: inline-block;
+    font-size: 12px;
+    text-align: center;
+    color: #424242;
+    border: 1px solid #a1a1a1;
+    line-height: 12px;
+    padding: 8px 20px 7px 20px;
+    background-color: #fbfbfb;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#fbfbfb), to(#ececec));
+    background-image: -webkit-linear-gradient(top, #fbfbfb, #ececec);
+    background-image: -moz-linear-gradient(top, #fbfbfb, #ececec);
+    background-image: -ms-linear-gradient(top, #fbfbfb, #ececec);
+    background-image: -o-linear-gradient(top, #fbfbfb, #ececec);
+    background-image: linear-gradient(to bottom, #fbfbfb, #ececec);
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+    -moz-background-clip: padding; -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    text-decoration: none;
+}
+.ui-dialog .buttonStyle:hover {
+    color: #eee;
+    background-color: #cccccc;
+    border-color: #424242;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#cccccc), to(#777777));
+    background-image: -webkit-linear-gradient(top, #cccccc, #777777);
+    background-image: -moz-linear-gradient(top, #cccccc, #777777);
+    background-image: -ms-linear-gradient(top, #cccccc, #777777);
+    background-image: -o-linear-gradient(top, #cccccc, #777777);
+    background-image: linear-gradient(to bottom, #cccccc, #777777);
+}
 .ribDialog > div {
     -webkit-border-radius: 12px;
     margin: 0px;
@@ -1098,39 +1128,8 @@ div.propertyItems label[for|=id] {
     float: right;
 }
 .ribDialog .buttonStyle {
-    display: block;
     width: 60px;
     height: 12px;
-    font-size: 12px;
-    text-align: center;
-    color: #424242;
-    border: 1px solid #a1a1a1;
-    line-height: 12px;
-    padding: 8px 20px 7px 20px;
-    background-color: #fbfbfb;
-    background-image: -webkit-gradient(linear, left top, left bottom, from(#fbfbfb), to(#ececec));
-    background-image: -webkit-linear-gradient(top, #fbfbfb, #ececec);
-    background-image: -moz-linear-gradient(top, #fbfbfb, #ececec);
-    background-image: -ms-linear-gradient(top, #fbfbfb, #ececec);
-    background-image: -o-linear-gradient(top, #fbfbfb, #ececec);
-    background-image: linear-gradient(to bottom, #fbfbfb, #ececec);
-    -webkit-border-radius: 6px;
-    -moz-border-radius: 6px;
-    border-radius: 6px;
-    -moz-background-clip: padding; -webkit-background-clip: padding-box;
-    background-clip: padding-box;
-    text-decoration: none;
-}
-.ribDialog .buttonStyle:hover {
-    color: #eee;
-    background-color: #cccccc;
-    border-color: #424242;
-    background-image: -webkit-gradient(linear, left top, left bottom, from(#cccccc), to(#777777));
-    background-image: -webkit-linear-gradient(top, #cccccc, #777777);
-    background-image: -moz-linear-gradient(top, #cccccc, #777777);
-    background-image: -ms-linear-gradient(top, #cccccc, #777777);
-    background-image: -o-linear-gradient(top, #cccccc, #777777);
-    background-image: linear-gradient(to bottom, #cccccc, #777777);
 }
 .ribDialog .linkStyle {
     background: none !important;
@@ -1327,26 +1326,25 @@ div.propertyItems label[for|=id] {
     margin-top: 2em
 }
 .deviceSetting input {
-    margin-top: 2em
+    margin-top: 2em;
+    margin-left: 1em;
+    margin-right: 1em;
+}
+.deviceSetting input[type='number'] {
+    width:5em;
+    size: 4;
 }
 
-
-.deviceSetting input.submit
-{
-    margin-left: 10px;
-    margin-right: 23px;
-    min-width: 110px;
+.deviceSetting #buttonSet{
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+}
+.deviceSetting #buttonSet * {
+    margin: 0 1em 3em 1em;
+    min-width: 25%;
 }
 
-.deviceSetting input.submit.single{
-    margin-left: 143px;
-}
-
-.deviceSetting input.delete
-{
-    margin-left: 23px;
-    min-width: 110px;
-}
 .rotateDevice {
     cursor: pointer;
     padding: 20px;
@@ -1422,4 +1420,10 @@ input.screenCoordinate::-webkit-inner-spin-button {
 .aboutDlg +.ui-widget-overlay {
     top: -1em;
     left: -1em;
+}
+#exportDialog {
+    padding: 0.8em 1.2em;
+}
+#exportDialog .buttonStyle {
+    margin: 0 0.6em;
 }

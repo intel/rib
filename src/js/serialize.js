@@ -268,7 +268,6 @@ function dumplog(loginfo){
 
 
 $(function() {
-
     /*******************************************************
      * JSON to ADM Direction
      ******************************************************/
@@ -380,12 +379,14 @@ $(function() {
      * This function is to find valid design.json in imported file and build ADMTree according it
      */
     function zipToProj(data) {
-        var zip, designData;
+        var zip, designData, ribRule;
+        // Accept file subffixed with ".json" or ".rib"
+        ribRule = /\.(json|rib)$/i;
         try {
             zip = new ZipFile(data);
             zip.filelist.forEach(function(zipInfo, idx, array) {
-                // if find a file name contians "json" then get its data
-                if (zipInfo.filename.indexOf("json") !== -1) {
+                // use file suffixed with ".json" or ".rib", case insensitive
+                if (ribRule.test(zipInfo.filename)) {
                     designData = zip.extract(zipInfo.filename);
                 }
             });
@@ -522,74 +523,101 @@ $(function() {
         return $.rib.designHeaders;
     }
 
-   function  exportFile (fileName, content, binary) {
-        var cookieValue = $.rib.cookieUtils.get("exportNotice"),
-            $exportNoticeDialog = createExportNoticeDialog(),
-            saveAndExportFile = function () {
-                $.rib.fsUtils.write(fileName, content, function(fileEntry){
-                    $.rib.fsUtils.exportToTarget(fileEntry.fullPath);
-                }, null, false, binary);
-            };
-
-        if(cookieValue === "true" && $exportNoticeDialog.length > 0) {
-            // bind exporting HTML code handler to OK button
-            $exportNoticeDialog.dialog("option", "buttons", {
-                "OK": function () {
-                    saveAndExportFile();
-                    $("#exportNoticeDialog").dialog("close");
-                }
-            });
-            // open the dialog
-            $exportNoticeDialog.dialog("open");
-        } else {
-            // if cookieValue is not true, export HTML code directly
-            saveAndExportFile();
-        }
-    }
-
     // create a notice Dialog for user to configure the browser, so that
     // a native dialog can be shown when exporting design or HTML code
-    function  createExportNoticeDialog () {
-        var dialogStr, dialogOpts, $exportNoticeDialog, cookieExpires;
+    function  createExportDialog () {
+        var dialogOpts, exportTypes, exportDialog, cookieExpires,
+            exportMenu, cancelDiv, configNotice, checkbox;
+        exportTypes = ['zip', 'json', 'wgt'];
         cookieExpires = new Date("January 1, 2042");
-        dialogStr = '<div id="exportNoticeDialog">';
-        dialogStr += 'Note: Files will be saved in the default download path of the Browser.';
-        dialogStr += '<p>To configure the Browser to ask you to where to save files, go to:<br>';
-        dialogStr += 'Preferences -> Under the Hood -> Download</p>';
-        dialogStr += '<p>Then check the box "Ask where to save each file before downloading"</p>';
-        dialogStr += '<p><input type="checkbox">Do not remind me again</p>';
-        dialogStr += '</div>';
         dialogOpts = {
-            autoOpen: false,
+            autoOpen: true,
             modal: true,
             width: 500,
             resizable: false,
-            height: 400,
-            title: "RIB",
+            height: 150,
+            title: "Export"
         };
-        $(dialogStr).dialog(dialogOpts);
-        $exportNoticeDialog = $("#exportNoticeDialog");
-        if($exportNoticeDialog.length <= 0) {
-            console.error("create saveAlertDialog failed.");
-            return null;
+        exportDialog = $('<div id="exportDialog" />').addClass("vbox");
+
+        // If user haven't checked "Do not remind again", then show the notice
+        if ($.rib.cookieUtils.get("exportNotice") !== "false") {
+            // Resize the dialog
+            dialogOpts.height *= 2;
+            // Add configure notice
+            configNotice = $('<div class="flex2" />').appendTo(exportDialog);
+            $('<p><b>Note:  </b>File will be saved in the default download path.</p>'
+                    + '<div>Please configure the browser to ask for saving location,<br />'
+                    + 'for Chrome, go to Settings: <em>chrome://chrome/settings/</em><br />'
+                    + 'and check the option to be asked where to save download files.</div>'
+                    + '<div><br /><input type="checkbox">&nbsp<a>Do not remind me again<a></div>'
+             ).appendTo(configNotice);
+            checkbox = configNotice.find('input:checkbox');
+            checkbox.change(function () {
+                var notice = this.checked ? "false" : "true";
+                // set cookie
+                if(!$.rib.cookieUtils.set("exportNotice", notice, cookieExpires)) {
+                    console.error("Set exportNotice cookie failed.");
+                }
+            });
+            checkbox.next('a').click(function () {
+                $(this).prev("input:checkbox").click(); });
         }
-        $exportNoticeDialog.find("input:checkbox").click(function () {
-            var notice = this.checked ? "false" : "true";
-            // set cookie
-            if(!$.rib.cookieUtils.set("exportNotice", notice, cookieExpires)) {
-                console.error("Set exportNotice cookie failed.");
-            }
+
+        // Add elements about selecting export type
+        exportMenu = $('<div align="center" id="export-menu" />');
+        cancelDiv = $('<div align="right"/>').append($('<button />').text("Cancel")
+            .addClass("buttonStyle")
+            .click(function () { exportDialog.dialog('close');}));
+        $('<div />').addClass('flex1')
+            .append('<div>Export project as:</div>')
+            .append(exportMenu)
+            .append(cancelDiv)
+            .appendTo(exportDialog);
+        $.each(exportTypes, function (index, type) {
+            $('<button />').attr('id', 'export-' + type)
+                .text(type)
+                .addClass("buttonStyle")
+                .appendTo(exportMenu);
         });
-        return $exportNoticeDialog;
+
+        exportDialog.dialog(dialogOpts);
+        return exportDialog;
     }
 
-    function exportPackage (resultProject) {
-        var zip, resultHTML, files, i;
-        zip = new JSZip();
-        resultHTML = generateHTML();
-        resultHTML && zip.add("index.html", resultHTML.html);
-        resultProject && zip.add("project.json", resultProject);
-        files = [
+    function  exportFile (fileName, content, binary) {
+        $.rib.fsUtils.write(fileName, content, function(fileEntry){
+            $.rib.fsUtils.exportToTarget(fileEntry.fullPath);
+        }, null, false, binary);
+    }
+
+    function getConfigFile (pid, iconPath) {
+        var projName, xmlHeader, xmlDoc, widget, childNode;
+        projName = $.rib.pmUtils.getProperty(pid, "name") || "Untitled";
+        // TODO: Ask user for following config data
+        xmlHeader = '<?xml version="1.0" encoding="UTF-8"?>';
+        xmlDoc = $.parseXML('<widget xmlns="http://www.w3.org/ns/widgets" />');
+        widget = xmlDoc.getElementsByTagName('widget')[0];
+        // add the attr to widget
+        widget.setAttribute('xmlns:tizen', 'http://tizen.org/ns/widgets');
+        widget.setAttribute('version', '0.1');
+        widget.setAttribute('viewmodes', 'fullscreen');
+        widget.setAttribute('id', 'http://yourdomain/' + projName);
+
+        // add name to the widget
+        childNode = xmlDoc.createElement('name');
+        childNode.appendChild(xmlDoc.createTextNode(projName));
+        widget.appendChild(childNode);
+
+        // add icon to the widget
+        childNode = xmlDoc.createElement('icon');
+        childNode.setAttribute('src', iconPath);
+        widget.appendChild(childNode);
+        return (xmlHeader + xmlserializer.serializeToString(xmlDoc));
+    }
+
+    function getNeededFiles () {
+        var files = [
             'src/css/images/ajax-loader.png',
             'src/css/images/icons-18-white.png',
             'src/css/images/icons-36-white.png',
@@ -599,6 +627,7 @@ $(function() {
             'src/css/images/web-ui-fw_noContent.png',
             'src/css/images/web-ui-fw_volume_icon.png'
         ];
+
         function getDefaultHeaderFiles (type) {
             var headers, files = [];
             headers = ADM.getDesignRoot().getProperty(type);
@@ -611,38 +640,81 @@ $(function() {
             }
             return files;
         }
-        $.merge(files, $.merge(getDefaultHeaderFiles("libs"), getDefaultHeaderFiles("css")));
+        // Add js Files
+        $.merge(files, getDefaultHeaderFiles("libs"));
+        // Add css Files
+        $.merge(files, getDefaultHeaderFiles("css"));
+        return files;
+    }
+
+    function  createZipAndExport(pid, ribFile, type) {
+        var zip, projName, resultHTML, resultConfig, files, i, iconPath;
+        zip = new JSZip();
+        files = getNeededFiles();
+        // Get the project Name
+        projName = $.rib.pmUtils.getProperty(pid, "name") || "Untitled";
+        // If the type is "wgt" then add config.xml and icon
+        if (type === 'wgt') {
+            // TODO: get icon from pInfo
+            iconPath = 'src/assets/rib-48.png';
+            resultConfig = getConfigFile(pid, iconPath);
+            resultConfig && zip.add("config.xml", resultConfig);
+            files.push(iconPath);
+        }
+        ribFile && zip.add(projName + ".json", ribFile);
+        resultHTML = generateHTML();
+        resultHTML && zip.add("index.html", resultHTML.html);
+        // projName now is the whole package name
+        projName = projName + '.' + type;
 
         i = 0;
-        function getFile () {
-            if (i < files.length)
-            {
-                // We have to do ajax request not using jquery as we can't get "arraybuffer" response from jquery
-                var req = window.ActiveXObject ? new window.ActiveXObject( "Microsoft.XMLHTTP" ): new XMLHttpRequest();
-                req.onload = function() {
-                    var uIntArray = new Uint8Array(this.response);
-                    var charArray = new Array(uIntArray.length);
-                    for (var j = 0; j < uIntArray.length; j ++)
-                        charArray[j] = String.fromCharCode(uIntArray[j]);
-                    zip.add(files[i],btoa(charArray.join('')), {base64:true});
-                    if (i === files.length - 1){
-                        var content = zip.generate(true);
-                        exportFile("design.zip", content, true);
-                    }
-                    i++;
-                    getFile();
+        files.forEach(function (file, index) {
+            // We have to do ajax request not using jquery as we can't get "arraybuffer" response from jquery
+            var req = window.ActiveXObject ? new window.ActiveXObject( "Microsoft.XMLHTTP" ): new XMLHttpRequest();
+            req.onload = function() {
+                var uIntArray = new Uint8Array(this.response);
+                var charArray = new Array(uIntArray.length);
+                for (var j = 0; j < uIntArray.length; j ++) {
+                    charArray[j] = String.fromCharCode(uIntArray[j]);
                 }
-                try
-                {
-                    req.open("GET", files[i], true);
-                    req.responseType = 'arraybuffer';
-                } catch (e) {
-                    alert(e);
+                zip.add(file, btoa(charArray.join('')), {base64:true});
+                if (i === files.length - 1){
+                    var content = zip.generate(true);
+                    exportFile(projName, content, true);
                 }
-                req.send(null);
+                i++;
             }
-        }
-        getFile();
+            try {
+                req.open("GET", file, true);
+                req.responseType = 'arraybuffer';
+            } catch (e) {
+                alert(e);
+            }
+            req.send(null);
+        });
+    }
+
+    function exportPackage (ribFile) {
+        var exportDialog, pid;
+        pid = pid || $.rib.pmUtils.getActive();
+
+        exportDialog = createExportDialog();
+        exportDialog.find("button#export-json").click(function () {
+            // Get the project Name
+            var projName = $.rib.pmUtils.getProperty(pid, "name") || "Untitled";
+            projName = projName + '.json';
+            exportFile(projName, ribFile);
+            exportDialog.dialog('close');
+        });
+        exportDialog.find("button#export-wgt").click(function () {
+            createZipAndExport(pid, ribFile, 'wgt');
+            exportDialog.dialog('close');
+        });
+        exportDialog.find("button#export-zip").click(function () {
+            createZipAndExport(pid, ribFile, 'zip');
+            exportDialog.dialog('close');
+        });
+        return;
     }
 
     /***************** export functions out *********************/
