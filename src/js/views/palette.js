@@ -48,21 +48,32 @@
         },
 
         refresh: function(event, widget) {
-            var listWidgets, columns;
+            var listWidgets, columns, generateWidget;
 
             widget = widget || this;
 
+            generateWidget = function (container, name) {
+                var reg = new RegExp("src:\\s*url\\s*\\('../../"),
+                    li = $('<img id="BWidget-' + name + '"></img>')
+                        .appendTo(container);
+                $.get("src/css/images/widgets/" +
+                        BWidget.getPaletteImageName(name), function (data) {
+                    li.attr('src','data:image/svg+xml;utf8,'
+                        + new XMLSerializer().serializeToString(data)
+                            .replace(reg, "src: url('" + location.protocol
+                                + "//" + location.host + "/" + location.pathname
+                                + "/src/css/")
+                    );
+                });
+                $(li).disableSelection()
+                    .addClass('nrc-palette-widget')
+                    .data("adm-node", {type: name});
+            };
             listWidgets = function (container, group) {
                 $.each(group, function (i, value) {
                     if (value && typeof value === "string") {
                         if (BWidget.isPaletteWidget(value)) {
-                            var li = $('<img id="BWidget-'+value+'"></img>')
-                                .attr("src", "src/css/images/widgets/" +
-                                             BWidget.getPaletteImageName(value))
-                                .appendTo(container);
-                            $(li).disableSelection()
-                                .addClass('nrc-palette-widget')
-                                .data("adm-node", {type: value});
+                            generateWidget(container, value);
                         }
                     }
                     else if (value)
