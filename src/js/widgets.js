@@ -595,6 +595,17 @@ var BWidgetRegistry = {
                 htmlAttribute: "data-iconpos",
                 invalidIn: "Navbar"
             },
+            mini: {
+                type: "boolean",
+                defaultValue: false,
+                htmlAttribute: {
+                    name: "data-mini",
+                    value: {
+                        true: "true",
+                        false: "false"
+                    }
+                }
+            },
             active: {
                 type: "boolean",
                 defaultValue: false,
@@ -769,6 +780,18 @@ var BWidgetRegistry = {
                 htmlAttribute: "step",
                 htmlSelector: "input"
             },
+            mini: {
+                type: "boolean",
+                defaultValue: false,
+                htmlSelector: "input",
+                htmlAttribute: {
+                    name: "data-mini",
+                    value: {
+                        true: "true",
+                        false: "false"
+                    }
+                }
+            },
             theme: {
                 type: "string",
                 options: [ "default", "a", "b", "c", "d", "e" ],
@@ -846,6 +869,18 @@ var BWidgetRegistry = {
                 htmlSelector: "input",
                 htmlAttribute: "placeholder"
             },
+            mini: {
+                type: "boolean",
+                defaultValue: false,
+                htmlSelector: "input",
+                htmlAttribute: {
+                    name: "data-mini",
+                    value: {
+                        true: "true",
+                        false: "false"
+                    }
+                }
+            },
             theme: {
                 type: "string",
                 options: [ "default", "a", "b", "c", "d", "e" ],
@@ -893,6 +928,17 @@ var BWidgetRegistry = {
                 defaultValue: "",
                 htmlAttribute: "placeholder"
             },
+            mini: {
+                type: "boolean",
+                defaultValue: false,
+                htmlAttribute: {
+                    name: "data-mini",
+                    value: {
+                        true: "true",
+                        false: "false"
+                    }
+                }
+            },
             theme: {
                 type: "string",
                 options: [ "default", "a", "b", "c", "d", "e" ],
@@ -937,6 +983,17 @@ var BWidgetRegistry = {
             label2: {
                 type: "string",
                 defaultValue: "On"
+            },
+            mini: {
+                type: "boolean",
+                defaultValue: false,
+                htmlAttribute: {
+                    name: "data-mini",
+                    value: {
+                        true: "true",
+                        false: "false"
+                    }
+                }
             },
             theme: {
                 type: "string",
@@ -1002,12 +1059,6 @@ var BWidgetRegistry = {
                 type: "string",
                 defaultValue: "Choose option",
             },
-            multiple: {
-                type: "boolean",
-                defaultValue: false,
-                displayName: "multiple select",
-                htmlAttribute: "multiple"
-            },
             options: {
                  type: "record-array",
                  sortable: true,
@@ -1025,6 +1076,23 @@ var BWidgetRegistry = {
                      },
                      children : []
                  }
+            },
+            multiple: {
+                type: "boolean",
+                defaultValue: false,
+                displayName: "multiple select",
+                htmlAttribute: "multiple"
+            },
+            mini: {
+                type: "boolean",
+                defaultValue: false,
+                htmlAttribute: {
+                    name: "data-mini",
+                    value: {
+                        true: "true",
+                        false: "false"
+                    }
+                }
             },
             disabled: {
                 type: "boolean",
@@ -1097,6 +1165,17 @@ var BWidgetRegistry = {
                type: "string",
                defaultValue: ""
             },
+            mini: {
+                type: "boolean",
+                defaultValue: false,
+                htmlAttribute: {
+                    name: "data-mini",
+                    value: {
+                        true: "true",
+                        false: "false"
+                    }
+                }
+            }
         },
         zones: [
             {
@@ -1224,6 +1303,17 @@ var BWidgetRegistry = {
                type: "string",
                defaultValue: ""
             },
+            mini: {
+                type: "boolean",
+                defaultValue: false,
+                htmlAttribute: {
+                    name: "data-mini",
+                    value: {
+                        true: "true",
+                        false: "false"
+                    }
+                }
+            }
         },
         zones: [
             {
@@ -1272,6 +1362,17 @@ var BWidgetRegistry = {
                 options: [ "not checked", "checked" ],
                 defaultValue: "not checked",
                 htmlAttribute: "checked"
+            },
+            mini: {
+                type: "boolean",
+                defaultValue: false,
+                htmlAttribute: {
+                    name: "data-mini",
+                    value: {
+                        true: "true",
+                        false: "false"
+                    }
+                }
             },
             theme: {
                 type: "string",
@@ -1746,6 +1847,17 @@ var BWidgetRegistry = {
                 type: "string",
                 defaultValue: "Collapsible Area",
             },
+            mini: {
+                type: "boolean",
+                defaultValue: false,
+                htmlAttribute: {
+                    name: "data-mini",
+                    value: {
+                        true: "true",
+                        false: "false"
+                    }
+                }
+            },
             theme: {
                 type: "string",
                 options: [ "default", "a", "b", "c", "d", "e" ],
@@ -1789,6 +1901,17 @@ var BWidgetRegistry = {
         paletteImageName: "jqm_accordian.svg",
         template: '<div data-role="collapsible-set"></div>',
         properties: {
+            mini: {
+                type: "boolean",
+                defaultValue: false,
+                htmlAttribute: {
+                    name: "data-mini",
+                    value: {
+                        true: "true",
+                        false: "false"
+                    }
+                }
+            },
             theme: {
                 type: "string",
                 options: [ "default", "a", "b", "c", "d", "e" ],
