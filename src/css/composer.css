@@ -132,6 +132,12 @@ Add some padding some that outline can be seen when selected.
     z-index: 9999 !important;
     margin-top: 10px;
     margin-bottom: 10px;
+}
+/*
+   Toggle Switch gets height=0 if we set it to auto, so ONLY set
+   set this if the helper is NOT a toggle switch
+*/
+.ui-sortable-helper:not([role=application].ui-slider) {
     height: auto !important;
 }
 .ui-sortable-placeholder {
