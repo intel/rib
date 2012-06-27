@@ -2222,7 +2222,7 @@ var BWidget = {
     },
 
     /**
-     * Gets the property description schema a given instance property.
+     * Gets the property description schema for a given instance property.
      *
      * @param {String} widgetType The type of the widget.
      * @param {String} property The name of the requested property.

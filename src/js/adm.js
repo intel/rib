@@ -1838,6 +1838,8 @@ ADMNode.prototype.getProperties = function () {
     defaults = BWidget.getPropertyDefaults(this.getType());
     for (i in defaults) {
         if (defaults.hasOwnProperty(i)) {
+            // FIXME: getPropertySchema really isn't intended to be used
+            // outside the BWidget class
             var validIn = BWidget.getPropertySchema(this.getType(), i).validIn,
                 invalidIn =
                     BWidget.getPropertySchema(this.getType(), i).invalidIn;
