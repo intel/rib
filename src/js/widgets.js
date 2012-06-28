@@ -216,7 +216,7 @@ var BWidgetRegistry = {
         parent: "Base",
         properties: {
             background: {
-                type: "string",
+                type: "url-uploadable",
                 defaultValue: "",
                 htmlAttribute: {
                     name: "style",
@@ -660,7 +660,7 @@ var BWidgetRegistry = {
         template: '<img/>',
         properties: {
             src: {
-                type: "string",
+                type: "url-uploadable",
                 defaultValue: "src/css/images/widgets/tizen_image.svg",
                 htmlAttribute: "src",
                 forceAttribute: true
