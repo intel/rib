@@ -2249,26 +2249,17 @@ var BWidget = {
      * @throws {Error} If widgetType is invalid.
      */
     getPropertyTypes: function (widgetType) {
-        var stack = [], props = {}, length, i, property, widget, currentWidget;
-        widget = currentWidget = BWidgetRegistry[widgetType];
+        var stack = [], props = {}, length, i, property, widget;
+        widget = BWidgetRegistry[widgetType];
 
         if (typeof widget !== "object") {
             throw new Error("undefined widget type in getPropertyTypes: " +
                             widgetType);
         }
 
-        // build hierarchical stack so child properties will override parents
-        while (currentWidget) {
-            stack.unshift(currentWidget.properties);
-            currentWidget = BWidgetRegistry[currentWidget.parent];
-        }
-
-        length = stack.length;
-        for (i = 0; i < length; i++) {
-            for (property in stack[i]) {
-                if (stack[i].hasOwnProperty(property)) {
-                    props[property] = stack[i][property].type;
-                }
+        for (property in widget.properties) {
+            if (widget.properties.hasOwnProperty(property)) {
+                props[property] = widget.properties[property].type;
             }
         }
         return props;
@@ -2285,30 +2276,20 @@ var BWidget = {
      * @throws {Error} If widgetType is invalid.
      */
     getPropertyOptions: function (widgetType) {
-        var stack = [], options = {}, length, i, property, widget, currentWidget;
-        widget = currentWidget = BWidgetRegistry[widgetType];
+        var stack = [], options = {}, length, i, property, widget;
+        widget = BWidgetRegistry[widgetType];
 
         if (typeof widget !== "object") {
             throw new Error("undefined widget type in getPropertyOptions: " +
                             widgetType);
         }
 
-        // build hierarchical stack so child properties will override parents
-        // although, really there should be no such conflicts
-        while (currentWidget) {
-            stack.unshift(currentWidget.properties);
-            currentWidget = BWidgetRegistry[currentWidget.parent];
-        }
-
-        length = stack.length;
-        for (i = 0; i < length; i++) {
-            for (property in stack[i]) {
-                if (stack[i].hasOwnProperty(property)) {
-                    options[property] = stack[i][property].options;
-                }
+        for (property in widget.properties) {
+            if (widget.properties.hasOwnProperty(property)) {
+                options[property] = widget.properties[property].options;
             }
         }
-        return options;
+        return $.extend(true, {}, options);
     },
 
     /**
@@ -2321,30 +2302,20 @@ var BWidget = {
      * @throws {Error} If widgetType is invalid.
      */
     getPropertyDefaults: function (widgetType) {
-        var stack = [], props = {}, length, i, property, widget, currentWidget;
-        widget = currentWidget = BWidgetRegistry[widgetType];
+        var stack = [], props = {}, length, i, property, widget;
+        widget = BWidgetRegistry[widgetType];
 
         if (typeof widget !== "object") {
             throw new Error("undefined widget type in getPropertyDefaults: "+
                             widgetType);
         }
-
-        // build hierarchical stack so child properties will override parents
-        //   although, really there should be no such conflicts
-        while (currentWidget) {
-            stack.unshift(currentWidget.properties);
-            currentWidget = BWidgetRegistry[currentWidget.parent];
-        }
-
-        length = stack.length;
-        for (i = 0; i < length; i++) {
-            for (property in stack[i]) {
-                if (stack[i].hasOwnProperty(property)) {
-                    props[property] = stack[i][property].defaultValue;
-                }
+        for (property in widget.properties) {
+            if (widget.properties.hasOwnProperty(property)) {
+                props[property] = widget.properties[property].defaultValue;
             }
         }
-        return props;
+
+        return $.extend(true, {}, props);
     },
 
     /**
@@ -2363,13 +2334,8 @@ var BWidget = {
                             widgetType);
         }
 
-        // build hierarchical stack so child properties will override parents
-        while (widget) {
-            if (widget.properties && widget.properties[property]) {
-                return widget.properties[property];
-            }
-            widgetType = widget.parent;
-            widget = BWidgetRegistry[widgetType];
+        if (widget.properties && widget.properties[property]) {
+            return $.extend(true, {}, widget.properties[property]);
         }
 
         // no such property found in hierarchy
