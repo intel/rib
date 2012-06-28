@@ -527,7 +527,9 @@ $(function() {
                     // remove the temp input element
                     input.remove();
                 });
-                input.click();
+                setTimeout(function() {
+                    input.click();
+                }, 0);
             },
 
     /**

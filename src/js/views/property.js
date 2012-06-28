@@ -160,6 +160,26 @@
                             value.find("#" + valueId).attr("checked", "checked");
                         }
                         break;
+                    case "url-uploadable":
+                        $('<input type ="text" value="">')
+                            .attr('id', valueId)
+                            .addClass('title labelInput')
+                            .appendTo(value);
+                        //set default value
+                        value.find('#' + valueId).val(valueVal);
+                        $('<button> Upload </button>')
+                            .addClass('buttonStyle')
+                            .click(function (e) {
+                                var target, saveDir;
+                                target = $(this).prev("input:text");
+                                saveDir = $.rib.pmUtils.ProjectDir + "/" + $.rib.pmUtils.getActive() + "/images/";
+                                $.rib.fsUtils.uploadAndSave("image", saveDir, $(this).parent(), function (file) {
+                                    target.val(file.toURL());
+                                    target.trigger('change');
+                                });
+                            })
+                            .appendTo(value);
+                        break;
                     case "record-array":
                         $('<table/>')
                             .attr('id', 'selectOption')
