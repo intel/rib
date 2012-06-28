@@ -103,6 +103,7 @@
 }
 .adm-node.ui-controlgroup,
 .adm-node.ui-selected[data-role=processingbar],
+.adm-node.ui-selected.ui-select,
 .adm-node.ui-selected.ui-radio,
 .adm-node.ui-selected.ui-checkbox {
     outline-offset: 0px !important;
@@ -121,6 +122,21 @@ Add some padding some that outline can be seen when selected.
     outline: 2px solid #4ae57b;
     outline-offset: -2px;
     z-index: 9998;
+}
+
+/* "Text" widgets should not have their outlines inset */
+span.adm-node.adm-editable.adm-text-content.ui-selected,
+h1.adm-node.adm-editable.adm-text-content.ui-selected,
+h2.adm-node.adm-editable.adm-text-content.ui-selected,
+h3.adm-node.adm-editable.adm-text-content.ui-selected,
+h4.adm-node.adm-editable.adm-text-content.ui-selected,
+h5.adm-node.adm-editable.adm-text-content.ui-selected,
+h6.adm-node.adm-editable.adm-text-content.ui-selected,
+label.adm-node.adm-editable.ui-selected,
+p.adm-node.adm-editable.adm-text-content.ui-selected,
+em.adm-node.adm-editable.adm-text-content.ui-selected,
+strong.adm-node.adm-editable.adm-text-content.ui-selected {
+    outline-offset: 0px;
 }
 .nrc-sortable-container.ui-state-active,
 .nrc-sortable-container.ui-state-active:empty {
