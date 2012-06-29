@@ -371,36 +371,39 @@
             content.find('#deleteElement')
                 .bind('click', function (e) {
                     var parent, zone, index;
-                    try {
-                        index = node.getZoneIndex();
-                        parent = node.getParent();
-                        zone = parent.getZoneArray(node.getZone());
-                        if (type === "Page") {
-                            continueToDelete = confirm("Are you sure you want to delete the page?");
-                            if(!continueToDelete) {
-                                return false;
+                    var doDelete = function () {
+                        try {
+                            index = node.getZoneIndex();
+                            parent = node.getParent();
+                            zone = parent.getZoneArray(node.getZone());
+                            if (type === "Page") {
+                                $.rib.pageUtils.deletePage(node.getUid(), false);
+                            } else {
+                                ADM.removeChild(node.getUid(), false);
                             }
-                            $.rib.pageUtils.deletePage(node.getUid(), false);
-                        } else {
-                            ADM.removeChild(node.getUid(), false);
+                            // Select sibling of removed node, or parent node
+                            // if removed node is the last node of parent.  The
+                            // order is next sibling, prev sibling and parent
+                            if (zone.length === 0) {
+                                //find the first selectable ancestor
+                                while (!parent.isSelectable()) {
+                                    parent = parent.getParent();
+                                }
+                                ADM.setSelected(parent);
+                            } else if (index < zone.length) {
+                                ADM.setSelected(zone[index])
+                            } else {
+                                ADM.setSelected(zone[zone.length - 1]);
+                            }
                         }
-                        // Select sibling of removed node, or parent node
-                        // if removed node is the last node of parent.  The
-                        // order is next sibling, prev sibling and parent
-                        if (zone.length === 0) {
-                            //find the first selectable ancestor
-                            while (!parent.isSelectable()) {
-                                parent = parent.getParent();
-                            }
-                            ADM.setSelected(parent);
-                        } else if (index < zone.length) {
-                            ADM.setSelected(zone[index])
-                        } else {
-                            ADM.setSelected(zone[zone.length - 1]);
+                        catch (err) {
+                            console.error(err.message);
                         }
                     }
-                    catch (err) {
-                        console.error(err.message);
+                    if (type === "Page") {
+                        confirm("Are you sure you want to delete the page?", doDelete);
+                    } else {
+                        doDelete();
                     }
                     e.stopPropagation();
                     return false;
