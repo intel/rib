@@ -456,10 +456,7 @@ body.ui-tabs.ui-widget {
 
 }
 .tools-primary .buttonStyle {
-    margin-left: 0px;
-    margin-right: 0px;
-    margin-top: 0.3em;
-    margin-bottom: 0px;
+    margin: 0.3em 0px 0px;
     background: #6d8995;
     border: none;
     color: #fefffa;
@@ -561,13 +558,10 @@ body.ui-tabs.ui-widget {
 .tools-secondary button {
     margin-left: 0px;
     margin-right: 0px;
-    padding-left: 0px;
-    padding-right: 0px;
+    padding: .5em 0px;
     background: none;
     border: none;
     margin-bottom: 0px;
-    padding-bottom: .5em;
-    padding-top: .5em;
     color: #fefffa;
 }
 .tools-secondary input {

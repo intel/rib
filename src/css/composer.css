@@ -206,17 +206,6 @@ fieldset.adm-node.ui-unmasked:not(.ui-sortable-helper),
 /**************************/
 /* container header style */
 /**************************/
-.groupHeader {
-    margin-left: -10px;
-    margin-right: -10px;
-    margin-top: -10px;
-    margin-bottom: 5px;
-    padding-top: 2px;
-    padding-left: 4px;
-    padding-bottom: 2px;
-    background-color: #6d8995;
-    color: white;
-}
 .ui-drag-header:before {
     content: attr(header-label);
     display: block;
