@@ -624,8 +624,8 @@ var BWidgetRegistry = {
             },
             transition: {
                 type: "string",
-                options: [ "slide", "slideup", "slidedown", "pop", "fade", "flip",
-                           "turn", "flow", "slidefade", "none"],
+                options: [ "slide", "slideup", "slidedown", "pop", "fade",
+                           "flip", "turn", "flow", "slidefade", "none" ],
                 defaultValue: "slide",
                 htmlAttribute: "data-transition"
             },
@@ -1295,43 +1295,8 @@ var BWidgetRegistry = {
      * Represents an ordered list element.
      */
     OrderedList: {
-        parent: "Base",
-        dragHeader: true,
-        displayLabel: "Ordered List",
-        paletteImageName: "jqm_ordered_list.svg",
-        properties: {
-            inset: {
-                type: "boolean",
-                defaultValue: true,
-                htmlAttribute: "data-inset",
-                // because data-inset="false" is the real default, do this:
-                forceAttribute: true
-                // FIXME: would be better to distinguish from the default that
-                //        occurs if you leave it off, vs. the default we think
-                //        the user is most likely to want
-            },
-            filter: {
-                type: "boolean",
-                defaultValue: false,
-                htmlAttribute: "data-filter"
-            },
-            theme: BCommonProperties.theme,
-            divider: {
-                displayName: "divider theme",
-                type: "string",
-                options: [ "default", "a", "b", "c", "d", "e" ],
-                defaultValue: "default",
-                htmlAttribute: "data-divider-theme"
-            }
-        },
+        parent: "List",
         template: '<ol data-role="listview">',
-        zones: [
-            {
-                name: "default",
-                cardinality: "N",
-                allow: [ "ListItem", "ListDivider", "ListButton" ]
-            }
-        ],
     },
 
     /**
