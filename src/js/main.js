@@ -590,6 +590,33 @@ $(function() {
 
     var fsUtils, cookieUtils, supportedBrowser, supportedOS,
         errorMsg, redirect = 'https://01.org/rib';
+    var startBuilder = function () {
+        cookieUtils = $.rib.cookieUtils;
+        // if can't get the cookie(no this record), then add exportNotice cookie
+        if (!cookieUtils.get("exportNotice")) {
+            if(!cookieUtils.set("exportNotice", "true")) {
+                // Failed to set the cookie
+                if (window.location.protocol === "file:") {
+                    console.error("Browser needs "
+                            + "'--allow-file-access-from-files"
+                            + "--enable-file-cookies' option." +
+                            + "\nClose the browser if you have already"
+                            + " opened it before.");
+                } else {
+                    console.error("Set exportNotice cookie failed.");
+                }
+            }
+        }
+        // Actually invoke the plugin that sets up our app UI
+        $(document).builder({debugMode: true, model: ADM});
+
+        // init the sandbox file system
+        fsUtils = $.rib.fsUtils;
+        // Try to init a temporary filesystem to test '--allow-file-access-from-files' option
+        requestFileSystem(window.TEMPORARY, 10,  function(filesystem) {
+            fsUtils.initFS(fsUtils.fsType, fsUtils.fsSize, fsInitSuccess, fsInitFailed);
+        }, fsInitFailed);
+    }
     // Detect browser and platform
     supportedBrowser = /(Chrome|Chromium)\/(\S+)/;
     supportedOS = /(Win|Linux|Mac)/;
@@ -597,37 +624,16 @@ $(function() {
         !supportedOS.test(navigator.platform)) {
         errorMsg = 'Only Google Chrome or Chromium are supported right now.  ' +
                    'Unfortunately, it seems you are not using one of these, ' +
-                   'but instead:\n\n\t' + navigator.userAgent + '\n\n' +
+                   'but instead:<br/><br/>' + navigator.userAgent + '<br/><br/>' +
                    'To learn more about Rapid Interface Builder and how to ' +
-                   'use it, please visit our project website at:\n\n\t' +
-                    redirect + '\n\n' +
+                   'use it, please visit our project website at:<br/><br/>' +
+                    redirect + '<br/><br/>' +
                    'You will be redirected there now (or press "Cancel" to ' +
                    'try Rapid Interface Builder at your own risk).';
-        if (confirm(errorMsg)) {
+        confirm(errorMsg, startBuilder, function (){
             document.location = redirect;
             return;
-        }
+        });
     }
-    cookieUtils = $.rib.cookieUtils;
-    // if can't get the cookie(no this record), then add exportNotice cookie
-    if (!cookieUtils.get("exportNotice")) {
-        if(!cookieUtils.set("exportNotice", "true")) {
-            // Failed to set the cookie
-            if (window.location.protocol === "file:") {
-                console.error("Browser needs '--allow-file-access-from-files --enable-file-cookies' option." +
-                        "\nClose the browser if you have already opened it before.");
-            } else {
-                console.error("Set exportNotice cookie failed.");
-            }
-        }
-    }
-    // Actually invoke the plugin that sets up our app UI
-    $(document).builder({debugMode: true, model: ADM});
-
-    // init the sandbox file system
-    fsUtils = $.rib.fsUtils;
-    // Try to init a temporary filesystem to test '--allow-file-access-from-files' option
-    requestFileSystem(window.TEMPORARY, 10,  function(filesystem) {
-        fsUtils.initFS(fsUtils.fsType, fsUtils.fsSize, fsInitSuccess, fsInitFailed);
-    }, fsInitFailed);
+    else startBuilder();
 });
