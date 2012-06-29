@@ -1834,24 +1834,20 @@ ADMNode.prototype.generateUniqueProperty = function (property) {
  * @return {Object} Object containing all the defined properties and values.
  */
 ADMNode.prototype.getProperties = function () {
-    var props = {}, defaults, i;
-    defaults = BWidget.getPropertyDefaults(this.getType());
-    for (i in defaults) {
-        if (defaults.hasOwnProperty(i)) {
-            // FIXME: getPropertySchema really isn't intended to be used
-            // outside the BWidget class
-            var validIn = BWidget.getPropertySchema(this.getType(), i).validIn,
-                invalidIn =
-                    BWidget.getPropertySchema(this.getType(), i).invalidIn;
-            if (validIn && this.getParent().getType() !== validIn)
+    var props = {}, defaults, p, type = this.getType();
+    defaults = BWidget.getPropertyDefaults(type);
+    for (p in defaults) {
+        if (defaults.hasOwnProperty(p)) {
+            // TODO: Maybe this can be replaced by the defaults object extended
+            // by the local _properties object, with jQuery.extend
+            if (this._parent &&
+                !BWidget.propertyValidIn(type, p, this._parent.getType()))
                 continue;
-            if (invalidIn && this.getParent().getType() === invalidIn)
-                continue;
-            props[i] = this._properties[i];
-            if (props[i] === undefined) {
-                props[i] = this.generateUniqueProperty(i);
-                if (props[i] === undefined) {
-                    props[i] = defaults[i];
+            props[p] = this._properties[p];
+            if (props[p] === undefined) {
+                props[p] = this.generateUniqueProperty(p);
+                if (props[p] === undefined) {
+                    props[p] = defaults[p];
                 }
             }
         }

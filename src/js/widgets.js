@@ -200,12 +200,12 @@ var BWidgetRegistry = {
             metas: {
                 type: "array",
                 defaultValue: [
-                    { key:'name',
+                    { key: 'name',
                       value: 'viewport',
                       content: 'width=device-width, initial-scale=1'
                     },
                     { designOnly: true,
-                      key:'http-equiv',
+                      key: 'http-equiv',
                       value: 'cache-control',
                       content: 'no-cache'
                     },
@@ -263,10 +263,11 @@ var BWidgetRegistry = {
             }
         ],
     },
+
     /**
-    *Support background images using <div>
+    * Support background images using <div>
     */
-    Background:{
+    Background: {
         parent: "Base",
         properties: {
             background: {
@@ -284,6 +285,7 @@ var BWidgetRegistry = {
             }
         }
     },
+
     /**
      * Represents a page or dialog in the application. Includes "top" zone
      * for an optional header, "content" zone for the Content area, and "bottom"
@@ -681,7 +683,7 @@ var BWidgetRegistry = {
             },
             align: {
                 type: "string",
-                options:[ "left", "center", "right" ],
+                options: [ "left", "center", "right" ],
                 defaultValue: "left",
                 htmlAttribute: {
                     name: "style",
@@ -937,7 +939,7 @@ var BWidgetRegistry = {
         template: '<select data-role="slider"><option value="%VALUE1%">%LABEL1%</option><option value="%VALUE2%">%LABEL2%</option></select>',
         // jQM generates a div next to the slider, which is the element actually
         // clicked when users try to click the flip toggle switch.
-        delegate:"next",
+        delegate: "next",
     },
 
     /**
@@ -2072,6 +2074,8 @@ var BWidget = {
     },
 
     /**
+     * @private
+     * Not intended as a public API. Only for use within BWidget.
      * Gets the property description schema for a given instance property.
      *
      * @param {String} widgetType The type of the widget.
@@ -2278,6 +2282,38 @@ var BWidget = {
     },
 
     /**
+     * Determines if the given instance property is valid within the given
+     * parent widget.
+     *
+     * @param {String} widgetType The type of the widget.
+     * @param {String} property The name of the requested property.
+     * @param {String} parentType The type of the parent widget.
+     * @return {Boolean} True if the property is valid, false otherwise.
+     * @throws {Error} If widgetType or parentType is invalid.
+     */
+    propertyValidIn: function (widgetType, property, parentType) {
+        var typeList, widget = BWidgetRegistry[widgetType],
+            parent = BWidgetRegistry[parentType],
+            schema = BWidget.getPropertySchema(widgetType, property);
+        if (typeof parent !== "object") {
+            throw new Error("undefined widget type in propertyValidIn: " +
+                            parentType);
+        }
+        if (schema) {
+            typeList = schema.validIn;
+            if (typeList) {
+                return BWidget.isTypeInList(parentType, typeList);
+            }
+            typeList = schema.invalidIn;
+            if (typeList) {
+                return !BWidget.isTypeInList(parentType, typeList);
+            }
+            return true;
+        }
+        return schema;
+    },
+
+    /**
      * Gets the template for a given widget type.
      *
      * @param {String} widgetType The type of the widget.
@@ -2457,17 +2493,17 @@ var BWidget = {
      * @throws {Error} If parentType or childType is invalid.
      */
     childAllowsParent: function (parentType, childType) {
-        var parent, child, allowIn, denyIn;
+        var parent, child, typeList;
         parent = BWidgetRegistry[parentType];
         child = BWidgetRegistry[childType];
         if ((typeof parent === "object") && (typeof child === "object")) {
-            allowIn = child.allowIn;
-            if (allowIn) {
-                return BWidget.isTypeInList(parentType, allowIn);
+            typeList = child.allowIn;
+            if (typeList) {
+                return BWidget.isTypeInList(parentType, typeList);
             }
-            denyIn = child.denyIn;
-            if (denyIn) {
-                return !BWidget.isTypeInList(parentType, denyIn);
+            typeList = child.denyIn;
+            if (typeList) {
+                return !BWidget.isTypeInList(parentType, typeList);
             }
             return true;
         }
