@@ -72,7 +72,9 @@
             listWidgets = function (container, group) {
                 $.each(group, function (i, value) {
                     if (value && typeof value === "string") {
-                        if (BWidget.isPaletteWidget(value)) {
+                        if (BWidget.isPaletteWidget(value) &&
+                            // Avoid duplication
+                            container.find("#BWidget-" + value).length === 0) {
                             generateWidget(container, value);
                         }
                     }
