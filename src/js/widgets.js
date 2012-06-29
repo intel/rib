@@ -30,6 +30,12 @@ var BCommonProperties = {
             }
         }
     },
+    position: {
+        type: "string",
+        options: [ "default", "fixed" ],
+        defaultValue: "default",
+        htmlAttribute: "data-position"
+    },
     theme: {
         type: "string",
         options: [ "default", "a", "b", "c", "d", "e" ],
@@ -321,12 +327,7 @@ var BWidgetRegistry = {
                 type: "string",
                 defaultValue: "Header"
             },
-            position: {
-                type: "string",
-                options: [ "default", "fixed" ],
-                defaultValue: "default",
-                htmlAttribute: "data-position"
-            },
+            position: BCommonProperties.position,
             theme: BCommonProperties.theme
         },
         zones: [
@@ -379,14 +380,9 @@ var BWidgetRegistry = {
         properties: {
             text: {
                 type: "string",
-                defaultValue: "Footer",
+                defaultValue: "Footer"
             },
-            position: {
-                type: "string",
-                options: [ "default", "fixed" ],
-                defaultValue: "default",
-                htmlAttribute: "data-position"
-            },
+            position: BCommonProperties.position,
             theme: BCommonProperties.theme
         },
         zones: [
