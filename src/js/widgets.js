@@ -901,7 +901,8 @@ var BWidgetRegistry = {
             disabled: {
                 type: "boolean",
                 defaultValue: false,
-                htmlAttribute: "disabled"
+                htmlAttribute: "disabled",
+                htmlSelector: "input"
             }
         },
         template: '<div data-role="fieldcontain"><label for="%ID%">%LABEL%</label><input type="text"/></div>',
