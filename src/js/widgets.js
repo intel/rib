@@ -14,6 +14,11 @@
  * widget.
  */
 var BCommonProperties = {
+    disabled: {
+        type: "boolean",
+        defaultValue: false,
+        htmlAttribute: "disabled"
+    },
     mini: {
         type: "boolean",
         defaultValue: false,
@@ -783,12 +788,9 @@ var BWidgetRegistry = {
                 htmlAttribute: "data-track-theme",
                 htmlSelector: "input"
             }),
-            disabled: {
-                type: "boolean",
-                defaultValue: false,
-                htmlAttribute: "disabled",
+            disabled: $.extend({}, BCommonProperties.disabled, {
                 htmlSelector: "input"
-            }
+            })
         },
         editable: {
             selector: "label",
@@ -863,12 +865,9 @@ var BWidgetRegistry = {
                 htmlSelector: "input",
                 htmlAttribute: "value"
             },
-            disabled: {
-                type: "boolean",
-                defaultValue: false,
-                htmlAttribute: "disabled",
+            disabled: $.extend({}, BCommonProperties.disabled, {
                 htmlSelector: "input"
-            }
+            })
         },
         template: '<div data-role="fieldcontain"><label for="%ID%">%LABEL%</label><input type="text"/></div>',
     },
@@ -900,11 +899,7 @@ var BWidgetRegistry = {
                 type: "string",
                 defaultValue: "",
             },
-            disabled: {
-                type: "boolean",
-                defaultValue: false,
-                htmlAttribute: "disabled"
-            }
+            disabled: BCommonProperties.disabled
         },
         template: '<textarea>%VALUE%</textarea>'
     },
@@ -935,11 +930,7 @@ var BWidgetRegistry = {
             },
             mini: BCommonProperties.mini,
             theme: BCommonProperties.theme,
-            disabled: {
-                type: "boolean",
-                defaultValue: false,
-                htmlAttribute: "disabled"
-            }
+            disabled: BCommonProperties.disabled
         },
         template: '<select data-role="slider"><option value="%VALUE1%">%LABEL1%</option><option value="%VALUE2%">%LABEL2%</option></select>',
         // jQM generates a div next to the slider, which is the element actually
@@ -1018,11 +1009,7 @@ var BWidgetRegistry = {
                 htmlAttribute: "multiple"
             },
             mini: BCommonProperties.mini,
-            disabled: {
-                type: "boolean",
-                defaultValue: false,
-                htmlAttribute: "disabled"
-            }
+            disabled: BCommonProperties.disabled
         },
         zones: [
             {
@@ -1153,11 +1140,7 @@ var BWidgetRegistry = {
                 htmlAttribute: "checked"
             },
             theme: BCommonProperties.theme,
-            disabled: {
-                type: "boolean",
-                defaultValue: false,
-                htmlAttribute: "disabled"
-            }
+            disabled: BCommonProperties.disabled
         },
         delegate: 'parent',
         template: function (node) {
@@ -1264,11 +1247,7 @@ var BWidgetRegistry = {
             },
             mini: BCommonProperties.mini,
             theme: BCommonProperties.theme,
-            disabled: {
-                type: "boolean",
-                defaultValue: false,
-                htmlAttribute: "disabled"
-            }
+            disabled: BCommonProperties.disabled
         },
         template: '<input type="checkbox"><label for="%ID%">%LABEL%</label>',
         delegate: 'parent'
