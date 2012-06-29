@@ -19,6 +19,21 @@ var BCommonProperties = {
         defaultValue: false,
         htmlAttribute: "disabled"
     },
+    icon: {
+        type: "string",
+        options: [ "none", "alert", "arrow-d", "arrow-l", "arrow-r",
+                   "arrow-u", "back", "check", "delete", "forward",
+                   "gear", "grid", "home", "info", "minus", "plus",
+                   "refresh", "search", "star" ],
+        defaultValue: "none",
+        htmlAttribute: "data-icon"
+    },
+    iconpos: {
+        type: "string",
+        options: [ "left", "top", "bottom", "right", "notext" ],
+        defaultValue: "left",
+        htmlAttribute: "data-iconpos"
+    },
     mini: {
         type: "boolean",
         defaultValue: false,
@@ -431,12 +446,9 @@ var BWidgetRegistry = {
             }
         ],
         properties: {
-            iconpos: {
-                type: "string",
-                options: [ "left", "top", "bottom", "right", "notext" ],
+            iconpos: $.extend({}, BCommonProperties.iconpos, {
                 defaultValue: "top",
-                htmlAttribute: "data-iconpos"
-            }
+            })
         },
         init: function (node) {
             // initial state is three buttons
@@ -587,22 +599,10 @@ var BWidgetRegistry = {
                 defaultValue: "page",
                 htmlAttribute: "data-rel"
             },
-            icon: {
-                type: "string",
-                options: [ "none", "alert", "arrow-d", "arrow-l", "arrow-r",
-                           "arrow-u", "back", "check", "delete", "forward",
-                           "gear", "grid", "home", "info", "minus", "plus",
-                           "refresh", "search", "star" ],
-                defaultValue: "none",
-                htmlAttribute: "data-icon"
-            },
-            iconpos: {
-                type: "string",
-                options: [ "left", "top", "bottom", "right", "notext" ],
-                defaultValue: "left",
-                htmlAttribute: "data-iconpos",
+            icon: BCommonProperties.icon,
+            iconpos: $.extend({}, BCommonProperties.iconpos, {
                 invalidIn: "Navbar"
-            },
+            }),
             mini: BCommonProperties.mini,
             active: {
                 type: "boolean",
@@ -1401,15 +1401,7 @@ var BWidgetRegistry = {
                 htmlAttribute: "href",
                 htmlSelector: "a"
             },
-            icon: {
-                type: "string",
-                options: [ "none", "alert", "arrow-d", "arrow-l", "arrow-r",
-                           "arrow-u", "back", "check", "delete", "forward",
-                           "gear", "grid", "home", "info", "minus", "plus",
-                           "refresh", "search", "star" ],
-                defaultValue: "none",
-                htmlAttribute: "data-icon"
-            },
+            icon: BCommonProperties.icon,
             theme: BCommonProperties.theme,
             countbubble: {
                 type: "string",
