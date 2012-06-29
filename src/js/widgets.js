@@ -10,6 +10,19 @@
 "use strict";
 
 /**
+ * BCommonProperties stores property definitions that are used in more than one
+ * widget.
+ */
+var BCommonProperties = {
+    theme: {
+        type: "string",
+        options: [ "default", "a", "b", "c", "d", "e" ],
+        defaultValue: "default",
+        htmlAttribute: "data-theme"
+    }
+};
+
+/**
  * BWidgetRegistry is private data, you should access it through BWidget
  *
  * Top-level object with properties representing all known widgets
@@ -246,12 +259,7 @@ var BWidgetRegistry = {
                 autoGenerate: "page",
                 htmlAttribute: "id"
             },
-            theme: {
-                type: "string",
-                options: [ "default", "a", "b", "c", "d", "e" ],
-                defaultValue: "default",
-                htmlAttribute: "data-theme"
-            }
+            theme: BCommonProperties.theme
         },
         redirect: {
             zone: "content",
@@ -303,12 +311,7 @@ var BWidgetRegistry = {
                 defaultValue: "default",
                 htmlAttribute: "data-position"
             },
-            theme: {
-                type: "string",
-                options: [ "default", "a", "b", "c", "d", "e" ],
-                defaultValue: "default",
-                htmlAttribute: "data-theme"
-            }
+            theme: BCommonProperties.theme
         },
         zones: [
             {
@@ -368,12 +371,7 @@ var BWidgetRegistry = {
                 defaultValue: "default",
                 htmlAttribute: "data-position"
             },
-            theme: {
-                type: "string",
-                options: [ "default", "a", "b", "c", "d", "e" ],
-                defaultValue: "default",
-                htmlAttribute: "data-theme"
-            }
+            theme: BCommonProperties.theme
         },
         zones: [
             {
@@ -615,12 +613,7 @@ var BWidgetRegistry = {
                     }
                 }
             },
-            theme: {
-                type: "string",
-                options: [ "default", "a", "b", "c", "d", "e" ],
-                defaultValue: "default",
-                htmlAttribute: "data-theme"
-            },
+            theme: BCommonProperties.theme,
             inline: {
                 type: "boolean",
                 defaultValue: false,
@@ -790,21 +783,14 @@ var BWidgetRegistry = {
                     }
                 }
             },
-            theme: {
-                type: "string",
-                options: [ "default", "a", "b", "c", "d", "e" ],
-                defaultValue: "default",
-                htmlAttribute: "data-theme",
+            theme: $.extend({}, BCommonProperties.theme, {
                 htmlSelector: "input"
-            },
-            track: {
+            }),
+            track_theme: $.extend({}, BCommonProperties.theme, {
                 displayName: "track theme",
-                type: "string",
-                options: [ "default", "a", "b", "c", "d", "e" ],
-                defaultValue: "default",
                 htmlAttribute: "data-track-theme",
                 htmlSelector: "input"
-            },
+            }),
             disabled: {
                 type: "boolean",
                 defaultValue: false,
@@ -879,13 +865,9 @@ var BWidgetRegistry = {
                     }
                 }
             },
-            theme: {
-                type: "string",
-                options: [ "default", "a", "b", "c", "d", "e" ],
-                defaultValue: "default",
-                htmlSelector: "input",
-                htmlAttribute: "data-theme"
-            },
+            theme: $.extend({}, BCommonProperties.theme, {
+                htmlSelector: "input"
+            }),
             label: {
                 type: "string",
                 defaultValue: "Label"
@@ -938,12 +920,7 @@ var BWidgetRegistry = {
                     }
                 }
             },
-            theme: {
-                type: "string",
-                options: [ "default", "a", "b", "c", "d", "e" ],
-                defaultValue: "default",
-                htmlAttribute: "data-theme"
-            },
+            theme: BCommonProperties.theme,
             value: {
                 // FIXME: Probably value should be removed, setting initial
                 //        static text is not a common thing to do
@@ -994,12 +971,7 @@ var BWidgetRegistry = {
                     }
                 }
             },
-            theme: {
-                type: "string",
-                options: [ "default", "a", "b", "c", "d", "e" ],
-                defaultValue: "default",
-                htmlAttribute: "data-theme"
-            },
+            theme: BCommonProperties.theme,
             disabled: {
                 type: "boolean",
                 defaultValue: false,
@@ -1237,12 +1209,7 @@ var BWidgetRegistry = {
                 defaultValue: "not checked",
                 htmlAttribute: "checked"
             },
-            theme: {
-                type: "string",
-                options: [ "default", "a", "b", "c", "d", "e" ],
-                defaultValue: "default",
-                htmlAttribute: "data-theme"
-            },
+            theme: BCommonProperties.theme,
             disabled: {
                 type: "boolean",
                 defaultValue: false,
@@ -1373,12 +1340,7 @@ var BWidgetRegistry = {
                     }
                 }
             },
-            theme: {
-                type: "string",
-                options: [ "default", "a", "b", "c", "d", "e" ],
-                defaultValue: "default",
-                htmlAttribute: "data-theme"
-            },
+            theme: BCommonProperties.theme,
             disabled: {
                 type: "boolean",
                 defaultValue: false,
@@ -1412,12 +1374,7 @@ var BWidgetRegistry = {
                 defaultValue: false,
                 htmlAttribute: "data-filter"
             },
-            theme: {
-                type: "string",
-                options: [ "default", "a", "b", "c", "d", "e" ],
-                defaultValue: "default",
-                htmlAttribute: "data-theme"
-            },
+            theme: BCommonProperties.theme,
             divider: {
                 displayName: "divider theme",
                 type: "string",
@@ -1460,12 +1417,7 @@ var BWidgetRegistry = {
                 defaultValue: false,
                 htmlAttribute: "data-filter"
             },
-            theme: {
-                type: "string",
-                options: [ "default", "a", "b", "c", "d", "e" ],
-                defaultValue: "default",
-                htmlAttribute: "data-theme"
-            },
+            theme: BCommonProperties.theme,
             divider: {
                 displayName: "divider theme",
                 type: "string",
@@ -1501,12 +1453,7 @@ var BWidgetRegistry = {
                 type: "string",
                 defaultValue: "List Item",
             },
-            theme: {
-                type: "string",
-                options: [ "default", "a", "b", "c", "d", "e" ],
-                defaultValue: "default",
-                htmlAttribute: "data-theme"
-            }
+            theme: BCommonProperties.theme
         },
         template: '<li>%TEXT%</li>'
     },
@@ -1528,12 +1475,7 @@ var BWidgetRegistry = {
                 type: "string",
                 defaultValue: "List Divider"
             },
-            theme: {
-                type: "string",
-                options: [ "default", "a", "b", "c", "d", "e" ],
-                defaultValue: "default",
-                htmlAttribute: "data-theme"
-            }
+            theme: BCommonProperties.theme
         },
         template: '<li data-role="list-divider">%TEXT%</li>'
     },
@@ -1570,12 +1512,7 @@ var BWidgetRegistry = {
                 defaultValue: "none",
                 htmlAttribute: "data-icon"
             },
-            theme: {
-                type: "string",
-                options: [ "default", "a", "b", "c", "d", "e" ],
-                defaultValue: "default",
-                htmlAttribute: "data-theme"
-            },
+            theme: BCommonProperties.theme,
             countbubble: {
                 type: "string",
                 displayName: "count bubble",
@@ -1857,19 +1794,11 @@ var BWidgetRegistry = {
                     }
                 }
             },
-            theme: {
-                type: "string",
-                options: [ "default", "a", "b", "c", "d", "e" ],
-                defaultValue: "default",
-                htmlAttribute: "data-theme"
-            },
-            content_theme: {
+            theme: BCommonProperties.theme,
+            content_theme: $.extend({}, BCommonProperties.theme, {
                 displayName: "content theme",
-                type: "string",
-                options: [ "default", "a", "b", "c", "d", "e" ],
-                defaultValue: "default",
                 htmlAttribute: "data-content-theme"
-            }
+            })
         },
         zones: [
             {
@@ -1911,19 +1840,11 @@ var BWidgetRegistry = {
                     }
                 }
             },
-            theme: {
-                type: "string",
-                options: [ "default", "a", "b", "c", "d", "e" ],
-                defaultValue: "default",
-                htmlAttribute: "data-theme"
-            },
-            content_theme: {
+            theme: BCommonProperties.theme,
+            content_theme: $.extend({}, BCommonProperties.theme, {
                 displayName: "content theme",
-                type: "string",
-                options: [ "default", "a", "b", "c", "d", "e" ],
-                defaultValue: "default",
                 htmlAttribute: "data-content-theme"
-            }
+            })
         },
         zones: [
             {
