@@ -14,6 +14,17 @@
  * widget.
  */
 var BCommonProperties = {
+    mini: {
+        type: "boolean",
+        defaultValue: false,
+        htmlAttribute: {
+            name: "data-mini",
+            value: {
+                true: "true",
+                false: "false"
+            }
+        }
+    },
     theme: {
         type: "string",
         options: [ "default", "a", "b", "c", "d", "e" ],
@@ -591,17 +602,7 @@ var BWidgetRegistry = {
                 htmlAttribute: "data-iconpos",
                 invalidIn: "Navbar"
             },
-            mini: {
-                type: "boolean",
-                defaultValue: false,
-                htmlAttribute: {
-                    name: "data-mini",
-                    value: {
-                        true: "true",
-                        false: "false"
-                    }
-                }
-            },
+            mini: BCommonProperties.mini,
             active: {
                 type: "boolean",
                 defaultValue: false,
@@ -771,18 +772,9 @@ var BWidgetRegistry = {
                 htmlAttribute: "step",
                 htmlSelector: "input"
             },
-            mini: {
-                type: "boolean",
-                defaultValue: false,
-                htmlSelector: "input",
-                htmlAttribute: {
-                    name: "data-mini",
-                    value: {
-                        true: "true",
-                        false: "false"
-                    }
-                }
-            },
+            mini: $.extend({}, BCommonProperties.mini, {
+                htmlSelector: "input"
+            }),
             theme: $.extend({}, BCommonProperties.theme, {
                 htmlSelector: "input"
             }),
@@ -853,18 +845,9 @@ var BWidgetRegistry = {
                 htmlSelector: "input",
                 htmlAttribute: "placeholder"
             },
-            mini: {
-                type: "boolean",
-                defaultValue: false,
-                htmlSelector: "input",
-                htmlAttribute: {
-                    name: "data-mini",
-                    value: {
-                        true: "true",
-                        false: "false"
-                    }
-                }
-            },
+            mini: $.extend({}, BCommonProperties.mini, {
+                htmlSelector: "input"
+            }),
             theme: $.extend({}, BCommonProperties.theme, {
                 htmlSelector: "input"
             }),
@@ -909,17 +892,7 @@ var BWidgetRegistry = {
                 defaultValue: "",
                 htmlAttribute: "placeholder"
             },
-            mini: {
-                type: "boolean",
-                defaultValue: false,
-                htmlAttribute: {
-                    name: "data-mini",
-                    value: {
-                        true: "true",
-                        false: "false"
-                    }
-                }
-            },
+            mini: BCommonProperties.mini,
             theme: BCommonProperties.theme,
             value: {
                 // FIXME: Probably value should be removed, setting initial
@@ -960,17 +933,7 @@ var BWidgetRegistry = {
                 type: "string",
                 defaultValue: "On"
             },
-            mini: {
-                type: "boolean",
-                defaultValue: false,
-                htmlAttribute: {
-                    name: "data-mini",
-                    value: {
-                        true: "true",
-                        false: "false"
-                    }
-                }
-            },
+            mini: BCommonProperties.mini,
             theme: BCommonProperties.theme,
             disabled: {
                 type: "boolean",
@@ -1054,17 +1017,7 @@ var BWidgetRegistry = {
                 displayName: "multiple select",
                 htmlAttribute: "multiple"
             },
-            mini: {
-                type: "boolean",
-                defaultValue: false,
-                htmlAttribute: {
-                    name: "data-mini",
-                    value: {
-                        true: "true",
-                        false: "false"
-                    }
-                }
-            },
+            mini: BCommonProperties.mini,
             disabled: {
                 type: "boolean",
                 defaultValue: false,
@@ -1136,17 +1089,7 @@ var BWidgetRegistry = {
                type: "string",
                defaultValue: ""
             },
-            mini: {
-                type: "boolean",
-                defaultValue: false,
-                htmlAttribute: {
-                    name: "data-mini",
-                    value: {
-                        true: "true",
-                        false: "false"
-                    }
-                }
-            }
+            mini: BCommonProperties.mini
         },
         zones: [
             {
@@ -1269,17 +1212,7 @@ var BWidgetRegistry = {
                type: "string",
                defaultValue: ""
             },
-            mini: {
-                type: "boolean",
-                defaultValue: false,
-                htmlAttribute: {
-                    name: "data-mini",
-                    value: {
-                        true: "true",
-                        false: "false"
-                    }
-                }
-            }
+            mini: BCommonProperties.mini
         },
         zones: [
             {
@@ -1329,17 +1262,7 @@ var BWidgetRegistry = {
                 defaultValue: "not checked",
                 htmlAttribute: "checked"
             },
-            mini: {
-                type: "boolean",
-                defaultValue: false,
-                htmlAttribute: {
-                    name: "data-mini",
-                    value: {
-                        true: "true",
-                        false: "false"
-                    }
-                }
-            },
+            mini: BCommonProperties.mini,
             theme: BCommonProperties.theme,
             disabled: {
                 type: "boolean",
@@ -1783,17 +1706,7 @@ var BWidgetRegistry = {
                 type: "string",
                 defaultValue: "Collapsible Area",
             },
-            mini: {
-                type: "boolean",
-                defaultValue: false,
-                htmlAttribute: {
-                    name: "data-mini",
-                    value: {
-                        true: "true",
-                        false: "false"
-                    }
-                }
-            },
+            mini: BCommonProperties.mini,
             theme: BCommonProperties.theme,
             content_theme: $.extend({}, BCommonProperties.theme, {
                 displayName: "content theme",
@@ -1829,17 +1742,7 @@ var BWidgetRegistry = {
         paletteImageName: "jqm_accordian.svg",
         template: '<div data-role="collapsible-set"></div>',
         properties: {
-            mini: {
-                type: "boolean",
-                defaultValue: false,
-                htmlAttribute: {
-                    name: "data-mini",
-                    value: {
-                        true: "true",
-                        false: "false"
-                    }
-                }
-            },
+            mini: BCommonProperties.mini,
             theme: BCommonProperties.theme,
             content_theme: $.extend({}, BCommonProperties.theme, {
                 displayName: "content theme",
