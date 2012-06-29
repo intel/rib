@@ -14,6 +14,12 @@
  * widget.
  */
 var BCommonProperties = {
+    checked: {
+        type: "string",
+        options: [ "not checked", "checked" ],
+        defaultValue: "not checked",
+        htmlAttribute: "checked"
+    },
     disabled: {
         type: "boolean",
         defaultValue: false,
@@ -1129,12 +1135,7 @@ var BWidgetRegistry = {
                 defaultValue: "",
                 htmlAttribute: "value"
             },
-            checked: {
-                type: "string",
-                options: [ "not checked", "checked" ],
-                defaultValue: "not checked",
-                htmlAttribute: "checked"
-            },
+            checked: BCommonProperties.checked,
             theme: BCommonProperties.theme,
             disabled: BCommonProperties.disabled
         },
@@ -1235,12 +1236,7 @@ var BWidgetRegistry = {
                 defaultValue: "",
                 htmlAttribute: "value"
             },
-            checked: {
-                type: "string",
-                options: [ "not checked", "checked" ],
-                defaultValue: "not checked",
-                htmlAttribute: "checked"
-            },
+            checked: BCommonProperties.checked,
             mini: BCommonProperties.mini,
             theme: BCommonProperties.theme,
             disabled: BCommonProperties.disabled
