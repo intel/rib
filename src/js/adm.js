@@ -1018,9 +1018,13 @@ ADM.copySubtree = function (node) {
     for (prop in props) {
         if (node.isPropertyExplicit(prop) &&
             !BWidget.getPropertyAutoGenerate(type, prop)) {
-            // do a deep copy of the property to avoid any cross-referencing
-            newNode.setProperty(prop, $.extend(true, {}, props[prop]),
-                                undefined, true);
+            if (typeof props[prop] === 'object') {
+                // do a deep copy of the property to avoid any cross-referencing
+                newNode.setProperty(prop, $.extend(true, {}, props[prop]),
+                                    undefined, true);
+            } else {
+                newNode.setProperty(prop, props[prop], undefined, true);
+            }
         }
     }
 
