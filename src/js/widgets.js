@@ -672,12 +672,12 @@ var BWidgetRegistry = {
                 htmlAttribute: "alt"
             },
             width: {
-                type: "string",
+                type: "integer",
                 defaultValue: "",
                 htmlAttribute: "width"
             },
             height: {
-                type: "string",
+                type: "integer",
                 defaultValue: "",
                 htmlAttribute: "height"
             },
