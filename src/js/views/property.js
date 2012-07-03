@@ -144,9 +144,17 @@
                 // display property of widget
                 switch (propType) {
                     case "boolean":
-                        $('<input type="checkbox"/>')
-                            .attr('id', valueId)
-                            .appendTo(value);
+                        //Forbid changing the style of the first page to "Dialog", we don't want
+                        //to user adjust style of the first page
+                        if (type === 'Page' &&
+                            node.getDesign().getChildren()[0] === node &&
+                            p === 'dialog') {
+                            code.empty();
+                        } else {
+                            $('<input type="checkbox"/>')
+                                .attr('id', valueId)
+                                .appendTo(value);
+                        }
 
                         // FIXME: Boolean values should be actual booleans, not
                         // "true" and "false" strings; but because of bugs we
