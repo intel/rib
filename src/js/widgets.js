@@ -46,8 +46,8 @@ var BCommonProperties = {
         htmlAttribute: {
             name: "data-mini",
             value: {
-                true: "true",
-                false: "false"
+                "true": "true",
+                "false": "false"
             }
         }
     },
@@ -618,8 +618,8 @@ var BWidgetRegistry = {
                 htmlAttribute: {
                     name: "class",
                     value: {
-                        true: "ui-btn-active",
-                        false: ""
+                        "true": "ui-btn-active",
+                        "false": ""
                     }
                 }
             },
@@ -643,8 +643,8 @@ var BWidgetRegistry = {
                 htmlAttribute: {
                     name: "data-rel",
                     value: {
-                        true: "back",
-                        false: ""
+                        "true": "back",
+                        "false": ""
                     }
                 }
             }
