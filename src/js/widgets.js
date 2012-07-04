@@ -635,8 +635,8 @@ var BWidgetRegistry = {
             opentargetas : {
                 type: "string",
                 displayName: "open target as",
-                options: ["page", "dialog"],
-                defaultValue: "page",
+                options: ["default", "page", "dialog"],
+                defaultValue: "default",
                 htmlAttribute: "data-rel"
             },
             icon: BCommonProperties.icon,
