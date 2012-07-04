@@ -1963,7 +1963,7 @@ ADMNode.prototype.setProperty = function (property, value, data, raw) {
     rval.result = false;
 
     if (typeof value !== type) {
-        var numberTypes = {float:0,integer:0,number:0};
+        var numberTypes = { "float": 0, "integer": 0, "number": 0 };
         if ((type in numberTypes) && isNaN(value)) {
             console.error("Error: attempted to set property " + property +
                           " (" + type + ") with wrong type (" + typeof value +
