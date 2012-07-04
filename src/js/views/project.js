@@ -318,6 +318,6 @@
                         // apend delete button
                         .append($('<div>Delete</div>').addClass("delete button").click(deleteHandler))
                         .appendTo(content);
-        },
+        }
     });
 })(jQuery);

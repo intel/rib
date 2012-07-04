@@ -56,6 +56,6 @@
             // allocate 30% of the remaining space for the filter tree
             used = 2 * headerHeight + resizeBarHeight;
             e.height(Math.round((e.parent().height() - used) * 0.3));
-        },
+        }
     });
 })(jQuery);

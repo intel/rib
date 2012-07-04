@@ -45,8 +45,8 @@ CodeMirror.defineMode("ribsrc", function(config, parserConfig) {
 
         copyState: function(state) {
             return {
-                htmlState : CodeMirror.copyState(htmlMixedMode, state.htmlState),
-           }
+                htmlState: CodeMirror.copyState(htmlMixedMode, state.htmlState)
+            }
         },
 
 

@@ -32,7 +32,7 @@ $(function() {
                 // "ctrl+c" for "copy"
                 'c':'copy',
                 // "ctrl+v" for "past"
-                'v':'paste',
+                'v':'paste'
             };
             if (e.ctrlKey && !navUtils.ignoreText()) {
                 charItem = String.fromCharCode(e.which).toLowerCase();
@@ -96,7 +96,7 @@ $(function() {
                 f = Boolean($('.adm-editing:focus',$(':rib-layoutView')
                              .layoutView('option','contentDocument')).length);
             return i||f;
-        },
+        }
     };
 
     /*******************  export pageUtils to $.rib **********************/

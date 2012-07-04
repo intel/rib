@@ -230,6 +230,6 @@
         moveNode: function (node, oldParent) {
             this.removeNode(node, oldParent);
             this.addNode(node);
-        },
+        }
     });
 })(jQuery);

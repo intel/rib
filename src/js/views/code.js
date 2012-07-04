@@ -180,6 +180,6 @@
                      return false;
                }
             });
-        },
+        }
     });
 })(jQuery);

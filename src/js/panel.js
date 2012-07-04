@@ -16,7 +16,7 @@
             position: 'left',    // Determines anchoring edge
             layout: 'vertical',  // Determines contents layout
             maxSize: 0,         // If set, constrains growth
-            minSize: 0,         // If set, constrains shrink
+            minSize: 0          // If set, constrains shrink
         },
 
         // constructor
@@ -27,7 +27,7 @@
                 'left':   'e',
                 'right':  'w',
                 'top':    's',
-                'bottom': 'n',
+                'bottom': 'n'
             };
 
             self.element.addClass('ui-panel vbox')

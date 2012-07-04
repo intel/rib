@@ -311,7 +311,7 @@
                                               {type: "propertyChanged",
                                                node: node,
                                                property: 'options'});
-                            },
+                            }
                         });
                         break;
                     default:
@@ -434,6 +434,6 @@
                 }
                 return ret;
             };
-        },
+        }
     });
 })(jQuery);

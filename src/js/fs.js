@@ -36,21 +36,21 @@ $(function() {
     fileTypes: {
         js: {
             mime: 'text/javascript',
-            suffix: ['js'],
+            suffix: ['js']
         },
         image: {
             mime: 'image/*',
             suffix: ['jpg', 'png', 'svg', 'bmp',
                 'gif', 'jpeg', 'jpm', 'jp2', 'jpx',
-                'xml', 'cgm', 'ief'],
+                'xml', 'cgm', 'ief']
         },
         css: {
             mime: 'text/css',
-            suffix: ['css'],
+            suffix: ['css']
         },
         any: {
             mime: '*',
-            suffix: ['*'],
+            suffix: ['*']
         }
     },
 
@@ -572,7 +572,7 @@ $(function() {
                        };
 
                        fsUtils.upload(fileType, container, handler, error)
-                   },
+                   }
     },
 
         /**

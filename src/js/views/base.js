@@ -16,7 +16,7 @@
     $.widget('rib.baseView', {
 
         options: {
-            model: null,
+            model: null
         },
 
         _create: function() {
@@ -154,6 +154,6 @@
 
             // Finally, redraw our view since the ADMDesign root has changed
             widget.refresh && widget.refresh(event, widget);
-        },
+        }
     });
 })(jQuery);

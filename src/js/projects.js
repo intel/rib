@@ -44,7 +44,7 @@ $(function () {
             thumbnail: {
                 type: "string",
                 defaultValue: ""
-            },
+            }
         }
     };
 
@@ -365,7 +365,7 @@ $(function () {
             config = {
                 pageTemplate: 'JQuery Mobile Page',
                 pageTitle: 'Home',
-                layout: ['Header', 'Footer'],
+                layout: ['Header', 'Footer']
             };
             config.design = newDesign;
             // TODO: Will we need to show a default page here?

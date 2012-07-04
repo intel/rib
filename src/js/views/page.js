@@ -388,6 +388,6 @@
                  .addClass('linkStyle');
 
              return newPageDialog;
-         },
+         }
     });
 })(jQuery);

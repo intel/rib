@@ -208,7 +208,7 @@ var BWidgetRegistry = {
                       key: 'http-equiv',
                       value: 'cache-control',
                       content: 'no-cache'
-                    },
+                    }
                 ]
             },
             libs: {
@@ -261,7 +261,7 @@ var BWidgetRegistry = {
                 cardinality: "N",
                 allow: "Page"
             }
-        ],
+        ]
     },
 
     /**
@@ -326,7 +326,7 @@ var BWidgetRegistry = {
                 cardinality: "1",
                 allow: "Footer"
             }
-        ],
+        ]
     },
 
     /**
@@ -369,7 +369,7 @@ var BWidgetRegistry = {
                 cardinality: "1",
                 allow: ["Navbar", "OptionHeader"]
             }
-        ],
+        ]
     },
 
     /**
@@ -416,7 +416,7 @@ var BWidgetRegistry = {
                 // may be a bug in jQuery Mobile 1.0
                 deny: "Slider"
             }
-        ],
+        ]
     },
 
     /**
@@ -435,7 +435,7 @@ var BWidgetRegistry = {
                 name: "default",
                 cardinality: "N"
             }
-        ],
+        ]
     },
 
     Navbar: {
@@ -455,7 +455,7 @@ var BWidgetRegistry = {
         ],
         properties: {
             iconpos: $.extend({}, BCommonProperties.iconpos, {
-                defaultValue: "top",
+                defaultValue: "top"
             })
         },
         init: function (node) {
@@ -478,7 +478,7 @@ var BWidgetRegistry = {
             sortover: function (e, ui) {
                 BWidget.getWidgetAttribute("Navbar", "rearrange")
                     ($(this), ui.placeholder);
-            },
+            }
         },
         rearrange: function (sortable, placeholder, excludePlaceholder) {
             var classes = ['a', 'b', 'c', 'd', 'e', 'solo'],
@@ -693,8 +693,8 @@ var BWidgetRegistry = {
                         "right": "display:block;margin: auto 0px auto auto"
                     }
                 }
-            },
-        },
+            }
+        }
     },
 
     /**
@@ -873,7 +873,7 @@ var BWidgetRegistry = {
                 htmlSelector: "input"
             })
         },
-        template: '<div data-role="fieldcontain"><label for="%ID%">%LABEL%</label><input type="text"/></div>',
+        template: '<div data-role="fieldcontain"><label for="%ID%">%LABEL%</label><input type="text"/></div>'
     },
 
     /**
@@ -901,7 +901,7 @@ var BWidgetRegistry = {
                 // FIXME: Probably value should be removed, setting initial
                 //        static text is not a common thing to do
                 type: "string",
-                defaultValue: "",
+                defaultValue: ""
             },
             disabled: BCommonProperties.disabled
         },
@@ -939,7 +939,7 @@ var BWidgetRegistry = {
         template: '<select data-role="slider"><option value="%VALUE1%">%LABEL1%</option><option value="%VALUE2%">%LABEL2%</option></select>',
         // jQM generates a div next to the slider, which is the element actually
         // clicked when users try to click the flip toggle switch.
-        delegate: "next",
+        delegate: "next"
     },
 
     /**
@@ -986,7 +986,7 @@ var BWidgetRegistry = {
         properties: {
             label: {
                 type: "string",
-                defaultValue: "Choose option",
+                defaultValue: "Choose option"
             },
             options: {
                  type: "record-array",
@@ -1106,7 +1106,7 @@ var BWidgetRegistry = {
                     button.setProperty("checked", "checked");
                 }
             }
-        },
+        }
     },
 
     /**
@@ -1169,7 +1169,7 @@ var BWidgetRegistry = {
             label.text(node.getProperty("label"));
 
             return code;
-        },
+        }
     },
 
     /**
@@ -1210,7 +1210,7 @@ var BWidgetRegistry = {
             for (i = 0; i < 3; i++) {
                 node.addChild(new ADMNode("Checkbox"));
             }
-        },
+        }
     },
 
     /**
@@ -1231,7 +1231,7 @@ var BWidgetRegistry = {
             },
             label: {
                 type: "string",
-                defaultValue: "Checkbox",
+                defaultValue: "Checkbox"
             },
             value: {
                 type: "string",
@@ -1286,7 +1286,7 @@ var BWidgetRegistry = {
                 cardinality: "N",
                 allow: [ "ListItem", "ListDivider", "ListButton" ]
             }
-        ],
+        ]
     },
 
     /**
@@ -1294,7 +1294,7 @@ var BWidgetRegistry = {
      */
     OrderedList: {
         parent: "List",
-        template: '<ol data-role="listview">',
+        template: '<ol data-role="listview">'
     },
 
     /**
@@ -1312,7 +1312,7 @@ var BWidgetRegistry = {
         properties: {
             text: {
                 type: "string",
-                defaultValue: "List Item",
+                defaultValue: "List Item"
             },
             theme: BCommonProperties.theme
         },
@@ -1600,8 +1600,8 @@ var BWidgetRegistry = {
             subtype: {
                 type: "string",
                 options: [ "a", "b", "c", "d", "e" ],
-                defaultValue: "a",
-            },
+                defaultValue: "a"
+            }
         },
         template: '<div class="ui-block-%SUBTYPE%"></div>',
         zones: [
@@ -1609,7 +1609,7 @@ var BWidgetRegistry = {
                 name: "default",
                 cardinality: "N"
             }
-        ],
+        ]
     },
 
     /**
@@ -1634,7 +1634,7 @@ var BWidgetRegistry = {
             //       of our users would care about.
             heading: {
                 type: "string",
-                defaultValue: "Collapsible Area",
+                defaultValue: "Collapsible Area"
             },
             mini: BCommonProperties.mini,
             theme: BCommonProperties.theme,
@@ -1646,7 +1646,7 @@ var BWidgetRegistry = {
         zones: [
             {
                 name: "default",
-                cardinality: "N",
+                cardinality: "N"
             }
         ],
         delegate: function (domNode, admNode) {
@@ -1660,7 +1660,7 @@ var BWidgetRegistry = {
             toggleCollapse(e);
             ADM.bind("selectionChanged", toggleCollapse);
             return domNode;
-        },
+        }
     },
 
     /**
@@ -1685,7 +1685,7 @@ var BWidgetRegistry = {
                 cardinality: "N",
                 allow: "Collapsible"
             }
-        ],
+        ]
     },
 
     DateTimePicker: {
@@ -1698,8 +1698,7 @@ var BWidgetRegistry = {
     CalendarPicker: {
         parent: "Base",
         paletteImageName: "tizen_calendar_picker.svg",
-        template: '<a data-role="calendarpicker" data-icon="grid" data-iconpos="notext" data-inline="true"></a>',
-
+        template: '<a data-role="calendarpicker" data-icon="grid" data-iconpos="notext" data-inline="true"></a>'
     },
 
     ColorPicker: {
@@ -1709,8 +1708,8 @@ var BWidgetRegistry = {
         properties: {
             data_color: {
                 type: "string",
-                defaultValue: "#ff00ff",
-            },
+                defaultValue: "#ff00ff"
+            }
         }
     },
 
@@ -1721,8 +1720,8 @@ var BWidgetRegistry = {
         properties: {
             data_color: {
                 type: "string",
-                defaultValue: "#1a8039",
-            },
+                defaultValue: "#1a8039"
+            }
         },
         delegate: 'next'
     },
@@ -1734,14 +1733,14 @@ var BWidgetRegistry = {
         properties: {
             data_color: {
                 type: "string",
-                defaultValue: "#1a8039",
+                defaultValue: "#1a8039"
             },
             show_preview: {
                 type: "boolean",
                 defaultValue: false,
                 htmlAttribute: "data-show-preview"
             }
-        },
+        }
     },
 
 
@@ -1752,9 +1751,9 @@ var BWidgetRegistry = {
         properties: {
             data_color: {
                 type: "string",
-                defaultValue: "#1a8039",
-            },
-        },
+                defaultValue: "#1a8039"
+            }
+        }
     },
 
     HsvPicker: {
@@ -1764,15 +1763,15 @@ var BWidgetRegistry = {
         properties: {
             data_color: {
                 type: "string",
-                defaultValue: "#1a8039",
-            },
-        },
+                defaultValue: "#1a8039"
+            }
+        }
     },
 
     ProgressBar: {
         parent: "Base",
         paletteImageName: "tizen_progress_bar.svg",
-        template: '<div data-role="processingbar" />',
+        template: '<div data-role="processingbar" />'
     },
 
     Switch: {
@@ -1792,9 +1791,8 @@ var BWidgetRegistry = {
                 cardinality: "N",
                 allow: "Grid"
             }
-        ],
-    },
-
+        ]
+    }
 };
 
 /**

@@ -114,7 +114,7 @@
             var validHTML = /^[a-zA-z0-9]([_-]*)$/,
                 validOptions = [
                     // Flags or key/value pairs for various debug options
-                    'debug',
+                    'debug'
                 ];
             // If option(s) are passed on URL, parse into a set of options
             // objects in the '$.rib' namespace.  Parsing rules as follows:

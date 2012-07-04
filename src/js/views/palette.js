@@ -17,7 +17,7 @@
     $.widget('rib.paletteView', {
 
         options: {
-            model: null,
+            model: null
         },
 
         _create: function() {
@@ -164,7 +164,7 @@
                         //   remains after dragging has completed...
                         f.find('.ui-state-active')
                             .removeClass('ui-state-active');
-                    },
+                    }
                 })
                 .disableSelection();
             }
@@ -176,7 +176,6 @@
             // allocate 70% of the remaining space for the palette
             used = 2 * headerHeight + resizeBarHeight;
             e.height(Math.round((e.parent().height() - used) * 0.7));
-        },
-
+        }
     });
 })(jQuery);

@@ -408,6 +408,6 @@
             // these lines.
             $(domNode).removeAttr('disabled');
             $(domNode).children().removeAttr('disabled');
-        },
+        }
     });
 })(jQuery);

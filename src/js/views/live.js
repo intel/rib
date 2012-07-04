@@ -17,7 +17,7 @@
 
         options: {
             iframe: null,
-            contentDocument: null,
+            contentDocument: null
         },
 
         _create: function() {
@@ -390,9 +390,9 @@
                             top: deviceInfo.screen.offset.right,
                             left: deviceInfo.screen.offset.top,
                             bottom: deviceInfo.screen.offset.left,
-                            right: deviceInfo.screen.offset.bottom,
+                            right: deviceInfo.screen.offset.bottom
                         }
-                    },
+                    }
                 });
             }
 
@@ -417,7 +417,7 @@
                 maxHeight: deviceInfo.screen.height + 'px',
                 position: 'absolute',
                 top: deviceInfo.screen.offset.top + 'px',
-                left: deviceInfo.screen.offset.left + 'px',
+                left: deviceInfo.screen.offset.left + 'px'
             });
 
             this._deviceWrapper.css({
@@ -426,7 +426,7 @@
                 maxWidth: deviceInfo.skin.width + 'px',
                 height: deviceInfo.skin.height + 'px',
                 minHeight: deviceInfo.skin.height + 'px',
-                maxHeight: deviceInfo.skin.height + 'px',
+                maxHeight: deviceInfo.skin.height + 'px'
             });
             deviceSkin = this._deviceWrapper.find('img').attr('src', deviceInfo.skin.href);
             if (this._projectDevice.rotating)
@@ -434,13 +434,13 @@
                     height: deviceInfo.skin.width + 'px',
                     width: deviceInfo.skin.height + 'px',
                     '-webkit-transform': 'rotate(-90deg)',
-                    '-webkit-transform-origin': deviceInfo.skin.height/2 + 'px ' + deviceInfo.skin.height/2 + 'px',
+                    '-webkit-transform-origin': deviceInfo.skin.height/2 + 'px ' + deviceInfo.skin.height/2 + 'px'
                 });
             else
                 deviceSkin.css({
                     height: deviceInfo.skin.height + 'px',
                     width: deviceInfo.skin.width + 'px',
-                    '-webkit-transform': 'rotate(0deg)',
+                    '-webkit-transform': 'rotate(0deg)'
                 });
 
         },
@@ -518,6 +518,6 @@
             if (win && win.$ && win.$.mobile) {
                 win.$.mobile.changePage("#" + pageId, {transition: "none"});
             }
-        },
+        }
     });
 })(jQuery);
