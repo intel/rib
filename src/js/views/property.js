@@ -348,7 +348,6 @@
 
                         if (node === null || node === undefined) {
                             throw new Error("Missing node, prop change failed!");
-                            return;
                         }
                         value = validValue($(this),
                             BWidget.getPropertyType(node.getType(), updated));

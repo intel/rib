@@ -159,7 +159,6 @@ $(function () {
         var schema = pmUtils.propertySchema[property];
         if (typeof schema != "object") {
             throw new Error("Undefined schema for property:" + property);
-            return null;
         } else {
             return $.extend(true, {}, schema);
         }
