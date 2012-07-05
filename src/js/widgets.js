@@ -222,9 +222,9 @@ var BWidgetRegistry = {
                     name: "style",
                     value: function (propValue) {
                         return "background-image:url('" + propValue + "');" +
-                            "background-attachment:scroll;" +
+                            "background-attachment:fixed;" +
                             "background-repeat:no-repeat;" +
-                            "background-size:cover;";
+                            "background-size:100% 100%;";
                     }
                 }
             }
