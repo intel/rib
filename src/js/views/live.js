@@ -304,6 +304,16 @@
                     getOwnerWindow(liveDoc.documentElement).$(liveDoc)
                         .bind('contextmenu', function(e) {
                             e.preventDefault();
+                        })
+                        .find('div:jqmData(role="page")')
+                        .bind('pageshow', function(e) {
+                            var pageId = this.id;
+                            $.each(ADM.getDesignRoot().getChildren(), function (i, child) {
+                                if (child.getProperty('id') == pageId) {
+                                    ADM.setActivePage(child);
+                                    return false;
+                                }
+                            });
                         });
                     $('body', liveDoc).css({
                         // prevent I bar cursor over UI text
