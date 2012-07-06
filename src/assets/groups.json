@@ -8,10 +8,7 @@
                     "Select": ["SelectMenu"],
                     "Number": ["Slider"]
             }
-         ],
-        "tizen_input_date":["DateTimePicker", "CalendarPicker"],
-        "tizen_input_color": ["ColorPicker", "ColorPickerButton",
-                        "ColorPalette", "ColorTitle", "HsvPicker"]
+         ]
     },
     "Functional Groups": [
         {
@@ -21,9 +18,7 @@
             "Form Elements": [
                 "#0._hidden_node.jqm_other_inputs.0", "Text",
                 {
-                    "Boolean": ["#0._hidden_node.jqm_input_boolean", "Switch"],
-                    "Date & Time": ["#0._hidden_node.tizen_input_date"],
-                    "Color": ["#0._hidden_node.tizen_input_color"]
+                    "Boolean": ["#0._hidden_node.jqm_input_boolean", "Switch"]
                 }
             ],
             "List Views": [
@@ -44,10 +39,6 @@
                 "#0._hidden_node.jqm_other_inputs",
                 "#0._hidden_node.jqm_input_boolean",
                 "#0.Functional Groups.0.List Views"
-            ],
-            "Tizen Widgets": [ "OptionHeader",  "Switch",
-                "#0._hidden_node.tizen_input_date",
-                "#0._hidden_node.tizen_input_color", "ProgressBar"
             ]
         }
     ]
