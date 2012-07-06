@@ -43,9 +43,9 @@
                                 .append('<input required name="name"/>')
                                 .append('<br/>')
                                 .append('<label for="screenWidth">Screen</label>')
-                                .append('<input name="screenWidth" type="number" max="10000" required/>')
+                                .append('<input name="screenWidth" type="number" max="10000" min="240" required/>')
                                 .append('<span>x</span>')
-                                .append('<input name="screenHeight" type="number" max="10000" required/>');
+                                .append('<input name="screenHeight" type="number" max="10000" min="320" required/>');
                             buttonSet = $('<div align="center" id="buttonSet" />').appendTo(deviceForm);
                             if (className === "editDevice") {
                                 if (widget._sysDevices[widget._projectDevice.name]) {
