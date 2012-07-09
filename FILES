@@ -18,6 +18,7 @@ Intel     src/js/pageTemplate.js               APLv2          N/A
 Intel     src/js/panel.js                      APLv2          N/A
 jQuery    src/js/jquery-workarounds.js         MIT, GPLv2     [6]
 & Intel                                        & APLv2
+Intel     src/js/jquery-plugins.js             APLv2          N/A
 Intel     src/js/main.js                       APLv2          N/A
 Intel     src/js/composer.js                   APLv2          N/A
 Intel     src/js/codeview-mode.js              APLv2          N/A
