@@ -56,7 +56,7 @@
 
             generateWidget = function (container, name) {
                 var href = location.href.replace(location.search, ''),
-                    li = $('<img id="BWidget-' + name + '"></img>')
+                    li = $('<img id="BWidget-' + name + '">')
                         .appendTo(container),
                     imgName = BWidget.getPaletteImageName(name);
                 $.get("src/css/images/widgets/" + imgName,
