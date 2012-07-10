@@ -31,16 +31,15 @@
                 rotateDeviceButton,
                 widget = this,
                 screenCoordElement = function (name, min, className) {
-                    return $('<input type="number" max="10000" required/>')
+                    return $('<input type="number" min="240" max="10000" required/>')
                                 .attr("name", name)
-                                .attr("min", min)
                                 .addClass(className);
                 },
                 screenWidthElement = function (className) {
-                    return screenCoordElement("screenWidth", 240, className);
+                    return screenCoordElement("screenWidth", className);
                 },
                 screenHeightElement = function (className) {
-                    return screenCoordElement("screenHeight", 320, className);
+                    return screenCoordElement("screenHeight", className);
                 },
                 createDeviceButton = function (className) {
                     var label = (className === "editDevice"?"Edit":"Add") +  " Device";
