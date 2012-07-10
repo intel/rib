@@ -30,6 +30,18 @@
                 deviceWrapper,
                 rotateDeviceButton,
                 widget = this,
+                screenCoordElement = function (name, min, className) {
+                    return $('<input type="number" max="10000" required/>')
+                                .attr("name", name)
+                                .attr("min", min)
+                                .addClass(className);
+                },
+                screenWidthElement = function (className) {
+                    return screenCoordElement("screenWidth", 240, className);
+                },
+                screenHeightElement = function (className) {
+                    return screenCoordElement("screenHeight", 320, className);
+                },
                 createDeviceButton = function (className) {
                     var label = (className === "editDevice"?"Edit":"Add") +  " Device";
                     var deviceButton = $('<a/>')
@@ -43,9 +55,9 @@
                                 .append('<input required name="name"/>')
                                 .append('<br/>')
                                 .append('<label for="screenWidth">Screen</label>')
-                                .append('<input name="screenWidth" type="number" max="10000" min="240" required/>')
+                                .append(screenWidthElement())
                                 .append('<span>x</span>')
-                                .append('<input name="screenHeight" type="number" max="10000" min="320" required/>');
+                                .append(screenHeightElement());
                             buttonSet = $('<div align="center" id="buttonSet" />').appendTo(deviceForm);
                             if (className === "editDevice") {
                                 if (widget._sysDevices[widget._projectDevice.name]) {
@@ -135,8 +147,13 @@
                 .end()
                 .appendTo(devicePanel);
 
-            deviceToolbar = $('<div/>')
+            deviceToolbar = $('<form/>')
                 .addClass('panel-section-contents')
+                .submit(function () {
+                    widget._setDevice();
+                    return false;
+                 })
+                .append("<input type='submit' style='display:none' value='sumbit'/>")
                 .appendTo(devicePanel);
 
             widget._recentDevices = $('<select/>').appendTo(deviceToolbar)
@@ -228,15 +245,23 @@
                 .addClass("separated")
                 .appendTo(deviceToolbar);
             widget._screenWidth =
-                $('<input name="screenWidth" type="number" min="0" class="screenCoordinate"/>')
+                screenWidthElement("screenCoordinate")
                 .change( function () {
                     widget._projectDevice.screenWidth = $(this).val();
-                    widget._setDevice();
+                    // Without setTimeout, error message will not show when
+                    // validation fails
+                    setTimeout(function () {
+                            // We have to click the submit button to trigger
+                            // error message when validation fails
+                            deviceToolbar.find('input[type=submit]').click();
+                        },
+                        0
+                    );
                 })
                 .appendTo(deviceToolbar);
             $('<label for="screenHeight"> x </label>').appendTo(deviceToolbar);
             widget._screenHeight =
-                $('<input name="screenHeight" type="number" min="0" class="screenCoordinate"/>')
+                screenHeightElement("screenCoordinate")
                 .change( function () {
                     widget._projectDevice.screenHeight = $(this).val();
                     widget._screenWidth.trigger('change');
