@@ -1294,6 +1294,7 @@ var BWidgetRegistry = {
      */
     OrderedList: {
         parent: "List",
+        paletteImageName: "jqm_ordered_list.svg",
         template: '<ol data-role="listview">'
     },
 
