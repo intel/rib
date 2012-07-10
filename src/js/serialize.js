@@ -748,7 +748,36 @@ $(function() {
         return;
     }
 
+    function scanSandboxFiles (admNode, handler) {
+        var props, p, value, urlPath, pType, projectDir, attrObject,
+            relativeRule, innerFiles = [];
+        if (!($.rib.fsUtils.fs && $.rib.pmUtils && $.rib.pmUtils.getActive())) {
+            return;
+        }
+        relativeRule = /^[\w\-_]+(\/[\w\-_]+)*\.?[\w]+$/i;
+        props = admNode.getProperties();
+        projectDir = $.rib.pmUtils.ProjectDir + "/" + $.rib.pmUtils.getActive() + "/";
+        for (p in props) {
+            value = props[p];
+            pType = BWidget.getPropertyType(admNode.getType(), p);
+            if (pType === "url-uploadable" && relativeRule.test(value)) {
+                urlPath = $.rib.fsUtils.pathToUrl(projectDir + value.replace(/^\//, ""));
+                handler && handler(p, value, urlPath);
+            }
+        }
+        return;
+    };
+
     /***************** export functions out *********************/
+    $.rib.useSandboxUrl = function (admNode, domNode) {
+        scanSandboxFiles(admNode, function (property, relativePath, urlPath) {
+            var attrObject = getPropertyDomAttribute(admNode, property, urlPath);
+            // Set the new value for the domNode
+            if (attrObject && attrObject.name && attrObject.value) {
+                $(domNode).attr(attrObject.name, attrObject.value);
+            }
+        })
+    };
     // Export serialization functions into $.rib namespace
     $.rib.ADMToJSONObj = ADMToJSONObj;
     $.rib.JSONToProj = JSONToProj;

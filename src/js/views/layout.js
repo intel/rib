@@ -417,6 +417,7 @@
                     $(domNode).attr('src', "src/css/images/widgets/tizen_image.svg");
                 }
             }
+            $.rib.useSandboxUrl(admNode, domNode);
         }
     });
 })(jQuery);

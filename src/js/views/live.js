@@ -314,7 +314,7 @@
                 });
                 liveDoc = widget.options.contentDocument[0];
                 liveDoc.open();
-                liveDoc.writeln(generateHTML().html);
+                liveDoc.writeln(generateHTML(ADM.getDesignRoot(), $.rib.useSandboxUrl).html);
                 liveDoc.close();
             }
         },

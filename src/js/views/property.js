@@ -174,7 +174,7 @@
                                 target = $(this).prev("input:text");
                                 saveDir = $.rib.pmUtils.ProjectDir + "/" + $.rib.pmUtils.getActive() + "/images/";
                                 $.rib.fsUtils.uploadAndSave("image", saveDir, $(this).parent(), function (file) {
-                                    target.val(file.toURL());
+                                    target.val("images/" + file.name);
                                     target.trigger('change');
                                 });
                             })
