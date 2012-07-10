@@ -56,13 +56,30 @@ var DEBUG = true,
         };
     },
 
+    getPropertyDomAttribute = function (node, propName, newValue) {
+        var attrName, attrMap, attrValue, propValue;
+        attrName = BWidget.getPropertyHTMLAttribute(node.getType(), propName);
+        propValue = newValue || node.getProperty(propName);
+        attrValue = propValue;
+        if (typeof attrName  === "object") {
+            attrMap = attrName;
+            attrName = attrMap.name;
+            if (typeof attrMap.value  === "function")
+                attrValue = attrMap.value(propValue);
+            else
+                attrValue = attrMap.value[propValue];
+        }
+        return {"name": attrName,
+                "value": attrValue};
+    },
+
     serializeADMNodeToDOM = function (node, domParent) {
         var uid, type, pid, selector,
             parentSelector = 'body',
             parentNode = null,
             template, props, id,
             selMap = {},  // maps selectors to attribute maps
-            attrName, attrValue, propValue, propDefault,
+            attrObject, propValue, propDefault,
             widget, regEx, wrapper, domNodes;
 
         // Check for valid node
@@ -127,22 +144,14 @@ var DEBUG = true,
         // Apply any special ADMNode properties to the template before we
         // create the DOM Element instance
         for (var p in props) {
-            propValue = attrValue = node.getProperty(p);
+            propValue = node.getProperty(p);
 
             switch (p) {
             case "type":
                 break;
             default:
-                attrName = BWidget.getPropertyHTMLAttribute(type, p);
-                if (typeof attrName  === "object") {
-                    var attrMap = attrName;
-                    attrName = attrMap.name;
-                    if (typeof attrMap.value  === "function")
-                        attrValue = attrMap.value(propValue);
-                    else
-                        attrValue = attrMap.value[propValue];
-                }
-                if (attrName) {
+                attrObject = getPropertyDomAttribute(node, p);
+                if (attrObject.name) {
                     propDefault = BWidget.getPropertyDefault(type, p);
 
                     if (propValue !== propDefault ||
@@ -159,7 +168,7 @@ var DEBUG = true,
                         }
 
                         // add attribute mapping to corresponding selector
-                        selMap[selector][attrName] = attrValue;
+                        selMap[selector][attrObject.name] = attrObject.value;
                     }
                 }
                 break;
