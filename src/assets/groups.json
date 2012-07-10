@@ -12,19 +12,18 @@
     },
     "Functional Groups": [
         {
-            "Toolbars": ["#0._hidden_node.jqm_toolbars", "OptionHeader"],
-            "Buttons": ["Button","ButtonGroup"],
+            "Toolbars": ["#0._hidden_node.jqm_toolbars"],
+            "Buttons": ["Button", "ButtonGroup"],
             "Content Formatting": ["Grid", "Collapsible", "Accordion"],
             "Form Elements": [
                 "#0._hidden_node.jqm_other_inputs.0", "Text",
                 {
-                    "Boolean": ["#0._hidden_node.jqm_input_boolean", "Switch"]
+                    "Boolean": ["#0._hidden_node.jqm_input_boolean"]
                 }
             ],
             "List Views": [
                  "List", "OrderedList", "ListItem", "ListDivider", "ListButton"
             ],
-            "Output": ["ProgressBar"],
             "Image": ["Image"]
         }
     ],
