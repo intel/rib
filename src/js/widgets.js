@@ -40,6 +40,11 @@ var BCommonProperties = {
         defaultValue: "left",
         htmlAttribute: "data-iconpos"
     },
+    inline: {
+        type: "boolean",
+        defaultValue: false,
+        htmlAttribute: "data-inline",
+    },
     mini: {
         type: "boolean",
         defaultValue: false,
@@ -48,6 +53,18 @@ var BCommonProperties = {
             value: {
                 "true": "true",
                 "false": "false"
+            }
+        }
+    },
+    nativecontrol: {
+        displayName: "native control",
+        type: "boolean",
+        defaultValue: false,
+        htmlAttribute: {
+            name: "data-role",
+            value: {
+                "true": "none",
+                "false": ""
             }
         }
     },
@@ -62,7 +79,14 @@ var BCommonProperties = {
         options: [ "default", "a", "b", "c", "d", "e" ],
         defaultValue: "default",
         htmlAttribute: "data-theme"
-    }
+    },
+    track_theme: {
+        displayName: "track theme",
+        type: "string",
+        options: [ "default", "a", "b", "c", "d", "e" ],
+        defaultValue: "default",
+        htmlAttribute: "data-track-theme",
+    },
 };
 
 /**
@@ -292,7 +316,12 @@ var BWidgetRegistry = {
                 autoGenerate: "page",
                 htmlAttribute: "id"
             },
-            theme: BCommonProperties.theme
+            theme: BCommonProperties.theme,
+            title: {
+                type: "string",
+                defaultValue: "",
+                htmlAttribute: "data-title",
+            }
         },
         redirect: {
             zone: "content",
@@ -599,6 +628,12 @@ var BWidgetRegistry = {
             iconpos: $.extend({}, BCommonProperties.iconpos, {
                 invalidIn: "Navbar"
             }),
+            iconshadow: {
+                displayName: "icon shadow",
+                type: "boolean",
+                defaultValue: true,
+                htmlAttribute: "data-iconshadow",
+            },
             mini: BCommonProperties.mini,
             active: {
                 type: "boolean",
@@ -612,12 +647,9 @@ var BWidgetRegistry = {
                 }
             },
             theme: BCommonProperties.theme,
-            inline: {
-                type: "boolean",
-                defaultValue: false,
-                htmlAttribute: "data-inline",
+            inline: $.extend({}, BCommonProperties.inline, {
                 invalidIn: "Navbar"
-            },
+            }),
             transition: {
                 type: "string",
                 options: [ "slide", "slideup", "slidedown", "pop", "fade",
@@ -635,7 +667,17 @@ var BWidgetRegistry = {
                         "false": ""
                     }
                 }
-            }
+            },
+            corners: {
+                type: "boolean",
+                defaultValue: true,
+                htmlAttribute: "data-corners"
+            },
+            shadow: {
+                type: "boolean",
+                defaultValue: true,
+                htmlAttribute: "data-shadow",
+            },
         },
         template: '<a data-role="button">%TEXT%</a>'
     },
@@ -775,14 +817,18 @@ var BWidgetRegistry = {
             theme: $.extend({}, BCommonProperties.theme, {
                 htmlSelector: "input"
             }),
-            track_theme: $.extend({}, BCommonProperties.theme, {
-                displayName: "track theme",
-                htmlAttribute: "data-track-theme",
+            track_theme: $.extend({}, BCommonProperties.track_theme, {
                 htmlSelector: "input"
             }),
             disabled: $.extend({}, BCommonProperties.disabled, {
                 htmlSelector: "input"
-            })
+            }),
+            highlight: {
+                type: "boolean",
+                defaultValue: false,
+                htmlAttribute: "data-highlight",
+                htmlSelector: "input",
+            },
         },
         editable: {
             selector: "label",
@@ -859,7 +905,10 @@ var BWidgetRegistry = {
             },
             disabled: $.extend({}, BCommonProperties.disabled, {
                 htmlSelector: "input"
-            })
+            }),
+            nativecontrol: $.extend({}, BCommonProperties.nativecontrol, {
+                htmlSelector: "input"
+            }),
         },
         template: '<div data-role="fieldcontain"><label for="%ID%">%LABEL%</label><input type="text"/></div>'
     },
@@ -891,7 +940,8 @@ var BWidgetRegistry = {
                 type: "string",
                 defaultValue: ""
             },
-            disabled: BCommonProperties.disabled
+            disabled: BCommonProperties.disabled,
+            nativecontrol: BCommonProperties.nativecontrol,
         },
         template: '<textarea>%VALUE%</textarea>'
     },
@@ -922,12 +972,17 @@ var BWidgetRegistry = {
             },
             mini: BCommonProperties.mini,
             theme: BCommonProperties.theme,
-            disabled: BCommonProperties.disabled
+            track_theme: BCommonProperties.track_theme,
+            disabled: BCommonProperties.disabled,
+            nativecontrol: BCommonProperties.nativecontrol,
         },
         template: '<select data-role="slider"><option value="%VALUE1%">%LABEL1%</option><option value="%VALUE2%">%LABEL2%</option></select>',
-        // jQM generates a div next to the slider, which is the element actually
-        // clicked when users try to click the flip toggle switch.
-        delegate: "next"
+        delegate: function (domNode, admNode) {
+            if(admNode.getProperty("nativecontrol") === true)
+                return $(domNode);
+            else
+                return $(domNode).next();
+        },
     },
 
     /**
@@ -1001,7 +1056,12 @@ var BWidgetRegistry = {
                 htmlAttribute: "multiple"
             },
             mini: BCommonProperties.mini,
-            disabled: BCommonProperties.disabled
+            disabled: BCommonProperties.disabled,
+            inline: BCommonProperties.inline,
+            icon: BCommonProperties.icon,
+            iconpos: $.extend({}, BCommonProperties.iconpos, {
+                defaultValue: "right"
+            }),
         },
         zones: [
             {
@@ -1127,7 +1187,8 @@ var BWidgetRegistry = {
             },
             checked: BCommonProperties.checked,
             theme: BCommonProperties.theme,
-            disabled: BCommonProperties.disabled
+            disabled: BCommonProperties.disabled,
+            nativecontrol: BCommonProperties.nativecontrol,
         },
         delegate: 'parent',
         template: function (node) {
@@ -1259,6 +1320,16 @@ var BWidgetRegistry = {
                 htmlAttribute: "data-filter"
             },
             theme: BCommonProperties.theme,
+            filter_theme: $.extend({}, BCommonProperties.theme, {
+                displayName: "filter theme",
+                htmlAttribute: "data-filter-theme"
+            }),
+            filter_placeholder: {
+                displayName: "filter placeholder",
+                type: "string",
+                defaultValue: "Filter items...",
+                htmlAttribute: "data-filter-placeholder"
+            },
             divider: {
                 displayName: "divider theme",
                 type: "string",
@@ -1302,6 +1373,12 @@ var BWidgetRegistry = {
             text: {
                 type: "string",
                 defaultValue: "List Item"
+            },
+            filtertext: {
+                displayName: "filter text",
+                type: "string",
+                defaultValue: "List Item",
+                htmlAttribute: "data-filtertext",
             },
             theme: BCommonProperties.theme
         },
@@ -1630,7 +1707,13 @@ var BWidgetRegistry = {
             content_theme: $.extend({}, BCommonProperties.theme, {
                 displayName: "content theme",
                 htmlAttribute: "data-content-theme"
-            })
+            }),
+            collapsed: {
+                type: "boolean",
+                defaultValue: true,
+                htmlAttribute: "data-collapsed",
+            },
+            iconpos: BCommonProperties.iconpos,
         },
         zones: [
             {
@@ -1666,7 +1749,8 @@ var BWidgetRegistry = {
             content_theme: $.extend({}, BCommonProperties.theme, {
                 displayName: "content theme",
                 htmlAttribute: "data-content-theme"
-            })
+            }),
+            iconpos: BCommonProperties.iconpos,
         },
         zones: [
             {
