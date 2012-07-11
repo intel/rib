@@ -182,8 +182,7 @@
         },
 
         _activePageChangedHandler: function(event, widget) {
-            var newIndex = event&&event.page && event.page.getZoneIndex(),
-                oldIndex = event&&event.oldPage && event.oldPage.getZoneIndex();
+            var newIndex = event&&event.page && event.page.getZoneIndex();
 
             widget = widget || this;
 
