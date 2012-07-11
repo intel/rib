@@ -499,7 +499,9 @@ ADM.addChild = function (parentRef, childRef, dryrun) {
         return child;
     }
 
-    console.warn("Warning: failed to add child: ", childRef, parent, child);
+    if (!dryrun) {
+        console.warn("Warning: failed to add child: ", childRef, parent, child);
+    }
     return null;
 };
 
@@ -1371,7 +1373,9 @@ ADMNode.prototype.getDesign = function () {
 ADMNode.prototype.fireModelEvent = function (name, data) {
     var design = this.getDesign();
     if (!design) {
-        console.warn("Warning: no root design found to fire model event");
+        if ($.rib.debug('warn') >= 2) {
+            console.warn("Warning: no root design found to fire model event");
+        }
         return;
     }
     design.fireEvent(name, data);
@@ -1469,7 +1473,9 @@ ADMNode.prototype.addChild = function (child, dryrun) {
             }
         }
 
-        console.warn("Warning: no zones found for child type");
+        if (!dryrun) {
+            console.warn("Warning: no zones found for child type");
+        }
         return false;
     }
 
@@ -1503,14 +1509,18 @@ ADMNode.prototype.addChildToZone = function (child, zoneName, zoneIndex,
     zone = this._zones[zoneName];
 
     if (!BWidget.zoneAllowsChild(myType, zoneName, childType)) {
-        console.warn("Warning: zone " + zoneName +
-                     " doesn't allow child type " + childType);
+        if (!dryrun) {
+            console.warn("Warning: zone " + zoneName +
+                         " doesn't allow child type " + childType);
+        }
         return false;
     }
 
     if (!BWidget.childAllowsParent(myType, childType)) {
-        console.warn("Warning: child type " + childType + " doesn't allow " +
-                     "parent type " + myType);
+        if (!dryrun) {
+            console.warn("Warning: child type " + childType +
+                         " doesn't allow parent type " + myType);
+        }
         return false;
     }
 
@@ -1524,7 +1534,9 @@ ADMNode.prototype.addChildToZone = function (child, zoneName, zoneIndex,
         limit = parseInt(cardinality, 10);
         if (zone.length >= limit) {
             // this zone is already full
-            console.warn("Warning: zone already full: " + zoneName);
+            if (!dryrun) {
+                console.warn("Warning: zone already full: " + zoneName);
+            }
             return false;
         }
     }
