@@ -43,7 +43,7 @@ var BCommonProperties = {
     inline: {
         type: "boolean",
         defaultValue: false,
-        htmlAttribute: "data-inline",
+        htmlAttribute: "data-inline"
     },
     mini: {
         type: "boolean",
@@ -85,8 +85,8 @@ var BCommonProperties = {
         type: "string",
         options: [ "default", "a", "b", "c", "d", "e" ],
         defaultValue: "default",
-        htmlAttribute: "data-track-theme",
-    },
+        htmlAttribute: "data-track-theme"
+    }
 };
 
 /**
@@ -677,7 +677,7 @@ var BWidgetRegistry = {
                 type: "boolean",
                 defaultValue: true,
                 htmlAttribute: "data-shadow",
-            },
+            }
         },
         template: '<a data-role="button">%TEXT%</a>'
     },
@@ -820,15 +820,15 @@ var BWidgetRegistry = {
             track_theme: $.extend({}, BCommonProperties.track_theme, {
                 htmlSelector: "input"
             }),
-            disabled: $.extend({}, BCommonProperties.disabled, {
-                htmlSelector: "input"
-            }),
             highlight: {
                 type: "boolean",
                 defaultValue: false,
                 htmlAttribute: "data-highlight",
-                htmlSelector: "input",
+                htmlSelector: "input"
             },
+            disabled: $.extend({}, BCommonProperties.disabled, {
+                htmlSelector: "input"
+            })
         },
         editable: {
             selector: "label",
@@ -908,7 +908,7 @@ var BWidgetRegistry = {
             }),
             nativecontrol: $.extend({}, BCommonProperties.nativecontrol, {
                 htmlSelector: "input"
-            }),
+            })
         },
         template: '<div data-role="fieldcontain"><label for="%ID%">%LABEL%</label><input type="text"/></div>'
     },
@@ -941,7 +941,7 @@ var BWidgetRegistry = {
                 defaultValue: ""
             },
             disabled: BCommonProperties.disabled,
-            nativecontrol: BCommonProperties.nativecontrol,
+            nativecontrol: BCommonProperties.nativecontrol
         },
         template: '<textarea>%VALUE%</textarea>'
     },
@@ -974,7 +974,7 @@ var BWidgetRegistry = {
             theme: BCommonProperties.theme,
             track_theme: BCommonProperties.track_theme,
             disabled: BCommonProperties.disabled,
-            nativecontrol: BCommonProperties.nativecontrol,
+            nativecontrol: BCommonProperties.nativecontrol
         },
         template: '<select data-role="slider"><option value="%VALUE1%">%LABEL1%</option><option value="%VALUE2%">%LABEL2%</option></select>',
         delegate: function (domNode, admNode) {
@@ -982,7 +982,7 @@ var BWidgetRegistry = {
                 return $(domNode);
             else
                 return $(domNode).next();
-        },
+        }
     },
 
     /**
@@ -1058,10 +1058,13 @@ var BWidgetRegistry = {
             mini: BCommonProperties.mini,
             disabled: BCommonProperties.disabled,
             inline: BCommonProperties.inline,
-            icon: BCommonProperties.icon,
+            icon: $.extend({}, BCommonProperties.icon, {
+                options: BCommonProperties.icon.options.slice(1),
+                defaultValue: "arrow-d"
+            }),
             iconpos: $.extend({}, BCommonProperties.iconpos, {
                 defaultValue: "right"
-            }),
+            })
         },
         zones: [
             {
@@ -1188,7 +1191,7 @@ var BWidgetRegistry = {
             checked: BCommonProperties.checked,
             theme: BCommonProperties.theme,
             disabled: BCommonProperties.disabled,
-            nativecontrol: BCommonProperties.nativecontrol,
+            nativecontrol: BCommonProperties.nativecontrol
         },
         delegate: 'parent',
         template: function (node) {
@@ -1314,12 +1317,19 @@ var BWidgetRegistry = {
                 //        occurs if you leave it off, vs. the default we think
                 //        the user is most likely to want
             },
+            theme: BCommonProperties.theme,
+            divider: {
+                displayName: "divider theme",
+                type: "string",
+                options: [ "default", "a", "b", "c", "d", "e" ],
+                defaultValue: "default",
+                htmlAttribute: "data-divider-theme"
+            },
             filter: {
                 type: "boolean",
                 defaultValue: false,
                 htmlAttribute: "data-filter"
             },
-            theme: BCommonProperties.theme,
             filter_theme: $.extend({}, BCommonProperties.theme, {
                 displayName: "filter theme",
                 htmlAttribute: "data-filter-theme"
@@ -1329,13 +1339,6 @@ var BWidgetRegistry = {
                 type: "string",
                 defaultValue: "Filter items...",
                 htmlAttribute: "data-filter-placeholder"
-            },
-            divider: {
-                displayName: "divider theme",
-                type: "string",
-                options: [ "default", "a", "b", "c", "d", "e" ],
-                defaultValue: "default",
-                htmlAttribute: "data-divider-theme"
             }
         },
         template: '<ul data-role="listview">',
@@ -1374,13 +1377,13 @@ var BWidgetRegistry = {
                 type: "string",
                 defaultValue: "List Item"
             },
+            theme: BCommonProperties.theme,
             filtertext: {
                 displayName: "filter text",
                 type: "string",
-                defaultValue: "List Item",
+                defaultValue: "",
                 htmlAttribute: "data-filtertext",
-            },
-            theme: BCommonProperties.theme
+            }
         },
         template: '<li>%TEXT%</li>'
     },
@@ -1430,7 +1433,10 @@ var BWidgetRegistry = {
                 htmlAttribute: "href",
                 htmlSelector: "a"
             },
-            icon: BCommonProperties.icon,
+            icon: $.extend({}, BCommonProperties.icon, {
+                options: BCommonProperties.icon.options.slice(1),
+                defaultValue: "arrow-r"
+            }),
             theme: BCommonProperties.theme,
             countbubble: {
                 type: "string",
@@ -1702,18 +1708,18 @@ var BWidgetRegistry = {
                 type: "string",
                 defaultValue: "Collapsible Area"
             },
-            mini: BCommonProperties.mini,
-            theme: BCommonProperties.theme,
-            content_theme: $.extend({}, BCommonProperties.theme, {
-                displayName: "content theme",
-                htmlAttribute: "data-content-theme"
-            }),
             collapsed: {
                 type: "boolean",
                 defaultValue: true,
                 htmlAttribute: "data-collapsed",
             },
             iconpos: BCommonProperties.iconpos,
+            mini: BCommonProperties.mini,
+            theme: BCommonProperties.theme,
+            content_theme: $.extend({}, BCommonProperties.theme, {
+                displayName: "content theme",
+                htmlAttribute: "data-content-theme"
+            })
         },
         zones: [
             {
@@ -1750,7 +1756,7 @@ var BWidgetRegistry = {
                 displayName: "content theme",
                 htmlAttribute: "data-content-theme"
             }),
-            iconpos: BCommonProperties.iconpos,
+            iconpos: BCommonProperties.iconpos
         },
         zones: [
             {
