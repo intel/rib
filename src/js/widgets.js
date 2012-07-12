@@ -184,6 +184,8 @@ var BCommonProperties = {
  *   9)        validIn:  Parent widget in which this property is valid
  *
  *  10)      invalidIn:  Parent widget in which this property is not valid
+ *  11)        visible:  optional boolean for the property user-exposed in
+ *                       property view (default true)
  *
  * @class
  */
@@ -2405,6 +2407,26 @@ var BWidget = {
             return true;
         }
         return schema;
+    },
+
+
+    /**
+     * Tests whether this property is visible to user, for example, property
+     * view can use it to decide if it will show this property.
+     *
+     * @param {String} widgetType The type of the widget.
+     * @param {String} property The name of the requested property.
+     * @return {Boolean} true if this property is visible to user, or it is
+     *                   undefined.
+     *                   false if this property is invisible to user.
+     */
+    propertyVisible: function (widgetType, property) {
+        var schema = BWidget.getPropertySchema(widgetType, property);
+        if (schema && typeof(schema.visible) == 'boolean') {
+            return schema.visible;
+        } else {
+            return true;
+        }
     },
 
     /**

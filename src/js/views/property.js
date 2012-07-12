@@ -130,6 +130,9 @@
             options = node.getPropertyOptions();
             // iterate property of node
             for (p in props) {
+                if (!BWidget.propertyVisible(node.getType(), p)) {
+                    continue;
+                }
                 labelVal = node.getPropertyDisplayName(p);
                 valueId = p+'-value';
                 valueVal = props[p];
