@@ -98,6 +98,24 @@ var ADMEventSource = {
     },
 
     /**
+     * Clears named event from the event queue.
+     *
+     * @param {String} name The name of the event.
+     * @see ADMEventSource.bind
+     * @see ADMEventSource.unbind
+     */
+    clearEvent: function (name) {
+        var i = 0;
+        while (i < ADMEventQueue.length) {
+            if (ADMEventQueue[i].event.name === name) {
+                ADMEventQueue.splice(i, 1);
+            } else {
+                i++;
+            }
+        }
+    },
+
+    /**
      * Fires named event from this object, with extra properties set in data.
      *
      * @param {String} name The name of the event.
@@ -312,6 +330,7 @@ ADM.setActivePage = function (page) {
         oldPage = ADM._activePage;
         ADM._activePage = page;
         ADM.setSelected(page);
+        ADM.clearEvent("activePageChanged");
         ADM.fireEvent("activePageChanged", { page: page, oldPage: oldPage });
         return true;
     }
