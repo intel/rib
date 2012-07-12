@@ -370,7 +370,7 @@
                 .appendTo(content);
             content.find('#deleteElement')
                 .bind('click', function (e) {
-                    var parent, zone, index;
+                    var parent, zone, index, msg;
                     var doDelete = function () {
                         try {
                             index = node.getZoneIndex();
@@ -401,7 +401,10 @@
                         }
                     }
                     if (type === "Page") {
-                        confirm("Are you sure you want to delete the page?", doDelete);
+                        // TODO: i18n
+                        msg = "Are you sure you want to delete the page '%1'?";
+                        msg = msg.replace("%1", node.getProperty("id"));
+                        $.rib.confirm(msg, doDelete);
                     } else {
                         doDelete();
                     }

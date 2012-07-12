@@ -630,10 +630,10 @@ $(function() {
                     redirect + '<br/><br/>' +
                    'You will be redirected there now (or press "Cancel" to ' +
                    'try Rapid Interface Builder at your own risk).';
-        confirm(errorMsg, startBuilder, function (){
+        $.rib.confirm(errorMsg, startBuilder, function () {
             document.location = redirect;
-            return;
         });
+    } else {
+        startBuilder();
     }
-    else startBuilder();
 });

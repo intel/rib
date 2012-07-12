@@ -276,7 +276,7 @@
                 $.rib.pmUtils.cloneProject(pid, success);
             };
             deleteHandler = function () {
-                var success = function (pid) {
+                var msg, success = function (pid) {
                     widget.refresh();
                     // If the deleted project it the active project
                     // or there is no project then find the last opened project
@@ -289,7 +289,11 @@
                         });
                     }
                 };
-                confirm("Are you sure you want to delete it?", function() {
+
+                // TODO: i18n
+                msg = "Are you sure you want to delete the '%1' project?";
+                msg = msg.replace("%1", $.rib.pmUtils.getProperty(pid, "name"));
+                $.rib.confirm(msg, function() {
                     $.rib.pmUtils.deleteProject(pid, success);
                 });
             };

@@ -10,7 +10,7 @@
 "use strict";
 
 $.rib = $.rib || {};
-$.rib.msgbox = function (){
+$.rib.msgbox = function () {
     var dlg = $("<div/>").append('<p class="title">'
             + arguments[0] + '</p>'),
         buttons = arguments[1], buttonSet;
@@ -24,19 +24,17 @@ $.rib.msgbox = function (){
                     .bind('click', function () {dlg.dialog('close')}));
         });
     }
-    dlg.dialog({modal:true});
+    dlg.dialog({
+        title: "Rapid Interface Builder",
+        modal: true,
+        minWidth: 300
+    });
 };
 
-window.alert =  function (msg) {
+window.alert = function (msg) {
     $.rib.msgbox(msg, {"OK": null});
 }
 
-var old_confirm = window.confirm;
-window.confirm = function () {
-    if (arguments.length > 1) {
-       $.rib.msgbox(arguments[0], {'Cancel': arguments[2], 'OK': arguments[1]});
-    }
-    else
-        return old_confirm(arguments[0]);
+$.rib.confirm = function (message, okCallback, cancelCallback) {
+    $.rib.msgbox(message, {'Cancel': cancelCallback, 'OK': okCallback});
 }
-
