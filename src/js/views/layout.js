@@ -374,7 +374,7 @@
             }
 
             // If this node is a "container", make sure it's class reflects this
-            if (admNode.isContainer() || admNode.getType() === 'Header') {
+            if (admNode.isContainer()) {
                 $(domNode).addClass('nrc-sortable-container');
                 if (admNode.getChildrenCount() === 0) {
                     $(domNode).addClass('empty');
