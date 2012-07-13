@@ -1862,6 +1862,15 @@ ADMNode.prototype.generateUniqueProperty = function (property) {
 };
 
 /**
+ * Gets explicit properties
+ *
+ * @return {Object} Object containing explicitly defined properties and values.
+ */
+ADMNode.prototype.getExplicitProperties = function () {
+    return $.extend(true, {}, this._properties);
+};
+
+/**
  * Gets the properties defined for this object. If a property is not explicitly
  * set, it will be included with its default value.
  *
@@ -1982,7 +1991,7 @@ ADMNode.prototype.isPropertyExplicit = function (property) {
  *                  relevant info for performing an undo of this operation.
  */
 ADMNode.prototype.setProperty = function (property, value, data, raw) {
-    var orig, func, changed, type, rval = { };
+    var orig, func, changed, type, rval = { }, defaultValue;
     type = BWidget.getPropertyType(this.getType(), property);
     if (!type) {
         console.error("Error: attempted to set non-existent property: " +
@@ -2018,14 +2027,21 @@ ADMNode.prototype.setProperty = function (property, value, data, raw) {
         }
     }
 
-    if (this._properties[property] !== value) {
+    orig = this._properties[property];
+    if (JSON.stringify(orig) !== JSON.stringify(value)) {
         if (!raw) {
             func = BWidget.getPropertyHookFunction(this.getType(), property);
             if (func)
                 rval.transactionData = func(this, value, data);
         }
-        orig = this._properties[property];
-        this._properties[property] = value;
+        defaultValue = this.getPropertyDefault(property);
+        // If the new value is equal to the default value, then we change it to default status:
+        // delete the item in explicit property list.
+        if (JSON.stringify(defaultValue) === JSON.stringify(value)) {
+            delete this._properties[property];
+        } else {
+            this._properties[property] = value;
+        }
         this.fireModelEvent("modelUpdated",
                             { type: "propertyChanged", node: this,
                               property: property, oldValue: orig,

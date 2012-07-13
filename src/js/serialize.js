@@ -79,7 +79,7 @@ var DEBUG = true,
             parentNode = null,
             template, props, id,
             selMap = {},  // maps selectors to attribute maps
-            attrObject, propValue, propDefault,
+            attrObject, propValue,
             widget, regEx, wrapper, domNodes;
 
         // Check for valid node
@@ -152,9 +152,7 @@ var DEBUG = true,
             default:
                 attrObject = getPropertyDomAttribute(node, p);
                 if (attrObject.name) {
-                    propDefault = BWidget.getPropertyDefault(type, p);
-
-                    if (propValue !== propDefault ||
+                    if (node.isPropertyExplicit(p) ||
                         BWidget.getPropertyForceAttribute(type, p)) {
                         selector = BWidget.getPropertyHTMLSelector(type, p);
                         if (!selector) {
@@ -315,37 +313,39 @@ $(function() {
             if ((typeof jsObject !== "object") || !(admNode instanceof ADMNode)) {
                 return false;
             }
-            properties = jsObject.properties;
             try {
-                // Set properties for current ADM node
-                for (item in properties) {
-                    // parser the properties and set the value to the node
-                    val = properties[item];
-                    // if we can't get value, we set item's value as default
-                    if (!val){
-                        val = admNode.getPropertyDefault(item);
+                if (jsObject.properties) {
+                    properties = jsObject.properties;
+                    // Set properties for current ADM node
+                    for (item in jsObject.properties) {
+                        // Parse properties and set the value to the node
+                        val = properties[item];
+                        // If we can't get value, we set item's value as default
+                        if (val){
+                            // NOTE: It's important that we pass "true" for the fourth
+                            // parameter here (raw) to disable "property hook"
+                            // functions like the grid one that adds or removes child
+                            // Block elements based on the property change
+                            admNode.setProperty(item, val, null, true);
+                        }
                     }
-
-                    // NOTE: It's important that we pass "true" for the fourth
-                    // parameter here (raw) to disable "property hook"
-                    // functions like the grid one that adds or removes child
-                    // Block elements based on the property change
-                    admNode.setProperty(item, val, null, true);
                 }
-                // Scan children nodes
-                children = jsObject.children;
-                for (i = 0; i < children.length; i++) {
-                    child = children[i];
-                    childNode = ADM.createNode(child.type, true);
+                if (jsObject.children) {
+                    // Scan children nodes
+                    children = jsObject.children;
+                    for (i = 0; i < children.length; i++) {
+                        child = children[i];
+                        childNode = ADM.createNode(child.type, true);
 
-                    // add child node to current node
-                    if (!admNode.addChildToZone(childNode, child.zone)) {
-                        dumplog("add child type "+ child.type + " failed");
-                        return false;
-                    }
-                    result = JSObjectToADMNode(childNode, child);
-                    if (!result) {
-                        return false;
+                        // Add child node to current node
+                        if (!admNode.addChildToZone(childNode, child.zone)) {
+                            dumplog("add child type "+ child.type + " failed");
+                            return false;
+                        }
+                        result = JSObjectToADMNode(childNode, child);
+                        if (!result) {
+                            return false;
+                        }
                     }
                 }
             }catch (e) {
@@ -355,7 +355,7 @@ $(function() {
                             ".\n\nContinue loading the design?"))
                     return false;
             }
-            // call extra handler for each relative pair
+            // Call extra handler for each relative pair
             eachHandler && eachHandler(admNode, jsObject);
             return true;
         };
@@ -375,7 +375,7 @@ $(function() {
         design = new ADMNode("Design");
         design.suppressEvents(true);
 
-        // add children in ADM
+        // Add children in ADM
         try {
             result = JSObjectToADMNode(design, parsedObject);
         } catch(e) {
@@ -411,20 +411,24 @@ $(function() {
         if (ADMTreeNode instanceof ADMNode) {
             // Save staff in ADMNode
             var JSObject = {},
-                children, i;
+                children, i, props;
             JSObject.type = ADMTreeNode.getType();
             JSObject.zone = ADMTreeNode.getZone();
-            JSObject.properties = ADMTreeNode.getProperties();
-            JSObject.children = [];
+            props = ADMTreeNode.getExplicitProperties();
+            // If there are some explicit properties
+            if (typeof props === "object" && Object.keys(props).length > 0) {
+                JSObject.properties = props;
+            }
 
             // Recurse to fill children array
             children = ADMTreeNode.getChildren();
             if (children.length > 0) {
+                JSObject.children = [];
                 for (i = 0; i < children.length; i++) {
                     JSObject.children[i] = ADMToJSONObj(children[i], handler);
                 }
             }
-            // run handler to handle every node
+            // Run handler to handle every node
             handler && handler(ADMTreeNode, JSObject);
             return JSObject;
         } else {
