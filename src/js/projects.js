@@ -124,9 +124,9 @@ $(function () {
     }
 
     /***************** APIs to manipulate projects *************************/
-    /* Get the acitve project.
+    /* Get the active project.
      *
-     * @return {String} The pid of current acitve project, or null if none.
+     * @return {String} The pid of current active project, or null if none.
      */
     pmUtils.getActive = function () {
         return pmUtils._activeProject;
