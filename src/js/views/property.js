@@ -336,27 +336,34 @@
                                     .attr('id', valueId)
                                     .addClass('labelInput')
                                     .click({'p': p, 'value': value}, function(e){
-                                        var o, value = e.data.value, p = e.data.p;
-                                        value.find('ul').html("");
-                                        for(o in options[p]) {
-                                            $('<li>' + options[p][o] + '</li>').appendTo(value.find('ul'));
+                                        var o, items = "",
+                                            value = e.data.value, p = e.data.p;
+
+                                        for (o in options[p]) {
+                                            items += '<li>' + options[p][o] + '</li>';
                                         }
+                                        value.find('ul')
+                                            .html("")
+                                            .append($(items));
+
                                         $(this).toggleClass('datalist-input');
                                         value.find('.datalist').toggle();
                                     })
                                     .keyup({ 'p' : p, 'value' : value}, function(e){
-                                        var matchedOptions = [], o,
+                                        var matchedOptions = [], o, items = "",
                                             inputedText = this.value,
                                             value = e.data.value;
                                         matchedOptions = $.grep(options[e.data.p], function(item, i){
                                             return item.indexOf(inputedText) >= 0;
                                         });
-                                        value.find('ul').html("");
 
                                         for (o in matchedOptions) {
-                                            $('<li>' + matchedOptions[o] + '</li>')
-                                                .appendTo(value.find('ul'));
+                                            items += '<li>' + matchedOptions[o] + '</li>';
                                         }
+                                        value.find('ul')
+                                            .html("")
+                                            .append(items);
+
                                         $(this).addClass('datalist-input');
                                         value.find('.datalist').show();
                                     })
@@ -405,9 +412,10 @@
                         var updated, node, element, type, value, ret, selected;
                         updated = event.target.id.replace(/-value/,'');
                         node = event.data;
-                        //FIXME: The "change" event will refresh property view
+                        // FIXME: The "change" event will refresh property view
                         // so "click" event of datalist is not triggered.
-                        // We have to look up the ":hover" class here to decide which item is clicked
+                        // We have to look up the ":hover" class here to decide
+                        // which item is clicked
                         selected = $(this).parent().find('.datalist ul li:hover');
 
                         if (node === null || node === undefined) {
