@@ -46,12 +46,14 @@ $(function() {
                 return null;
             }
             ADM.addChild(design, newPage);
-            //set dialog property of page
+
+            // set dialog property of page
             result = ADM.setProperty(newPage, 'dialog', isDialog);
             if (!result.result) {
                 return null;
             }
-            //set page layout
+
+            // create initial page layout
             result = setPageLayout(newPage, layout);
             //TODO: if we have some specfic logic to handle with template,
             //      use below code

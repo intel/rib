@@ -144,9 +144,13 @@
                 // display property of widget
                 switch (propType) {
                     case "boolean":
-                        //Forbid changing the style of the first page to "Dialog", we don't want
-                        //to user adjust style of the first page
+                        // Forbid changing the style of the first page to
+                        // "Dialog", we don't want to user adjust style of the
+                        // first page
                         if (type === 'Page' &&
+                            // FIXME: the knowledge of when to hide or show a
+                            // property should come from the widget registry,
+                            // not be hard-coded here
                             node.getDesign().getChildren()[0] === node &&
                             p === 'dialog') {
                             code.empty();

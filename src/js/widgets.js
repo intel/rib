@@ -311,12 +311,14 @@ var BWidgetRegistry = {
         moveable: false,
         template: function (node) {
             var prop, code, design = node.getDesign();
-            //make sure style of the first page  can only be page
+
+            // make sure style of the first page can only be page
             if (design.getChildren()[0] === node) {
                 code =  $('<div data-role="page"></div>');
             } else {
                 code = $('<div data-role="' +
-                        (node.getProperty("dialog")? "dialog" : "page") + '"></div>');
+                        (node.getProperty("dialog") ? "dialog" : "page") +
+                         '"></div>');
             }
 
             return code;
@@ -328,14 +330,14 @@ var BWidgetRegistry = {
                 htmlAttribute: "id"
             },
             theme: BCommonProperties.theme,
+            dialog: {
+                type: "boolean",
+                defaultValue: false,
+            },
             title: {
                 type: "string",
                 defaultValue: "",
                 htmlAttribute: "data-title",
-            },
-            dialog: {
-                type: "boolean",
-                defaultValue: false,
             }
         },
         redirect: {
@@ -363,7 +365,7 @@ var BWidgetRegistry = {
 
     /**
      * Represents a header object at the top of a page. Includes a "text"
- * property that represents header text. Includes "left" and "right" zones
+     * property that represents header text. Includes "left" and "right" zones
      * for optional buttons, and "bottom" zone for an optional navbar.
      */
     Header: {

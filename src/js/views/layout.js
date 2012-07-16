@@ -397,6 +397,10 @@
 
             // If this node is a "dialog", make it display as "page" in layout view
             if (admNode.getType() === "Page" && admNode.getProperty("dialog") === true) {
+                // FIXME: This is one of many examples of places where
+                // hard-coded logic about a specific widget should be pulled out
+                // into something in the widget registry description that we can
+                // discover generically here.
                 $(domNode).attr('data-role', 'page');
             }
 

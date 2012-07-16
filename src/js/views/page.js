@@ -256,13 +256,13 @@
                     dialog = $('#pageDialog');
 
                 options.pageTemplate = dialog.find("#pagePicker").val();
-                //get style of new page
+                // get style of new page
                 if (dialog.find('input:radio[name=Layout]:checked').val() === 'dialog') {
                     options.isDialog = true;
                 } else {
                     options.isDialog = false;
                 }
-                //get checkbox value
+                // get checkbox value
                 if (dialog.find('#header_layout').is(":checked")) {
                     layout.push('Header');
                 }
