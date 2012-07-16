@@ -518,7 +518,7 @@ $(function() {
         });
 
         // Configure "sortable" behaviors
-        targets = $(e.target).subtree('.nrc-sortable-container,body .ui-page');
+        targets = $(e.target).subtree('.nrc-sortable-container');
 
         debug && console.log("Found ["+targets.length+"] sortable targets: ");
 

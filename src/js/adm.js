@@ -1328,16 +1328,14 @@ ADMNode.prototype.isMoveable = function () {
 };
 
 /**
- * Tests whether this node is a container object.  An object is
- * considered to be a container if it has one (1) zone and that
- * zone's cardinality is "N".
+ * Tests whether this node is a container object. An object is now considered
+ * to be a container if it has zones defined, e.g. can have any sub-nodes.
  *
  * @return {Boolean} True if the node is a container object.
  */
 ADMNode.prototype.isContainer = function () {
     var zones = BWidget.getZones(this.getType());
-    return (zones.length === 1 &&
-            BWidget.getZoneCardinality(this.getType(),zones[0]) === "N");
+    return zones.length > 0;
 };
 
 /**
