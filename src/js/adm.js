@@ -1344,7 +1344,7 @@ ADMNode.prototype.isContainer = function () {
  * @return {Boolean} True if the node shown have a drag header added.
  */
 ADMNode.prototype.isHeaderVisible = function () {
-    return this.isContainer && BWidget.isHeaderVisible(this.getType());
+    return this.isContainer() && BWidget.isHeaderVisible(this.getType());
 };
 
 /**
