@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="128px" height="35px" viewBox="0 0 128 35" enable-background="new 0 0 128 35" xml:space="preserve">
+<defs>
+  <style>
+    <![CDATA[
+        @font-face {
+            font-family: OpenSans-SemiBold;
+            src: url('../../fonts/OpenSans-Semibold.ttf');
+        }
+    ]]>
+  </style>
+</defs>
+<g>
+	<rect fill="#FFFFFF" width="128" height="35"/>
+</g>
+<rect fill="#627278" width="5" height="35"/>
+<g>
+	<polygon fill="#C9D7DB" points="122,30 13,30 13,5 122,5 	"/>
+</g>
+<text transform="matrix(1 0 0 1 24 21.5)" font-family="'OpenSans-Semibold'" font-size="11" id="jqm_customheader_title">Custom Header</text>
+</svg>

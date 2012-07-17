@@ -1,6 +1,6 @@
 [{
     "_hidden_node": {
-        "jqm_toolbars":["Header", "Footer", "Navbar"],
+        "jqm_toolbars":["Header", "CustomHeader", "Footer", "Navbar"],
         "jqm_input_boolean":["ToggleSwitch", "RadioButton", "RadioGroup", "Checkbox", "CheckboxGroup"],
         "jqm_other_inputs":[ {
                     "Form": ["Form"],

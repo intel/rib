@@ -350,7 +350,7 @@ var BWidgetRegistry = {
             {
                 name: "top",
                 cardinality: "1",
-                allow: "Header"
+                allow: ["Header", "CustomHeader"]
             },
             {
                 name: "content",
@@ -404,6 +404,36 @@ var BWidgetRegistry = {
                 name: "bottom",
                 cardinality: "1",
                 allow: ["Navbar", "OptionHeader"]
+            }
+        ]
+    },
+
+    /**
+     * Represents a header object at the top of a page. Includes a "text"
+     * property that represents header text. Includes "left" and "right" zones
+     * for optional buttons, and "bottom" zone for an optional navbar.
+     */
+    CustomHeader: {
+        parent: "Background",
+        allowIn: "Page",
+        dragHeader: true,
+        paletteImageName: "jqm_customheader.svg",
+        displayLabel: "Custom Header",
+        moveable: false,
+        template: '<div data-role="header"><div></div></div>',
+        properties: {
+            text: {
+                type: "string",
+                defaultValue: "CustomHeader"
+            },
+            position: BCommonProperties.position,
+            theme: BCommonProperties.theme
+        },
+        zones: [
+            {
+                name: "default",
+                locator: '> div',
+                cardinality: "N"
             }
         ]
     },
