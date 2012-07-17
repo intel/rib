@@ -1348,6 +1348,101 @@ ADMNode.prototype.isHeaderVisible = function () {
 };
 
 /**
+ * Check property by several selectors in a filter object.
+ * Selectors can specify name, or type, or value. Result will meet all
+ * selectors, which meens it will be "AND" effection of all selectors in filter
+ * object. In filter object, name and type should all be string, value can be
+ * any type, if it is a function or regular expression, it will be treated as
+ * check rule to determine if the value matchs or not, for case of function,
+ * property value will be passed as parameter.
+ *
+ * @param {Object} filterObj The object contains filter selectors, such as:
+ *                           {
+ *                               name: "propertyName",
+ *                               type: "propertyType",
+ *                               value: propertyValue/RegExp/Function
+ *                           }
+ * @param {String} property Name of property to be checked
+ * @param {Any} value The value of the property to be checked
+  @return {Boolean} Return true if matched, else false.
+ */
+ADMNode.prototype.checkProperty = function (filterObj, property, value) {
+    var pType;
+    value = value || this.getProperty(property);
+    pType = BWidget.getPropertyType(this.getType(), property);
+
+    // If need to check name, but name not match, check next one
+    if (filterObj.name && property !== filterObj.name)
+        return false;
+
+    // If need to check type, but not match, check next one
+    if (filterObj.type && pType !== filterObj.type)
+        return false;
+
+    // Check value, if required.
+    if (filterObj.hasOwnProperty('value')) {
+        if (typeof filterObj.value === "function") {
+            // If check function returns false, check next one
+            if (!filterObj.value(value))
+                return false;
+
+        } else if (filterObj.value instanceof RegExp) {
+            // If test rule failed, check next one
+            if (!value || !filterObj.value.test(value))
+                return false;
+
+        } else if (JSON.stringify(value) !== JSON.stringify(filterObj.value)) {
+            return false;
+        }
+    }
+    if (filterObj.name || filterObj.type || filterObj.value) {
+        return true;
+    } else {
+        console.warn("Empty filter when check property.");
+        return false;
+    }
+};
+
+/**
+ * Finds nodes in the subtree rooted at this object (inclusive), by property
+ * name, or type, or value. Thg result will meet all key-value pairs in filter
+ * object, like function "checkProperty". In filter object, name and
+ * type should all be string, value can be any type, if it is a function or
+ * regular expression, it will be treated as check rule to determine if the
+ * value matchs or not, for case of function, property value will be passed
+ * as parameter.
+ *
+ * @param {Object} filterObj The object contains filter selectors, such as:
+ *                           {
+ *                               name: "propertyName",
+ *                               type: "propertyType",
+ *                               value: propertyValue/RegExp/Function
+ *                           }
+ * @return {Array} An array of objects, which contians matched ADM node and
+ *                      the related properties:
+ *                      [
+ *                          { node: node1, props: matchedProps},
+ *                          { node: node2, props: matchedProps}
+ *                          ...
+ *                      ]
+ */
+ADMNode.prototype.findNodeByProperty = function (filterObj) {
+    var children, i, result, matchedProps;
+    result = result || [];
+    matchedProps = this.getProperties(filterObj);
+    // Handle current node
+    if (matchedProps && Object.keys(matchedProps).length > 0) {
+        result.push({ node: this, props: matchedProps});
+    };
+    // Scan children
+    children = this.getChildren();
+    for (i = children.length - 1; i >= 0; i--) {
+        result = result.concat(children[i].findNodeByProperty(filterObj));
+    }
+    return result;
+};
+
+/**
  * Finds the object in the subtree rooted at this object (inclusive), by UID.
  *
  * @param {Number} uid The unique ID of the object to be found.
@@ -1864,12 +1959,25 @@ ADMNode.prototype.generateUniqueProperty = function (property) {
 /**
  * Gets the properties defined for this object. If a property is not explicitly
  * set, it will be included with its default value.
+ * If filter object is specified, it will find properties by several selectors.
+ * Selectors can specify name, or type, or value. Result will meet all
+ * selectors, which meens it will be "AND" effection of all selectors in filter
+ * object. In filter object, name and type should all be string, value can be
+ * any type, if it is a function or regular expression, it will be treated as
+ * check rule to determine if the value matchs or not, for case of function,
+ * property value will be passed as parameter.
+ *
+ * @param {Object} filterObj The object contains filter selectors, such as:
+ *                           {
+ *                               name: "propertyName",
+ *                               type: "propertyType",
+ *                               value: propertyValue/RegExp/Function
+ *                           }
  *
  * @return {Object} Object containing all the defined properties and values.
  */
-ADMNode.prototype.getProperties = function () {
-    var props = {}, defaults, p, type = this.getType();
-
+ADMNode.prototype.getProperties = function (filterObj) {
+    var props = {}, defaults, p, value, type = this.getType();
     defaults = BWidget.getPropertyDefaults(type);
     for (p in defaults) {
         if (defaults.hasOwnProperty(p)) {
@@ -1878,13 +1986,19 @@ ADMNode.prototype.getProperties = function () {
             if (this._parent &&
                 !BWidget.propertyValidIn(type, p, this._parent.getType()))
                 continue;
-            props[p] = this._properties[p];
-            if (props[p] === undefined) {
-                props[p] = this.generateUniqueProperty(p);
-                if (props[p] === undefined) {
-                    props[p] = defaults[p];
+            value = this._properties[p];
+            if (value === undefined) {
+                value = this.generateUniqueProperty(p);
+                if (value === undefined) {
+                    value = defaults[p];
                 }
             }
+            // If the selectors are exist, and the property don't meet them,
+            // then ignore this property
+            if (filterObj && !this.checkProperty(filterObj, p, value)) {
+                continue;
+            }
+            props[p] = value;
         }
     }
     return props;
