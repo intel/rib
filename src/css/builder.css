@@ -1569,3 +1569,118 @@ input.screenCoordinate::-webkit-inner-spin-button {
 #exportDialog .buttonStyle {
     margin: 0 0.6em;
 }
+
+#eventHandlerDialog {
+    overflow: hidden;
+}
+
+#eventHandlerDialog .title {
+    position: relative;
+    height: 52px;
+    background-color: #E4E5DF;
+}
+
+#eventHandlerDialog .title > label {
+    position: absolute;
+    left: 10px;
+    top: 16px;
+    font-size : 13px;
+    color: #4d4d4d;
+    font-family: OpenSans-SB;
+    font-weight: 600; /* semi-bold */
+}
+
+
+#eventHandlerDialog .wrap_left {
+    position: relative;
+    width: 230px;
+    border-right: 1px solid #dededc;
+}
+
+#eventHandlerDialog .wrap_left .container {
+    position: absolute;
+    width: 100%;
+    margin: 10px;
+}
+
+
+#eventHandlerDialog .wrap_left .container * {
+    display: inline-block;
+}
+
+#eventHandlerDialog .wrap_left .container select {
+    position: absolute;
+    top: 10px;
+    left: 0px;
+    width: 270px;
+}
+
+#eventHandlerDialog .wrap_left .container fieldset {
+    position: absolute;
+    top: 40px;
+    width: 244px;
+    height: 370px;
+    overflow: auto;
+}
+
+#eventHandlerDialog .wrap_left .container fieldset ul {
+    margin: 0px;
+}
+
+#eventHandlerDialog .wrap_left .container fieldset li {
+    display: block;
+    padding: 8px 8px 8px 8px;
+    margin-left: -36px;
+    width: 200px;
+    height: 34px;
+    border: 8px transparent;
+    border-bottom: 1px solid #CCC;
+}
+
+#eventHandlerDialog .wrap_left .container fieldset li.ui-selected {
+    background-color: #4AE57B;
+}
+
+#eventHandlerDialog .wrap_left .container fieldset li > a.link {
+    padding-top: 8px;
+    width: 160px;
+    height: 34px;
+}
+
+#eventHandlerDialog .wrap_left .container fieldset a.ui-button  {
+    margin-top: 0px;
+    float: right;
+}
+
+#eventHandlerDialog .wrap_left .container button.doneButton {
+    position: absolute;
+    top: 440px;
+    left: 46px;
+    width: 180px;
+}
+
+#eventHandlerDialog .wrap_right {
+    width: 630px;
+}
+
+#eventHandlerDialog .wrap_right .container {
+    overflow: auto;
+    resize:  none;
+    height: 600px;
+    width: 98%;
+    margin: 6px;
+}
+
+#eventHandlerDialog .wrap_right .container .CodeMirror {
+    margin: 4px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    -moz-box-shadow:    inset 0 0 4px #000000;
+    -webkit-box-shadow: inset 0 0 4px #000000;
+    box-shadow:         inset 0 0 4px #000000;
+    height: 470px;
+}
+
+#eventHandlerDialog .wrap_right .container .CodeMirror .CodeMirror-scroll {
+    height: 464px;
+}
