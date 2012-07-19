@@ -350,7 +350,7 @@ var BWidgetRegistry = {
             {
                 name: "top",
                 cardinality: "1",
-                allow: ["Header", "CustomHeader"]
+                allow: [ "Header", "CustomHeader" ]
             },
             {
                 name: "content",
@@ -403,7 +403,7 @@ var BWidgetRegistry = {
             {
                 name: "bottom",
                 cardinality: "1",
-                allow: ["Navbar", "OptionHeader"]
+                allow: [ "Navbar", "OptionHeader" ]
             }
         ]
     },
@@ -1116,7 +1116,7 @@ var BWidgetRegistry = {
             {
                 name: "default",
                 cardinality: "N",
-                allow: [ "Option" ]
+                allow: "Option"
             }
         ],
         delegate: function (domNode, admNode) {
@@ -1183,7 +1183,7 @@ var BWidgetRegistry = {
             {
                 name: "default",
                 cardinality: "N",
-                allow: [ "RadioButton" ]
+                allow: "RadioButton"
             }
         ],
         template: '<fieldset data-role="controlgroup"><legend>%LEGEND%</legend></fieldset>',
@@ -1298,7 +1298,7 @@ var BWidgetRegistry = {
             {
                 name: "default",
                 cardinality: "N",
-                allow: [ "Checkbox" ]
+                allow: "Checkbox"
             }
         ],
         template: '<fieldset data-role="controlgroup"><legend>%LEGEND%</legend></fieldset>',
