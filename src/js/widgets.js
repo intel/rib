@@ -422,10 +422,6 @@ var BWidgetRegistry = {
         moveable: false,
         template: '<div data-role="header"><div></div></div>',
         properties: {
-            text: {
-                type: "string",
-                defaultValue: "CustomHeader"
-            },
             position: BCommonProperties.position,
             theme: BCommonProperties.theme
         },
