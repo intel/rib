@@ -47,7 +47,7 @@
                         .addClass(className + " separated")
                         .appendTo(deviceToolbar)
                         .click( function () {
-                            var buttonSet, deviceForm;
+                            var buttonSet, deviceForm, options = '';
                             deviceForm= $("<form/>")
                                 .addClass("deviceSetting")
                                 .append('<label for="name">Device Name</label>')
@@ -60,8 +60,9 @@
                                 .append('<span>x</span>')
                                 .append(screenHeightElement());
                             for (var type in widget._sysDevices) {
-                                $('<option/>').text(type).appendTo(deviceForm.find('select'));
+                                options += '<option>' + type + '</option>';
                             }
+                            deviceForm.find('select').append($(options));
                             buttonSet = $('<div align="center" id="buttonSet" />').appendTo(deviceForm);
                             if (className === "editDevice") {
                                 if (widget._sysDevices[widget._projectDevice.name]) {
