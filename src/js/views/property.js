@@ -381,6 +381,45 @@
                         });
                         value.find('#'+ valueId).val(valueVal);
                         break;
+                    case "targetlist":
+                        $('<div class="title"/>')
+                            .append(
+                                $('<input type="text" value=""/>')
+                                    .attr('id', valueId)
+                                    .addClass('labelInput')
+                                    .click({'p': p, 'value': value}, function(e) {
+                                        var o, items = "", pages, id,
+                                            value = e.data.value, p = e.data.p;
+
+                                        pages = ADM.getDesignRoot().getChildren();
+                                        for (o = 0; o < pages.length; o++) {
+                                            id = pages[o].getProperty('id');
+                                            items += '<li>#' + id + '</li>';
+                                        }
+                                        value.find('ul')
+                                            .html("")
+                                            .append($(items));
+
+                                        $(this).toggleClass('datalist-input');
+                                        value.find('.datalist').toggle();
+                                    })
+                            )
+                            .append(
+                                $('<div style="display:none"/>')
+                                .addClass('datalist')
+                                .append('<ul/>')
+                            )
+                        .appendTo(value);
+                        value.delegate(".datalist li", "click", function(e) {
+                            $(this).parent().parent().parent().find('input')
+                                   .val($(this).text()).change().end()
+                                   .find('.datalist').hide().end();
+                        });
+                        if (valueVal === "back") {
+                        } else {
+                            value.find('#' + valueId).val(valueVal);
+                        }
+                        break;
                     default:
                         // handle property has options
                         if (options[p]) {

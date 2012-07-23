@@ -658,7 +658,7 @@ var BWidgetRegistry = {
                 defaultValue: "Button"
             },
             target: {
-                type: "string",
+                type: "targetlist",
                 defaultValue: "",
                 htmlAttribute: "href"
             },
