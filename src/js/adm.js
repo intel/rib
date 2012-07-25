@@ -1862,15 +1862,6 @@ ADMNode.prototype.generateUniqueProperty = function (property) {
 };
 
 /**
- * Gets explicit properties
- *
- * @return {Object} Object containing explicitly defined properties and values.
- */
-ADMNode.prototype.getExplicitProperties = function () {
-    return $.extend(true, {}, this._properties);
-};
-
-/**
  * Gets the properties defined for this object. If a property is not explicitly
  * set, it will be included with its default value.
  *
@@ -1878,6 +1869,7 @@ ADMNode.prototype.getExplicitProperties = function () {
  */
 ADMNode.prototype.getProperties = function () {
     var props = {}, defaults, p, type = this.getType();
+
     defaults = BWidget.getPropertyDefaults(type);
     for (p in defaults) {
         if (defaults.hasOwnProperty(p)) {
@@ -1896,6 +1888,17 @@ ADMNode.prototype.getProperties = function () {
         }
     }
     return props;
+};
+
+/**
+ * Gets all explicitly set properties for this object.
+ *
+ * @return {Object} Object containing explicitly defined properties and values.
+ *                  The object contains deep copies of the properties so they
+ *                  are free to be modified by the caller as desired.
+ */
+ADMNode.prototype.getExplicitProperties = function () {
+    return $.extend(true, {}, this._properties);
 };
 
 /**
@@ -2027,17 +2030,30 @@ ADMNode.prototype.setProperty = function (property, value, data, raw) {
         }
     }
 
+    // test for deep equality efficiently
+    function deepEqual(a, b) {
+        if (typeof a !== "object") {
+            return a === b;
+        } else {
+            if (a === b) {
+                return true;
+            }
+            return JSON.stringify(a) === JSON.stringify(b);
+        }
+    }
+
     orig = this._properties[property];
-    if (JSON.stringify(orig) !== JSON.stringify(value)) {
+    if (!deepEqual(orig, value)) {
         if (!raw) {
             func = BWidget.getPropertyHookFunction(this.getType(), property);
             if (func)
                 rval.transactionData = func(this, value, data);
         }
+
+        // if the new value is equal to the default value, delete the item in
+        // the explicit property list
         defaultValue = this.getPropertyDefault(property);
-        // If the new value is equal to the default value, then we change it to default status:
-        // delete the item in explicit property list.
-        if (JSON.stringify(defaultValue) === JSON.stringify(value)) {
+        if (deepEqual(defaultValue, value)) {
             delete this._properties[property];
         } else {
             this._properties[property] = value;
