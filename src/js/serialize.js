@@ -679,13 +679,17 @@ $(function() {
         }
         ribFile && zip.add(projName + ".json", ribFile);
         resultHTML = generateHTML(null, function (admNode, domNode) {
-            scanSandboxFiles(admNode, function (property, relativePath, urlPath) {
-                // Add the image file to the needed list
+            var urlPath, projectDir, matched, p;
+            matched = admNode.getMatchingProperties($.rib.pmUtils.relativeFilter);
+            projectDir = $.rib.pmUtils.ProjectDir + "/" + pid + "/";
+            // Add uploaded images to the needed list
+            for (p in matched) {
+                urlPath = $.rib.fsUtils.pathToUrl(projectDir + matched[p].replace(/^\//, ""));
                 files.push({
                     "src": urlPath,
-                    "dst": relativePath
+                    "dst": matched[p]
                 });
-            });
+            }
         });
         resultHTML && zip.add("index.html", resultHTML.html);
         // projName now is the whole package name
@@ -753,35 +757,27 @@ $(function() {
         return;
     }
 
-    function scanSandboxFiles (admNode, handler) {
-        var props, p, value, urlPath, pType, projectDir, attrObject,
-            relativeRule;
-        if (!($.rib.fsUtils.fs && $.rib.pmUtils && $.rib.pmUtils.getActive())) {
-            return;
-        }
-        relativeRule = /^[\w\-_]+(\/[\w\-_]+)*\.?[\w]+$/i;
-        props = admNode.getProperties();
-        projectDir = $.rib.pmUtils.ProjectDir + "/" + $.rib.pmUtils.getActive() + "/";
-        for (p in props) {
-            value = props[p];
-            pType = BWidget.getPropertyType(admNode.getType(), p);
-            if (pType === "url-uploadable" && relativeRule.test(value)) {
-                urlPath = $.rib.fsUtils.pathToUrl(projectDir + value.replace(/^\//, ""));
-                handler && handler(p, value, urlPath);
-            }
-        }
-        return;
-    };
-
     /***************** export functions out *********************/
     $.rib.useSandboxUrl = function (admNode, domNode) {
-        scanSandboxFiles(admNode, function (property, relativePath, urlPath) {
-            var attrObject = getPropertyDomAttribute(admNode, property, urlPath);
+        var projectDir, urlPath, matched, p, attrObject, pid;
+        // Get the specified properties by uploaded relative filter
+        matched = admNode.getMatchingProperties($.rib.pmUtils.relativeFilter);
+        pid = $.rib.pmUtils.getActive();
+        if (!pid) {
+            return;
+        }
+        projectDir = $.rib.pmUtils.ProjectDir + "/" + pid + "/";
+
+        // Change the attributes of the DOM
+        for (p in matched) {
+            urlPath = $.rib.fsUtils.pathToUrl(projectDir + matched[p].replace(/^\//, ""));
+            attrObject = getPropertyDomAttribute(admNode, p, urlPath);
             // Set the new value for the domNode
             if (attrObject && attrObject.name && attrObject.value) {
                 $(domNode).attr(attrObject.name, attrObject.value);
             }
-        })
+        }
+        return;
     };
     // Export serialization functions into $.rib namespace
     $.rib.ADMToJSONObj = ADMToJSONObj;

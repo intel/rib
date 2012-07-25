@@ -24,6 +24,11 @@ $(function () {
         allTags: [],
         ProjectDir: "/projects",
         pidPrefix: "p",
+        // Filter to find sandbox resources
+        relativeFilter:{
+            type: "url-uploadable",
+            value: /^(?!(https?|ftp):\/+).+/i
+        },
         propertySchema: {
             name: {
                 type: "string",
