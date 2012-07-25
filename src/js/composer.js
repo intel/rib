@@ -536,9 +536,6 @@ $(function() {
                 cancel: '> :not(.adm-node,.orig-adm-node)',
                 items: '> *.adm-node:not(.ui-header,.ui-content,.ui-footer),' +
                     '> .ui-controlgroup-controls > .adm-node,' +
-                    // Treating ui-collapse-content as item will make it easier
-                    // to target with other items during sort.
-                    '> .ui-collapsible-content,' +
                     // Collapsible's items are under .ui-collapsible-content
                     '> .ui-collapsible-content > .adm-node,' +
                     '> ul > li.adm-node,' +
