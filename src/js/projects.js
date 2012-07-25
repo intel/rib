@@ -29,6 +29,8 @@ $(function () {
             type: "url-uploadable",
             value: /^(?!(https?|ftp):\/+).+/i
         },
+        // Object to save refernce count for sandbox resource
+        resourceRef: {},
         propertySchema: {
             name: {
                 type: "string",
@@ -874,6 +876,97 @@ $(function () {
             return (b.date - a.date);
         };
         return arr.sort(orderFunc);
+    };
+
+    /**
+     * Add reference count for a resource in current active project
+     *
+     * @param {String} refPath The resource's path relative to project folder.
+     * @return {None}
+     */
+    pmUtils.addRefCount = function (refPath) {
+        if (!pmUtils.resourceRef[refPath]) {
+            pmUtils.resourceRef[refPath] = 1;
+        } else {
+            pmUtils.resourceRef[refPath]++;
+        }
+        return;
+    };
+
+    /**
+     * Reduce reference count for a resource in current active project
+     *
+     * @param {String} refPath The resource's path relative to project folder.
+     * @return {None}
+     */
+    pmUtils.reduceRefCount = function (refPath) {
+        var projectDir = pmUtils.ProjectDir + "/" + pmUtils.getActive() + "/";
+        if (pmUtils.resourceRef.hasOwnProperty(refPath)) {
+            pmUtils.resourceRef[refPath]--;
+            // Delete the resource if the reference count is 0
+            // TODO: will list all the uploaded resource and show the reference
+            // count of them. It will depend on the user if delete or not.
+            if (pmUtils.resourceRef[refPath] <= 0) {
+                $.rib.confirm('Unused resource: "' + refPath +
+                    '". \nWould you like to delete it from the project?', function () {
+                    $.rib.fsUtils.rm(projectDir + refPath);
+                    delete pmUtils.resourceRef[refPath];
+                });
+            }
+        } else {
+            console.warn('No reference count for ' + refPath + 'in reduceRefCount');
+        }
+        return;
+    };
+
+    /**
+     * Scan the sandbox resources used by ADM node, and update the
+     * reference count accordingly. If the ADM node is a design, reference
+     * count object will be reset to empty first and then create reference
+     * count for all used resource, otherwise, the reference count will go
+     * up or down according to "upFlag"
+     *
+     * @param {ADMNode} node ADM node to scan.
+     * @param {Boolean} upFlag Flag stands for add(true) or delete(false)
+     *                         reference count for resources used in the node.
+     * @return {Boolean} Return true if succeed, false if failed.
+     */
+    pmUtils.scanADMNodeResource = function (node, upFlag) {
+        var matched, i, p, value;
+        // Only handle ADMNodes
+        node = node || ADM.getDesignRoot();
+        if (!(node instanceof ADMNode)) {
+            return false;
+        }
+        // if the design is Design root
+        if (node.getType() === "Design") {
+            // reset pmUtils.resourceRef
+            pmUtils.resourceRef = {};
+            upFlag = true;
+        }
+        // Find all used sandbox resource nodes and the matched properties
+        matched = node.findNodesByProperty($.rib.pmUtils.relativeFilter);
+        for (i = 0; i < matched.length; i++) {
+            if (!matched[i].properties) {
+                continue;
+            }
+            for (p in matched[i].properties) {
+                value = matched[i].properties[p]
+                upFlag ? $.rib.pmUtils.addRefCount(value) : $.rib.pmUtils.reduceRefCount(value);
+            }
+        }
+        return true;
+    };
+
+    /**
+     * Get status about used resources in current active project.
+     *
+     * @param {String} ref The resource's path relative to project folder.
+     * @return {Object/None} Return an deep copy of reference count object
+     *                       if succeed, null if failed.
+     */
+    pmUtils.usedResources = function () {
+        return $.extend(true, {}, pmUtils.resourceRef);
     };
 
     /************ export pmUtils to $.rib **************/
