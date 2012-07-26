@@ -1348,54 +1348,55 @@ ADMNode.prototype.isHeaderVisible = function () {
 };
 
 /**
- * Check property by several selectors in a filter object.
- * Selectors can specify name, or type, or value. Result will meet all
- * selectors, which meens it will be "AND" effection of all selectors in filter
- * object. In filter object, name and type should all be string, value can be
- * any type, if it is a function or regular expression, it will be treated as
- * check rule to determine if the value matchs or not, for case of function,
- * property value will be passed as parameter.
+ * Check whether the given property of this node matches the given filter.
+ * If a name filter is specified, the property name must be an exact match. If
+ * a type filter is specified, the property type must be an exact match. A
+ * value filter can be a fixed value, RegExp, or function. If specified, the
+ * value must be an exact match of a fixed value, or match the pattern of the
+ * RegExp filter, or the function filter must return a true equivalent value
+ * when the property value is passed as a parameter.
  *
- * @param {Object} filterObj The object contains filter selectors, such as:
- *                           {
- *                               name: "propertyName",
- *                               type: "propertyType",
- *                               value: propertyValue/RegExp/Function
- *                           }
- * @param {String} property Name of property to be checked
- * @param {Any} value The value of the property to be checked
-  @return {Boolean} Return true if matched, else false.
+ * @param {Object} propertyFilter An object containing one or more filters:
+ *                                {
+ *                                    name: string,
+ *                                    type: string,
+ *                                    value: fixed value, RegExp, or function
+ *                                }
+ * @param {String} property Name of the property to be checked.
+ * @param {Any} value [Optional] Value to check against the filter. If left out,
+ *                    the current value is used.
+ * @return {Boolean} Return true if matched, else false.
  */
-ADMNode.prototype.checkProperty = function (filterObj, property, value) {
-    var pType;
-    value = value || this.getProperty(property);
+ADMNode.prototype.propertyMatches = function (propertyFilter, property, value) {
+    var pType, value;
     pType = BWidget.getPropertyType(this.getType(), property);
 
-    // If need to check name, but name not match, check next one
-    if (filterObj.name && property !== filterObj.name)
+    // check property name
+    if (propertyFilter.name && property !== propertyFilter.name)
         return false;
 
-    // If need to check type, but not match, check next one
-    if (filterObj.type && pType !== filterObj.type)
+    // check property type
+    if (propertyFilter.type && pType !== propertyFilter.type)
         return false;
 
-    // Check value, if required.
-    if (filterObj.hasOwnProperty('value')) {
-        if (typeof filterObj.value === "function") {
-            // If check function returns false, check next one
-            if (!filterObj.value(value))
+    // check property value
+    if (propertyFilter.hasOwnProperty('value')) {
+        if (value !== undefined) {
+            value = this.getProperty(property);
+        }
+        if (typeof propertyFilter.value === "function") {
+            // found filter function
+            if (!propertyFilter.value(value))
                 return false;
-
-        } else if (filterObj.value instanceof RegExp) {
-            // If test rule failed, check next one
-            if (!value || !filterObj.value.test(value))
+        } else if (propertyFilter.value instanceof RegExp) {
+            // found filter regexp
+            if (typeof value !== "string" || !propertyFilter.value.test(value))
                 return false;
-
-        } else if (JSON.stringify(value) !== JSON.stringify(filterObj.value)) {
+        } else if (JSON.stringify(value) !== JSON.stringify(propertyFilter.value)) {
             return false;
         }
     }
-    if (filterObj.name || filterObj.type || filterObj.value) {
+    if (propertyFilter.name || propertyFilter.type || propertyFilter.value) {
         return true;
     } else {
         console.warn("Empty filter when check property.");
@@ -1404,46 +1405,52 @@ ADMNode.prototype.checkProperty = function (filterObj, property, value) {
 };
 
 /**
- * Finds nodes in the subtree rooted at this object (inclusive), by property
- * name, or type, or value. Thg result will meet all key-value pairs in filter
- * object, like function "checkProperty". In filter object, name and
- * type should all be string, value can be any type, if it is a function or
- * regular expression, it will be treated as check rule to determine if the
- * value matchs or not, for case of function, property value will be passed
- * as parameter.
+ * Finds nodes in the subtree rooted at this node (inclusive), which have
+ * properties that match the given filter. If a name filter is specified, the
+ * property name must be an exact match. If a type filter is specified, the
+ * property type must be an exact match. A value filter can be a fixed value,
+ * RegExp, or function. If specified, the value must be an exact match of a
+ * fixed value, or match the pattern of the RegExp filter, or the function
+ * filter must return a true equivalent value when the property value is passed
+ * as a parameter.
  *
- * @param {Object} filterObj The object contains filter selectors, such as:
- *                           {
- *                               name: "propertyName",
- *                               type: "propertyType",
- *                               value: propertyValue/RegExp/Function
- *                           }
- * @return {Array} An array of objects, which contians matched ADM node and
- *                      the related properties:
- *                      [
- *                          { node: node1, props: matchedProps},
- *                          { node: node2, props: matchedProps}
- *                          ...
- *                      ]
+ * @param {Object} propertyFilter An object containing one or more filters:
+ *                                {
+ *                                    name: string,
+ *                                    type: string,
+ *                                    value: fixed value, RegExp, or function
+ *                                }
+ * @return {Array} An array of objects with the matching ADM node and an object
+ *                 containing all matching properties:
+ *                 [
+ *                     { node: node1, matches: { name1: value1 } },
+ *                     { node: node2, matches: { name2: value2 } },
+ *                     ...
+ *                 ]
  */
-ADMNode.prototype.findNodeByProperty = function (filterObj) {
-    var children, i, result, matchedProps;
-    result = result || [];
-    matchedProps = this.getProperties(filterObj);
-    // Handle current node
+ADMNode.prototype.findNodesByProperty = function (propertyFilter) {
+    var children, i, result = [], matchedProps;
+    matchedProps = this.getMatchingProperties(propertyFilter);
+
+    // TODO: because properties are statically defined, we could find all the
+    // node types that actually contain matching properties, and filter at the
+    // node level before checking the values
+
+    // handle current node
     if (matchedProps && Object.keys(matchedProps).length > 0) {
-        result.push({ node: this, props: matchedProps});
+        result.push({ node: this, properties: matchedProps});
     };
-    // Scan children
+
+    // recurse on children
     children = this.getChildren();
     for (i = children.length - 1; i >= 0; i--) {
-        result = result.concat(children[i].findNodeByProperty(filterObj));
+        result = result.concat(children[i].findNodesByProperty(propertyFilter));
     }
     return result;
 };
 
 /**
- * Finds the object in the subtree rooted at this object (inclusive), by UID.
+ * Finds a node in the subtree rooted at this node (inclusive), by UID.
  *
  * @param {Number} uid The unique ID of the object to be found.
  * @return {ADMNode} The ADM object with the given UID, or null if not found.
@@ -1959,24 +1966,10 @@ ADMNode.prototype.generateUniqueProperty = function (property) {
 /**
  * Gets the properties defined for this object. If a property is not explicitly
  * set, it will be included with its default value.
- * If filter object is specified, it will find properties by several selectors.
- * Selectors can specify name, or type, or value. Result will meet all
- * selectors, which meens it will be "AND" effection of all selectors in filter
- * object. In filter object, name and type should all be string, value can be
- * any type, if it is a function or regular expression, it will be treated as
- * check rule to determine if the value matchs or not, for case of function,
- * property value will be passed as parameter.
- *
- * @param {Object} filterObj The object contains filter selectors, such as:
- *                           {
- *                               name: "propertyName",
- *                               type: "propertyType",
- *                               value: propertyValue/RegExp/Function
- *                           }
  *
  * @return {Object} Object containing all the defined properties and values.
  */
-ADMNode.prototype.getProperties = function (filterObj) {
+ADMNode.prototype.getProperties = function () {
     var props = {}, defaults, p, value, type = this.getType();
     defaults = BWidget.getPropertyDefaults(type);
     for (p in defaults) {
@@ -1993,11 +1986,6 @@ ADMNode.prototype.getProperties = function (filterObj) {
                     value = defaults[p];
                 }
             }
-            // If the selectors are exist, and the property don't meet them,
-            // then ignore this property
-            if (filterObj && !this.checkProperty(filterObj, p, value)) {
-                continue;
-            }
             props[p] = value;
         }
     }
@@ -2013,6 +2001,52 @@ ADMNode.prototype.getProperties = function (filterObj) {
  */
 ADMNode.prototype.getExplicitProperties = function () {
     return $.extend(true, {}, this._properties);
+};
+
+/**
+ * Gets the properties defined for this object that match the given filter. If
+ * a name filter is specified, only that named property will be returned. If a
+ * type filter is specified, the property type must be an exact match. A value
+ * filter can be a fixed value, RegExp, or function. If specified, the value
+ * must be an exact match of a fixed value, or match the pattern of the RegExp
+ * filter, or the function filter must return a true equivalent value when the
+ * property value is passed as a parameter.
+ *
+ * @param {Object} propertyFilter An object containing one or more filters:
+ *                                {
+ *                                    name: string,
+ *                                    type: string,
+ *                                    value: fixed value, RegExp, or function
+ *                                }
+ *
+ * @return {Object} Object containing all the defined properties and values.
+ */
+ADMNode.prototype.getMatchingProperties = function (propertyFilter) {
+    var p, props = {};
+    if (!propertyFilter || Object.keys(propertyFilter).length == 0) {
+        return props;
+    }
+
+    if (propertyFilter.name) {
+        // get property by name
+        p = this.getProperty(propertyFilter.name);
+        if (p !== undefined && p !== null) {
+            props[propertyFilter.name] = p;
+        }
+    }
+    else {
+        // start with all the properties
+        props = this.getProperties();
+    }
+
+    for (p in props) {
+        // remove properties that don't match the filters
+        if (propertyFilter && !this.propertyMatches(propertyFilter, p,
+                                                    props[p])) {
+            delete props[p];
+        }
+    }
+    return props;
 };
 
 /**
