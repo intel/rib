@@ -139,7 +139,7 @@
         },
 
         refresh: function(event, widget) {
-            var pageWidgets,
+            var pageWidgets, i,
                 model = this.options.model,
                 pages = $('#pages', this.element);
 
@@ -147,25 +147,21 @@
                 pageWidgets = model.getDesignRoot().getChildren();
                 pages.empty();
 
-                for ( var i = 0; i < pageWidgets.length; i ++) {
-                    $('<div>'+(i+1)+'</div>')
+                for (i = 0; i < pageWidgets.length; i++) {
+                    $('<div>' + (i+1) + '</div>')
                         .addClass('pageIcon')
                         .toggleClass('ui-selected',
                             pageWidgets[i] === model.getActivePage())
                         .data('page', pageWidgets[i])
-                        .click(function (e) {
-                            model.setActivePage($(this).data('page'));
-                        })
-                        .hover(function (e) {
-                            $(this).children(':first').show();
-                        }, function (e) {
-                            $(this).children(':first').hide();
-                        })
                         .appendTo(pages);
                 }
+
+                pages.delegate('div', 'click', function () {
+                    model.setActivePage($(this).data('page'));
+                });
             }
             if (!event || !event.name ||
-                event.name !== 'activePageChanged'|| !event.page) {
+                event.name !== 'activePageChanged' || !event.page) {
                 return;
             } else {
                 ($('.pageIcon')[event.page.getZoneIndex()]).scrollIntoView();
