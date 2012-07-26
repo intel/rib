@@ -156,11 +156,6 @@
                         .click(function (e) {
                             model.setActivePage($(this).data('page'));
                         })
-                        .hover(function (e) {
-                            $(this).children(':first').show();
-                        }, function (e) {
-                            $(this).children(':first').hide();
-                        })
                         .appendTo(pages);
                 }
             }
