@@ -335,10 +335,11 @@ $(function() {
                     children = jsObject.children;
                     for (i = 0; i < children.length; i++) {
                         child = children[i];
+                        zone = child.zone || "default";
                         childNode = ADM.createNode(child.type, true);
 
                         // Add child node to current node
-                        if (!admNode.addChildToZone(childNode, child.zone)) {
+                        if (!admNode.addChildToZone(childNode, zone)) {
                             dumplog("add child type "+ child.type + " failed");
                             return false;
                         }
@@ -411,9 +412,12 @@ $(function() {
         if (ADMTreeNode instanceof ADMNode) {
             // Save staff in ADMNode
             var JSObject = {},
-                children, i, props;
+                children, i, props, zone;
             JSObject.type = ADMTreeNode.getType();
-            JSObject.zone = ADMTreeNode.getZone();
+            zone = ADMTreeNode.getZone();
+            if (zone !== "default") {
+                JSObject.zone = zone;
+            }
             props = ADMTreeNode.getExplicitProperties();
             // If there are some explicit properties
             if (typeof props === "object" && Object.keys(props).length > 0) {
