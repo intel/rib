@@ -104,13 +104,18 @@ $(function() {
                     }
                     requestFileSystem(type, grantedBytes, successFS, onError);
                 }, onError);
-                setTimeout(function() {
-                    alert('Persistent storage quota is needed to save your RIB projects.<br>' +
-                        '<br>Please click the "OK" button on up-front bar on the top' +
-                        'to grant the permission.<br>' +
-                        '<br>Otherwise, temporary storage will be used to save your projects.<br>' +
-                        'But temporary storage may be deleted at the browser’s discretion,<br>' +
-                        'for example, if temporary quota exceeded, oldest data will be deleted.');
+                setTimeout(function () {
+                    alert('RIB needs persistent storage space to save your ' +
+                          'projects. That way, you will find your projects ' +
+                          'again when you launch RIB in the future. You can ' +
+                          'always remove the data by going to Settings | ' +
+                          'Under the Hood | Content Settings | All Cookies ' +
+                          'and Site Data.<br>' +
+                          '<br>Please click the "OK" button on the ' +
+                          'infobar above to grant permission.<br>' +
+                          '<br>Otherwise, temporary storage will be used to ' +
+                          'save your projects but they may be deleted at any ' +
+                          'time by your browser.');
                 }, 0);
             } else {
                 requestFileSystem(type, size, successFS, onError);
