@@ -1368,8 +1368,7 @@ ADMNode.prototype.isHeaderVisible = function () {
  * @return {Boolean} Return true if matched, else false.
  */
 ADMNode.prototype.propertyMatches = function (propertyFilter, property, value) {
-    var pType, value;
-    pType = BWidget.getPropertyType(this.getType(), property);
+    var pType = BWidget.getPropertyType(this.getType(), property);
 
     // check property name
     if (propertyFilter.name && property !== propertyFilter.name)
@@ -1381,7 +1380,7 @@ ADMNode.prototype.propertyMatches = function (propertyFilter, property, value) {
 
     // check property value
     if (propertyFilter.hasOwnProperty('value')) {
-        if (value !== undefined) {
+        if (value === undefined) {
             value = this.getProperty(property);
         }
         if (typeof propertyFilter.value === "function") {
@@ -1993,17 +1992,6 @@ ADMNode.prototype.getProperties = function () {
 };
 
 /**
- * Gets all explicitly set properties for this object.
- *
- * @return {Object} Object containing explicitly defined properties and values.
- *                  The object contains deep copies of the properties so they
- *                  are free to be modified by the caller as desired.
- */
-ADMNode.prototype.getExplicitProperties = function () {
-    return $.extend(true, {}, this._properties);
-};
-
-/**
  * Gets the properties defined for this object that match the given filter. If
  * a name filter is specified, only that named property will be returned. If a
  * type filter is specified, the property type must be an exact match. A value
@@ -2047,6 +2035,17 @@ ADMNode.prototype.getMatchingProperties = function (propertyFilter) {
         }
     }
     return props;
+};
+
+/**
+ * Gets all explicitly set properties for this object.
+ *
+ * @return {Object} Object containing explicitly defined properties and values.
+ *                  The object contains deep copies of the properties so they
+ *                  are free to be modified by the caller as desired.
+ */
+ADMNode.prototype.getExplicitProperties = function () {
+    return $.extend(true, {}, this._properties);
 };
 
 /**
