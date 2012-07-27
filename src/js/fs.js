@@ -61,34 +61,61 @@ $(function() {
      * @param {number} size The required size for the file system.
      */
     initFS: function (type, size, success, error) {
-        var onError = error || fsUtils.onError;
-        // Create a temporary sandbox filesystem
-        if (storageInfo && requestFileSystem) {
-            storageInfo.requestQuota(type, size, function(grantedBytes){
-                requestFileSystem(type, grantedBytes, function(filesystem) {
-                    fsUtils.fs = filesystem;
-                    console.log("A sandbox filesystem: "+ fsUtils.fs.name + " is created;");
-                    console.log(fsUtils.fs.name + " type: " + type + ", size: " + size );
-                    // Create a default target window and append it
-                    // to the document.body
-                    if (!$('iframe#'+fsUtils.defaultTarget).length) {
-                        $('<iframe></iframe>')
+        var onError = error || fsUtils.onError, successFS;
+        if(size <= 0) {
+            console.warn("Required size for filesystem should be positive number.");
+            return;
+        }
+        // Create a sandbox filesystem
+        successFS = function (filesystem) {
+            fsUtils.fs = filesystem;
+            console.log("A sandbox filesystem: "+ fsUtils.fs.name + " is created;");
+            console.log(fsUtils.fs.name + " type: " + type + ", size: " + size );
+            // Create a default target window and append it
+            // to the document.body
+            if (!$('iframe#'+fsUtils.defaultTarget).length) {
+                $('<iframe></iframe>')
                     .attr('id', fsUtils.defaultTarget)
                     .css('display', 'none')
                     .appendTo('body');
-                    }
-                    if(success) {
-                        success(filesystem);
-                    }
-                    while (fsUtils.deferredOperations.length > 0) {
-                        var op = fsUtils.deferredOperations.shift();
-                        op.op.apply(this, op.arg);
-                    }
-                }, onError);
-            }, onError);
-        }else{
+            }
+            if(success) {
+                success(filesystem);
+            }
+            while (fsUtils.deferredOperations.length > 0) {
+                var op = fsUtils.deferredOperations.shift();
+                op.op.apply(this, op.arg);
+            }
+        };
+
+        if (!(storageInfo && requestFileSystem)) {
             console.log("File System Not Available");
+            return;
         }
+        // Check the quota
+        storageInfo.queryUsageAndQuota(type, function(usage, quota){
+            // If the quota can't meet requirement, then request more quota
+            if ((type === window.PERSISTENT) && (quota < size)) {
+                storageInfo.requestQuota(type, size, function(grantedBytes){
+                    // If the user click the "cancle" button, then create a temporary fs
+                    if (grantedBytes <= 0) {
+                        type = window.TEMPORARY;
+                        grantedBytes = size;
+                    }
+                    requestFileSystem(type, grantedBytes, successFS, onError);
+                }, onError);
+                setTimeout(function() {
+                    alert('Persistent storage quota is needed to save your RIB projects.<br>' +
+                        '<br>Please click the "OK" button on up-front bar on the top' +
+                        'to grant the permission.<br>' +
+                        '<br>Otherwise, temporary storage will be used to save your projects.<br>' +
+                        'But temporary storage may be deleted at the browser’s discretion,<br>' +
+                        'for example, if temporary quota exceeded, oldest data will be deleted.');
+                }, 0);
+            } else {
+                requestFileSystem(type, size, successFS, onError);
+            }
+        }, onError)
     },
 
     /**
