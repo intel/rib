@@ -498,49 +498,6 @@ $(function() {
         return $.rib.defaultHeaders;
     }
 
-    function getDesignHeaders() {
-        var i, props, el;
-
-        $.rib.designHeaders = $.rib.designHeaders || [];
-        if ($.rib.designHeaders.length > 0)
-            return $.rib.designHeaders;
-
-        props = ADM.getDesignRoot().getProperty('metas');
-        for (i in props) {
-            el = '<meta ';
-            if (props[i].hasOwnProperty('key')) {
-                el = el + props[i].key;
-            }
-            if (props[i].hasOwnProperty('value')) {
-                el = el + '="' + props[i].value + '"';
-            }
-            if (props[i].hasOwnProperty('content')) {
-                el = el + ' content="' + props[i].content + '"';
-            }
-            el = el + '>';
-            $.rib.designHeaders.push(el);
-        }
-        props = ADM.getDesignRoot().getProperty('libs');
-        for (i in props) {
-            el = '<script ';
-            if (props[i].hasOwnProperty('value')) {
-                el = el + 'src="' + props[i].value + '"';
-            }
-            el = el + '></script>';
-            $.rib.designHeaders.push(el);
-        }
-        props = ADM.getDesignRoot().getProperty('css');
-        for (i in props) {
-            el = '<link ';
-            if (props[i].hasOwnProperty('value')) {
-                el = el + 'href="' + props[i].value + '"';
-            }
-            el = el + ' rel="stylesheet">';
-            $.rib.designHeaders.push(el);
-        }
-        return $.rib.designHeaders;
-    }
-
     // create a notice Dialog for user to configure the browser, so that
     // a native dialog can be shown when exporting design or HTML code
     function  createExportDialog () {
@@ -782,9 +739,6 @@ $(function() {
     // Export serialization functions into $.rib namespace
     $.rib.ADMToJSONObj = ADMToJSONObj;
     $.rib.JSONToProj = JSONToProj;
-
     $.rib.getDefaultHeaders = getDefaultHeaders;
-    $.rib.getDesignHeaders = getDesignHeaders;
-
     $.rib.exportPackage = exportPackage;
 });
