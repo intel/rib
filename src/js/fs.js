@@ -19,13 +19,13 @@ window.storageInfo = window.storageInfo || window.webkitStorageInfo;
  * Global object to access File System utils.
  *
  */
-$(function() {
+$(function () {
     var fsUtils = {
     defaultTarget: 'export-target',
     fsType: window.PERSISTENT,
     fsSize: 20*1024*1024,
-    fs:null,
-    deferredOperations:[],
+    fs: null,
+    deferredOperations: [],
     /**
      * Acceptable uploaded file types
      *
@@ -62,24 +62,24 @@ $(function() {
      */
     initFS: function (type, size, success, error) {
         var onError = error || fsUtils.onError, successFS;
-        if(size <= 0) {
-            console.warn("Required size for filesystem should be positive number.");
+        if (size <= 0) {
+            console.warn("Required size for filesystem should be a positive number.");
             return;
         }
         // Create a sandbox filesystem
         successFS = function (filesystem) {
             fsUtils.fs = filesystem;
-            console.log("A sandbox filesystem: "+ fsUtils.fs.name + " is created;");
+            console.log("A sandbox filesystem: " + fsUtils.fs.name + " was created;");
             console.log(fsUtils.fs.name + " type: " + type + ", size: " + size );
             // Create a default target window and append it
             // to the document.body
-            if (!$('iframe#'+fsUtils.defaultTarget).length) {
+            if (!$('iframe#' + fsUtils.defaultTarget).length) {
                 $('<iframe></iframe>')
                     .attr('id', fsUtils.defaultTarget)
                     .css('display', 'none')
                     .appendTo('body');
             }
-            if(success) {
+            if (success) {
                 success(filesystem);
             }
             while (fsUtils.deferredOperations.length > 0) {
@@ -89,14 +89,14 @@ $(function() {
         };
 
         if (!(storageInfo && requestFileSystem)) {
-            console.log("File System Not Available");
+            console.log("Filesystem not available");
             return;
         }
         // Check the quota
-        storageInfo.queryUsageAndQuota(type, function(usage, quota){
+        storageInfo.queryUsageAndQuota(type, function (usage, quota) {
             // If the quota can't meet requirement, then request more quota
             if ((type === window.PERSISTENT) && (quota < size)) {
-                storageInfo.requestQuota(type, size, function(grantedBytes){
+                storageInfo.requestQuota(type, size, function (grantedBytes) {
                     // If the user click the "cancle" button, then create a temporary fs
                     if (grantedBytes <= 0) {
                         type = window.TEMPORARY;
@@ -184,8 +184,8 @@ $(function() {
      *
      * @return {url} url referring to the path.
      */
-    pathToUrl: function (path){
-                   if(typeof path !== "string"){
+    pathToUrl: function (path) {
+                   if (typeof path !== "string") {
                        console.log("String type is needed for file which is to be read.");
                        return false;
                    }
@@ -243,12 +243,12 @@ $(function() {
      * success callback passed the FileEntry referring to the new file.
      * error callback passed the generated error.
      */
-    touch: function (filePath, success, error){
+    touch: function (filePath, success, error) {
                var onError = error || fsUtils.onError;
-               fsUtils.fs.root.getFile(filePath, {create: true, exclusive: true}, function(fileEntry) {
+               fsUtils.fs.root.getFile(filePath, {create: true, exclusive: true}, function (fileEntry) {
                    console.log(fileEntry.fullPath + " is created.");
                    // pass the fileEntry to the success handler
-                   if(success){
+                   if (success) {
                        success(fileEntry);
                    }
                }, onError);
@@ -264,16 +264,16 @@ $(function() {
      * success callback passed the contents of the file.
      * error callback passed the generated error.
      */
-    read: function (path, success, error){
+    read: function (path, success, error) {
               var onError = error || fsUtils.onError;
 
-              fsUtils.pathToEntry(path, function(fileEntry) {
+              fsUtils.pathToEntry(path, function (fileEntry) {
                   // Obtain the File object representing the FileEntry.
                   // Use FileReader to read its contents.
-                  fileEntry.file(function(file) {
+                  fileEntry.file(function (file) {
                       var reader = new FileReader();
 
-                      reader.onloadend = function(e) {
+                      reader.onloadend = function (e) {
                           success(e.target.result);
                       };
                       reader.onError = onError;
@@ -299,7 +299,7 @@ $(function() {
      * success callback passed the FileEntry referring to the file.
      * error callback passed the generated error.
      */
-    write: function (path, contents, success, error, opt_append, binary){
+    write: function (path, contents, success, error, opt_append, binary) {
 
                var onError = error || fsUtils.onError;
                function write(fileEntry) {
@@ -346,7 +346,7 @@ $(function() {
                    if (opt_append) {
                        write(fileEntry);
                    } else {
-                       fsUtils.rm(path, function (){
+                       fsUtils.rm(path, function () {
                            fsUtils.touch(path, write, error);
                        }, onError);
                    }
@@ -378,7 +378,7 @@ $(function() {
             fsUtils.pathToEntry(from, function (entry) {
                 fsUtils.pathToEntry(path.length > 0 ? path.join("/") : "/", function (dest) {
                     entry.copyTo(dest, fileName, function (finalDestination) {
-                        if(success){
+                        if (success) {
                             success(finalDestination);
                         }
                     }, onError);
@@ -406,7 +406,7 @@ $(function() {
             fsUtils.pathToEntry(from, function (entry) {
                 fsUtils.pathToEntry(path.length > 0 ? path.join("/") : "/", function (dest) {
                     entry.moveTo(dest, newName, function (finalDestination) {
-                        if(success){
+                        if (success) {
                             success(finalDestination);
                         }
                     }, onError);
@@ -430,7 +430,7 @@ $(function() {
             fsUtils.fs.root[opt_recursive ? "getDirectory" : "getFile"](path, {create: false}, function (entry) {
                 entry[opt_recursive ? "removeRecursively" : "remove"](function () {
                     console.log(path + ' is removed.');
-                    if(success){
+                    if (success) {
                         success();
                     }
                 }, onError);
@@ -451,7 +451,7 @@ $(function() {
                var onError = error || fsUtils.onError;
                fsUtils.fs.root.getDirectory(path, {create: true}, function (dirEntry) {
                    console.log(path + ' is created.');
-                   if(success){
+                   if (success) {
                        success(dirEntry);
                    }
                }, onError);
@@ -559,7 +559,7 @@ $(function() {
                     // remove the temp input element
                     input.remove();
                 });
-                setTimeout(function() {
+                setTimeout(function () {
                     input.removeClass('hidden-accessible').click();
                     input.addClass('hidden-accessible');
                 }, 0);
@@ -588,7 +588,7 @@ $(function() {
                                    return;
                                }
                                // Write uploaded file to sandbox
-                               fsUtils.write(destDir + file.name, file, function(newFile){
+                               fsUtils.write(destDir + file.name, file, function (newFile) {
                                    success && success(newFile);
                                });
                            };
@@ -620,20 +620,20 @@ $(function() {
              *
              * @return {string} value The value of the cookie record or null if failed.
              */
-            get:function (name) {
+            get: function (name) {
                     var cookies, record, value = null, i;
-                    if(typeof name !== "string") {
+                    if (typeof name !== "string") {
                         console.error("Invalid cookie name.");
                         return value;
                     }
-                    if(document.cookie && document.cookie !== "") {
+                    if (document.cookie && document.cookie !== "") {
                         // split cookie records
                         cookies = document.cookie.split(';');
 
-                        for(i = 0; i < cookies.length; i++) {
+                        for (i = 0; i < cookies.length; i++) {
                             record = $.trim(cookies[i]);
                             // find the record matchs the name
-                            if(record.substring(0, name.length + 1) === (name + '=')) {
+                            if (record.substring(0, name.length + 1) === (name + '=')) {
                                 // get the value
                                 value = decodeURIComponent(record.substring(name.length + 1));
                                 break;
@@ -655,16 +655,16 @@ $(function() {
              */
             set: function (name, value, expires) {
                      var text;
-                     if(typeof name !== "string" || typeof value !== "string") {
+                     if (typeof name !== "string" || typeof value !== "string") {
                          console.error("Invalid cookie name or value.");
                          return false;
                      }
                      text = encodeURIComponent(name) + "=" + encodeURIComponent(value);
-                     if(expires instanceof Date) {
+                     if (expires instanceof Date) {
                          text += "; expires=" + expires.toGMTString();
                      }
                      document.cookie = text;
-                     if(document.cookie && document.cookie !== "") {
+                     if (document.cookie && document.cookie !== "") {
                          return true;
                      } else {
                          console.warn("Failed to set cookie.");
@@ -680,7 +680,7 @@ $(function() {
         fsUtils[opName] = function () {
             if (fsUtils.fs === null)
             {
-                fsUtils.deferredOperations.push({op:oldOp, arg:arguments});
+                fsUtils.deferredOperations.push({op: oldOp, arg: arguments});
                 return;
             }
             else
