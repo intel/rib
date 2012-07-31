@@ -19,7 +19,7 @@
 <g>
 	<polygon fill="#C9D7DB" points="122,30 13,30 13,5 122,5 	"/>
 </g>
-<text transform="matrix(1 0 0 1 47 21.5)" font-family="'OpenSans-Semibold'" font-size="11" id="jqm_header_title">Header</text>
+<text text-anchor="middle" transform="translate(66.5, 21.5)" font-family="'OpenSans-Semibold'" font-size="11" id="jqm_header_title">Header</text>
 <g>
 	<path fill="#9AACB3" d="M24.879,26C20.527,26,17,22.418,17,18c0,-4.418,3.527,-8,7.879,-8h11.242c4.353,0,7.879,3.582,7.879,8,0,4.418,-3.526,8,-7.879,8
 		H24.879z"/>

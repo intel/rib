@@ -27,5 +27,5 @@
 		c0-3.86,3.168-7,7.062-7H114 M113.938,9H20.062C15.609,9,12,12.582,12,17v6c0,4.418,3.609,8,8.062,8h93.875
 		c4.453,0,8.062-3.582,8.062-8v-6C122,12.582,118.391,9,113.938,9L113.938,9z"/>
 </g>
-<text transform="matrix(1 0 0 1 48.3667 23.873)" font-family="'OpenSans-Semibold'" font-size="10" id="jqm_button_title">Button</text>
+<text text-anchor="middle" transform="translate(66.5, 24)" font-family="'OpenSans-Semibold'" font-size="11" id="jqm_button_title">Button</text>
 </svg>
