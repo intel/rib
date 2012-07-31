@@ -234,9 +234,13 @@ $(function () {
         },
 
     /**
-     * Create a file. If the file is already exist, an error will be generated.
+     * Create a file from a full path, also creating any non-existent
+     * directories in the path. If the file already exists, an error
+     * will be generated.
      *
-     * @param {string} filePath The given file path needs to be created.
+     * @param {string} filePath Full path of the file to be created.
+     *                 If the last char of the path is "/", it will
+     *                 be an invalid file path, which triggers error.
      * @param {function(FileEntry)=} opt_successCallback An optional
      * @param {function(FileError)=} opt_errorCallback An optional
      *
@@ -244,14 +248,33 @@ $(function () {
      * error callback passed the generated error.
      */
     touch: function (filePath, success, error) {
-               var onError = error || fsUtils.onError;
-               fsUtils.fs.root.getFile(filePath, {create: true, exclusive: true}, function (fileEntry) {
-                   console.log(fileEntry.fullPath + " is created.");
-                   // pass the fileEntry to the success handler
-                   if (success) {
-                       success(fileEntry);
-                   }
-               }, onError);
+               var index, fileName, destFolder, onError, createFile;
+               onError = error || fsUtils.onError;
+               if (typeof filePath !== "string" || filePath[filePath.length-1] === '/') {
+                   console.error('Invalid file path: "' + filePath + '" when touch file.');
+                   error && error();
+                   return;
+               }
+               createFile = function (destDir, fileName) {
+                   destDir.getFile(fileName, {create: true, exclusive: true}, function (fileEntry) {
+                       dumplog(fileEntry.fullPath + " is created.");
+                       // pass the fileEntry to the success handler
+                       if (success) {
+                           success(fileEntry);
+                       }
+                   }, onError);
+               };
+               index = filePath.lastIndexOf('/');
+               // If there is special parent directory
+               if (index > 0) {
+                   fileName = filePath.substr(index+1, filePath.length);
+                   destFolder = filePath.substr(0, index+1);
+                   fsUtils.mkdir(destFolder, function (destDir) {
+                       createFile(destDir, fileName);
+                   },onError);
+               } else {
+                   createFile(fsUtils.fs.root, filePath);
+               }
            },
 
     /**
@@ -453,9 +476,8 @@ $(function () {
                var onError, createDir;
                onError = error || fsUtils.onError;
                createDir = function (parentDir, folders) {
-                   var dirCheck = /[.\s]/;
-                   // Ignore the invalid folders
-                   if (dirCheck.test(folders[0]) || folders[0].length <= 0) {
+                   // ignore '.'
+                   if (folders[0] === '.' || folders[0].length <= 0) {
                        folders = folders.slice(1);
                    }
                    parentDir.getDirectory(folders[0], {create: true}, function (dirEntry) {
