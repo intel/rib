@@ -24,5 +24,5 @@
 	<path fill="#999999" d="M120,9v20H14V9H120 M121,8H13v22h108V8L121,8z"/>
 </g>
 <rect fill="#627278" width="5" height="38"/>
-<text transform="matrix(1 0 0 1 19 22.7588)" font-family="'OpenSans-Semibold'" font-size="11" id="jqm_simple_list_item_title">Simple List Item</text>
+<text transform="matrix(1 0 0 1 19 22.7588)" font-family="'OpenSans-Semibold'" font-size="11" id="jqm_text_list_item_title">Text List Item</text>
 </svg>

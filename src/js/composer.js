@@ -558,6 +558,7 @@ $(function() {
                     '> .ui-collapsible-content > .adm-node,' +
                     '> ul > li.adm-node,' +
                     '> div.customHeader > .adm-node,' +
+                    '> div > div > a > .adm-node,' +
                     '> *.orig-adm-node:not(.ui-header,.ui-content,.ui-footer)',
                 start: function(event, ui){
                     trackOffsets('start:   ',ui,$(this).data('sortable'));

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg id="Layer_1" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 128 38" xml:space="preserve" height="38px" viewBox="0 0 128 38" width="128px" version="1.1" y="0px" x="0px" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<defs id="defs3">
+  <style id="style5">
+        @font-face {
+            font-family: OpenSans-SemiBold;
+            src: url(&apos;../../fonts/OpenSans-Semibold.ttf&apos;);
+        }
+  </style>
+</defs>
+<g id="g7">
+	<rect id="rect9" width="128" height="38" fill="#FFFFFF"/>
+</g>
+<g id="g11" transform="translate(0,6)">
+	<linearGradient id="SVGID_1_" y2="9.4109" gradientUnits="userSpaceOnUse" x2="66.5" gradientTransform="translate(0,-6)" y1="30.21" x1="66.5">
+		<stop id="stop14" style="stop-color:#DDDDDD;" offset="0"/>
+		<stop id="stop16" style="stop-color:#FDFDFD;" offset="1"/>
+	</linearGradient>
+	<rect id="rect18" style="fill:url(#SVGID_1_);" height="21" width="107" y="9" x="13"/>
+	<path id="path20" style="fill:#999999;" d="M120,9v20h-106v-20h106m1-1h-108v22h108v-22z"/>
+</g>
+<rect id="rect22" width="5" height="38" fill="#627278"/>
+<text id="jqm_thumbnail_list_item_title" y="10.758801" x="13" font-size="11" style="font-size:11px;font-family:OpenSans-Semibold;">Thumbnail List Item</text>
+</svg>

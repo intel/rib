@@ -21,8 +21,27 @@
                     "Boolean": ["#0._hidden_node.jqm_input_boolean"]
                 }
             ],
-            "List Views": [
-                 "List", "OrderedList", "ListItem", "ListDivider", "ListButton"
+            "List Views": [ {
+                    "Ordered List": ["OrderedList", "SimpleListItem", "ListDivider"],
+                    "Unordered Lists": [ {
+                            "Single Lists": [ {
+                                    "Simple Single List": ["SimpleList", "SimpleListItem", "ListDivider"],
+                                    "Button Single List": ["ButtonList", "ButtonListItem", "ListButton", "ListDivider"],
+                                    "Text Single List": ["TextList", "TextListItem", "ListDivider", "TextButton"],
+                                    "Icon Single List": ["IconList", "IconListItem", "IconButton", "ListDivider"],
+                                    "Thumbnail Single List": ["ThumbnailList", "ThumbnailListItem", "ThumbnailButton", "ListDivider"]
+                                }
+                            ],
+                            "Split Lists": [ {
+                                    "Simple Split List": ["SimpleSplitList", "SimpleSplitListItem"],
+                                    "Text Split List": ["TextSplitList", "TextSplitListItem", "TextButton"],
+                                    "Icon Split List": ["IconSplitList", "IconSplitListItem", "IconButton"],
+                                    "Thumbnail Split List": ["ThumbnailSplitList", "ThumbnailSplitListItem", "ThumbnailButton"]
+                                }
+                            ]
+                        }
+                    ]
+                }
             ],
             "Image": ["Image"]
         }
