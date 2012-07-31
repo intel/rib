@@ -438,9 +438,11 @@ $(function () {
         },
 
     /**
-     * Create a directory.
+     * Create directory, making parent directories as needed recursively.
+     * If any folder in the path doesn't exist, this function will create
+     * parent directory first.
      *
-     * @param {string} path String path referring to the directory needs to be created.
+     * @param {string} path Full path of the directory to be created.
      * @param {function(DirectoryEntry)=} opt_successCallback An optional
      * @param {function(FileError)=} opt_errorCallback An optional
      *
@@ -448,13 +450,24 @@ $(function () {
      * error callback passed the generated error.
      */
     mkdir: function (path, success, error) {
-               var onError = error || fsUtils.onError;
-               fsUtils.fs.root.getDirectory(path, {create: true}, function (dirEntry) {
-                   console.log(path + ' is created.');
-                   if (success) {
-                       success(dirEntry);
+               var onError, createDir;
+               onError = error || fsUtils.onError;
+               createDir = function (parentDir, folders) {
+                   var dirCheck = /[.\s]/;
+                   // Ignore the invalid folders
+                   if (dirCheck.test(folders[0]) || folders[0].length <= 0) {
+                       folders = folders.slice(1);
                    }
-               }, onError);
+                   parentDir.getDirectory(folders[0], {create: true}, function (dirEntry) {
+                       if (folders.length > 1) {
+                           createDir(dirEntry, folders.slice(1));
+                       } else {
+                           success && success(dirEntry);
+                       }
+                   }, onError);
+               };
+               // Create the folders in the root directory
+               createDir(fsUtils.fs.root, path.split('/'));
            },
 
     /**
