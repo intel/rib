@@ -613,7 +613,7 @@ var BWidgetRegistry = {
     ButtonGroup: {
         parent: "Base",
         dragHeader: true,
-        paletteImageName: "jqm_vertical_button_group.svg",
+        paletteImageName: "jqm_button_group.svg",
         template: '<div data-role="controlgroup"></div>',
         displayLabel: "Button Group",
         zones: [
