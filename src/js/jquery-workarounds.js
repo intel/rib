@@ -374,13 +374,22 @@ jQuery.extend = jQuery.fn.extend = function() {
         target = arguments[0] || {},
         i = 1,
         length = arguments.length,
-        replaceArray = false;
+        replaceArray = false,
         deep = false;
 
     // Handle a deep copy situation
     if ( typeof target === "boolean" ) {
         deep = target;
-        target = arguments[1] || {};
+
+        ////////////////////////////////////////////////////////////////////////
+        // Start of RIB changes
+        // arguments[1] may be "false" when replaceArray is specified,
+        // we shouldn't assign {} to target in this case
+        // target = arguments[1] || {};
+        target = arguments[1];
+        // End of RIB changes
+        ////////////////////////////////////////////////////////////////////////
+
         // skip the boolean and the target
         i = 2;
     }
@@ -395,6 +404,7 @@ jQuery.extend = jQuery.fn.extend = function() {
         // skip the boolean and the target
         i = 3;
     }
+    target = target || {};
     // End of RIB changes
     ////////////////////////////////////////////////////////////////////////////
 
@@ -442,7 +452,11 @@ jQuery.extend = jQuery.fn.extend = function() {
                     }
 
                     // Never move original objects, clone them
-                    target[ name ] = jQuery.extend( deep, clone, copy );
+                    ////////////////////////////////////////////////////////////
+                    // Start of RIB changes
+                    target[ name ] = jQuery.extend( deep, replaceArray, clone, copy );
+                    // End of RIB changes
+                    ////////////////////////////////////////////////////////////
 
                     // Don't bring in undefined values
                 } else if ( copy !== undefined ) {
