@@ -104,6 +104,9 @@
                 widget.moveNode(event.node, event.oldParent);
                 break;
             case "propertyChanged":
+                if (event.node && event.node.getType() === 'Design') {
+                    break;
+                }
                 widget.removeNode(event.node);
                 widget.addNode(event.node);
                 widget.setSelected(widget._getSelected());

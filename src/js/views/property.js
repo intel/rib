@@ -64,6 +64,9 @@
             if (event) {
                 if (event.node && !(event.name === "modelUpdated" &&
                     event.type === "nodeRemoved")) {
+                    if (event.type === "propertyChanged" && event.node.getType() === 'Design') {
+                        return;
+                    }
                     widget._showProperties(event.node);
                 } else {
                     node = ADM.getActivePage();
