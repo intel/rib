@@ -636,14 +636,12 @@ $(function() {
         }
         ribFile && zip.add(projName + ".json", ribFile);
         resultHTML = generateHTML(null, function (admNode, domNode) {
-            var urlPath, projectDir, matched, p;
+            var matched, p;
             matched = admNode.getMatchingProperties($.rib.pmUtils.relativeFilter);
-            projectDir = $.rib.pmUtils.ProjectDir + "/" + pid + "/";
             // Add uploaded images to the needed list
             for (p in matched) {
-                urlPath = $.rib.fsUtils.pathToUrl(projectDir + matched[p].replace(/^\//, ""));
                 files.push({
-                    "src": urlPath,
+                    "src": toSandboxUrl(matched[p]),
                     "dst": matched[p]
                 });
             }
@@ -714,6 +712,22 @@ $(function() {
         return;
     }
 
+    function toSandboxUrl (path, pid) {
+        var projectDir, fullPath;
+        pid = pid || $.rib.pmUtils.getActive();
+        projectDir = $.rib.pmUtils.getProjectDir(pid);
+        if (typeof path !== "string") {
+            console.error("Invalid path in toSandboxUrl: " + path);
+            return null;
+        }
+        fullPath = path;
+        // If the first char is '/', then it will be the absolute path in sandbox
+        if (path[0] !== '/' && projectDir) {
+            fullPath = projectDir + path;
+        }
+        return $.rib.fsUtils.pathToUrl(fullPath);
+    }
+
     /***************** export functions out *********************/
     $.rib.useSandboxUrl = function (admNode, domNode) {
         var projectDir, urlPath, matched, p, attrObject, pid;
@@ -736,6 +750,65 @@ $(function() {
         }
         return;
     };
+
+    /**
+     * Add custom file to current active project.
+     * It will save the content in project folder. If the parent directy of
+     * filePath doesn't exist, it will be created.
+     *
+     * @param {String} filePath Path to save the file. If the first of the path
+     *                 is "/", it will be taken as absolute path, else it will
+     *                 be considered as relative to project folder,
+     * @param {String} type Type of the custom file.
+     * @param {string/File/Blob} contents Content Data of custom file.
+     *
+     * @return {None}
+     */
+    $.rib.addCustomFile = function (filePath, type, contents, success, error) {
+        var destPath, addToDesign, projectDir;
+        projectDir = $.rib.pmUtils.getProjectDir();
+        // If it is relative path, then add the project folder path
+        if (filePath[0] !== '/' && projectDir) {
+            destPath = projectDir + filePath;
+        } else {
+            destPath = filePath;
+        }
+        addToDesign = function (type, value) {
+            var design, array, property, propertyMap, i, temp;
+            propertyMap = {
+                css: 'css',
+                js: 'libs'
+            };
+            design = ADM.getDesignRoot();
+            property = propertyMap[type];
+            temp = $.extend(true, {}, {
+                property: property,
+                value: design.getProperty(property)
+            });
+            array = temp.value;
+            for (i = 0; i < array.length; i++) {
+                // If the value is in headers, then just return.
+                if (JSON.stringify(array[i]) === JSON.stringify(value)) {
+                    return;
+                }
+            }
+            // If the value is not in array, then push the value in the list
+            array.push(value);
+            // set the new array back
+            design.setProperty(property, array);
+            return;
+        };
+        // Write contents to sandbox
+        $.rib.fsUtils.write(destPath, contents, function (newFile) {
+            var headerValue = {
+                'inSandbox': true,
+                'value': filePath
+            };
+            addToDesign(type, headerValue);
+            success && success(newFile);
+        }, error);
+    };
+
     // Export serialization functions into $.rib namespace
     $.rib.ADMToJSONObj = ADMToJSONObj;
     $.rib.JSONToProj = JSONToProj;

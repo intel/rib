@@ -139,6 +139,21 @@ $(function () {
         return pmUtils._activeProject;
     };
 
+    /* Get project folder path in sandbox, if pid is not specified, then
+     * return the project directory of active project.
+     *
+     * @param {String} pid Project id.
+     * @return {String/Null} The project folder path.
+     */
+    pmUtils.getProjectDir = function (pid) {
+        pid = pid || pmUtils._activeProject;
+        if (!pid) {
+            return null;
+        } else {
+            return pmUtils.ProjectDir + "/" + pid + "/";
+        }
+    };
+
     /**
      * Get properties of a specified project.
      *
