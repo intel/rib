@@ -1453,6 +1453,18 @@ ADMNode.prototype.hasUserVisibleDescendants = function () {
 };
 
 /**
+ * Change this node to another type
+ *
+ * @param {String} type The type this node will morph to.
+ * @return {ADMNode} The morphed node.
+ */
+ADMNode.prototype.morphTo = function (type) {
+    var morphedChild = ADM.createNode(type);
+    this._inheritance = morphedChild._inheritance;
+    this._zones = morphedChild._zones;
+    return this;
+};
+/**
  * Adds given child object to this object, generally at the end of the first
  * zone that accepts the child.
  *
@@ -1519,11 +1531,19 @@ ADMNode.prototype.addChild = function (child, dryrun) {
 ADMNode.prototype.addChildToZone = function (child, zoneName, zoneIndex,
                                              dryrun) {
     // requires: assumes cardinality is "N", or a numeric string
-    var add = false, myType, childType, zone, cardinality, limit;
+    var add = false, myType, childType, zone, cardinality, limit, morph,
+        morphedChildType, morphedChild;
     myType = this.getType();
     childType = child.getType();
     zone = this._zones[zoneName];
 
+    morph = BWidget.getZone(myType, zoneName).morph;
+    if (morph) {
+        morphedChildType = morph(childType, myType);
+        if (morphedChildType !== childType) {
+            childType = morphedChildType;
+        }
+    }
     if (!BWidget.zoneAllowsChild(myType, zoneName, childType)) {
         if (!dryrun) {
             console.warn("Warning: zone " + zoneName +
@@ -1630,7 +1650,8 @@ ADMNode.prototype.insertChildInZone = function (child, zoneName, index,
         }
     }
 
-    var zone = this._zones[zoneName];
+    var zone = this._zones[zoneName],
+        myType, childType, morph, morphedChildType;
     if (!zone) {
         console.error("Error: zone not found in insertChildInZone: " +
                       zoneName);
@@ -1642,6 +1663,14 @@ ADMNode.prototype.insertChildInZone = function (child, zoneName, index,
     }
     if (child instanceof ADMNode) {
         if (!dryrun) {
+            myType = this.getType();
+            childType = child.getType();
+            morph = BWidget.getZone(myType, zoneName).morph;
+            if (morph) {
+                morphedChildType = morph(childType, myType);
+                if (morphedChildType != childType)
+                    child.morphTo(morphedChildType);
+            }
             zone.splice(index, 0, child);
 
             setRootRecursive(child, this._root);
