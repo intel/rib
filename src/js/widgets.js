@@ -159,6 +159,8 @@ var BCommonProperties = {
  *                 of this zone.
  *   6) itemWrapper: an HTML tag used to wrapp a child node before appending
  *                   to the zone
+ *   7) morph: function used to change the child type to another type before
+ *             adding it to the zone
  *
  * The "properties" of each widget definition is an object, each property of
  * which names a property of the widget. These are objects with the following
@@ -3440,7 +3442,7 @@ var BWidget = {
      *                 found.
      */
     zoneAllowsChild: function (parentType, zone, childType) {
-        var parent, child, zones, i, allow, deny;
+        var parent, child, zones, i, allow, deny, morph;
         parent = BWidgetRegistry[parentType];
         child = BWidgetRegistry[childType];
         if ((typeof parent !== "object") || (typeof child !== "object")) {
@@ -3451,6 +3453,9 @@ var BWidget = {
         if (zones && zones.length > 0) {
             for (i = zones.length - 1; i >= 0; i--) {
                 if (zones[i].name === zone) {
+                    morph = BWidget.getZone(parentType, zone).morph;
+                    if (morph)
+                        childType = morph(childType, parentType);
                     allow = zones[i].allow;
                     if (allow) {
                         return BWidget.isTypeInList(childType, allow);
