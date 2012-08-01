@@ -3375,15 +3375,23 @@ var BWidget = {
         //  returns: true, if type is the list string, or type is one of the
         //                 strings in list
         //           false, otherwise, or if list is invalid
-        var i;
+        var i, parentType = type,
+        isType = function (srcType, targetType) {
+            if (srcType === targetType)
+                return true;
+            while (srcType && (srcType = BWidgetRegistry[srcType].parent)) {
+                if (srcType === targetType)
+                    return true;
+            }
+            return false;
+        };
         if (list) {
-            if (type === list) {
+            if (isType(type, list)) {
                 return true;
             } else if (list.length > 0) {
                 for (i = list.length - 1; i >= 0; i--) {
-                    if (type === list[i]) {
+                    if (isType(type, list[i]))
                         return true;
-                    }
                 }
             }
         }
