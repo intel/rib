@@ -598,49 +598,7 @@ $(function () {
                     input.removeClass('hidden-accessible').click();
                     input.addClass('hidden-accessible');
                 }, 0);
-            },
-
-    /**
-     * Trigger an native dialog to upload file in a container,
-     * and save the file in a parent directory. If the parent directy is not exist,
-     * it will be create, but it only work once, if the grandparent directory is not
-     * exist, it will report error.
-     *
-     * @param {String} type File type to upload
-     * @param {String} destDir Directory where the uploaded file to be saved in
-     * @param {Jquery Object} container DOM element where native dialog will be triggered
-     * @param {function(File)=} success Success callback with uploaded file as its parameter
-     * @param {function()=} error Error callback
-     *
-     * @return {None}
-     */
-    uploadAndSave: function (fileType, destDir, container, success, error) {
-                       var handler = function (file) {
-                           var successHandler, errorCreateDir;
-                           successHandler = function (dirEntry) {
-                               if (!dirEntry.isDirectory) {
-                                   console.error(dirEntry.fullPath + " is not a directory in sandbox.");
-                                   return;
-                               }
-                               // Write uploaded file to sandbox
-                               fsUtils.write(destDir + file.name, file, function (newFile) {
-                                   success && success(newFile);
-                               });
-                           };
-                           errorCreateDir = function (e) {
-                               if (e.code === FileError.NOT_FOUND_ERR) {
-                                   // Create a Untitled project and open it in onEnd function
-                                   fsUtils.mkdir(destDir, successHandler);
-                               } else {
-                                   fsUtils.onError(e);
-                                   error && error();
-                               }
-                           };
-                           fsUtils.pathToEntry(destDir, successHandler, errorCreateDir);
-                       };
-
-                       fsUtils.upload(fileType, container, handler, error)
-                   }
+            }
     },
 
         /**
