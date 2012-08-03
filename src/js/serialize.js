@@ -77,13 +77,29 @@ $(function () {
         attrName = BWidget.getPropertyHTMLAttribute(node.getType(), propName);
         propValue = newValue || node.getProperty(propName);
         attrValue = propValue;
+        if (typeof attrName === "function") {
+            attrName = attrName(propValue);
+        }
         if (typeof attrName  === "object") {
             attrMap = attrName;
             attrName = attrMap.name;
-            if (typeof attrMap.value  === "function")
-                attrValue = attrMap.value(propValue);
-            else
-                attrValue = attrMap.value[propValue];
+            attrValue = attrMap.value;
+            switch(typeof(attrValue)) {
+                case "function":
+                    attrValue = attrValue(propValue);
+                    break;
+                case "object":
+                    attrValue = attrValue[propValue];
+                    break;
+                case "string":
+                    break;
+                case "undefined":
+                    break;
+                case "boolean":
+                    break;
+                default:
+                    throw "attrValue type can not be handled";
+            }
         }
         return {"name": attrName,
                 "value": attrValue};

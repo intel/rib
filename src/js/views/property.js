@@ -396,6 +396,7 @@
                                         var o, items = "", pages, id,
                                             value = e.data.value, p = e.data.p;
 
+                                        items += '<li>previous page</li>';
                                         pages = ADM.getDesignRoot().getChildren();
                                         for (o = 0; o < pages.length; o++) {
                                             id = pages[o].getProperty('id');
@@ -428,10 +429,14 @@
                     default:
                         // handle property has options
                         if (options[p]) {
-                            $('<select size="1">')
-                                .attr('id', valueId)
-                                .addClass('title')
-                                .appendTo(value);
+                            $('<select size="1">').attr('id', valueId)
+                                    .addClass('title')
+                                    .appendTo(value);
+                            if (type === 'Button' && p === 'opentargetas'
+                                && node.getProperty('target') ===
+                                    'previous page') {
+                                value.find('#'+valueId).attr('disabled', 'disabled');
+                            }
                             //add options to select list
                             for (o in options[p]) {
                                 //TODO make it simple
@@ -471,8 +476,12 @@
                         value = validValue($(this),
                             BWidget.getPropertyType(node.getType(), updated));
                         ret = ADM.setProperty(node, updated, value);
-                        if(ret.result === false) {
+                        type = node.getType();
+                        if (ret.result === false) {
                             $(this).val(node.getProperty(updated));
+                        } else if (type === "Button" &&
+                            value === "previous page") {
+                            ADM.setProperty(node, "opentargetas", "default");
                         }
                         event.stopPropagation();
                         return false;
