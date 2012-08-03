@@ -2619,7 +2619,7 @@ var BWidget = {
     init: function () {
         // effects: add the type and displayLabel properties to widget
         //          registry objects
-        var type, parentName;
+        var type, parentName, newZones, descendantZone, descendantZoneIndex;
         for (type in BWidgetRegistry) {
             if (BWidgetRegistry.hasOwnProperty(type)) {
                 BWidgetRegistry[type].type = type;
@@ -2657,6 +2657,26 @@ var BWidget = {
                 }
                 parentName = BWidgetRegistry[type].parent;
                 while (parentName) {
+                    if (BWidgetRegistry[parentName].zones) {
+                        newZones = [];
+                        $.each(BWidgetRegistry[parentName].zones, function (i, pZone) {
+                            descendantZone = null;
+                            if (BWidgetRegistry[type].zones)
+                            $.each(BWidgetRegistry[type].zones, function (i, zone) {
+                                if (pZone.name === zone.name) {
+                                    descendantZone = zone;
+                                    descendantZoneIndex = i;
+                                    return false;
+                                }
+                            });
+                            if (descendantZone)
+                                BWidgetRegistry[type].zones[descendantZoneIndex] = $.extend(true, true, {}, pZone, descendantZone);
+                            else
+                                newZones.push(pZone);
+                        });
+                        if(BWidgetRegistry[type].zones)
+                            $.merge(BWidgetRegistry[type].zones, newZones);
+                    }
                     BWidgetRegistry[type] = $.extend(true, true, {}, BWidgetRegistry[parentName], BWidgetRegistry[type]);
                     parentName = BWidgetRegistry[parentName].parent;
                 }
