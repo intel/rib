@@ -14,7 +14,7 @@
         {
             "Toolbars": ["#0._hidden_node.jqm_toolbars"],
             "Buttons": ["Button", "ButtonGroup"],
-            "Content Formatting": ["Grid", "Collapsible", "Accordion"],
+            "Content Formatting": ["Grid", "Collapsible", "Accordion", "Div"],
             "Form Elements": [
                 "#0._hidden_node.jqm_other_inputs.0", "Text",
                 {
@@ -30,7 +30,7 @@
 
     "Widget Sets": [
         {
-            "Simple HTML": [ "Text", "Image" ],
+            "Simple HTML": [ "Text", "Image", "Div" ],
             "jQuery Mobile": [ 
                 "#0._hidden_node.jqm_toolbars",
                 "#0.Functional Groups.0.Buttons",

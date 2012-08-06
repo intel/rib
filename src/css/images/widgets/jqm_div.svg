@@ -1,0 +1,34 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+    "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg contentScriptType="text/ecmascript" zoomAndPan="magnify" xmlns:xlink="http://www.w3.org/1999/xlink" baseProfile="full"
+    contentStyleType="text/css" id="Layer_1" enable-background="new 0 0 128 63" version="1.1" xml:space="preserve"
+    width="128px" preserveAspectRatio="xMidYMid meet" viewBox="0 0 128 63" height="63px" xmlns="http://www.w3.org/2000/svg"
+    x="0px" y="0px">
+    <defs>
+        <style>     <![CDATA[
+        @font-face {
+            font-family: OpenSans-SemiBold;
+            src: url('../../fonts/OpenSans-Semibold.ttf');
+        }
+    ]]>   </style> </defs>
+    <g>
+        <rect fill="#FFFFFF" width="128" height="63"/>
+        <path fill="#698A97" d="M122,0h-4v1h4V0L122,0z M116,0h-4v1h4V0L116,0z M110,0h-4v1h4V0L110,0z
+            M104,0h-4v1h4V0L104,0z M98,0h-4v1 h4V0L98,0z M92,0h-4v1h4V0L92,0z M86,0h-4v1h4V0L86,0z M80,0h-4v1h4V0L80,0z
+            M74,0h-4v1h4V0L74,0z M68,0h-4v1h4V0L68,0z M62,0h-4v1 h4V0L62,0z M56,0h-4v1h4V0L56,0z M50,0h-4v1h4V0L50,0z
+            M44,0h-4v1h4V0L44,0z M38,0h-4v1h4V0L38,0z M32,0h-4v1h4V0L32,0z M26,0h-4v1 h4V0L26,0z M20,0h-4v1h4V0L20,0z
+            M14,0h-4v1h4V0L14,0z M8,0H4v1h4V0L8,0z M2,0H0v1l0,0c0,0.5,0,1,0,1h1V1h1V0L2,0z M1,4H0v4h1V4 L1,4z
+            M1,10H0v4h1V10L1,10z M1,16H0v4h1V16L1,16z M1,22H0v4h1V22L1,22z M1,28H0v4h1V28L1,28z M1,34H0v4h1V34L1,34z
+            M1,40H0v4h1V40 L1,40z M1,46H0v4h1V46L1,46z M1,52H0v4h1V52L1,52z M1,58H0v4h1V58L1,58z M5,62H1v1h4V62L5,62z
+            M11,62H7v1h4V62L11,62z M17,62h-4v1 h4V62L17,62z M23,62h-4v1h4V62L23,62z M29,62h-4v1h4V62L29,62z
+            M35,62h-4v1h4V62L35,62z M41,62h-4v1h4V62L41,62z M47,62h-4v1h4V62 L47,62z M53,62h-4v1h4V62L53,62z
+            M59,62h-4v1h4V62L59,62z M65,62h-4v1h4V62L65,62z M71,62h-4v1h4V62L71,62z M77,62h-4v1h4V62L77,62 z
+            M83,62h-4v1h4V62L83,62z M89,62h-4v1h4V62L89,62z M95,62h-4v1h4V62L95,62z M101,62h-4v1h4V62L101,62z
+            M107,62h-4v1h4V62L107,62z M113,62h-4v1h4V62L113,62z M119,62h-4v1h4V62L119,62z M125,62h-4v1h4V62L125,62z
+            M128,60h-1v2l0,0v1h1V60L128,60z M128,54h-1v4h1 V54L128,54z M128,48h-1v4h1V48L128,48z
+            M128,42h-1v4h1V42L128,42z M128,36h-1v4h1V36L128,36z M128,30h-1v4h1V30L128,30z M128,24h-1 v4h1V24L128,24z
+            M128,18h-1v4h1V18L128,18z M128,12h-1v4h1V12L128,12z M128,6h-1v4h1V6L128,6z M128,0h-4v1h3v3h1V0L128,0z"/> </g>
+    <rect fill="#698A97" height="22" width="128"/>
+    <text fill="#FFFFFF" id="jqm_collapsible_title" font-size="11" font-family="'OpenSans-Semibold'" transform="matrix(1 0 0 1 9 15.4258)">Div</text>
+    <rect x="7.75" y="28.5" fill="none" width="112.25" stroke-dasharray="2,2" height="25.5" stroke="#000000"/></svg>

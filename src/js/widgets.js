@@ -1515,6 +1515,23 @@ var BWidgetRegistry = {
     },
 
     /**
+     * Represents a div element.
+     */
+
+    Div: {
+        parent: "Base",
+        dragHeader: true,
+        paletteImageName: "jqm_div.svg",
+        template: '<div class="div-widget"></div>',
+        zones: [
+            {
+                name: "default",
+                cardinality: "N"
+            }
+        ]
+    },
+
+    /**
      * Represents a grid element.
      */
     Grid: {
