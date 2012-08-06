@@ -944,6 +944,7 @@ div.propertyItems label[for|=id] {
 .paletteView {
     overflow: auto;
     padding: 2px;
+    cursor: pointer;
 }
 .paletteView .columns {
     text-align: center;
