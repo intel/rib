@@ -1374,9 +1374,22 @@ div.propertyItems label[for|=id] {
 }
 
 .projectBox .content {
-    padding: 8px;
+    padding: 6px;
+}
+.thumbnail-wrapper {
+    overflow:hidden;
+    -webkit-box-shadow: .1em .1em .2em .15em #595b55;
+    border: 2px solid #fff;
+    -webkit-border-radius: 10px;
+    width: 120px;
+    height: 124px;
 }
 .thumbnail {
+    position: relative;
+    top: 0px;
+    left: 0px;
+    display: inline-block;
+    background-color: white;
 }
 .rightSide {
     font-family: OpenSans;

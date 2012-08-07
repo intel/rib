@@ -354,7 +354,14 @@
 
             widget = widget || this;
 
-            if (!widget.element.data('visible')) return;
+            /*
+             * TODO: With this line, thumbnail will not show up until
+             * the live view be visible for at least one time.
+             * So, comment this line out, we need to generate thumbnail when
+             * RIB starts. But, this influence performance. Better method may
+             * need to be used later.
+             */
+             // if (!widget.element.data('visible')) return;
 
             iframe = widget.options.iframe;
             if (iframe.length) {
@@ -389,6 +396,7 @@
                         // prevent user drags from selecting UI text
                         "-webkit-user-select": "none"
                     });
+                    $.rib.pmUtils.updateThumbnail(liveDoc);
                 });
                 liveDoc = widget.options.contentDocument[0];
                 liveDoc.open();
