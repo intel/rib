@@ -1236,8 +1236,7 @@ var BWidgetRegistry = {
             },
             checked: BCommonProperties.checked,
             theme: BCommonProperties.theme,
-            disabled: BCommonProperties.disabled,
-            nativecontrol: BCommonProperties.nativecontrol
+            disabled: BCommonProperties.disabled
         },
         delegate: 'parent',
         template: function (node) {
