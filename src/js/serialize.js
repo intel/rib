@@ -27,6 +27,14 @@ var DEBUG = true,
             'unformatted': ['a', 'script', 'title']
         });
     },
+    dumplog = function (loginfo){
+        if (DEBUG && (typeof loginfo === "string")){
+            console.log(loginfo);
+        }
+        return;
+    };
+
+$(function() {
 
     /**
      * Generate HTML from ADM tree.
@@ -36,7 +44,7 @@ var DEBUG = true,
      *
      * @return {Object} return an object contains generated DOM object and related html string
      */
-    generateHTML = function (design, extraHandler) {
+    function generateHTML (design, extraHandler) {
         design = design || ADM.getDesignRoot();
         var doc = constructNewDocument($.rib.getDefaultHeaders(design));
 
@@ -54,9 +62,9 @@ var DEBUG = true,
         return { doc: doc,
                  html: formatHTML(xmlserializer.serializeToString(doc))
         };
-    },
+    }
 
-    getPropertyDomAttribute = function (node, propName, newValue) {
+    function getPropertyDomAttribute (node, propName, newValue) {
         var attrName, attrMap, attrValue, propValue;
         attrName = BWidget.getPropertyHTMLAttribute(node.getType(), propName);
         propValue = newValue || node.getProperty(propName);
@@ -71,9 +79,9 @@ var DEBUG = true,
         }
         return {"name": attrName,
                 "value": attrValue};
-    },
+    }
 
-    serializeADMNodeToDOM = function (node, domParent) {
+    function serializeADMNodeToDOM (node, domParent) {
         var uid, type, pid, selector,
             parentSelector = 'body',
             parentNode = null,
@@ -226,9 +234,9 @@ var DEBUG = true,
         }
 
         return widget;
-    },
+    }
 
-    serializeADMSubtreeToDOM = function (node, domParent, renderer) {
+    function serializeADMSubtreeToDOM (node, domParent, renderer) {
         var isContainer = false,
             domElement;
 
@@ -257,38 +265,29 @@ var DEBUG = true,
 
         // 4. Return (anything?)
         return;
-    };
-function constructNewDocument(headers) {
-    var doc = document.implementation.createHTMLDocument('title'),
-        head = $(doc.head),
-        tmpHead = '', i;
+    }
 
-    if (headers && headers.length > 0) {
-        for (i=0; i < headers.length; i++) {
-            if (headers[i].match('<script ')) {
-                // Need this workaround since appendTo() causes the script
-                // to get parsed and then removed from the DOM tree, meaning
-                // it will not be in any subsequent Serialization output later
-                tmpHead = head[0].innerHTML;
-                head[0].innerHTML = tmpHead+headers[i];
-            } else {
-                $(headers[i]).appendTo(head);
+    function constructNewDocument(headers) {
+        var doc = document.implementation.createHTMLDocument('title'),
+            head = $(doc.head),
+            tmpHead = '', i;
+
+        if (headers && headers.length > 0) {
+            for (i=0; i < headers.length; i++) {
+                if (headers[i].match('<script ')) {
+                    // Need this workaround since appendTo() causes the script
+                    // to get parsed and then removed from the DOM tree, meaning
+                    // it will not be in any subsequent Serialization output later
+                    tmpHead = head[0].innerHTML;
+                    head[0].innerHTML = tmpHead+headers[i];
+                } else {
+                    $(headers[i]).appendTo(head);
+                }
             }
         }
+        return doc;
     }
 
-    return doc;
-}
-
-function dumplog(loginfo){
-    if (DEBUG && (typeof loginfo === "string")){
-        console.log(loginfo);
-    }
-    return;
-}
-
-
-$(function() {
     /*******************************************************
      * JSON to ADM Direction
      ******************************************************/
@@ -810,6 +809,8 @@ $(function() {
     };
 
     // Export serialization functions into $.rib namespace
+    $.rib.generateHTML = generateHTML;
+    $.rib.serializeADMSubtreeToDOM = serializeADMSubtreeToDOM;
     $.rib.ADMToJSONObj = ADMToJSONObj;
     $.rib.JSONToProj = JSONToProj;
     $.rib.getDefaultHeaders = getDefaultHeaders;

@@ -338,7 +338,7 @@
         _serializeADMDesignToDOM: function() {
             this.options.contentDocument.find('body >  div[data-role="page"]')
                 .remove();
-            serializeADMSubtreeToDOM(this.designRoot, null, this._renderer);
+            $.rib.serializeADMSubtreeToDOM(this.designRoot, null, this._renderer);
         },
 
         _renderer: function (admNode, domNode) {

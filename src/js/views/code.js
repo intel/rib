@@ -56,7 +56,7 @@
 
             if (!widget.element.data('visible')) return;
 
-            self._htmlDoc = generateHTML();
+            self._htmlDoc = $.rib.generateHTML();
             textCode = $(self.element).find('#text-code');
 
             if (textCode.length === 0) {
