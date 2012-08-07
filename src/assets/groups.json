@@ -22,8 +22,6 @@
                 }
             ],
             "List Views": [ {
-                    "Ordered List": ["OrderedList", "SimpleListItem", "ListDivider"],
-                    "Unordered Lists": [ {
                             "Single Lists": [
                                     "SimpleList",
                                     "ButtonList",
@@ -41,8 +39,6 @@
                                     "SimpleListItem",
                                     "ListDivider"
                             ]
-                        }
-                    ]
                 }
             ],
             "Image": ["Image"]
