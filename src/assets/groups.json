@@ -32,7 +32,7 @@
                                     "ListDivider"
                             ],
                             "Split Lists": [
-                                    "SimpleSplitList",
+                                    "ButtonSplitList",
                                     "TextSplitList",
                                     "IconSplitList",
                                     "ThumbnailSplitList",

@@ -1712,16 +1712,16 @@ var BWidgetRegistry = {
      * Represents a Split list element.
      */
     ThumbnailSplitList: {
-        parent: "SimpleSplitList",
+        parent: "ButtonSplitList",
         paletteImageName: "jqm_thumbnail_split_list.svg",
     },
 
     /**
      * Represents a Split list element.
      */
-    SimpleSplitList: {
+    ButtonSplitList: {
         parent: "ListBase",
-        paletteImageName: "jqm_simple_split_list.svg",
+        paletteImageName: "jqm_button_split_list.svg",
         properties: {
             theme: {
                 type: "string",
@@ -1746,7 +1746,7 @@ var BWidgetRegistry = {
      * Represents a Split list element.
      */
     TextSplitList: {
-        parent: "SimpleSplitList",
+        parent: "ButtonSplitList",
         paletteImageName: "jqm_text_split_list.svg",
     },
 
@@ -1754,7 +1754,7 @@ var BWidgetRegistry = {
      * Represents a Split list element.
      */
     IconSplitList: {
-        parent: "SimpleSplitList",
+        parent: "ButtonSplitList",
         paletteImageName: "jqm_icon_split_list.svg",
     },
 
@@ -1873,7 +1873,7 @@ var BWidgetRegistry = {
      * Represents a SplitListItem element.
      */
     ThumbnailSplitListItem: {
-        parent: "SimpleSplitListItem",
+        parent: "ButtonSplitListItem",
         displayLabel: "Thumbnail Split List Item",
         paletteImageName: "jqm_thumbnail_split_list_item.svg",
         allowIn: [ "ThumbnailSplitList" ],
@@ -1893,11 +1893,11 @@ var BWidgetRegistry = {
     /**
      * Represents a SplitListItem element.
      */
-    SimpleSplitListItem: {
+    ButtonSplitListItem: {
         parent: "SimpleListItem",
-        displayLabel: "Simple Split List Item",
-        paletteImageName: "jqm_simple_split_list_item.svg",
-        allowIn: [ "SimpleSplitList" ],
+        displayLabel: "Button Split List Item",
+        paletteImageName: "jqm_button_split_list_item.svg",
+        allowIn: [ "ButtonSplitList" ],
         properties: {
             text: {
                 defaultValue: "List Item",
@@ -1927,7 +1927,7 @@ var BWidgetRegistry = {
      * Represents a SplitListItem element.
      */
     IconSplitListItem: {
-        parent: "SimpleSplitListItem",
+        parent: "ButtonSplitListItem",
         displayLabel: "Icon Split List Item",
         paletteImageName: "jqm_icon_split_list_item.svg",
         allowIn: [ "IconSplitList" ],
@@ -1952,7 +1952,7 @@ var BWidgetRegistry = {
      * Represents a SplitListItem element.
      */
     TextSplitListItem: {
-        parent: "SimpleSplitListItem",
+        parent: "ButtonSplitListItem",
         displayLabel: "Text Split List Item",
         paletteImageName: "jqm_text_split_list_item.svg",
         allowIn: [ "TextSplitList" ],
@@ -1994,9 +1994,9 @@ var BWidgetRegistry = {
      */
     ListButton: {
         parent: "ButtonBase",
-        displayLabel: "List Button",
+        displayLabel: "Extra Button",
         paletteImageName: "jqm_list_button.svg",
-        allowIn: [ "ButtonListItem", "ThumbnailSplitListItem", "SimpleSplitListItem", "TextSplitListItem", "IconSplitListItem" ],
+        allowIn: [ "ButtonListItem", "ThumbnailSplitListItem", "ButtonSplitListItem", "TextSplitListItem", "IconSplitListItem" ],
         properties: {
             text: {
                 defaultValue: "List Button"
