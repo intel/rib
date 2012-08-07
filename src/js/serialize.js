@@ -34,7 +34,7 @@ var DEBUG = true,
         return;
     };
 
-$(function() {
+$(function () {
 
     /**
      * Generate HTML from ADM tree.
@@ -46,7 +46,7 @@ $(function() {
      *
      * @return {Object} return an object contains generated DOM object and related html string
      */
-    function generateHTML (design, useSandboxUrl, extraHandler) {
+    function generateHTML(design, useSandboxUrl, extraHandler) {
         design = design || ADM.getDesignRoot();
         var doc = constructNewDocument($.rib.getDesignHeaders(design, useSandboxUrl));
 
@@ -66,7 +66,7 @@ $(function() {
         };
     }
 
-    function getPropertyDomAttribute (node, propName, newValue) {
+    function getPropertyDomAttribute(node, propName, newValue) {
         var attrName, attrMap, attrValue, propValue;
         attrName = BWidget.getPropertyHTMLAttribute(node.getType(), propName);
         propValue = newValue || node.getProperty(propName);
@@ -83,7 +83,7 @@ $(function() {
                 "value": attrValue};
     }
 
-    function serializeADMNodeToDOM (node, domParent, useSandboxUrl) {
+    function serializeADMNodeToDOM(node, domParent, useSandboxUrl) {
         var uid, type, pid, selector,
             parentSelector = 'body',
             parentNode = null,
@@ -243,7 +243,7 @@ $(function() {
         return widget;
     }
 
-    function serializeADMSubtreeToDOM (node, domParent, useSandboxUrl, renderer) {
+    function serializeADMSubtreeToDOM(node, domParent, useSandboxUrl, renderer) {
         var isContainer = false,
             domElement;
 
@@ -511,7 +511,7 @@ $(function() {
 
     // create a notice Dialog for user to configure the browser, so that
     // a native dialog can be shown when exporting design or HTML code
-    function  createExportDialog () {
+    function createExportDialog() {
         var dialogOpts, exportTypes, exportDialog, cookieExpires,
             exportMenu, cancelDiv, configNotice, checkbox;
         exportTypes = ['zip', 'json', 'wgt'];
@@ -571,13 +571,13 @@ $(function() {
         return exportDialog;
     }
 
-    function  exportFile (fileName, content, binary) {
-        $.rib.fsUtils.write(fileName, content, function(fileEntry){
+    function exportFile(fileName, content, binary) {
+        $.rib.fsUtils.write(fileName, content, function (fileEntry){
             $.rib.fsUtils.exportToTarget(fileEntry.fullPath);
         }, null, false, binary);
     }
 
-    function getConfigFile (pid, iconPath) {
+    function getConfigFile(pid, iconPath) {
         var projName, xmlHeader, xmlDoc, widget, childNode;
         projName = $.rib.pmUtils.getProperty(pid, "name") || "Untitled";
         // TODO: Ask user for following config data
@@ -602,7 +602,7 @@ $(function() {
         return (xmlHeader + xmlserializer.serializeToString(xmlDoc));
     }
 
-    function getNeededFiles () {
+    function getNeededFiles() {
         var files = [
             'src/css/images/ajax-loader.png',
             'src/css/images/icons-18-white.png',
@@ -612,7 +612,7 @@ $(function() {
             'src/css/images/icon-search-black.png',
         ];
 
-        function getHeaderFiles (type) {
+        function getHeaderFiles(type) {
             var headers, files = [];
             headers = ADM.getDesignRoot().getProperty(type);
             for ( var header in headers) {
@@ -638,7 +638,7 @@ $(function() {
         return files;
     }
 
-    function  createZipAndExport(pid, ribFile, type) {
+    function createZipAndExport(pid, ribFile, type) {
         var zip, projName, resultHTML, resultConfig, files, i, iconPath;
         zip = new JSZip();
         files = getNeededFiles();
@@ -685,7 +685,7 @@ $(function() {
                 console.error("Invalid path for exported zipfile.");
                 return;
             }
-            req.onload = function() {
+            req.onload = function () {
                 var uIntArray = new Uint8Array(this.response);
                 var charArray = new Array(uIntArray.length);
                 for (var j = 0; j < uIntArray.length; j ++) {
@@ -708,7 +708,7 @@ $(function() {
         });
     }
 
-    function exportPackage (ribFile) {
+    function exportPackage(ribFile) {
         var exportDialog, pid;
         pid = pid || $.rib.pmUtils.getActive();
 
@@ -731,7 +731,7 @@ $(function() {
         return;
     }
 
-    function toSandboxUrl (path, pid) {
+    function toSandboxUrl(path, pid) {
         var projectDir, fullPath;
         pid = pid || $.rib.pmUtils.getActive();
         projectDir = $.rib.pmUtils.getProjectDir(pid);

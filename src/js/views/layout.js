@@ -11,7 +11,7 @@
 
 // Layout view widget
 
-(function($, undefined) {
+(function ($, undefined) {
 
     $.widget('rib.layoutView', $.rib.baseView, {
 
@@ -32,7 +32,7 @@
             }
         },
 
-        _create: function() {
+        _create: function () {
             var o = this.options,
                 e = this.element;
 
@@ -51,7 +51,7 @@
             this.options.contentDocument =
                 $(this.options.iframe[0].contentDocument);
 
-            $(window).resize(this, function(event) {
+            $(window).resize(this, function (event) {
                 var el = event.data.element,
                     doc = event.data.options.contentDocument,
                     iframe = event.data.options.iframe;
@@ -75,7 +75,7 @@
             return this;
         },
 
-        _setOption: function(key, value) {
+        _setOption: function (key, value) {
             // Chain up to base class _setOptions()
             // FIXME: In jquery UI 1.9 and above, instead use
             //    this._super('_setOption', key, value)
@@ -93,7 +93,7 @@
             }
         },
 
-        refresh: function(event, widget) {
+        refresh: function (event, widget) {
             var name, visible;
             widget = widget || event && event.data || this;
             name = (event)?(event.name)?event.name:event.type:'';
@@ -157,14 +157,14 @@
         },
 
         // Private functions
-        _iframeLoaded: function(event) {
+        _iframeLoaded: function (event) {
             event.data.loaded = true;
             event.data.refresh(null, event.data);
             $.rib.enableKeys(event.data.options.contentDocument);
             event.data.options.contentDocument[0].contentEditable = false;
         },
 
-        _createPrimaryTools: function() {
+        _createPrimaryTools: function () {
             var doc, html, classes, selector,
                 commands = ['undo', 'redo', 'cut', 'copy', 'paste'];
 
@@ -200,11 +200,11 @@
             return html;
         },
 
-        _createSecondaryTools: function() {
+        _createSecondaryTools: function () {
             return $(null);
         },
 
-        _selectionChangedHandler: function(event, widget) {
+        _selectionChangedHandler: function (event, widget) {
             var uid;
             widget = widget || this;
 
@@ -226,16 +226,16 @@
                 widget.options.contentDocument
                     .find('.adm-node[data-uid=\''+uid+'\']')
                     .not('[data-role=\'page\']')
-                    .addClass('ui-selected').first().each(function() {
+                    .addClass('ui-selected').first().each(function () {
                         // Scroll selected node into view
-                        setTimeout($.proxy(function() {
+                        setTimeout($.proxy(function () {
                             this.scrollIntoViewIfNeeded()
                         }, this), 100);
                     });
             }
         },
 
-        _activePageChangedHandler: function(event, widget) {
+        _activePageChangedHandler: function (event, widget) {
             var win,
                 newPage = event && event.page,
                 id = newPage && newPage.getProperty('id');
@@ -257,7 +257,7 @@
             }
         },
 
-        _modelUpdatedHandler: function(event, widget) {
+        _modelUpdatedHandler: function (event, widget) {
             var win, aPage, pageNode;
 
             widget = widget || this;
@@ -285,7 +285,7 @@
             }
         },
 
-        _createDocument: function() {
+        _createDocument: function () {
             var contents, doc;
 
             if (!this.designRoot) return;
@@ -297,7 +297,7 @@
             doc.close();
         },
 
-        _serializeFramework: function() {
+        _serializeFramework: function () {
             var start, end, ret, headers;
 
             headers = this._getCustomHeaders();
@@ -317,12 +317,12 @@
         // Great assumptions are being made here that the incoming default
         // headers are already "sorted" and in the order in which they should
         // be inserted into the <head/> node of the document being created...
-        _getCustomHeaders: function() {
+        _getCustomHeaders: function () {
             var dh = $.rib.getDesignHeaders(),   // default headers
                 ch = this.options.customHeaders, // our custom headers
                 m, s;
 
-            $.each(dh, function(idx) {
+            $.each(dh, function (idx) {
                 if (/<meta/.test(this)) {
                     m = idx+1; // Insert our Meta after LAST one
                     return;
@@ -340,7 +340,7 @@
                              dh.slice(s),   ch.link);
         },
 
-        _serializeADMDesignToDOM: function() {
+        _serializeADMDesignToDOM: function () {
             this.options.contentDocument.find('body >  div[data-role="page"]')
                 .remove();
             $.rib.serializeADMSubtreeToDOM(this.designRoot, null, true, this._renderer);
