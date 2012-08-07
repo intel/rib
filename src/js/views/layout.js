@@ -110,6 +110,11 @@
             if ((!event) || (name === 'load' ||
                              name === 'designReset' ||
                              name === 'modelUpdated')) {
+                // Update headers if Design's properties changed
+                if (name === "designReset" || (name  === 'modelUpdated'
+                            && event.node && event.node.getType() === 'Design')) {
+                    widget._createDocument();
+                }
                 widget._serializeADMDesignToDOM();
 /* FIXME: Calling serializeADMSubtreeToDom is not actually forcing the
           the DOM to update, but it should work...
@@ -313,7 +318,7 @@
         // headers are already "sorted" and in the order in which they should
         // be inserted into the <head/> node of the document being created...
         _getCustomHeaders: function() {
-            var dh = $.rib.getDefaultHeaders(),   // default headers
+            var dh = $.rib.getDesignHeaders(),   // default headers
                 ch = this.options.customHeaders, // our custom headers
                 m, s;
 
@@ -338,7 +343,7 @@
         _serializeADMDesignToDOM: function() {
             this.options.contentDocument.find('body >  div[data-role="page"]')
                 .remove();
-            $.rib.serializeADMSubtreeToDOM(this.designRoot, null, this._renderer);
+            $.rib.serializeADMSubtreeToDOM(this.designRoot, null, true, this._renderer);
         },
 
         _renderer: function (admNode, domNode) {
@@ -426,7 +431,6 @@
                     $(domNode).attr('src', "src/css/images/widgets/tizen_image.svg");
                 }
             }
-            $.rib.useSandboxUrl(admNode, domNode);
         }
     });
 })(jQuery);
