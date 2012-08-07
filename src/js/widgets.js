@@ -69,6 +69,10 @@ var BCommonProperties = {
         defaultValue: "default",
         htmlAttribute: "data-position"
     },
+    text: {
+        type: "string",
+        defaultValue: "Button"
+    },
     theme: {
         type: "string",
         options: function() {
