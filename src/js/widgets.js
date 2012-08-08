@@ -1835,7 +1835,6 @@ var BWidgetRegistry = {
             },
         ],
         init: function (node) {
-            // initial state is three TextButton
             var widgit;
             widgit = ADM.createNode("Text");
             widgit.setProperty("type", "h3");
@@ -1918,7 +1917,6 @@ var BWidgetRegistry = {
             }
         ],
         init: function (node) {
-            // initial state is a ThumbnailButton
             var image = ADM.createNode("Image");
             var text = ADM.createNode("Text");
             text.setProperty("type", "h3");
@@ -1993,95 +1991,33 @@ var BWidgetRegistry = {
      * Represents a SplitListItem element.
      */
     ButtonSplitListItem: {
-        parent: "SplitListItemBase",
+        parent: [ "ButtonListItem", "SplitListItemBase" ],
         displayLabel: "Button Split List Item",
         paletteImageName: "jqm_button_split_list_item.svg",
         allowIn: [ "ButtonSplitList" ],
-        template: '<li><a>%TEXT%</a></li>',
-        editable: {
-            selector: "",
-            propertyName: "text"
-        },
-        properties: {
-            text: BCommonProperties.text,
-        },
     },
 
     /**
      * Represents a SplitListItem element.
      */
     IconSplitListItem: {
-        parent: "ButtonSplitListItem",
+        parent: [ "IconListItem", "ButtonSplitListItem" ],
         displayLabel: "Icon Split List Item",
         paletteImageName: "jqm_icon_split_list_item.svg",
         allowIn: [ "IconSplitList" ],
-        properties: {
-            text: {
-                defaultValue: "Icon List Item"
-            },
-            iconsrc: {
-                type: "url-uploadable",
-                defaultValue: "src/css/images/widgets/tizen_image.svg",
-                htmlSelector: "img",
-                htmlAttribute: "src",
-                forceAttribute: true
-            },
-            countbubble: {
-                type: "string",
-                displayName: "count bubble",
-                defaultValue: "0"
-            }
-        },
-        template: function(node) {
-            var prop, iconsrc, countBubble, code = $('<li><a>%TEXT%</a></li>');
-            prop = node.getProperty("countbubble");
-            // Add the count bubble if countbubble property is not blank
-            if (prop.trim() != '') {
-                countBubble = $('<span>')
-                    .attr('class', 'ui-li-count')
-                    .html(prop);
-                code.find('a').append(countBubble);
-            };
-            prop = node.getProperty("iconsrc");
-            // Add the count bubble if iconsrc property is not blank
-            if (prop.trim() != '') {
-                iconsrc = $('<img/>')
-                        .attr('width','16')
-                        .attr('class', 'ui-li-icon');
-                code.find('a').append(iconsrc);
-            };
-            return code;
-        }
     },
 
     /**
      * Represents a SplitListItem element.
      */
     TextSplitListItem: {
-        parent: "SplitListItemBase",
+        parent: [ "TextListItem", "SplitListItemBase" ],
         displayLabel: "Text Split List Item",
         paletteImageName: "jqm_text_split_list_item.svg",
         allowIn: [ "TextSplitList" ],
-        zones: [
-            {
-                name: "default",
-                cardinality: "N",
-                locator: "a",
-                allow: [ "Text" ]
-            }
-        ],
         init: function (node) {
-            // initial state is three buttons
-            var widgit;
-            widgit = ADM.createNode("Text");
-            widgit.setProperty("type", "h3");
-            widgit.setProperty("text", "Text List Item");
-            node.addChild(widgit);
-            widgit = ADM.createNode("Text");
-            widgit.setProperty("type", "p");
-            widgit.setProperty("text", "Text List Item");
-            node.addChild(widgit);
-            node.addChild(ADM.createNode("ListButton"));
+            BWidgetRegistry.TextListItem.init(node);
+            BWidgetRegistry.SplitListItemBase.init(node);
         }
     },
 
@@ -2117,130 +2053,6 @@ var BWidgetRegistry = {
             theme: BCommonProperties.theme,
         },
         template: '<a/>',
-    },
-
-    /**
-     * Represents a button. A Icon_Image property holds the button text.
-     */
-    IconButton: {
-        parent: "ButtonBase",
-        displayLabel: "Icon list Button",
-        paletteImageName: "jqm_icon_list_button.svg",
-        allowIn: [ "IconListItem", "IconSplitListItem" ],
-        properties: {
-            text: {
-                defaultValue: "Icon List Item"
-            },
-            iconsrc: {
-                type: "url-uploadable",
-                defaultValue: "src/css/images/widgets/tizen_image.svg",
-                forceAttribute: true
-            },
-            countbubble: {
-                type: "string",
-                displayName: "count bubble",
-                defaultValue: "0"
-            }
-        },
-        template: function(node) {
-            var prop, iconsrc, countBubble, code = $('<a>%TEXT%</a><');
-            prop = node.getProperty("countbubble");
-            // Add the count bubble if countbubble property is not blank
-            if (prop.trim() != '') {
-                countBubble = $('<span>')
-                    .attr('class', 'ui-li-count')
-                    .html(prop);
-                code.append(countBubble);
-            };
-            prop = node.getProperty("iconsrc");
-            // Add the count bubble if iconsrc property is not blank
-            if (prop.trim() != '') {
-                iconsrc = $('<img/>')
-                        .attr('src', prop)
-                        .attr('width','16')
-                        .attr('class', 'ui-li-icon');
-                code.append(iconsrc);
-            };
-            return code;
-        }
-    },
-
-    /**
-     * Represents a button. A Image property holds the button text.
-     */
-    ThumbnailButton: {
-        parent: "ButtonBase",
-        displayLabel: "Thumbnail list Button",
-        paletteImageName: "jqm_thumbnail_list_button.svg",
-        allowIn: [ "ThumbnailSplitListItem", "ThumbnailListItem" ],
-        properties: {
-            text: {
-                type: "string",
-                defaultValue: "ThumbnailSplit List Item"
-            },
-        },
-        template:'<a></a>',
-        zones: [
-            {
-                name: "left",
-                cardinality: "1",
-                allow: [ "Image" ]
-            },
-            {
-                name: "right",
-                cardinality: "N",
-                allow: [ "Text" ]
-            }
-        ],
-        init: function (node) {
-            // initial state is three Image and Texts
-            var image = ADM.createNode("Image");
-            var text = ADM.createNode("Text");
-            text.setProperty("type", "h3");
-            text.setProperty("text", "Thumbnail List Item");
-            node.addChild(text);
-            text = ADM.createNode("Text");
-            text.setProperty("type", "p");
-            text.setProperty("text", "Thumbnail List Item");
-            node.addChild(text);
-            node.addChild(image);
-        }
-    },
-
-    /**
-     * Represents a button. A Image property holds the button text.
-     */
-    TextButton: {
-        parent: "ButtonBase",
-        displayLabel: "Text list Button",
-        paletteImageName: "jqm_text_list_button.svg",
-        allowIn: [ "TextListItem", "TextSplitListItem" ],
-        properties: {
-            text: {
-                type: "string",
-                defaultValue: "Text List Item"
-            },
-        },
-        template:'<a></a>',
-        zones: [
-            {
-                name: "right",
-                cardinality: "N",
-                allow: [ "Text" ]
-            }
-        ],
-        init: function (node) {
-            // initial state is three Image and Texts
-            var widgit;
-            widgit = ADM.createNode("Text");
-            widgit.setProperty("type", "h3");
-            widgit.setProperty("text", "Text List Item");
-            node.addChild(widgit);
-            widgit = ADM.createNode("Text");
-            widgit.setProperty("type", "p");
-            widgit.setProperty("text", "Text List Item");
-            node.addChild(widgit);
-        }
     },
 
     /**
