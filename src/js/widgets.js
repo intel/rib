@@ -1774,7 +1774,7 @@ var BWidgetRegistry = {
         properties: {
             text: {
                 type: "string",
-                defaultValue: "",
+                defaultValue: "List Item",
             },
             theme: BCommonProperties.theme,
             filtertext: {
@@ -1788,43 +1788,67 @@ var BWidgetRegistry = {
     },
 
     /**
+     * Represents a ListItem element.
+     */
+    ListItemBase: {
+        parent: "ButtonBase",
+        defaultHtmlSelector: "a",
+        properties: {
+            theme: $.extend(true, {}, BCommonProperties.theme, {
+                       htmlSelector: ""
+                   })
+        },
+        template: '<li><a></a></li>'
+    },
+
+    /**
      * Represents a list button item element.
      */
     ButtonListItem: {
-        parent: "SimpleListItem",
+        parent: "ListItemBase",
         displayLabel: "Button List Item",
         paletteImageName: "jqm_button_list_item.svg",
         allowIn: [ "ButtonList" ],
-        zones: [
-            {
-                name: "default",
-                cardinality: { min: "1", max: "1"},
-                allow: [ "ListButton" ]
+        editable: {
+            selector: ".ui-btn-text > a",
+            propertyName: "text"
+        },
+        properties: {
+            text: {
+                type: "string",
+                defaultValue: "Button List Item",
             }
-        ],
-        init: function (node) {
-            node.addChild(ADM.createNode("ListButton"));
-        }
+        },
+        template: '<li><a>%TEXT%</a></li>',
     },
 
     /**
      * Represents a list text item element.
      */
     TextListItem: {
-        parent: "ButtonListItem",
+        parent: "ListItemBase",
         displayLabel: "Text List Item",
         paletteImageName: "jqm_text_list_item.svg",
         allowIn: [ "TextList" ],
-        template: '<li></li>',
         zones: [
             {
                 name: "default",
-                allow: [ "TextButton" ]
+                cardinality: "N",
+                locator: "a",
+                allow: [ "Text" ]
             },
         ],
         init: function (node) {
             // initial state is three TextButton
-            node.addChild(ADM.createNode("TextButton"));
+            var widgit;
+            widgit = ADM.createNode("Text");
+            widgit.setProperty("type", "h3");
+            widgit.setProperty("text", "Text List Item");
+            node.addChild(widgit);
+            widgit = ADM.createNode("Text");
+            widgit.setProperty("type", "p");
+            widgit.setProperty("text", "Text List Item");
+            node.addChild(widgit);
         }
     },
 
@@ -1836,16 +1860,42 @@ var BWidgetRegistry = {
         displayLabel: "Icon List Item",
         paletteImageName: "jqm_icon_list_item.svg",
         allowIn: [ "IconList" ],
-        template: '<li></li>',
-        zones: [
-            {
-                name: "default",
-                allow: [ "IconButton" ]
+        properties: {
+            text: {
+                defaultValue: "Icon List Item"
+            },
+            iconsrc: {
+                type: "url-uploadable",
+                defaultValue: "src/css/images/widgets/tizen_image.svg",
+                htmlSelector: "img",
+                htmlAttribute: "src",
+                forceAttribute: true
+            },
+            countbubble: {
+                type: "string",
+                displayName: "count bubble",
+                defaultValue: "0"
             }
-        ],
-        init: function (node) {
-            // initial state is three buttons
-            node.addChild(ADM.createNode("IconButton"));
+        },
+        template: function(node) {
+            var prop, iconsrc, countBubble, code = $('<li><a>%TEXT%</a></li>');
+            prop = node.getProperty("countbubble");
+            // Add the count bubble if countbubble property is not blank
+            if (prop.trim() != '') {
+                countBubble = $('<span>')
+                    .attr('class', 'ui-li-count')
+                    .html(prop);
+                code.find('a').append(countBubble);
+            };
+            prop = node.getProperty("iconsrc");
+            // Add the count bubble if iconsrc property is not blank
+            if (prop.trim() != '') {
+                iconsrc = $('<img/>')
+                        .attr('width','16')
+                        .attr('class', 'ui-li-icon');
+                code.find('a').append(iconsrc);
+            };
+            return code;
         }
     },
 
@@ -1853,20 +1903,36 @@ var BWidgetRegistry = {
      * Represents a ThumbnailListItem element.
      */
     ThumbnailListItem: {
-        parent: "ButtonListItem",
+        parent: "ListItemBase",
         displayLabel: "Thumbnail List Item",
         paletteImageName: "jqm_thumbnail_list_item.svg",
         allowIn: [ "ThumbnailList"],
-        template: '<li></li>',
         zones: [
             {
-                name: "default",
-                allow: [ "ThumbnailButton" ]
+                name: "left",
+                cardinality: "1",
+                locator: "a",
+                allow: [ "Image" ]
+            },
+            {
+                name: "right",
+                cardinality: "N",
+                locator: "a",
+                allow: [ "Text" ]
             }
         ],
         init: function (node) {
             // initial state is a ThumbnailButton
-            node.addChild(ADM.createNode("ThumbnailButton"));
+            var image = ADM.createNode("Image");
+            var text = ADM.createNode("Text");
+            text.setProperty("type", "h3");
+            text.setProperty("text", "Thumbnail List Item");
+            node.addChild(text);
+            text = ADM.createNode("Text");
+            text.setProperty("type", "p");
+            text.setProperty("text", "Thumbnail List Item");
+            node.addChild(text);
+            node.addChild(image);
         }
     },
 
@@ -1913,14 +1979,7 @@ var BWidgetRegistry = {
      * Represents a SplitListItem element.
      */
     SplitListItemBase: {
-        parent: "ButtonBase",
-        defaultHtmlSelector: "a",
-        properties: {
-            theme: $.extend(true, {}, BCommonProperties.theme, {
-                       htmlSelector: ""
-                   })
-        },
-        template: '<li><a></a></li>',
+        parent: "ListItemBase",
         zones: [
             {
                 name: "extra",
@@ -1944,7 +2003,7 @@ var BWidgetRegistry = {
         allowIn: [ "ButtonSplitList" ],
         template: '<li><a>%TEXT%</a></li>',
         editable: {
-            selector: ".ui-btn-text > a",
+            selector: "",
             propertyName: "text"
         },
         properties: {
@@ -2055,34 +2114,13 @@ var BWidgetRegistry = {
         paletteImageName: "jqm_list_button.svg",
         allowIn: [ "SplitListItemBase"],
         properties: {
-            text: {
-                defaultValue: "List Button"
-            },
             icon: $.extend({}, BCommonProperties.icon, {
                 options: BCommonProperties.icon.options.slice(1),
                 defaultValue: "arrow-r"
             }),
             theme: BCommonProperties.theme,
-            countbubble: {
-                type: "string",
-                displayName: "count bubble",
-                defaultValue: ""
-            }
         },
-        template: function (node) {
-            var prop, countBubble, code = $('<a>%TEXT%</a><');
-
-            prop = node.getProperty("countbubble");
-            // Add the count bubble if countbubble property is not blank
-            if (prop.trim() != '') {
-                countBubble = $('<span>')
-                    .attr('class', 'ui-li-count')
-                    .html(prop);
-                code.append(countBubble);
-            };
-
-            return code;
-        }
+        template: '<a/>',
     },
 
     /**
