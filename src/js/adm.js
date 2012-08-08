@@ -1008,18 +1008,8 @@ function ADMNode(widgetType) {
     var currentType = widgetType, widget, zones, length, i, func;
 
     this._valid = false;
-    this._inheritance = [];
-
-    while (currentType) {
-        widget = BWidgetRegistry[currentType];
-        if (typeof widget === "object") {
-            this._inheritance.push(currentType);
-            currentType = widget.parent;
-        } else {
-            console.error("Error: invalid type hierarchy creating ADM node");
-            return;
-        }
-    }
+    this._inheritance = [widgetType];
+    $.merge(this._inheritance, BWidget.getAncestors(widgetType));
 
     this._uid = ++ADMNode.prototype._lastUid;
 
