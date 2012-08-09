@@ -1393,7 +1393,23 @@ var BWidgetRegistry = {
                 cardinality: "N",
                 allow: [ "ListItem", "ListDivider", "ListButton" ]
             }
-        ]
+        ],
+        delegate: function (domNode, admNode) {
+            var filterForm, headerLabel, newNode = $('<div>');
+            if (!admNode.getProperty('filter'))
+                return domNode;
+            filterForm = domNode.prev('form');
+            domNode.removeClass('ui-drag-header nrc-sortable-container');
+            // Move header label attr to container
+            newNode.attr('header-label', domNode.attr('header-label'));
+            domNode.removeAttr('header-label');
+            // Move specific classes to container
+            newNode.addClass(
+                'ui-drag-header nrc-sortable-container ui-listview-container'
+            );
+            // Reconstruct the domNode.
+            return filterForm.wrap(newNode).parent().append(domNode);
+        }
     },
 
     /**

@@ -282,3 +282,15 @@ label.adm-editable span.adm-text-content::before,
 body > li.ui-sortable-helper[class*="ui-block-"] {
     list-style: none;
 }
+
+/* List filter hacking */
+div.ui-listview-container {
+    padding: 0px; /* Override the settings in nrc-sortable-container for header label */
+}
+div.ui-listview-container > form {
+    margin: 4px 2px 4px 2px;
+}
+div.ui-listview-container > ul.ui-listview,
+div.ui-listview-container > ol.ui-listview {
+    margin: 1px 2px 1px 2px;
+}
