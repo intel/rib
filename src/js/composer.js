@@ -804,13 +804,6 @@ $(function() {
         $(inputs).disableSelection();
     });
 
-    $('div:jqmData(role="page")').live('pageshow', function(e) {
-        // Make sure selected node is visible on pageinit
-        $('.ui-selected:first').each(function () {
-            $.mobile.silentScroll($(this).offset().top);
-        });
-    });
-
     function messageHandler(e) {
         switch (e.data) {
             case 'reload':
