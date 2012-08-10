@@ -36,6 +36,12 @@ var DEBUG = true,
 
 $(function () {
 
+    /* Variable definition */
+    var headerPropertyMap = {
+        css: 'css',
+        js: 'libs'
+    };
+
     /**
      * Generate HTML from ADM tree.
      *
@@ -768,7 +774,139 @@ $(function () {
         return $.rib.fsUtils.pathToUrl(fullPath);
     }
 
-    /***************** export functions out *********************/
+    function indexOfArray(array, value) {
+        var i, index = -1;
+        if (typeof value !== 'object') {
+            return $.inArray(array, value);
+        } else {
+            for (i = 0; i < array.length; i++) {
+                if (JSON.stringify(array[i]) === JSON.stringify(value)) {
+                    index = i;
+                }
+            }
+            return index;
+        }
+    }
+
+    /**
+     * Check if the sandbox file is a design header, such as css, js file.
+     *
+     * @param {String} type Type of the specified header.
+     * @param {String} filePath Sandbox path of header file.
+     *
+     * @return {Boolean} Return true if find the file in header list, else false.
+     * Notes: filePath If the file is in project directory, relative path should
+     *        be used. A path beginning with '/' will be considered as absolut
+     *        path in sandbox.
+     */
+    function isSandboxHeader(type, filePath) {
+        var property, array, design, index;
+
+        if (!(type && filePath && (filePath.length > 0))) {
+            dumplog('Error: Invalid parameter(s) in isSandboxHeader.');
+            return false;
+        }
+        property = headerPropertyMap[type];
+        if (!property) {
+            dumplog('Error: No header:' + type + 'in design.');
+            return false;
+        }
+        design = ADM.getDesignRoot();
+        array = $.merge([], design.getProperty(property));
+        index = indexOfArray(array, {
+                           inSandbox: true,
+                           value: filePath
+                       });
+        if (index > -1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Add sandbox header file in current design, such as css, js file.
+     *
+     * @param {String} type Type of the specified header.
+     * @param {String} filePath Sandbox path of header file.
+     *
+     * @return {Boolean} Return true if added the header, else return false.
+     *
+     * Notes: filePath If the file is in project directory, relative path should
+     *        be used. A path beginning with '/' will be considered as absolut
+     *        path in sandbox.
+     */
+    function addSandboxHeader(type, filePath) {
+        var property, array, design, index;
+
+        if (!(type && filePath && (filePath.length > 0))) {
+            dumplog('Error: Invalid parameter(s) in addSandboxHeader.');
+            return false;
+        }
+        property = headerPropertyMap[type];
+        if (!property) {
+            dumplog('Error: No header:' + type + 'in design.');
+            return false;
+        }
+        design = ADM.getDesignRoot();
+        array = $.merge([], design.getProperty(property));
+        index = indexOfArray(array, {
+                           inSandbox: true,
+                           value: filePath
+                       });
+        if (index === -1) {
+            array.push({
+                inSandbox: true,
+                value: filePath
+            });
+            // set the new array back
+            design.setProperty(property, array);
+        } else {
+            dumplog('warning:"' + filePath +'" is already in ' + type + ' list.');
+        }
+        return true;
+    }
+
+    /**
+     * Remove sandbox header file in current design, such as css, js file.
+     *
+     * @param {String} type Type of the specified header.
+     * @param {String} filePath Sandbox path of header file.
+     *
+     * @return {Boolean} Return true if deleted the header, else return false.
+     *
+     * Notes: filePath If the file is in project directory, relative path should
+     *        be used. A path beginning with '/' will be considered as absolut
+     *        path in sandbox.
+     */
+    function removeSandboxHeader(type, filePath) {
+        var property, array, design, index;
+
+        if (!(type && filePath && (filePath.length > 0))) {
+            dumplog('Error: Invalid parameter(s) in removeSandboxHeader.');
+            return false;
+        }
+        property = headerPropertyMap[type];
+        if (!property) {
+            dumplog('Error: No header:' + type + 'in design.');
+            return false;
+        }
+        design = ADM.getDesignRoot();
+        array = $.merge([], design.getProperty(property));
+        index = indexOfArray(array, {
+                           inSandbox: true,
+                           value: filePath
+                       });
+        if (index > -1) {
+            array.splice(index, 1);
+            // set the new array back
+            design.setProperty(property, array);
+        } else {
+            dumplog('warning: not find:"' + filePath +'" in ' + type + ' list.');
+        }
+        return true;
+    }
+
     /**
      * Add custom file to current active project.
      * It will save the content in project folder. If the parent directy of
@@ -782,7 +920,7 @@ $(function () {
      *
      * @return {None}
      */
-    $.rib.addCustomFile = function (filePath, type, contents, success, error) {
+    function addCustomFile(filePath, type, contents, success, error) {
         var destPath, addToDesign, projectDir;
         projectDir = $.rib.pmUtils.getProjectDir();
         // If it is relative path, then add the project folder path
@@ -791,42 +929,14 @@ $(function () {
         } else {
             destPath = filePath;
         }
-        addToDesign = function (type, value) {
-            var design, array, property, propertyMap, i, temp;
-            propertyMap = {
-                css: 'css',
-                js: 'libs'
-            };
-            design = ADM.getDesignRoot();
-            property = propertyMap[type];
-            temp = $.extend(true, {}, {
-                property: property,
-                value: design.getProperty(property)
-            });
-            array = temp.value;
-            for (i = 0; i < array.length; i++) {
-                // If the value is in headers, then just return.
-                if (JSON.stringify(array[i]) === JSON.stringify(value)) {
-                    return;
-                }
-            }
-            // If the value is not in array, then push the value in the list
-            array.push(value);
-            // set the new array back
-            design.setProperty(property, array);
-            return;
-        };
         // Write contents to sandbox
         $.rib.fsUtils.write(destPath, contents, function (newFile) {
-            var headerValue = {
-                'inSandbox': true,
-                'value': filePath
-            };
-            addToDesign(type, headerValue);
+            addSandboxHeader(type, filePath);
             success && success(newFile);
         }, error);
-    };
+    }
 
+    /***************** export functions out *********************/
     // Export serialization functions into $.rib namespace
     $.rib.generateHTML = generateHTML;
     $.rib.serializeADMSubtreeToDOM = serializeADMSubtreeToDOM;
@@ -834,4 +944,8 @@ $(function () {
     $.rib.JSONToProj = JSONToProj;
     $.rib.getDesignHeaders = getDesignHeaders;
     $.rib.exportPackage = exportPackage;
+    $.rib.isSandboxHeader = isSandboxHeader;
+    $.rib.addSandboxHeader = addSandboxHeader;
+    $.rib.removeSandboxHeader = removeSandboxHeader;
+    $.rib.addCustomFile = addCustomFile;
 });
