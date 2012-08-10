@@ -462,17 +462,23 @@ $(function () {
             if (props[i].hasOwnProperty('key')) {
                 el = el + props[i].key;
             }
-            // If need to use sandbox url
-            if (useSandboxUrl && props[i].inSandbox) {
-                el = el + '="' + toSandboxUrl(props[i].value) + '"';
-            } else if (props[i].hasOwnProperty('value')) {
-                el = el + '="' + props[i].value + '"';
+            if (props[i].hasOwnProperty('value') && props[i].value) {
+                // Skip empty or invalid header properties
+                if ((typeof props[i].value !== 'string') || (props[i].value.length <= 0)) {
+                    continue;
+                }
+                // If need to use sandbox url
+                if (useSandboxUrl && props[i].inSandbox) {
+                    el = el + '="' + toSandboxUrl(props[i].value) + '"';
+                } else {
+                    el = el + '="' + props[i].value + '"';
+                }
+                if (props[i].hasOwnProperty('content')) {
+                    el = el + ' content="' + props[i].content + '"';
+                }
+                el = el + '>';
+                headers.push(el);
             }
-            if (props[i].hasOwnProperty('content')) {
-                el = el + ' content="' + props[i].content + '"';
-            }
-            el = el + '>';
-            headers.push(el);
         }
         props = designRoot.getProperty('libs');
         for (i in props) {
@@ -480,15 +486,21 @@ $(function () {
             if (props[i].hasOwnProperty('designOnly') && props[i].designOnly) {
                 continue;
             }
-            el = '<script ';
-            // If need to use sandbox url
-            if (useSandboxUrl && props[i].inSandbox) {
-                el = el + 'src="' + toSandboxUrl(props[i].value) + '"';
-            } else if (props[i].hasOwnProperty('value')) {
-                el = el + 'src="' + props[i].value + '"';
+            if (props[i].hasOwnProperty('value') && props[i].value) {
+                // Skip empty or invalid header properties
+                if ((typeof props[i].value !== 'string') || (props[i].value.length <= 0)) {
+                    continue;
+                }
+                el = '<script ';
+                // If need to use sandbox url
+                if (useSandboxUrl && props[i].inSandbox) {
+                    el = el + 'src="' + toSandboxUrl(props[i].value) + '"';
+                } else {
+                    el = el + 'src="' + props[i].value + '"';
+                }
+                el = el + '></script>';
+                headers.push(el);
             }
-            el = el + '></script>';
-            headers.push(el);
         }
         props = designRoot.getProperty('css');
         for (i in props) {
@@ -496,15 +508,21 @@ $(function () {
             if (props[i].hasOwnProperty('designOnly') && props[i].designOnly) {
                 continue;
             }
-            el = '<link ';
-            // If need to use sandbox url
-            if (useSandboxUrl && props[i].inSandbox) {
-                el = el + 'href="' + toSandboxUrl(props[i].value) + '"';
-            } else if (props[i].hasOwnProperty('value')) {
-                el = el + 'href="' + props[i].value + '"';
+            if (props[i].hasOwnProperty('value') && props[i].value) {
+                // Skip empty or invalid header properties
+                if ((typeof props[i].value !== 'string') || (props[i].value.length <= 0)) {
+                    continue;
+                }
+                el = '<link ';
+                // If need to use sandbox url
+                if (useSandboxUrl && props[i].inSandbox) {
+                    el = el + 'href="' + toSandboxUrl(props[i].value) + '"';
+                } else {
+                    el = el + 'href="' + props[i].value + '"';
+                }
+                el = el + ' rel="stylesheet">';
+                headers.push(el);
             }
-            el = el + ' rel="stylesheet">';
-            headers.push(el);
         }
         return headers;
     }
@@ -620,9 +638,12 @@ $(function () {
                 if (headers[header].hasOwnProperty('designOnly') && headers[header].designOnly) {
                     continue;
                 }
+                if (!headers[header].value) {
+                    continue;
+                }
                 if (headers[header].inSandbox) {
                     files.push({
-                        'src': toSandboxUrl(headers[header].Value),
+                        'src': toSandboxUrl(headers[header].value),
                         'dst': headers[header].value
                     });
                 } else {
