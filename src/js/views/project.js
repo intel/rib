@@ -106,16 +106,31 @@
         // Private functions
         _dialogOpenHandler: function (e, ui) {
             try {
-                var name, isCreate, dialog;
+                var name = "Untitled", isCreate, dialog, id, t,
+                pmUtils = $.rib.pmUtils, currentTheme = "Default",
+                pid, themeNames;
                 dialog = this.options && this.options.projectDialog;
                 dialog = dialog || $(this).dialog('option', 'projectDialog');
                 isCreate = dialog.data('new-project-dialog');
-                name = $.rib.pmUtils.getProperty( $.rib.pmUtils.getActive(), "name");
-
+                pid = pmUtils.getActive();
+                if (pid) {
+                    name = pmUtils.getProperty(pid, "name");
+                    currentTheme = pmUtils.getProperty(pid, "theme");
+                }
+                //clear all items in list of themes
+                $('#themePicker', dialog).empty();
+                // Insert the list of themes
+                themeNames = pmUtils.getAllThemes();
+                for (t in themeNames) {
+                    id = themeNames[t];
+                    $('<option id="'+ id +'" value="' + id + '">'+ id + '</option>')
+                        .appendTo('#themePicker', dialog);
+                }
+                //make sure current theme of project is selected
+                $('#themePicker', dialog).val(currentTheme);
                 $("#projectName", dialog).val((isCreate)?'':name);
-                $(".ui-button-text", dialog).text((isCreate)?'Next':'Done')
-            }
-            catch (err) {
+                $(".ui-button-text", dialog).text((isCreate)?'Next':'Done');
+            } catch (err) {
                 console.error(err.message);
                 return false;
             }
@@ -128,8 +143,7 @@
                 dialog = dialog || $(this).dialog('option', 'projectDialog');
                 isCreate = dialog.data('new-project-dialog');
                 opts.name = $("#projectName", dialog).val()|| "Untitled";
-                //TODO: Add support for theme
-                //options.theme = ("#themePicker", this).val();
+                opts.theme = $("#themePicker", dialog).val() || "Default";
 
                 if (isCreate) {
                     //call project API to create a new project
@@ -210,14 +224,7 @@
 
         _createSettingDialog: function() {
             var projectDialog = this.options.projectDialog,
-                themeNames = ['Project Defalut(Pink Martini)',
-                               'Purple People Eater',
-                               'CAstle Greyskull',
-                               'Blue Meanies',
-                               'Project Defalut(Pink Martini)',
-                               'Purple People Eater',
-                               'CAstle Greyskull',
-                               'Blue Meanies'];
+                themeNames, pmUtils = $.rib.pmUtils;
 
             projectDialog = $('<div/>')
                 .addClass('ribDialog')
@@ -229,12 +236,10 @@
                 .append('<form><legend/><ul>' +
                     '<li class="mt23"><label for="name">Project Name</label>' +
                     '<input type ="text" id="projectName" value=""/></li>' +
-                    /* TODO: add support for theme
                     '<li class="mt23"><label for="name">Theme</label>' +
                     '<select id="themePicker" size="4"></select></li>' +
                     '<li class="mt50"><u id="uploadTheme" class="fr mr40">' +
                     'Upload Theme</u></li>' +
-                    */
                     '</ul></form><div class="div-bottom"></div>')
                 .end()
                 .append('<div/>')
@@ -242,15 +247,22 @@
                 .addClass('flex1 wrap_right')
                 .end()
                 .appendTo(projectDialog, this);
-            /* TODO: add support for theme
-            // Insert the list of themes
-            for (var t in themeNames) {
-               var id = themeNames[t];
-               $('<option id="'+ id +'" value="' + id + '">'+ id + '</option>')
-                   .appendTo('#themePicker', projectDialog);
-            }
-            */
 
+            $(document).delegate('#uploadTheme', "click", function () {
+                $.rib.fsUtils.upload('css', projectDialog, function(file) {
+                    pmUtils.uploadTheme(file);
+                    //if file.name isn't in theme select list, add it to the list
+                    //else do nothing
+                    var themeName = file.name.replace(/.css$/g, "");
+                    themeNames = pmUtils.getAllThemes();
+                    if (jQuery.inArray(themeName, themeNames) === -1) {
+                        themeNames.push(themeName);
+                        $('<option id="'+ themeName +'" value="' +
+                            themeName + '">'+ themeName + '</option>')
+                            .appendTo('#themePicker', projectDialog);
+                    }
+                });
+            });
             projectDialog.dialog({
                 autoOpen: false,
                 modal: true,
