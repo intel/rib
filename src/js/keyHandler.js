@@ -18,7 +18,6 @@ $(function() {
         enableKeys: function (element) {
             $(element).keyup(navUtils.shortCut);
             $(element).keydown(navUtils.tabHandler);
-            $(element).keyup(navUtils.deleteHandler);
         },
         shortCut: function(e) {
             var charItem, shortKeys;
@@ -34,7 +33,17 @@ $(function() {
                 // "ctrl+v" for "past"
                 'v':'paste'
             };
-            if (e.ctrlKey && !navUtils.ignoreText()) {
+            // If there is modal dialog or need to ignore text elements, do nothing.
+            if ($('.ui-widget-overlay:visible').length > 0 || navUtils.ignoreText()) {
+                return true;
+            }
+            // for "delete"
+            // fn + delete in Mac to delete element
+            if (e.which === 46) {
+                $('#deleteElement:visible').trigger("click");
+                return false;
+            }
+            if (e.ctrlKey) {
                 charItem = String.fromCharCode(e.which).toLowerCase();
                 if (shortKeys[charItem]) {
                     $('#btn' + shortKeys[charItem] + ':visible').trigger("click");
@@ -45,6 +54,9 @@ $(function() {
         },
         // for "tab"
         tabHandler: function (e) {
+            if ($('.ui-wiget-overlay:visible').length > 0) {
+                return true;
+            }
             var navItems = navUtils.enableFocus();
             if (e.which !== 9) {
                 return true;
@@ -61,15 +73,6 @@ $(function() {
                     navItems.last().focus();
                     return false;
                 }
-            }
-        },
-        // for "delete"
-        deleteHandler: function (e) {
-            if (e.which !== 46 || navUtils.ignoreText()) {
-                return true;
-            } else {
-                $('#deleteElement:visible').trigger("click");
-                return false;
             }
         },
         /**
