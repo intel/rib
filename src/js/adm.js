@@ -1859,7 +1859,7 @@ ADMNode.prototype.removeChild = function (child, dryrun) {
  * @return {ADMNode} The removed child, or null if not found.
  */
 ADMNode.prototype.removeChildFromZone = function (zoneName, index, dryrun) {
-    var zone, removed, child, parentNode;
+    var zone, removed, child, parentNode, parent;
     zone = this._zones[zoneName];
     if (!zone) {
         console.error("Error: no such zone found while removing child: " +
@@ -1882,13 +1882,28 @@ ADMNode.prototype.removeChildFromZone = function (zoneName, index, dryrun) {
         child._parent = null;
         child._root = null;
 
-        if (child.isSelected()) {
-            ADM.setSelected(null);
-        }
-
         this.fireModelEvent("modelUpdated",
                             { type: "nodeRemoved", node: child, parent: this,
                               index: index, zone: zoneName });
+
+        if (child.isSelected()) {
+            parent = this;
+
+            // Select sibling of removed node, or parent node
+            // if removed node is the last node of parent.  The
+            // order is next sibling, prev sibling and parent
+            if (zone.length === 0) {
+                // find the first selectable ancestor
+                while (!parent.isSelectable()) {
+                    parent = parent.getParent();
+                }
+                ADM.setSelected(parent);
+            } else if (index < zone.length) {
+                ADM.setSelected(zone[index])
+            } else {
+                ADM.setSelected(zone[zone.length - 1]);
+            }
+        }
     }
     return child;
 };

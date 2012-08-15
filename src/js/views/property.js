@@ -59,20 +59,8 @@
         },
 
         refresh: function(event, widget) {
-            var node;
             widget = widget || this;
-            if (event) {
-                if (event.node && !(event.name === "modelUpdated" &&
-                    event.type === "nodeRemoved")) {
-                    if (event.type === "propertyChanged" && event.node.getType() === 'Design') {
-                        return;
-                    }
-                    widget._showProperties(event.node);
-                } else {
-                    node = ADM.getActivePage();
-                    widget._showProperties(node);
-                }
-            }
+            widget._showProperties(ADM.getSelectedNode());
         },
 
         // Private functions
@@ -92,14 +80,14 @@
             widget.refresh(event,widget);
         },
 
-        _activePageChangedHandler: function(event, widget) {
-            widget = widget || this;
-            widget.refresh(event,widget);
-        },
-
         _modelUpdatedHandler: function(event, widget) {
             widget = widget || this;
-            widget.refresh(event,widget);
+            if (event && (event.type === "propertyChanged" &&
+                        event.node.getType() === 'Design')) {
+                return;
+            } else {
+                widget.refresh(event,widget);
+            }
         },
 
         _showProperties: function(node) {
@@ -498,43 +486,20 @@
                 .appendTo(content);
             content.find('#deleteElement')
                 .bind('click', function (e) {
-                    var parent, zone, index, msg;
-                    var doDelete = function () {
-                        try {
-                            index = node.getZoneIndex();
-                            parent = node.getParent();
-                            zone = parent.getZoneArray(node.getZone());
-                            if (type === "Page") {
-                                $.rib.pageUtils.deletePage(node.getUid(), false);
-                            } else {
-                                ADM.removeChild(node.getUid(), false);
-                            }
-                            // Select sibling of removed node, or parent node
-                            // if removed node is the last node of parent.  The
-                            // order is next sibling, prev sibling and parent
-                            if (zone.length === 0) {
-                                //find the first selectable ancestor
-                                while (!parent.isSelectable()) {
-                                    parent = parent.getParent();
-                                }
-                                ADM.setSelected(parent);
-                            } else if (index < zone.length) {
-                                ADM.setSelected(zone[index])
-                            } else {
-                                ADM.setSelected(zone[zone.length - 1]);
-                            }
-                        }
-                        catch (err) {
-                            console.error(err.message);
-                        }
+                    var msg, node;
+                    node = ADM.getSelectedNode();
+                    if (!node) {
+                        return false;
                     }
-                    if (type === "Page") {
+                    if (node.getType() === "Page") {
                         // TODO: i18n
                         msg = "Are you sure you want to delete the page '%1'?";
                         msg = msg.replace("%1", node.getProperty("id"));
-                        $.rib.confirm(msg, doDelete);
+                        $.rib.confirm(msg, function () {
+                            $.rib.pageUtils.deletePage(node.getUid());
+                        });
                     } else {
-                        doDelete();
+                        ADM.removeChild(node.getUid(), false);
                     }
                     e.stopPropagation();
                     return false;
