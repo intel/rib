@@ -355,6 +355,103 @@ $.widget("ui.droppable", $.extend({}, $.ui.droppable.prototype, {
 
     }
 }));
+/*
+ * FIXME: This is an enhencement for the sortable plugin in jQuery-ui to better
+ *        support nested sortables
+ *
+ * We override the _contactContainers function so that it uses the item with
+ * lowest distance bettween the mouse pointer and each of its borders to rearrange,
+ * the direction of which is determined by the mouse postion relative to the
+ * item, with the exception when the mouse pointer intersects with the item
+ * or distance is zero, in which case mouse moving direction is used.
+ * Also we use this algorithm to rearrange even when currentContainer is not
+ * changed to override the defective rearranging in _mouseDrag
+ *
+ * Copied from jquery-ui version 1.8.16, ui/jquery.ui.draggable.js
+ */
+$.widget("ui.sortable", $.extend({}, $.ui.sortable.prototype, {
+    _contactContainers: function(event) {
+
+        // get innermost container that intersects with item
+        var innermostContainer = null, innermostIndex = null, direction, intersection;
+
+
+        for (var i = this.containers.length - 1; i >= 0; i--){
+
+
+            // never consider a container that's located within the item itself
+            if($.ui.contains(this.currentItem[0], this.containers[i].element[0]))
+                continue;
+
+
+            if(intersection = this._intersectsWithPointer(this.containers[i].containerCache)) {
+                direction = intersection == 1 ? "down" : "up";
+
+                // if we've already found a container and it's more "inner" than this, then continue
+                if(innermostContainer && $.ui.contains(this.containers[i].element[0], innermostContainer.element[0]))
+                    continue;
+
+                innermostContainer = this.containers[i];
+                innermostIndex = i;
+            } else {
+                // container doesn't intersect. trigger "out" event if necessary
+                if(this.containers[i].containerCache.over) {
+                    this.containers[i]._trigger("out", event, this._uiHash(this));
+                    this.containers[i].containerCache.over = 0;
+                }
+            }
+
+        }
+
+        // if no intersecting containers found, return
+        if(!innermostContainer) return;
+
+        // move the item into the container if it's not there already
+        if(this.containers.length === 1) {
+            this.containers[innermostIndex]._trigger("over", event, this._uiHash(this));
+            this.containers[innermostIndex].containerCache.over = 1;
+        } else {
+
+            //When entering a new container, we will find the item with the least distance and append our item near it
+            var dist = 10000; var itemWithLeastDistance = null;
+            var posProperty = this.containers[innermostIndex].floating ? 'left' : 'top';
+            var sizeProperty = this.containers[innermostIndex].floating ? 'width' : 'height';
+            var base = this.positionAbs[posProperty] + this.offset.click[posProperty];
+            for (var j = this.items.length - 1; j >= 0; j--) {
+                if(!$.ui.contains(this.containers[innermostIndex].element[0], this.items[j].item[0])) continue;
+                var cur = this.items[j][posProperty];
+                if(Math.abs(cur - base) > Math.abs(cur + this.items[j][sizeProperty] - base))
+                    cur += this.items[j][sizeProperty];
+
+                if(Math.abs(cur - base) < dist) {
+                    dist = Math.abs(cur - base); itemWithLeastDistance = this.items[j];
+                    if(!this._intersectsWithPointer(itemWithLeastDistance) && base != cur)
+                    {
+                        this.direction =  base > cur ? "up": "down";
+                    }
+                    else
+                        this.direction = direction;
+                }
+            }
+
+            if(!itemWithLeastDistance && !this.options.dropOnEmpty) //Check if dropOnEmpty is enabled
+                return;
+
+            this.currentContainer = this.containers[innermostIndex];
+            itemWithLeastDistance ? this._rearrange(event, itemWithLeastDistance, null, true) : this._rearrange(event, null, this.containers[innermostIndex].element, true);
+            this._trigger("change", event, this._uiHash());
+            this.containers[innermostIndex]._trigger("change", event, this._uiHash(this));
+
+            //Update the placeholder
+            this.options.placeholder.update(this.currentContainer, this.placeholder);
+
+            this.containers[innermostIndex]._trigger("over", event, this._uiHash(this));
+            this.containers[innermostIndex].containerCache.over = 1;
+        }
+
+
+    },
+}));
 
 /*
  * This is an enhencement for jquery.extend, which tries to extend
