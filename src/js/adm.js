@@ -2069,6 +2069,55 @@ ADMNode.prototype.getProperty = function (property) {
 };
 
 /**
+ * Gets an object representing the serializable content of the requested
+ * property, if any. Only properties with an htmlAttribute defined are
+ * serializable in this sense; other properties may be included as part of the
+ * widget template. A property that has not been explicitly set is not
+ * serializable, unless it has the "forceAttribute" flag set. The serializable
+ * property value is not always the same as the value displayed to the user, so
+ * a mapping is performed in those cases. The returned object also includes
+ * the name of the corresponding HTML attribute and a selector to find the
+ * DOM node it applies to. Some properties are not defined as serializable,
+ * and are instead used by the widget template directly.
+ *
+ * @param {String} The name of the requested property.
+ * @return {Object} An object containing:
+ *                    'attribute', an HTML attribute string;
+ *                    'value',     the string value to set the attribute to;
+ *                    'selector',  a CSS selector that will find the node the
+ *                                 attribute belongs to;
+ *                  or null if the property is not serializable, or undefined
+ *                  if the property is invalid for this object.
+ */
+ADMNode.prototype.getPropertySerializationObject = function (property) {
+    var obj = {}, type = this.getType(), value = this.getProperty(property),
+        valueMap = BWidget.getPropertyValueMap(type, property);
+
+    // only serialize properties that are either explicitly set or forced
+    if (!this.isPropertyExplicit(property) &&
+        !BWidget.getPropertyForceAttribute(type, property)) {
+        return null;
+    }
+
+    obj.attribute = BWidget.getPropertyHTMLAttribute(type, property);
+    if (typeof obj.attribute === "function") {
+        obj.attribute = obj.attribute(value);
+    }
+    if (obj.attribute === undefined) {
+        return null;
+    }
+
+    obj.value = BWidget.getPropertySerializableValue(type, property, value);
+
+    obj.selector = BWidget.getPropertyHTMLSelector(type, property);
+    if (!obj.selector) {
+        // select the first node by default
+        obj.selector = ":first";
+    }
+    return obj;
+};
+
+/**
  * Gets the options for the named property for this widget type.
  *
  * @param {String} The name of the requested property.

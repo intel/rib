@@ -72,46 +72,13 @@ $(function () {
         };
     }
 
-    function getPropertyDomAttribute(node, propName, newValue) {
-        var attrName, attrMap, attrValue, propValue;
-        attrName = BWidget.getPropertyHTMLAttribute(node.getType(), propName);
-        propValue = newValue || node.getProperty(propName);
-        attrValue = propValue;
-        if (typeof attrName === "function") {
-            attrName = attrName(propValue);
-        }
-        if (typeof attrName  === "object") {
-            attrMap = attrName;
-            attrName = attrMap.name;
-            attrValue = attrMap.value;
-            switch(typeof(attrValue)) {
-                case "function":
-                    attrValue = attrValue(propValue);
-                    break;
-                case "object":
-                    attrValue = attrValue[propValue];
-                    break;
-                case "string":
-                    break;
-                case "undefined":
-                    break;
-                case "boolean":
-                    break;
-                default:
-                    throw "attrValue type can not be handled";
-            }
-        }
-        return {"name": attrName,
-                "value": attrValue};
-    }
-
     function serializeADMNodeToDOM(node, domParent, useSandboxUrl) {
         var uid, type, pid, selector,
             parentSelector = 'body',
             parentNode = null,
             template, props, id,
             selMap = {},  // maps selectors to attribute maps
-            attrObject, propValue,
+            attrObject, mapObject, propValue,
             widget, regEx, wrapper, domNodes;
 
         // Check for valid node
@@ -178,35 +145,23 @@ $(function () {
         for (var p in props) {
             propValue = node.getProperty(p);
 
-            switch (p) {
-            case "type":
-                break;
-            default:
-                // If need to use sandbox url and the property matches, then change the value.
-                if (useSandboxUrl && node.propertyMatches($.rib.pmUtils.relativeFilter, p, props[p])) {
-                    attrObject = getPropertyDomAttribute(node, p, toSandboxUrl(props[p]));
-                } else {
-                    attrObject = getPropertyDomAttribute(node, p);
+            attrObject = node.getPropertySerializationObject(p);
+            if (attrObject) {
+                mapObject = selMap[attrObject.selector];
+                if (!mapObject) {
+                    // create a new selector map entry
+                    mapObject = selMap[attrObject.selector] = {};
                 }
-                if (attrObject.name) {
-                    if (node.isPropertyExplicit(p) ||
-                        BWidget.getPropertyForceAttribute(type, p)) {
-                        selector = BWidget.getPropertyHTMLSelector(type, p);
-                        if (!selector) {
-                            // by default apply attributes to first element
-                            selector = ":first";
-                        }
 
-                        if (!selMap[selector]) {
-                            // create a new select map entry
-                            selMap[selector] = {};
-                        }
-
-                        // add attribute mapping to corresponding selector
-                        selMap[selector][attrObject.name] = attrObject.value;
-                    }
+                if (useSandboxUrl &&
+                    node.propertyMatches($.rib.pmUtils.relativeFilter,
+                                         p, props[p])) {
+                    attrObject.value = BWidget.getPropertySerializableValue(
+                        type, p, toSandboxUrl(props[p]));
                 }
-                break;
+
+                // add attribute mapping to corresponding selector
+                mapObject[attrObject.attribute] = attrObject.value;
             }
 
             if (typeof propValue === "string" ||

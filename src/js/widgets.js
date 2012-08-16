@@ -48,25 +48,14 @@ var BCommonProperties = {
     mini: {
         type: "boolean",
         defaultValue: false,
-        htmlAttribute: {
-            name: "data-mini",
-            value: {
-                "true": "true",
-                "false": "false"
-            }
-        }
+        htmlAttribute: "data-mini"
     },
     nativecontrol: {
         displayName: "native control",
         type: "boolean",
         defaultValue: false,
-        htmlAttribute: {
-            name: "data-role",
-            value: {
-                "true": "none",
-                "false": ""
-            }
-        }
+        htmlAttribute: "data-role",
+        htmlValueMap: { "true": "none" }
     },
     position: {
         type: "string",
@@ -156,15 +145,20 @@ var BCommonProperties = {
  *                       attribute
  *   4)  forceAttribute: if true, always write out the HTML attribute even when
  *                       it is equal to the default value (default: false)
- *   5)    htmlSelector: optional selector to find the DOM nodes on which to
+ *   5)    htmlValueMap: optional object mapping property values to the strings
+ *                       that should be used for serializing the property into
+ *                       an HTML attribute (only makes sense when htmlAttribute
+ *                       is set); alternately a function that takes a property
+ *                       value and returns the serialization string
+ *   6)    htmlSelector: optional selector to find the DOM nodes on which to
  *                       apply the HTML attribute (default: root node returned
  *                       by the template for this widget)
- *   6)    autoGenerate: "string" prefix for automatically assigning unique
+ *   7)    autoGenerate: "string" prefix for automatically assigning unique
  *                       values (only valid for string type)
- *   7)         options: An array of the only valid values for this property,
+ *   8)         options: An array of the only valid values for this property,
  *                       to be selected from a dropdown rather than freely
  *                       entered
- *   8) setPropertyHook: optional function to be called when a property is
+ *   9) setPropertyHook: optional function to be called when a property is
  *                       about to change, giving the widget an opportunity to
  *                       modify its children (e.g. grid rows or columns change)
  *                       Takes the ADM node, the new property value, and a
@@ -181,10 +175,9 @@ var BCommonProperties = {
  *                       guaranteed that if you see data X again, you will be
  *                       going from 3 to 5 rows, and can make sense of the
  *                       data.)
- *   9)        validIn:  Parent widget in which this property is valid
- *
- *  10)      invalidIn:  Parent widget in which this property is not valid
- *  11)        visible:  optional boolean for the property user-exposed in
+ *  10)        validIn:  Parent widget in which this property is valid
+ *  11)      invalidIn:  Parent widget in which this property is not valid
+ *  12)        visible:  optional boolean for the property user-exposed in
  *                       property view (default true)
  *
  * @class
@@ -287,14 +280,12 @@ var BWidgetRegistry = {
             background: {
                 type: "url-uploadable",
                 defaultValue: "",
-                htmlAttribute: {
-                    name: "style",
-                    value: function (propValue) {
-                        return "background-image:url('" + propValue + "');" +
-                            "background-attachment:fixed;" +
-                            "background-repeat:no-repeat;" +
-                            "background-size:100% 100%;";
-                    }
+                htmlAttribute: "style",
+                htmlValueMap: function (propValue) {
+                    return "background-image: url('" + propValue + "'); " +
+                        "background-attachment: fixed; " +
+                        "background-repeat: no-repeat; " +
+                        "background-size: 100% 100%;";
                 }
             }
         }
@@ -660,13 +651,12 @@ var BWidgetRegistry = {
             target: {
                 type: "targetlist",
                 defaultValue: "",
-                htmlAttribute: function(value) {
-                    if (value === "previous page") {
-                        return {"name": "data-rel", "value": "back"};
-                    } else {
-                        return {"name": "href", "value": value};
-                    }
-                }
+                // FIXME: "previous page" is a magic string coordinated with
+                // property.js, which is bogus
+                htmlAttribute: function (value) {
+                    return (value === "previous page") ? "data-rel" : "href";
+                },
+                htmlValueMap: { "previous page": "back" }
             },
             opentargetas : {
                 type: "string",
@@ -689,13 +679,8 @@ var BWidgetRegistry = {
             active: {
                 type: "boolean",
                 defaultValue: false,
-                htmlAttribute: {
-                    name: "class",
-                    value: {
-                        "true": "ui-btn-active",
-                        "false": ""
-                    }
-                }
+                htmlAttribute: "class",
+                htmlValueMap: { "true": "ui-btn-active" }
             },
             theme: BCommonProperties.theme,
             inline: $.extend({}, BCommonProperties.inline, {
@@ -716,7 +701,7 @@ var BWidgetRegistry = {
             shadow: {
                 type: "boolean",
                 defaultValue: true,
-                htmlAttribute: "data-shadow",
+                htmlAttribute: "data-shadow"
             }
         },
         template: '<a data-role="button">%TEXT%</a>'
@@ -755,13 +740,11 @@ var BWidgetRegistry = {
                 type: "string",
                 options: [ "left", "center", "right" ],
                 defaultValue: "left",
-                htmlAttribute: {
-                    name: "style",
-                    value: {
-                        "left": "display:block;margin:auto auto auto 0px",
-                        "center": "display:block;margin: 0 auto",
-                        "right": "display:block;margin: auto 0px auto auto"
-                    }
+                htmlAttribute: "style",
+                htmlValueMap: {
+                    "left": "display: block; margin: auto auto auto 0px",
+                    "center": "display: block; margin: 0 auto",
+                    "right": "display: block; margin: auto 0px auto auto"
                 }
             }
         }
@@ -1438,7 +1421,7 @@ var BWidgetRegistry = {
                 displayName: "filter text",
                 type: "string",
                 defaultValue: "",
-                htmlAttribute: "data-filtertext",
+                htmlAttribute: "data-filtertext"
             }
         },
         template: '<li>%TEXT%</li>'
@@ -2285,13 +2268,66 @@ var BWidget = {
     },
 
     /**
-     * Gets the HTML attribute associated with this property.
+     * Gets a value map object or function which maps user visible property
+     * values to the actual values that should be serialized to HTML. If it
+     * is a map object, values that are not present in the map should be used
+     * as is. If it is a function, the function takes the current value and
+     * returns the serialization value.
+     *
+     * @param {String} widgetType The type of the widget.
+     * @param {String} property The name of the requested property.
+     * @return {Various} An object mapping user-presented values to the actual
+     *                   values to be used in serialization to HTML. Or, it
+     *                   could be a function that takes a user value and returns
+     *                   a serialization value. Otherwise, returns undefined and
+     *                   the user-presented values should be used as they are.
+     * @throws {Error} If widgetType is invalid, or property not found.
+     */
+    getPropertyValueMap: function (widgetType, property) {
+        var schema = BWidget.getPropertySchema(widgetType, property);
+        if (schema) {
+            return schema.htmlValueMap;
+        }
+        return schema;
+    },
+
+    /**
+     * Applies any value mapping on the given value that would occur during
+     * serialization if this value were found in the given widget type and
+     * property. Returns the mapped value (always a string) or the supplied
+     * value converted to a string if there is no such mapping.
+     *
+     * @param {String} widgetType The type of the widget.
+     * @param {String} property The name of the requested property.
+     * @param {Various} value The unmapped value of the property that needs to
+     *                        be mapped to the serialized value.
+     * @return {String} The string that would be serialized for this value.
+     */
+    getPropertySerializableValue: function (widgetType, property, value) {
+        var mapped, valueMap;
+        valueMap = BWidget.getPropertyValueMap(widgetType, property);
+        if (typeof valueMap === "function") {
+            mapped = valueMap(value);
+        } else if (typeof valueMap === "object") {
+            mapped = valueMap[value];
+        }
+
+        if (!mapped) {
+            mapped = String(value);
+        }
+        return mapped;
+    },
+
+    /**
+     * Gets the HTML attribute associated with this property, or a function that
+     * will return it for a given property value.
      *
      * @param {String} widgetType The type of the widget.
      * @param {String} property The name of the property.
-     * @return {String} The name of an HTML attribute to set to this property
-     *                  value in the template, or undefined if no HTML
-     *                  attribute should be set.
+     * @return {Various} The name of an HTML attribute to set to this property
+     *                   value in the template, or a function that takes the
+     *                   current property value and returns an HTML attribute,
+     *                   or undefined if none.
      * @throws {Error} If widgetType is invalid, or property not found.
      */
     getPropertyHTMLAttribute: function (widgetType, property) {
