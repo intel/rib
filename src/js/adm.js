@@ -2209,6 +2209,8 @@ ADMNode.prototype.setProperty = function (property, value, data, raw) {
         }
     }
 
+    // TODO: In HTML5 the rules for ids are not this strict, so this should be
+    //       corrected with reference to the spec.
     // HTML id naming rules:
     // Must begin with a letter A-Z or a-z
     // Can be followed by: letters (A-Za-z), digits (0-9), hyphens ("-"), and underscores ("_")
