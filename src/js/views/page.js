@@ -129,11 +129,11 @@
 
             if(left){
                 if (scrollLeft < (pageCount-visibleCount)*length){
-                    box.animate({scrollLeft: scrollLeft + length});
+                    box.animate({scrollLeft: scrollLeft + length}, {queue: false});
                 }
             } else {
                 if(scrollLeft !== 0){
-                    box.animate({scrollLeft: scrollLeft - length});
+                    box.animate({scrollLeft: scrollLeft - length}, {queue: false});
                 }
             }
         },
