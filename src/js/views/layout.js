@@ -102,6 +102,10 @@
             if (!widget.loaded) {
                 return;
             }
+            if (event && (name === "designReset" || (name === 'modelUpdated'
+                && event.node && event.node.getType() === 'Design'))) {
+                widget._createDocument();
+            }
 
             if (event && (name !== 'designReset') && !visible) {
                 return;
@@ -110,11 +114,6 @@
             if ((!event) || (name === 'load' ||
                              name === 'designReset' ||
                              name === 'modelUpdated')) {
-                // Update headers if Design's properties changed
-                if (name === "designReset" || (name  === 'modelUpdated'
-                            && event.node && event.node.getType() === 'Design')) {
-                    widget._createDocument();
-                }
                 widget._serializeADMDesignToDOM();
 /* FIXME: Calling serializeADMSubtreeToDom is not actually forcing the
           the DOM to update, but it should work...
@@ -324,7 +323,7 @@
         // headers are already "sorted" and in the order in which they should
         // be inserted into the <head/> node of the document being created...
         _getCustomHeaders: function () {
-            var dh = $.rib.getDesignHeaders(),   // default headers
+            var dh = $.rib.getDesignHeaders(null, true),   // default headers
                 ch = this.options.customHeaders, // our custom headers
                 m, s;
 
