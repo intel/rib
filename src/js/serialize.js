@@ -171,7 +171,7 @@ $(function () {
                 if(typeof propValue === "string") {
                     propValue = propValue.replace(/&/g, "&amp;");
                     propValue = propValue.replace(/"/g, "&quot;");
-                    propValue = propValue.replace(/'/g, "&#39;");
+                    propValue = propValue.replace(/'/g, "&apos;");
                     propValue = propValue.replace(/</g, "&lt;");
                     propValue = propValue.replace(/>/g, "&gt;");
                     // Append UID to assist with debugging

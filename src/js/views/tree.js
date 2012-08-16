@@ -130,7 +130,7 @@
                             [attachment](container)
                             .append($('<span/>')
                                 .addClass('singleItem')
-                                .html("&#x2022;")
+                                .html("&bull;")
                                 .click(function(e) {
                                     $(this).toggleClass("close")
                                     .parent()

@@ -20,7 +20,7 @@ function loadDevices(container) {
             if (first) {
                 // set initial default
                 $("#preview-frame").attr(val);
-                bullet = "&#x2022;";
+                bullet = "&bull;";
                 first = false;
             }
             li = $('<li>');
@@ -39,7 +39,7 @@ function loadDevices(container) {
                     .find("span.space")
                     .html("&nbsp;");
                 $(this).find("span.space")
-                    .html("&#x2022;");
+                    .html("&bull;");
             });
         });
     };
