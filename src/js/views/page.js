@@ -99,6 +99,21 @@
             }
         },
 
+        _scrollPageCompleteHandler: function(widget){
+            var box = widget ? $('#box', widget.element) : $(this),
+                iconWidth = $('.pageIcon').outerWidth(true),
+                scroller = $('#pages'),
+                pageCount = scroller.children().length,
+                visibleCount = (box.innerWidth() / iconWidth).toFixed(), pos,
+                scrollLeft = box.scrollLeft();
+            // Make left page arrow active
+            box.prev().toggleClass('ui-state-active',
+                (scrollLeft > iconWidth/3));
+            // Make right page arrow active
+            box.next().toggleClass('ui-state-active',
+                (scrollLeft < (pageCount-visibleCount)*iconWidth - iconWidth/3));
+        },
+
         /*
          * scroll page view
          * direction: boolean. if true, scroll right; false, scroll left.
@@ -109,7 +124,8 @@
                 scroller = this.element.find('#pages'),
                 pageCount = scroller.children().length,
                 visibleCount = (box.innerWidth() / length).toFixed(), pos,
-                scrollLeft = box.scrollLeft();
+                scrollLeft = box.scrollLeft(),
+                that = this;
 
             if (index === undefined && typeof(left) !== 'boolean') {
                 index = parseInt(left,10);
@@ -120,20 +136,24 @@
                 if (index*length+length >= scrollLeft + box.innerWidth()) {
                     box.animate({
                         scrollLeft: scrollLeft + index * length + length -
-                                    box.innerWidth()});
+                           box.innerWidth()},
+                           that._scrollPageCompleteHandler);
                 } else if (index*length < scrollLeft) {
-                    box.animate({scrollLeft: index*length});
+                    box.animate({scrollLeft: index*length},
+                        that._scrollPageCompleteHandler);
                 }
                 return;
             }
 
             if(left){
                 if (scrollLeft < (pageCount-visibleCount)*length){
-                    box.animate({scrollLeft: scrollLeft + length}, {queue: false});
+                    box.animate({scrollLeft: scrollLeft + length},
+                    {queue: false, complete: that._scrollPageCompleteHandler});
                 }
             } else {
                 if(scrollLeft !== 0){
-                    box.animate({scrollLeft: scrollLeft - length}, {queue: false});
+                    box.animate({scrollLeft: scrollLeft - length},
+                    {queue: false, complete: that._scrollPageCompleteHandler});
                 }
             }
         },
@@ -159,6 +179,7 @@
                 pages.delegate('div', 'click', function () {
                     model.setActivePage($(this).data('page'));
                 });
+                this._scrollPageCompleteHandler(widget);
             }
             if (!event || !event.name ||
                 event.name !== 'activePageChanged' || !event.page) {
