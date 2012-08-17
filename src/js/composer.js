@@ -531,8 +531,8 @@ $(function() {
                 appendTo: 'body',
                 helper: 'clone',
                 connectWith:
-                    '.ui-page > .adm-node.ui-sortable:not(.ui-masked),' +
-                    '.ui-page > .orig-adm-node.ui-sortable:not(.ui-masked)',
+                    '.ui-page .adm-node.ui-sortable:not(.ui-masked),' +
+                    '.ui-page .orig-adm-node.ui-sortable:not(.ui-masked)',
                 cancel: '> :not(.adm-node,.orig-adm-node)',
                 items: '> *.adm-node:not(.ui-header,.ui-content,.ui-footer),' +
                     '> .ui-controlgroup-controls > .adm-node,' +
