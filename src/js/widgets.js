@@ -678,9 +678,12 @@ var BWidgetRegistry = {
             mini: BCommonProperties.mini,
             active: {
                 type: "boolean",
-                defaultValue: false,
-                htmlAttribute: "class",
-                htmlValueMap: { "true": "ui-btn-active" }
+                defaultValue: false
+            },
+            right: {
+                validIn: "Header",
+                type: "boolean",
+                defaultValue: false
             },
             theme: BCommonProperties.theme,
             inline: $.extend({}, BCommonProperties.inline, {
@@ -704,7 +707,16 @@ var BWidgetRegistry = {
                 htmlAttribute: "data-shadow"
             }
         },
-        template: '<a data-role="button">%TEXT%</a>'
+        template: function (node) {
+            var right, active, code = $('<a data-role="button">%TEXT%</a>');
+
+            code.toggleClass("ui-btn-active", node.getProperty("active"));
+            if(BWidget.propertyValidIn("Button", "right",
+                node.getParent().getType())) {
+                code.toggleClass("ui-btn-right", node.getProperty("right"));
+            }
+            return code;
+        }
     },
 
     /**
