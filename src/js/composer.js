@@ -530,6 +530,7 @@ $(function() {
                 placeholder: 'ui-sortable-placeholder',
                 appendTo: 'body',
                 helper: 'clone',
+                tolerance: "pointer",
                 connectWith:
                     '.ui-page .adm-node.ui-sortable:not(.ui-masked),' +
                     '.ui-page .orig-adm-node.ui-sortable:not(.ui-masked)',
@@ -556,7 +557,9 @@ $(function() {
 
                     //jQuery UI should have done this after hiding current item
                     //and creating placeholder.
-                    $(this).sortable('refreshPositions');
+                    $(this).sortable('refresh');
+
+
 
                     applyMasking($('.ui-sortable-connected'), ui.helper);
                     adjustMargins(ui.placeholder);
@@ -564,13 +567,6 @@ $(function() {
                 change: function(event, ui){
                     trackOffsets('change:  ',ui,$(this).data('sortable'));
 
-                    // Workaround a jQuery UI's bug which sometimes rearranges
-                    // the placeholder to a container without changing
-                    // the currentContainer, which leads to placeholder
-                    // jittering
-                    $(this).data('sortable').currentContainer
-                        = ui.placeholder.closest('.nrc-sortable-container')
-                                        .data('sortable');
                     adjustMargins(ui.placeholder);
                 },
                 sort: function(event, ui){
@@ -626,9 +622,6 @@ $(function() {
                 },
                 out: function(event, ui){
                     trackOffsets('out:     ',ui,$(this).data('sortable'));
-                    if ($(this).is('.nrc-sortable-container.ui-collapsible') &&
-                        $(this).subtree('.ui-selected').length === 0)
-                        $(this).trigger('collapse');
                 },
                 stop: function(event, ui){
                     trackOffsets('stop:    ',ui,$(this).data('sortable'));
@@ -786,7 +779,6 @@ $(function() {
                 d.addClass('ui-sortable-connected');
                 $(this).sortable('option','connectWith',
                     '.ui-sortable-connected')
-                $(this).sortable('refresh')
 
                 return true;
             })

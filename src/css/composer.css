@@ -48,10 +48,11 @@
 /*************************/
 /* Class specific tweaks */
 /*************************/
-.nrc-sortable-container.ui-content > * {
+.nrc-sortable-container.ui-content .adm-node {
     margin-top: 10px;
     margin-bottom: 10px;
 }
+
 .nrc-sortable-container {
     padding: 10px;
     box-sizing: border-box;
