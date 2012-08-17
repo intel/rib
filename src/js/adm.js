@@ -1070,6 +1070,9 @@ ADM.copySubtree = function (node) {
 ADM.paste = function () {
     var node, parent, target;
     target = ADM._selection ? ADM._selection : ADM._activePage;
+    if (ADM._clipboard && ADM._clipboard.getType() === 'Page') {
+        target = ADM.getDesignRoot();
+    }
     if (!ADM._clipboard || !target) {
         return;
     }
