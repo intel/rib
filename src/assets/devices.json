@@ -8,10 +8,10 @@
            },
            "screen": {
                "offset": {
-                   "top": 46,
+                   "top": 45,
                    "right": 47,
-                   "bottom": 99,
-                   "left": 53
+                   "bottom": 95,
+                   "left": 52
                },
                "width": 320,
                "height": 480
@@ -28,10 +28,10 @@
            },
            "screen": {
                "offset": {
-                   "top": 85,
-                   "right": 100,
-                   "bottom": 88,
-                   "left": 100
+                   "top": 84,
+                   "right": 99,
+                   "bottom": 82,
+                   "left": 99
                },
                "width": 1000,
                "height": 600
@@ -48,10 +48,10 @@
            },
            "screen": {
                "offset": {
-                   "top": 58,
+                   "top": 57,
                    "right": 174,
-                   "bottom": 357,
-                   "left": 174
+                   "bottom": 350,
+                   "left": 173
                },
                "width": 895,
                "height": 508
