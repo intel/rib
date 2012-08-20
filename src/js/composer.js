@@ -116,7 +116,7 @@ $(function() {
             // Only update if values differ
             if (ev.data.getProperty(prop) !== text) {
                 // Attempt to set the ADM property
-                if (!ev.data.setProperty(prop,text).result){
+                if (!ADM.setProperty(ev.data, prop, text).result) {
                     // Revert if setProperty fails
                     setTextNodeContents(elem, ev.data.getProperty(prop));
                 }
