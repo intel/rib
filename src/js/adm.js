@@ -891,9 +891,11 @@ ADM.undo = function () {
         }
         else if (obj.type === "remove") {
             obj.parent.insertChildInZone(obj.child, obj.zone, obj.zoneIndex);
+            ADM.setSelected(obj.child);
         }
         else if (obj.type === "move") {
             obj.node.moveNode(obj.oldParent, obj.oldZone, obj.oldZoneIndex);
+            ADM.setSelected(obj.node);
         }
         else if (obj.type === "insertRelative") {
             obj.sibling.getParent().removeChild(obj.child);
@@ -901,6 +903,7 @@ ADM.undo = function () {
         else if (obj.type === "propertyChange") {
             // TODO: this could require deeper copy of complex properties
             obj.node.setProperty(obj.property, obj.oldValue, obj.data);
+            ADM.setSelected(obj.node);
         }
         else {
             console.warn("Warning: Unexpected UNDO transaction");
@@ -935,6 +938,8 @@ ADM.redo = function () {
             obj.parent.addChild(obj.child);
             if (obj.child.getType() == 'Page') {
                 that.setActivePage(obj.child);
+            } else {
+                ADM.setSelected(obj.child);
             }
         }
         else if (obj.type === "remove") {
@@ -943,13 +948,16 @@ ADM.redo = function () {
         }
         else if (obj.type === "move") {
             obj.node.moveNode(obj.newParent, obj.newZone, obj.newZoneIndex);
+            ADM.setSelected(obj.node);
         }
         else if (obj.type === "insertRelative") {
             obj.sibling.insertChildRelative(obj.child, obj.offset);
+            ADM.setSelected(obj.node);
         }
         else if (obj.type === "propertyChange") {
             // TODO: this could require deeper copy of complex properties
             obj.node.setProperty(obj.property, obj.value, obj.data);
+            ADM.setSelected(obj.node);
         }
         else {
             console.warn("Warning: Unexpected REDO transaction");
