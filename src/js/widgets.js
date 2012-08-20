@@ -648,6 +648,12 @@ var BWidgetRegistry = {
                 type: "string",
                 defaultValue: "Button"
             },
+            right: {
+                displayName: "align right",
+                validIn: "Header",
+                type: "boolean",
+                defaultValue: false
+            },
             target: {
                 type: "targetlist",
                 defaultValue: "",
@@ -665,6 +671,13 @@ var BWidgetRegistry = {
                 defaultValue: "default",
                 htmlAttribute: "data-rel"
             },
+            transition: {
+                type: "string",
+                options: [ "slide", "slideup", "slidedown", "pop", "fade",
+                           "flip", "turn", "flow", "slidefade", "none" ],
+                defaultValue: "slide",
+                htmlAttribute: "data-transition"
+            },
             icon: BCommonProperties.icon,
             iconpos: $.extend({}, BCommonProperties.iconpos, {
                 invalidIn: "Navbar"
@@ -680,22 +693,10 @@ var BWidgetRegistry = {
                 type: "boolean",
                 defaultValue: false
             },
-            right: {
-                validIn: "Header",
-                type: "boolean",
-                defaultValue: false
-            },
             theme: BCommonProperties.theme,
             inline: $.extend({}, BCommonProperties.inline, {
                 invalidIn: "Navbar"
             }),
-            transition: {
-                type: "string",
-                options: [ "slide", "slideup", "slidedown", "pop", "fade",
-                           "flip", "turn", "flow", "slidefade", "none" ],
-                defaultValue: "slide",
-                htmlAttribute: "data-transition"
-            },
             corners: {
                 type: "boolean",
                 defaultValue: true,
