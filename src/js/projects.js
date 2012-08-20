@@ -101,7 +101,7 @@ $(function () {
                 }
             });
             // fill all projects info into pmUtils._projectsInfo
-            $.each(entries, function(index, e) {
+            $.each(entries, function (index, e) {
                 fsUtils.read(e.fullPath + "/pInfo.json", function (text) {
                     var dataObject = $.parseJSON(text);
                     // use the name of project folder as key, it's also PID
@@ -139,7 +139,7 @@ $(function () {
             type: 'GET',
             url: themePath,
             dataType: 'json',
-            success: function(data) {
+            success: function (data) {
                 $.extend(true, pmUtils.themesList, data);
             },
             async: false
@@ -564,7 +564,7 @@ $(function () {
             }
         };
         // save current design
-        pmUtils.syncCurrentProject(function() {
+        pmUtils.syncCurrentProject(function () {
             // read the design file and build ADM design according it
             $.rib.fsUtils.read(designPath, successHandler);
         });
@@ -718,7 +718,7 @@ $(function () {
     pmUtils.importProject = function (file, success, error) {
         var reader = new FileReader();
 
-        reader.onloadend = function(e) {
+        reader.onloadend = function (e) {
             var properties, design, designData, designRule,
                 copyRule, copyFiles, data, zip, successHandler,
                 resultProject;
@@ -733,7 +733,7 @@ $(function () {
                 console.warn("Failed to parse imported file as zip.");
             }
             if (zip && zip.filelist) {
-                zip.filelist.forEach(function(zipInfo, idx, array){
+                zip.filelist.forEach(function (zipInfo, idx, array){
                     if (designRule.test(zipInfo.filename)) {
                         designData = zip.extract(zipInfo.filename);
                     }
@@ -769,13 +769,13 @@ $(function () {
                         return;
                     }
                     // Copy needed files to sandbox
-                    $.each(copyFiles, function(i, fileName) {
+                    $.each(copyFiles, function (i, fileName) {
                         $.rib.fsUtils.write(projectFolder + fileName, zip.extract(fileName), function (newFile) {
                             count++;
                             if (count === copyFiles.length) {
                                 success && success();
                             }
-                        }, function(e) {
+                        }, function (e) {
                             count++;
                             console.error("Error when copy " + projectFolder + fileName + " to sandbox.");
                             $.rib.fsUtils.onError(e);
@@ -783,7 +783,7 @@ $(function () {
                     });
                 }
                 // Create "images/" sub-directory and copy the images in
-                $.rib.fsUtils.mkdir(projectFolder + "images", copyHandler, function(e) {
+                $.rib.fsUtils.mkdir(projectFolder + "images", copyHandler, function (e) {
                     console.error("Failed to create sub-folder images/ in " + projectFolder);
                 });
             };
@@ -1048,26 +1048,26 @@ $(function () {
      */
     pmUtils.uploadTheme = function (themeFile) {
         var themeName = themeFile.name.replace(/.css$/g, "");
-        var parseSwatchers = function(buffer) {
-            var swatchers = [], lines = [], arr, i,
+        var parseSwatches = function (buffer) {
+            var swatches = [], lines = [], arr, i,
                 re = /^\.ui-bar-([a-z]) {$/i;
             lines = buffer.split('\n');
             for (i = 0; i < lines.length; i++) {
                 arr =re.exec(lines[i]);
-                //if swatcher is not found in swatcher list, add it into swatchers
-                if (arr && jQuery.inArray(arr[1], swatchers) === -1) {
-                    swatchers.push(arr[1]);
+                //if swatch is not found in swatcher list, add it into swatches
+                if (arr && jQuery.inArray(arr[1], swatches) === -1) {
+                    swatches.push(arr[1]);
                 }
             }
-            return swatchers;
+            return swatches;
         };
         //write themeFile to sandbox
-        $.rib.fsUtils.write('/themes/' + themeFile.name, themeFile, function() {
+        $.rib.fsUtils.write('/themes/' + themeFile.name, themeFile, function () {
             //read file to buffer
-            $.rib.fsUtils.read('/themes/' + themeFile.name, function(result) {
+            $.rib.fsUtils.read('/themes/' + themeFile.name, function (result) {
                 try {
-                    var swathchers = parseSwatchers(result);
-                    pmUtils.themesList[themeName] = swathchers;
+                    var swatches = parseSwatches(result);
+                    pmUtils.themesList[themeName] = swatches;
                     //update themes.json in sandbox
                     $.rib.fsUtils.write('/themes.json', JSON.stringify(pmUtils.themesList));
                 } catch(e) {
