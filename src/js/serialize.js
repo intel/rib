@@ -658,7 +658,7 @@ $(function () {
             for (p in matched) {
                 files.push({
                     "src": toSandboxUrl(matched[p]),
-                    "dst": matched[p]
+                    "dst": matched[p].value ? matched[p].value : matched[p]
                 });
             }
         });
@@ -729,19 +729,23 @@ $(function () {
     }
 
     function toSandboxUrl(path, pid) {
-        var projectDir, fullPath;
+        var projectDir, pathStr;
         pid = pid || $.rib.pmUtils.getActive();
         projectDir = $.rib.pmUtils.getProjectDir(pid);
-        if (typeof path !== "string") {
-            console.error("Invalid path in toSandboxUrl: " + path);
+        if ((path instanceof Object) && path.inSandbox) {
+            pathStr = path.value;
+        } else {
+            pathStr = path;
+        }
+        if (typeof pathStr !== "string") {
+            console.error("Invalid path in toSandboxUrl: " + pathStr);
             return null;
         }
-        fullPath = path;
         // If the first char is '/', then it will be the absolute path in sandbox
-        if (path[0] !== '/' && projectDir) {
-            fullPath = projectDir + path;
+        if (pathStr[0] !== '/' && projectDir) {
+            pathStr = projectDir + pathStr;
         }
-        return $.rib.fsUtils.pathToUrl(fullPath);
+        return $.rib.fsUtils.pathToUrl(pathStr);
     }
 
     function indexOfArray(array, value) {

@@ -191,18 +191,18 @@
                             .addClass('title labelInput')
                             .appendTo(value);
                         //set default value
-                        value.find('#' + valueId).val(valueVal);
+                        value.find('#' + valueId).val(valueVal.value);
                         $('<button> Upload </button>')
                             .addClass('buttonStyle')
-                            .click(function (e) {
-                                var target, saveDir;
-                                target = $(this).prev("input:text");
-                                saveDir = $.rib.pmUtils.ProjectDir + "/" + $.rib.pmUtils.getActive() + "/images/";
+                            .click({node:node, property:p}, function (e) {
+                                var saveDir = $.rib.pmUtils.getProjectDir() + "images/";
                                 $.rib.fsUtils.upload("image", $(this).parent(), function(file) {
                                     // Write uploaded file to sandbox
                                     $.rib.fsUtils.write(saveDir + file.name, file, function (newFile) {
-                                        target.val("images/" + newFile.name);
-                                        target.trigger('change');
+                                        ADM.setProperty(e.data.node, e.data.property, {
+                                            inSandbox: true,
+                                            value: "images/" + newFile.name
+                                        });
                                     });
                                 });
                             }).appendTo(value);
