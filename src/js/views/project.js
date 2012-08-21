@@ -234,11 +234,11 @@
                 .children(':first')
                 .addClass('flex1 vbox wrap_left')
                 .append('<form><legend/><ul>' +
-                    '<li class="mt23"><label for="name">Project Name</label>' +
+                    '<li><label for="name">Project Name</label>' +
                     '<input type ="text" id="projectName" value=""/></li>' +
                     '<li class="mt23"><label for="name">Theme</label>' +
                     '<select id="themePicker" size="4"></select></li>' +
-                    '<li class="mt50"><u id="uploadTheme" class="fr mr40">' +
+                    '<li><u id="uploadTheme" class="fr mr40">' +
                     'Upload Theme</u></li>' +
                     '</ul></form><div class="div-bottom"></div>')
                 .end()

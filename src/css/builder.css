@@ -1177,7 +1177,7 @@ div.propertyItems label[for|=id] {
     border: 0px;
 }
 .ribDialog legend {
-    height: 10px;
+    height: 28px;
 }
 .ribDialog .bottom {
     position: absolute;
@@ -1222,9 +1222,6 @@ div.propertyItems label[for|=id] {
 .mt150 {
     margin-top: 150px;
 }
-.mt50 {
-    margin-top: 50px;
-}
 .mt23 {
     margin-top: 23px;
 }
@@ -1262,7 +1259,6 @@ div.propertyItems label[for|=id] {
 }
 .ribDialog li {
     clear: both;
-    height: 23px;
 }
 .ribDialog fieldset {
     display: inline;
