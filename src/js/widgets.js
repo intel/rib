@@ -35,6 +35,7 @@ var BCommonProperties = {
         htmlAttribute: "data-icon"
     },
     iconpos: {
+        displayName: "icon position",
         type: "string",
         options: [ "left", "top", "bottom", "right", "notext" ],
         defaultValue: "left",
