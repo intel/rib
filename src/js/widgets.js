@@ -1760,10 +1760,36 @@ var BWidgetRegistry = {
     },
 
     /**
+     * Represents a base ListItem element.
+     */
+    ListItemBase: {
+        parent: "Base",
+        properties: {
+            countbubble: {
+                type: "string",
+                displayName: "count bubble",
+                defaultValue: ""
+            }
+        },
+        template: function(node) {
+            var prop, iconsrc, countBubble, code = $('<li></li>');
+            prop = node.getProperty("countbubble");
+            // Add the count bubble if countbubble property is not blank
+            if (prop.trim() != '') {
+                countBubble = $('<span>')
+                    .attr('class', 'ui-li-count')
+                    .html(prop);
+                code.append(countBubble);
+            };
+            return code;
+        }
+    },
+
+    /**
      * Represents a generic list item element.
      */
     SimpleListItem: {
-        parent: "Base",
+        parent: "ListItemBase",
         displayLabel: "List Item",
         paletteImageName: "jqm_list_item.svg",
         allowIn: [ "ListBase" ],
@@ -1784,28 +1810,33 @@ var BWidgetRegistry = {
                 htmlAttribute: "data-filtertext"
             }
         },
-        template: '<li>%TEXT%</li>'
+        template: function (node) {
+            return BWidgetRegistry.ListItemBase.template(node).append(node.getProperty('text'));
+        },
     },
 
     /**
-     * Represents a ListItem element.
+     * Represents a Clickable ListItem element.
      */
-    ListItemBase: {
-        parent: "ButtonBase",
+    ClickableListItem: {
+        parent: [ "ListItemBase", "ButtonBase" ],
         defaultHtmlSelector: "a",
         properties: {
             theme: $.extend(true, {}, BCommonProperties.theme, {
                        htmlSelector: ""
                    })
         },
-        template: '<li><a></a></li>'
+        template: function (node) {
+            var code = BWidgetRegistry.ListItemBase.template(node);
+            return code.append($('<a/>').append(code.find('span.ui-li-count')));
+        },
     },
 
     /**
      * Represents a list button item element.
      */
     ButtonListItem: {
-        parent: "ListItemBase",
+        parent: "ClickableListItem",
         allowIn: [ "ButtonList" ],
         editable: {
             selector: ".ui-btn-text > a",
@@ -1817,14 +1848,17 @@ var BWidgetRegistry = {
                 defaultValue: "Button List Item",
             }
         },
-        template: '<li><a>%TEXT%</a></li>',
+        template: function (node) {
+            return BWidgetRegistry.ClickableListItem.template(node)
+                .find('a').append(node.getProperty('text')).end();
+        },
     },
 
     /**
      * Represents a list text item element.
      */
     TextListItem: {
-        parent: "ListItemBase",
+        parent: "ClickableListItem",
         allowIn: [ "TextList" ],
         zones: [
             {
@@ -1864,24 +1898,12 @@ var BWidgetRegistry = {
                 htmlAttribute: "src",
                 forceAttribute: true
             },
-            countbubble: {
-                type: "string",
-                displayName: "count bubble",
-                defaultValue: "0"
-            }
         },
         template: function(node) {
-            var prop, iconsrc, countBubble, code = $('<li><a>%TEXT%</a></li>');
-            prop = node.getProperty("countbubble");
-            // Add the count bubble if countbubble property is not blank
-            if (prop.trim() != '') {
-                countBubble = $('<span>')
-                    .attr('class', 'ui-li-count')
-                    .html(prop);
-                code.find('a').append(countBubble);
-            };
+            var prop, iconsrc,
+                code = BWidgetRegistry.ButtonListItem.template(node);
             prop = node.getProperty("iconsrc");
-            // Add the count bubble if iconsrc property is not blank
+            // Add the icon if iconsrc property is not blank
             if (prop.trim() != '') {
                 iconsrc = $('<img/>')
                         .attr('width','16')
@@ -1896,7 +1918,7 @@ var BWidgetRegistry = {
      * Represents a ThumbnailListItem element.
      */
     ThumbnailListItem: {
-        parent: "ListItemBase",
+        parent: "ClickableListItem",
         allowIn: [ "ThumbnailList"],
         zones: [
             {
@@ -1967,7 +1989,7 @@ var BWidgetRegistry = {
      * Represents a SplitListItem element.
      */
     SplitListItemBase: {
-        parent: "ListItemBase",
+        parent: "ClickableListItem",
         zones: [
             {
                 name: "extra",
