@@ -425,11 +425,23 @@ $(function () {
     }
 
     function getDesignHeaders(design, useSandboxUrl) {
-        var i, props, el, designRoot, headers;
+        var i, props, el, designRoot, headers, toCorrectPath;
         designRoot = design || ADM.getDesignRoot();
         headers = [];
 
         props = designRoot.getProperty('metas');
+        toCorrectPath = function (header) {
+            var path = header.value;
+            // If need to use sandbox url
+            if (header.inSandbox) {
+                if (useSandboxUrl) {
+                    path = toSandboxUrl(path);
+                } else {
+                    path = path.replace(/^\//, '');
+                }
+            }
+            return path;
+        };
         for (i in props) {
             // Skip design only header properties
             if (props[i].hasOwnProperty('designOnly') && props[i].designOnly) {
@@ -444,12 +456,7 @@ $(function () {
                 if ((typeof props[i].value !== 'string') || (props[i].value.length <= 0)) {
                     continue;
                 }
-                // If need to use sandbox url
-                if (useSandboxUrl && props[i].inSandbox) {
-                    el = el + '="' + toSandboxUrl(props[i].value) + '"';
-                } else {
-                    el = el + '="' + props[i].value + '"';
-                }
+                el = el + '="' + toCorrectPath(props[i]) + '"';
                 if (props[i].hasOwnProperty('content')) {
                     el = el + ' content="' + props[i].content + '"';
                 }
@@ -470,11 +477,7 @@ $(function () {
                 }
                 el = '<script ';
                 // If need to use sandbox url
-                if (useSandboxUrl && props[i].inSandbox) {
-                    el = el + 'src="' + toSandboxUrl(props[i].value) + '"';
-                } else {
-                    el = el + 'src="' + props[i].value + '"';
-                }
+                el = el + 'src="' + toCorrectPath(props[i]) + '"';
                 el = el + '></script>';
                 headers.push(el);
             }
@@ -492,11 +495,7 @@ $(function () {
                 }
                 el = '<link ';
                 // If need to use sandbox url
-                if (useSandboxUrl && props[i].inSandbox) {
-                    el = el + 'href="' + toSandboxUrl(props[i].value) + '"';
-                } else {
-                    el = el + 'href="' + props[i].value + '"';
-                }
+                el = el + 'href="' + toCorrectPath(props[i]) + '"';
                 el = el + ' rel="stylesheet">';
                 headers.push(el);
             }
