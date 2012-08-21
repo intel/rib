@@ -86,8 +86,8 @@
                 // Should this REALLY be done here, or plugin registration in
                 // the "host"... using the functions mapped in widget options?
                 case 'model':
-                    this._createDocument();
                     this.options.iframe.load(this, this._iframeLoaded);
+                    this._createDocument();
                     break;
                 default:
                     break;
