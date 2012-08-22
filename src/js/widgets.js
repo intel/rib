@@ -66,7 +66,19 @@ var BCommonProperties = {
     },
     theme: {
         type: "string",
-        options: [ "default", "a", "b", "c", "d", "e" ],
+        options: function() {
+            var pmUtils = $.rib.pmUtils, currentTheme, pid, swatches = [];
+            pid = pmUtils.getActive();
+            if (pid) {
+                currentTheme = pmUtils.getProperty(pid, "theme");
+                if (currentTheme === 'Default') {
+                    swatches = ["default", "a", "b", "c", "d", "e"];
+                } else {
+                    swatches = pmUtils.themesList[currentTheme];
+                }
+            }
+            return swatches;
+        },
         defaultValue: "default",
         htmlAttribute: "data-theme"
     },
@@ -2178,7 +2190,7 @@ var BWidget = {
      * @throws {Error} If widgetType is invalid.
      */
     getPropertyOptions: function (widgetType) {
-        var stack = [], options = {}, length, i, property, widget;
+        var stack = [], options = {}, length, i, property, widget, valueOptions;
         widget = BWidgetRegistry[widgetType];
 
         if (typeof widget !== "object") {
@@ -2188,7 +2200,12 @@ var BWidget = {
 
         for (property in widget.properties) {
             if (widget.properties.hasOwnProperty(property)) {
-                options[property] = widget.properties[property].options;
+                valueOptions = widget.properties[property].options;
+                if (typeof valueOptions === "function") {
+                    options[property] = valueOptions();
+                } else {
+                    options[property] = valueOptions;
+                }
             }
         }
         return $.extend(true, {}, options);
