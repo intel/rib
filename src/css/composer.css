@@ -48,7 +48,7 @@
 /*************************/
 /* Class specific tweaks */
 /*************************/
-.nrc-sortable-container.ui-content .adm-node {
+.nrc-sortable-container.ui-content > * {
     margin-top: 10px;
     margin-bottom: 10px;
 }
