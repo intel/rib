@@ -361,7 +361,34 @@
                            '-webkit-transform-origin':'2 2'});
         },
         _buttonEvents: function(box, pid, widget) {
-            var openHandler, cloneHandler, deleteHandler;
+            var renameHandler, openHandler, cloneHandler, deleteHandler;
+            renameHandler = function(e) {
+                var spanElement = $(this),
+                    renameProject = function(e, inputElement, spanElement) {
+                        var projectName = inputElement.val();
+                        if (projectName.trim() == '')
+                            projectName = 'Untitled'
+                        $.rib.pmUtils.setProperty(pid, "name", projectName);
+                        spanElement.html(projectName);
+                        spanElement.show();
+                        inputElement.remove();
+                    };
+
+                spanElement.hide();
+                $('<input>')
+                    .attr('type', 'text')
+                    .val(spanElement.html())
+                    .appendTo(spanElement.parent())
+                    .keydown(function(e) {
+                        if(e.keyCode == '13') {
+                            renameProject(e, $(this), spanElement);
+                        }
+                    })
+                    .blur(function(e) {
+                        renameProject(e, $(this), spanElement);
+                    })
+                    .focus();
+            };
             openHandler = function () {
                 var success = function () {
                     // show the layout tab
@@ -397,6 +424,7 @@
                     $.rib.pmUtils.deleteProject(pid, success);
                 });
             };
+            box.find('.titleBar > span').dblclick(renameHandler);
             box.find('.openButton').click(openHandler);
             box.find('.clone.button').click(cloneHandler);
             box.find('.delete.button').click(deleteHandler);

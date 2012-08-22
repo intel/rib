@@ -1344,6 +1344,11 @@ div.propertyItems label[for|=id] {
     font-weight: bold;
 }
 
+.titleBar input {
+    width: 150px;
+    margin: 3px;
+}
+
 .openButton {
     background-image: url("images/openButton_up.png");
     background-repeat: no-repeat;
