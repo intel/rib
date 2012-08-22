@@ -266,6 +266,35 @@ ADM.getDesignRoot = function () {
 };
 
 /**
+ * Not intended as a public API.
+ * An event handler to catch node removal and set the selection to the nearest
+ * appropriate node.
+ * @private
+ */
+ADM.adjustSelectionHandler = function (event) {
+    // handle node removal by adjusting selection
+    var zone, parent;
+    if (event.type === "nodeRemoved") {
+        parent = event.parent;
+        zone = parent.getZoneArray(event.zone);
+
+        // Select sibling of removed node, or parent node
+        // if removed node is the last node of parent.  The
+        // order is next sibling, prev sibling, then parent.
+        if (zone.length === 0) {
+            while (!parent.isSelectable()) {
+                parent = parent.getParent();
+            }
+            ADM.setSelected(parent);
+        } else if (event.index < zone.length) {
+            ADM.setSelected(zone[event.index])
+        } else {
+            ADM.setSelected(zone[zone.length - 1]);
+        }
+    }
+}
+
+/**
  * Sets the singleton design root. Sends a "designReset" event if
  * design changed.
  *
@@ -281,6 +310,10 @@ ADM.setDesignRoot = function (design) {
 
     if (ADM._design !== design) {
         ADM._design = design;
+
+        design.unbind("modelUpdated", ADM.adjustSelectionHandler);
+        design.bind("modelUpdated", ADM.adjustSelectionHandler);
+
         ADM.setActivePage(null);  // this will also setSelected(null)
 
         // ensure a design always has a page
@@ -423,6 +456,7 @@ ADM.setSelected = function (nodeRef) {
 
     if (ADM._selection !== node) {
         ADM._selection = node;
+        ADM.clearEvent("selectionChanged");
         ADM.fireEvent("selectionChanged", { node: node, uid: uid });
         return true;
     }
@@ -952,7 +986,7 @@ ADM.redo = function () {
         }
         else if (obj.type === "insertRelative") {
             obj.sibling.insertChildRelative(obj.child, obj.offset);
-            ADM.setSelected(obj.node);
+            ADM.setSelected(obj.child);
         }
         else if (obj.type === "propertyChange") {
             // TODO: this could require deeper copy of complex properties
@@ -1896,25 +1930,6 @@ ADMNode.prototype.removeChildFromZone = function (zoneName, index, dryrun) {
         this.fireModelEvent("modelUpdated",
                             { type: "nodeRemoved", node: child, parent: this,
                               index: index, zone: zoneName });
-
-        if (child.isSelected()) {
-            parent = this;
-
-            // Select sibling of removed node, or parent node
-            // if removed node is the last node of parent.  The
-            // order is next sibling, prev sibling and parent
-            if (zone.length === 0) {
-                // find the first selectable ancestor
-                while (!parent.isSelectable()) {
-                    parent = parent.getParent();
-                }
-                ADM.setSelected(parent);
-            } else if (index < zone.length) {
-                ADM.setSelected(zone[index])
-            } else {
-                ADM.setSelected(zone[zone.length - 1]);
-            }
-        }
     }
     return child;
 };
