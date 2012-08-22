@@ -171,10 +171,10 @@
         },
 
         _setSelected: function (domNode) {
+            this.element.find('.ui-selected')
+                .removeClass('ui-selected')
+                .removeClass('ui-state-active');
             if (domNode[0]) {
-                this.element.find('.ui-selected')
-                    .removeClass('ui-selected')
-                    .removeClass('ui-state-active');
                 domNode.find('> a').addClass('ui-state-active')
                     .addClass('ui-selected')
                     [0].scrollIntoViewIfNeeded();

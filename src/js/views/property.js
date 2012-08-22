@@ -100,12 +100,9 @@
 
             // Clear the properties pane when nothing is selected
             if (node === null || node === undefined) {
-                node = ADM.getActivePage();
-                if (node === null || node === undefined) {
-                    content.empty()
-                        .append('<label>Nothing Selected</label>');
-                    return;
-                }
+                content.empty()
+                    .append('<label>Nothing Selected</label>');
+                return;
             }
 
             type = node.getType();

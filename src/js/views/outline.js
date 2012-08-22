@@ -50,22 +50,15 @@
             }
 
             // Make sure we show the page as selected if no node is selected
-            if (event === null || event.node === null) {
-                node = widget.options.model.getDesignRoot()
-                             .findNodeByUid(widget.options.model.getSelected());
-                if (node === null || node === undefined) {
-                    node = widget.options.model.getActivePage();
-                    if (node === null || node === undefined) {
-                        return false;
-                    }
-                }
-            } else {
+            if (event && event.node !== undefined) {
                 node = event.node;
+            } else {
+                console.error('Event object may be discontruced, in outline selection handler.');
+                return;
             }
-
             // When a page is selected, we will close all other page subtrees
             // and ensure the selected pages' subtree is opened
-            if (node.getType() === 'Page') {
+            if (node && node.getType() === 'Page') {
                 // node is <a> element, need the "folder" <span> before it
                 var fldr = widget.findDomNode(node).find('> .folder').eq(0);
                 // "Close" all other page folders

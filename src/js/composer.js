@@ -898,6 +898,10 @@ $(function() {
         $(foo).focus();
         $(bar).blur();
 
-        adm.setSelected((item?$(item).attr('data-uid'):item));
+        if (item) {
+            adm.setSelected($(item).attr('data-uid'));
+        } else {
+            adm.setSelected(adm.getActivePage());
+        }
     }
 });
