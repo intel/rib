@@ -1960,11 +1960,15 @@ ADMNode.prototype.foreach = function (func) {
  * @param {String} The name of the property.
  * @return {String} The generated property value.
  */
-ADMNode.prototype.generateUniqueProperty = function (property) {
+ADMNode.prototype.generateUniqueProperty = function (property, force) {
     var generate, design, myType, length, i, genLength, max, num, existing = [];
     myType = this.getType();
     generate = BWidget.getPropertyAutoGenerate(myType, property);
-    if (!generate) {
+    // If force argument is set, then set the generate as myType and continue
+    // to run.
+    if (!generate && force) {
+        generate = myType.toLowerCase();
+    } else if (!generate) {
         return undefined;
     }
 
