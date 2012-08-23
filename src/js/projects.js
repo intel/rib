@@ -685,7 +685,7 @@ $(function () {
         var d, s, pid;
         pid = $.rib.pmUtils.getActive();
         if (!pid) {
-            console.warn("No active project to update thumbnail.");
+            dumplog("Warning: No active project to update thumbnail.");
             return false;
         }
         d = $(liveDoc.documentElement).clone();

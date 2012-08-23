@@ -118,7 +118,7 @@ $(function () {
         if (parentNode === undefined || parentNode === null ||
             parentNode.length < 1) {
             // No sense adding it to the DOM if we can't find it's parent
-            console.info(parentSelector+' not found in Design View');
+            dumplog("Warning" + parentSelector+' not found in Design View');
         }
 
         domNodes = $(selector, parentNode);
