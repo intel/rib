@@ -299,6 +299,16 @@ $(function () {
      */
     pmUtils.setProperties = function (pid, properties) {
         var i, pInfo, temp, newThemeName, oldThemeName, props, p;
+        var getThemeFile = function (themeName) {
+            var theme;
+            if (jQuery.inArray(themeName + ".min.css",
+                        $.rib.pmUtils.allThemes) !== -1) {
+                theme = '/themes/' + themeName + ".min.css";
+            } else {
+                theme = '/themes/' + themeName + ".css";
+            }
+            return theme;
+        };
         // get the original object of pInfo
         pid && (pInfo = pmUtils._projectsInfo[pid]);
         if (!(pid && pInfo) || typeof properties !== "object") {
@@ -313,12 +323,16 @@ $(function () {
                     oldThemeName = pmUtils.getProperty(pid, 'theme');
                     //update css property in header
                     if (oldThemeName === "Default") {
-                        $.rib.addSandboxHeader('css', '/themes/' + newThemeName + '.css');
+                        newThemeName = getThemeFile(newThemeName);
+                        $.rib.addSandboxHeader('css', newThemeName);
                     } else if (newThemeName === "Default") {
-                        $.rib.removeSandboxHeader('css', '/themes/' + oldThemeName + '.css');
+                        oldThemeName = getThemeFile(oldThemeName);
+                        $.rib.removeSandboxHeader('css', oldThemeName);
                     } else {
-                        $.rib.removeSandboxHeader('css', '/themes/' + oldThemeName + '.css');
-                        $.rib.addSandboxHeader('css', '/themes/' + newThemeName + '.css');
+                        oldThemeName = getThemeFile(oldThemeName);
+                        newThemeName = getThemeFile(newThemeName);
+                        $.rib.removeSandboxHeader('css', oldThemeName);
+                        $.rib.addSandboxHeader('css', newThemeName);
                     }
                 }
                 // if the item has schema then check the type
@@ -1048,40 +1062,28 @@ $(function () {
      * upload a new theme to projects
      *
      * @param {String} theme file
-     * @return {Bool} return true if success, false when fails
+     * @param {Function} callback when upload file successfully
      */
-    pmUtils.uploadTheme = function (themeFile) {
-        var themeName = themeFile.name.replace(/.css$/g, "");
-        var parseSwatches = function (buffer) {
-            var swatches = [], lines = [], arr, i,
-                re = /^\.ui-bar-([a-z]) {$/i;
-            lines = buffer.split('\n');
-            for (i = 0; i < lines.length; i++) {
-                arr =re.exec(lines[i]);
-                //if swatch is not found in swatcher list, add it into swatches
-                if (arr && jQuery.inArray(arr[1], swatches) === -1) {
-                    swatches.push(arr[1]);
-                }
-            }
-            return swatches;
-        };
+    pmUtils.uploadTheme = function (themeFile, handler) {
+        var themeNames = [], themeName;
+
         //write themeFile to sandbox
         $.rib.fsUtils.write('/themes/' + themeFile.name, themeFile, function () {
             //read file to buffer
-            $.rib.fsUtils.read('/themes/' + themeFile.name, function (result) {
+            $.rib.fsUtils.read('/themes/' + themeFile.name, function (buffer) {
+                var swatches, result;
                 try {
-                    var swatches = parseSwatches(result);
-                    if (swatches.length) {
-                        pmUtils.themesList[themeName] = swatches;
-                        // add default swatch into theme
-                        pmUtils.themesList[themeName].unshift('default');
-                        // update themes.json in sandbox
-                        $.rib.fsUtils.write('/themes.json',
-                                            JSON.stringify(pmUtils.themesList));
+                    // split suffix of 'css'
+                    themeName = themeFile.name.replace(/.css$/g, "");
+                    // split suffix of 'min' if exists
+                    themeName = themeName.replace(/.min$/g, "");
+                    result = updateThemeList(themeName, buffer);
+                    if (result) {
+                        themeNames.push(themeName);
+                        handler();
                     }
                 } catch(e) {
                     alert(e.stack);
-                    return false;
                 }
             });
         });
@@ -1099,6 +1101,39 @@ $(function () {
         }
         return themes;
     };
+
+    /**
+     * After parsing buffers, we extract swatches of theme. Then update
+     * theme list
+     *
+     * @return {Boolean} return true if update theme list successfully,
+     *         otherwise return false
+     */
+    function updateThemeList (themeName, buffer) {
+        var swatches = [], swatch, arr, i,
+            re = /\.ui-bar-[a-z]/g;
+        arr = buffer.match(re);
+        try {
+            for (i = 0; i < arr.length; i++) {
+                swatch = arr[i].replace(/\.ui-bar-/g, "");
+                // if swatch is not found in swatcher list, add it into swatches
+                if (swatch && jQuery.inArray(swatch, swatches) === -1) {
+                    swatches.push(swatch);
+                }
+            }
+            if (swatches.length) {
+                pmUtils.themesList[themeName] = swatches;
+                // add default swatch into theme
+                pmUtils.themesList[themeName].unshift('default');
+                // update themes.json in sandbox
+                $.rib.fsUtils.write('/themes.json', JSON.stringify(pmUtils.themesList));
+            }
+            return true;
+        } catch(e) {
+            alert(e.stack);
+            return false;
+        }
+    }
 
     /************ export pmUtils to $.rib **************/
     $.rib.pmUtils = pmUtils;
