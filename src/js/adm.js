@@ -2131,8 +2131,7 @@ ADMNode.prototype.getProperty = function (property) {
  *                  if the property is invalid for this object.
  */
 ADMNode.prototype.getPropertySerializationObject = function (property) {
-    var obj = {}, type = this.getType(), value = this.getProperty(property),
-        valueMap = BWidget.getPropertyValueMap(type, property);
+    var obj = {}, type = this.getType(), value = this.getProperty(property);
 
     // only serialize properties that are either explicitly set or forced
     if (!this.isPropertyExplicit(property) &&
