@@ -60,6 +60,7 @@ src/css/web-ui-fw-theme.css		MIT             Intel
 src/css/web-ui-fw-widgets.css		MIT             Intel
 lib/jszip.js				MIT or GPLv3	Stuart Knightley[5]
 lib/zipfile.js				Modified BSD    Arnaud Renervier[6]
+lib/deflate.js				MIT/X11         Arnaud Renervier[6]
 lib/CodeMirror-2.21/LICENSE		BSD-like	Marijn Haverbeke
 lib/CodeMirror-2.21/lib/codemirror.css	BSD-like	Marijn Haverbeke
 lib/CodeMirror-2.21/lib/codemirror.js	BSD-like	Marijn Haverbeke
