@@ -48,6 +48,10 @@ $(function () {
             mime: 'text/css',
             suffix: ['css']
         },
+        zip: {
+            mime: 'application/zip',
+            suffix: ['zip']
+        },
         any: {
             mime: '*',
             suffix: ['*']
@@ -554,6 +558,10 @@ $(function () {
      */
     checkFileType: function (type, file) {
                        var arrString, rule;
+                       if (type === 'any') {
+                           // if file type is any, we don't check
+                           return true;
+                       }
                        arrString = fsUtils.fileTypes[type.toLowerCase()].suffix.join('|');
                        rule = new RegExp("\\.(" + arrString + ")$", "i");
                        // TODO: May need to read the "content-type" to check the type
