@@ -432,6 +432,15 @@ $(function() {
                         delegateNode.addClass('delegation');
                         delegateNode.attr('data-uid', $(node).attr('data-uid'));
                     }
+                    if (admNode.isSelected() && !admNode.instanceOf('Page')) {
+                        $(node).removeClass('ui-selected')
+                            .removeClass('ui-selecting')
+                            .removeClass('ui-unselecting');
+
+                        $(delegateNode).removeClass('ui-unselecting')
+                            .removeClass('ui-selecting')
+                            .addClass('ui-selected');
+                    }
                 }
 
                 // Configure "select" handler
