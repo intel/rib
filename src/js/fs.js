@@ -327,7 +327,7 @@ $(function () {
                var onError = error || fsUtils.onError;
                function write(fileEntry) {
                    fileEntry.createWriter(function (fileWriter) {
-                       var bb, mimeString, ab, ia;
+                       var bb, ab, ia;
 
                        fileWriter.onwriteend = function (progressEvent) {
                            success && success(fileEntry);
@@ -343,8 +343,6 @@ $(function () {
                              fileWriter.write(contents);
                        // Case 2: string contents, create a blob
                        } else {
-                           bb = new BlobBuilder(); // Create a new Blob on-the-fly.
-                           mimeString = "text/plain";
                            if (binary) {
                                // write the bytes of the string to an ArrayBuffer
                                ab = new ArrayBuffer(contents.length);
@@ -352,16 +350,19 @@ $(function () {
                                for (var i = 0; i < contents.length; i++) {
                                    ia[i] = contents.charCodeAt(i);
                                }
-                               // write the ArrayBuffer to a blob, and you're done
-                               bb.append(ab);
-                               mimeString = "";
+                               contents = ia;
                            }
-                           else {
+                           if (window.Blob) {
+                               bb = new Blob([contents]); // Create a new Blob on-the-fly.
+                               fileWriter.write(bb);
+                           } else if (window.BlobBuilder){
+                               bb = new BlobBuilder(); // Create a new Blob on-the-fly.
                                bb.append(contents);
+                               fileWriter.write(bb.getBlob());
+                           } else {
+                               console.error("No Blob or BlobBuilder constructor.");
                            }
-                           fileWriter.write(bb.getBlob(mimeString));
                        }
-
                    }, onError);
                }
 
