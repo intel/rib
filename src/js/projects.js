@@ -978,10 +978,14 @@ $(function () {
             // TODO: will list all the uploaded resource and show the reference
             // count of them. It will depend on the user if delete or not.
             if (pmUtils.resourceRef[refPath] <= 0) {
-                $.rib.confirm('Unused resource: "' + refPath +
-                    '". \nWould you like to delete it from the project?', function () {
-                    $.rib.fsUtils.rm(projectDir + refPath);
-                    delete pmUtils.resourceRef[refPath];
+                delete pmUtils.resourceRef[refPath];
+                $.rib.fsUtils.pathToEntry(projectDir + refPath, function (entry) {
+                    $.rib.confirm('Unused resource: "' + entry.name +
+                        '". \nWould you like to delete it from the project?', function () {
+                            $.rib.fsUtils.rm(entry.fullPath);
+                        }, function () {
+                            pmUtils.resourceRef[refPath] = 0;
+                        });
                 });
             }
         } else {
