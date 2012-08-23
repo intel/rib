@@ -1067,9 +1067,14 @@ $(function () {
             $.rib.fsUtils.read('/themes/' + themeFile.name, function (result) {
                 try {
                     var swatches = parseSwatches(result);
-                    pmUtils.themesList[themeName] = swatches;
-                    //update themes.json in sandbox
-                    $.rib.fsUtils.write('/themes.json', JSON.stringify(pmUtils.themesList));
+                    if (swatches.length) {
+                        pmUtils.themesList[themeName] = swatches;
+                        // add default swatch into theme
+                        pmUtils.themesList[themeName].unshift('default');
+                        // update themes.json in sandbox
+                        $.rib.fsUtils.write('/themes.json',
+                                            JSON.stringify(pmUtils.themesList));
+                    }
                 } catch(e) {
                     alert(e.stack);
                     return false;
