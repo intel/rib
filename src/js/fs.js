@@ -352,16 +352,19 @@ $(function () {
                                }
                                contents = ia;
                            }
-                           if (window.Blob) {
-                               bb = new Blob([contents]); // Create a new Blob on-the-fly.
-                               fileWriter.write(bb);
-                           } else if (window.BlobBuilder){
-                               bb = new BlobBuilder(); // Create a new Blob on-the-fly.
-                               bb.append(contents);
-                               fileWriter.write(bb.getBlob());
-                           } else {
-                               console.error("No Blob or BlobBuilder constructor.");
+                           try {
+                               bb = new Blob([contents]);
+                           } catch(e) {
+                               if (window.BlobBuilder){
+                                   bb = new BlobBuilder(); // Create a new Blob on-the-fly.
+                                   bb.append(contents);
+                                   bb = bb.getBlob();
+                               } else {
+                                   console.error("No Blob or BlobBuilder constructor.");
+                                   return;
+                               }
                            }
+                           bb && fileWriter.write(bb);
                        }
                    }, onError);
                }
