@@ -96,7 +96,7 @@
                 p, props, options, code, o, propertyItems, label, value,
                 title = this.element.parent().find('.property_title'),
                 content = this.element.find('.property_content'),
-                continueToDelete;
+                continueToDelete, container;
 
             // Clear the properties pane when nothing is selected
             if (node === null || node === undefined) {
@@ -382,8 +382,16 @@
                                             value = e.data.value, p = e.data.p;
 
                                         items += '<li>previous page</li>';
+                                        container = node.getParent();
+                                        while (container !== null &&
+                                            container.getType() !== "Page") {
+                                            container = container.getParent();
+                                        }
                                         pages = ADM.getDesignRoot().getChildren();
                                         for (o = 0; o < pages.length; o++) {
+                                            if (pages[o] === container) {
+                                                continue;
+                                            }
                                             id = pages[o].getProperty('id');
                                             items += '<li>#' + id + '</li>';
                                         }
