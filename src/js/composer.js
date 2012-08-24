@@ -279,58 +279,6 @@ $(function() {
         }
     };
 
-    var addNewNodeOnDrop = function (domParent, domChildren, adm, pid,
-                                     nodeRef, role, domNode) {
-        var newNode, domSibling, sid, admChildren, domIndex, debug;
-
-        debug = (window.top.$.rib && window.top.$.rib.debug());
-        domIndex = domChildren.index(domNode);
-
-        // Append first(only)/last child to this container
-        if (domIndex >= domChildren.length-1 || role === 'page') {
-            if (adm.addChild(pid, nodeRef, true)) {
-                newNode = adm.addChild(pid, nodeRef);
-                debug && console.log('Appended node',role);
-                newNode && adm.setSelected(newNode);
-            } else {
-                console.warn('Append child failed:',role);
-            }
-        } else if (domIndex > 0) {
-            // Insert nth child into this container
-            domSibling = $(domNode, domParent).prev('.adm-node');
-            sid = domSibling.attr('data-uid');
-            if (adm.insertChildAfter(sid, nodeRef, true)) {
-                newNode = adm.insertChildAfter(sid, nodeRef);
-                debug && console.log('Inserted nth node',role);
-                newNode && adm.setSelected(newNode);
-            } else {
-                console.warn('Insert nth child failed:',role);
-            }
-        } else {
-            // Add 1st child into an empty container
-            if (domChildren.length-1 <= 0) {
-                if (adm.addChild(pid, nodeRef, true)) {
-                    newNode = adm.addChild(pid, nodeRef);
-                    debug && console.log('Added 1st node',role);
-                    newNode && adm.setSelected(newNode);
-                } else {
-                    console.warn('Add 1st child failed:',role);
-                }
-            } else {
-                // Insert 1st child into non-empty container
-                admChildren = adm.toNode(pid).getChildren();
-                sid = admChildren.length && admChildren[0].getUid();
-                if (adm.insertChildBefore(sid, nodeRef, true)) {
-                    newNode = adm.insertChildBefore(sid, nodeRef);
-                    debug && console.log('Inserted 1st node', role);
-                    newNode && adm.setSelected(newNode);
-                } else {
-                    console.warn('Insert 1st child failed:', role);
-                }
-            }
-        }
-    };
-
     window.top.$.rib = window.top.$.rib || {};
     window.top.$.rib.dndfilter = dndfilter;
 
@@ -643,16 +591,14 @@ $(function() {
                 },
                 stop: function(event, ui){
                     trackOffsets('stop:    ',ui,$(this).data('sortable'));
-                    var type, isDrop,
+                    var isDrop,
                         pid = $(this).attr('data-uid'),
-                        node = null,
                         adm = window.parent.ADM,
-                        bw = window.parent.BWidget,
                         root = adm.getDesignRoot(),
-                        node, zones, newParent, newZone,
-                        rdx, idx, cid, pid, sid,
+                        nodeRef, newParent, newNode,
+                        cid, pid,
                         sibling, children, parent,
-                        role, card;
+                        role, prevItem = ui.item, nextItem = ui.item;
 
                     role = $(this).attr('data-role') || '';
 
@@ -703,87 +649,53 @@ $(function() {
                         ui.item.remove();
                         return false;
                     }
-
-                    // Drop from palette: add a node
                     if (isDrop) {
                         if (ui.item.data('adm-node')) {
-                            type = ui.item.data('adm-node').type;
+                            nodeRef = ui.item.data('adm-node').type;
                         }
 
-                        if (!type) {
+                        if (!nodeRef) {
                             console.warn('Drop failed: Missing node type');
                             ui.item.remove();
                             return false;
                         }
-
-                        children = $($(this).sortable('option', 'items'), this)
-                                          .add(ui.item);
-                        addNewNodeOnDrop(this, children, adm, pid, type,
-                                         role, ui.item);
-                        ui.item.remove();
-                        return;
-
-                    // Sorted from layoutView: move a node
-                    } else {
-                        children = ui.item.parent().children('.adm-node')
-                                          .add(ui.item);
-                        idx = children.index(ui.item);
+                    }
+                    else {
                         cid = ui.item.attr('data-uid');
                         // closest() will select current element if it matches
                         // the selector, so we start with its parent.
+                        nodeRef = cid && root.findNodeByUid(cid);
+                        if (event && event.ctrlKey) {
+                            nodeRef = adm.copySubtree(nodeRef);
+                        }
+                    }
+
+                    while (prevItem[0] || nextItem[0]) {
+                        prevItem = prevItem.prev('.adm-node');
+                        if (prevItem[0] && (newNode = adm.insertChildAfter
+                                (prevItem.attr('data-uid'), nodeRef)))
+                            break;
+                        nextItem = nextItem.next('.adm-node');
+                        if (nextItem[0] && (newNode = adm.insertChildBefore
+                                (nextItem.attr('data-uid'), nodeRef)))
+                            break;
+                    }
+                    if (!prevItem[0] && !nextItem[0]) {
                         pid = ui.item.parent()
                                      .closest('.adm-node.ui-sortable,'+
                                               '.orig-adm-node.ui-sortable')
                                      .attr('data-uid');
-                        node = cid && root.findNodeByUid(cid);
-                        if (event && event.ctrlKey) {
-                            node = adm.copySubtree(node); // Clone it
-                            addNewNodeOnDrop(this, children, adm, pid, node,
-                                             role, ui.item);
-                        } else {
-                            newParent = pid && root.findNodeByUid(pid);
-                            zones = newParent && bw.getZones(newParent.getType());
-                            card = newParent && zones &&
-                                   bw.getZoneCardinality(newParent.getType(),
-                                                         zones[0]);
-
-                            // Notify the ADM that element has been moved
-                            if ((zones && zones.length===1 && card !== '1')) {
-                                if (!node ||
-                                    !adm.moveNode(node, newParent, zones[0],
-                                                  idx)) {
-                                    console.warn('Move node failed');
-                                    ui.item.remove();
-                                    return false;
-                                } else {
-                                    debug && console.log('Move node worked');
-                                    if (node) adm.setSelected(node.getUid());
-                                }
-                            } else if (node && newParent &&
-                                       newParent.getType() === 'Header') {
-                                for (var z=0; z < zones.length; z++) {
-                                    if (adm.moveNode(node, newParent, zones[z],
-                                        0, true)) {
-                                        newZone = zones[z];
-                                        break;
-                                    }
-                                }
-                                if (newZone) {
-                                    adm.moveNode(node, newParent, newZone, 0);
-                                    debug && console.log('Move node worked');
-                                    if (node) adm.setSelected(node.getUid());
-                                } else {
-                                    console.warn('Move node failed');
-                                    ui.item.remove();
-                                    return false;
-                                }
-                            } else {
-                                console.warn('Move node failed: invalid zone');
+                        newParent = pid && root.findNodeByUid(pid);
+                        if (!(newNode = adm.addChild(newParent, nodeRef))) {
+                            if (isDrop) {
                                 ui.item.remove();
-                                return false;
+                                return true;
                             }
+                            return false;
                         }
                     }
+                    if (newNode)
+                        adm.setSelected(newNode);
                 }
             })
             .bind('mousedown.composer', function(event) {
