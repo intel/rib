@@ -1487,7 +1487,7 @@ ADMNode.prototype.findNodesByProperty = function (propertyFilter) {
 
     // recurse on children
     children = this.getChildren();
-    for (i = children.length - 1; i >= 0; i--) {
+    for (i = 0; i < children.length; i++) {
         result = result.concat(children[i].findNodesByProperty(propertyFilter));
     }
     return result;
