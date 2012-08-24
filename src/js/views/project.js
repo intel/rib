@@ -380,13 +380,14 @@
                     .val(spanElement.html())
                     .appendTo(spanElement.parent())
                     .keydown(function(e) {
-                        if(e.keyCode == '13') {
+                        if (e.keyCode == '13') {
                             renameProject(e, $(this), spanElement);
                         }
                     })
                     .blur(function(e) {
                         renameProject(e, $(this), spanElement);
                     })
+                    .select()
                     .focus();
             };
             openHandler = function () {
