@@ -249,7 +249,7 @@
                 .appendTo(projectDialog, this);
 
             $(document).delegate('#uploadTheme', "click", function () {
-                $.rib.fsUtils.upload('css', projectDialog, function(file) {
+                $.rib.fsUtils.upload('any', projectDialog, function(file) {
 		            var handler = function () {
                         var themeName, themeList = [];
 

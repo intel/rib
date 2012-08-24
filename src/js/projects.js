@@ -1075,51 +1075,55 @@ $(function () {
      * @param {Function} callback when upload file successfully
      */
     pmUtils.uploadTheme = function (themeFile, handler) {
-        // firstly we check whether name of imported theme file
-        // exists in the projects
-        // If exists, a confirm dialog pup up for user to select
-        //    if user select "yes", orignal theme file will be deleted
-        //    else do nothing, return directly
-        // else upload new theme files
-        var msg, minifiedRule = /(\.min\.css)$/i,
-            theme = themeFile.name.replace(/(\.css|\.min.css)$/g, "");
-        if ($.rib.pmUtils.themesList.hasOwnProperty(theme) ||
-            theme === "Default") {
-            if (theme === "Default") {
-                msg = "Defauls used for  JQuery Mobile  default theme" +
-                    "(jquery.mobile.theme-1.1.0.css), please rename" +
-                    " imported theme";
-                window.alert(msg);
-                return;
+        var type, reader;
+        // get file type. Currently we get file type
+        // just accordint to suffix of file name
+        var getFileType = function (fileName) {
+            var type,re = /(?:.*)+\.(zip|css)$/i;
+            type = re.exec(fileName);
+            if (type) {
+                return type[1].toLowerCase();
             } else {
-                msg = "There is " + theme + " theme existed in projects. " +
-                    "Would you like to replace it?";
-                $.rib.confirm(msg,
-                    // if user select "OK" button, replace old one with new theme
-                    function () {
-                        var anotherThemeFile;
-                        if (minifiedRule.test(themeFile.name)) {
-                            anotherThemeFile = themeFile.name.replace(/\.min\.css$/g, "\.css");
-                        } else {
-                            anotherThemeFile = themeFile.name.replace(/\.css$/g, ".min.css");
-                        }
-                        if (jQuery.inArray(anotherThemeFile, pmUtils.allThemes) !== -1) {
-                            $.rib.fsUtils.rm('/themes/' + anotherThemeFile,
-                                function () {
-                                    var idx, allThemes = $.rib.pmUtils.allThemes;
-                                    idx = allThemes.indexOf(anotherThemeFile);
-                                    if(idx!=-1) {
-                                        allThemes.splice(idx, 1);
-                                    }
-                                    writeThemeFile(themeFile, handler);
-                                });
-                        } else {
-                            writeThemeFile(themeFile, handler);
-                        }
-                    });
+                return "unsupported";
             }
-        } else {
-            writeThemeFile(themeFile, handler);
+        };
+
+        type = getFileType(themeFile.name);
+        switch (type) {
+            case 'css':
+                singleCssHandler(themeFile.name, themeFile, handler);
+                break;
+            case 'zip':
+                reader = new FileReader();
+                reader.onloadend = function (e) {
+                    var zip, data, cssRule, cssData, copyFiles = [];
+                    // get result data from reader
+                    data = e.target.result;
+                    cssRule = /(\.min\.css)$/i;
+                    try {
+                        zip = new ZipFile(data);
+                    } catch (e) {
+                        console.warn("Failed to parse imported file as zip.");
+                    }
+                    if (zip && zip.filelist) {
+                        zip.filelist.forEach(function (zipInfo, idx, array) {
+                            if (cssRule.test(zipInfo.filename)) {
+                                cssData = zip.extract(zipInfo.filename);
+                                // write themeFile to sandbox
+                                singleCssHandler(zipInfo.filename.replace(/^themes\//i,""),
+                                    cssData, handler);
+                            }
+                        });
+                    }
+                };
+                reader.onError = function () {
+                    console.error("Read imported file error.");
+                };
+                reader.readAsBinaryString(themeFile);
+                break;
+            case 'default':
+                console.warn("unsupported file type, please upload css or zip file");
+                break;
         }
     };
 
@@ -1137,17 +1141,17 @@ $(function () {
     };
 
     /**
-     * After parsing buffers, we extract swatches of theme. Then update
-     * theme list
+     * import single css file to project
      *
-     * @return {Boolean} return true if update theme list successfully,
-     *         otherwise return false
+     * @param {String} themeName imported name of theme file
+     * @param {String} content content of theme
+     * @param {Function} handler callback after handling theme
      */
-    function updateThemeList (themeName, buffer) {
-        var swatches = [], swatch, arr, i,
-            re = /\.ui-bar-[a-z]/g;
-        arr = buffer.match(re);
-        try {
+    function singleCssHandler (themeName, content, handler) {
+        var parseSwatches = function (buffer) {
+            var swatches = [], swatch, arr =[], i,
+                re = /\.ui-bar-[a-z]/g;
+            arr = buffer.match(re);
             for (i = 0; i < arr.length; i++) {
                 swatch = arr[i].replace(/\.ui-bar-/g, "");
                 // if swatch is not found in swatcher list, add it into swatches
@@ -1155,43 +1159,82 @@ $(function () {
                     swatches.push(swatch);
                 }
             }
-            if (swatches.length) {
-                pmUtils.themesList[themeName] = swatches;
-                // add default swatch into theme
-                pmUtils.themesList[themeName].unshift('default');
-                // update themes.json in sandbox
-                $.rib.fsUtils.write('/themes.json', JSON.stringify(pmUtils.themesList));
-            }
-            return true;
-        } catch(e) {
-            alert(e.stack);
-            return false;
-        }
-    }
-
-    /**
-     * Write theme to sandbox
-     */
-    function writeThemeFile(themeFile, handler) {
-        // write themeFile to sandbox
-        $.rib.fsUtils.write('/themes/' + themeFile.name, themeFile, function () {
-            //read file to buffer
-            $.rib.fsUtils.read('/themes/' + themeFile.name, function (buffer) {
-                var result, themeName;
-                try {
-                    // split suffix of '.css' and '.min.css'
-                    themeName = themeFile.name.replace(/(\.min.css|\.css)$/g, "");
-                    result = updateThemeList(themeName, buffer);
-                    if (result) {
-                        handler();
+            return swatches;
+        };
+        // write theme to sandbox
+        var writeThemeFile = function (themeName, content, handler) {
+            $.rib.fsUtils.write('/themes/' + themeName, content, function () {
+                //read file to buffer
+                $.rib.fsUtils.read('/themes/' + themeName, function (buffer) {
+                    var theme, swatches = [];
+                    try {
+                        // split suffix of '.css' and '.min.css'
+                        theme = themeName.replace(/(\.min.css|\.css)$/g, "");
+                        swatches = parseSwatches(buffer);
+                        if (swatches.length) {
+                            pmUtils.themesList[theme] = swatches;
+                            // add default swatch into theme
+                            pmUtils.themesList[theme].unshift('default');
+                            // update themes.json in sandbox
+                            $.rib.fsUtils.write('/themes.json',
+                                JSON.stringify(pmUtils.themesList));
+                            handler();
+                        }
+                    } catch(e) {
+                        alert(e.stack);
                     }
-                } catch(e) {
-                    alert(e.stack);
-                }
+                });
+                //update allThemes
+                $.rib.pmUtils.allThemes.push(themeName);
             });
-            //update allThemes
-            $.rib.pmUtils.allThemes.push(themeFile.name);
-        });
+        };
+
+        // firstly we check whether name of imported theme file
+        // exists in the projects
+        // If exists, a confirm dialog pup up for user to select
+        //    if user select "yes", orignal theme file will be deleted
+        //    else do nothing, return directly
+        // else upload new theme files
+        var msg, minifiedRule = /(\.min\.css)$/i,
+            theme = themeName.replace(/(\.css|\.min.css)$/g, "");
+        if ($.rib.pmUtils.themesList.hasOwnProperty(theme) ||
+                theme === "Default") {
+            if (theme === "Default") {
+                msg = "Defauls used for  JQuery Mobile  default theme" +
+                    "(jquery.mobile.theme-1.1.0.css), please rename" +
+                    " imported theme";
+                $.rib.msgbox(msg, {"OK": null});
+                return;
+            } else {
+                msg = "There is " + theme + " theme existed in projects. " +
+                    "Would you like to replace it?";
+                $.rib.confirm(msg,
+                        // if user select "OK" button, replace old one with new theme
+                        function () {
+                            var anotherThemeFile;
+                            if (minifiedRule.test(themeName)) {
+                                anotherThemeFile = themeName.replace(/\.min\.css$/g, "\.css");
+                            } else {
+                                anotherThemeFile = themeName.replace(/\.css$/g, ".min.css");
+                            }
+                            if (jQuery.inArray(anotherThemeFile, pmUtils.allThemes) !== -1) {
+                                $.rib.fsUtils.rm('/themes/' + anotherThemeFile,
+                                    function () {
+                                        var idx, allThemes = $.rib.pmUtils.allThemes;
+                                        idx = allThemes.indexOf(anotherThemeFile);
+                                        if(idx!=-1) {
+                                            allThemes.splice(idx, 1);
+                                        }
+                                        writeThemeFile(themeName, content, handler);
+                                    });
+                            } else {
+                                writeThemeFile(themeName, content, handler);
+                            }
+                        });
+            }
+        } else {
+            writeThemeFile(themeName, content, handler);
+        }
     }
 
     /************ export pmUtils to $.rib **************/
