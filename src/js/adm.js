@@ -359,7 +359,7 @@ ADM.endTransaction = function () {
  * @return {ADMNode} The child object, on success; null, on failure.
  */
 ADM.addChild = function (parentRef, childRef, dryrun) {
-    var parent, child;
+    var parent, child, oldParent, oldType, oldZone, oldZoneIndex;
 
     parent = ADM.toNode(parentRef);
     if (!parent) {
@@ -379,6 +379,12 @@ ADM.addChild = function (parentRef, childRef, dryrun) {
         return null;
     }
 
+    oldParent = child.getParent();
+    if (oldParent) {
+        oldType = child.getType();
+        oldZone = child.getZone();
+        oldZoneIndex = child.getZoneIndex();
+    }
     if (parent.addChild(child, dryrun)) {
         if (dryrun) {
             return true;
@@ -388,7 +394,11 @@ ADM.addChild = function (parentRef, childRef, dryrun) {
         ADM.transaction({
             type: "add",
             parent: child.getParent(),
-            child: child
+            child: child,
+            oldParent: oldParent,
+            oldType: oldType,
+            oldZone: oldZone,
+            oldZoneIndex: oldZoneIndex
         });
         return child;
     }
@@ -475,7 +485,7 @@ ADM.addChildRecursive = function (parentRef, childRef, dryrun) {
  * @private
  */
 ADM.insertChildRelative = function (siblingRef, childRef, offset, dryrun) {
-    var sibling, child;
+    var sibling, child, oldParent, oldType, oldZone, oldZoneIndex;
 
     sibling = ADM.toNode(siblingRef);
     if (!sibling) {
@@ -496,6 +506,12 @@ ADM.insertChildRelative = function (siblingRef, childRef, offset, dryrun) {
                      childRef);
     }
 
+    oldParent = child.getParent();
+    if (oldParent) {
+        oldType = child.getType();
+        oldZone = child.getZone();
+        oldZoneIndex = child.getZoneIndex();
+    }
     if (sibling.insertChildRelative(child, offset, dryrun)) {
         if (dryrun) {
             return true;
@@ -504,7 +520,11 @@ ADM.insertChildRelative = function (siblingRef, childRef, offset, dryrun) {
             type: "insertRelative",
             sibling: sibling,
             child: child,
-            offset: offset
+            offset: offset,
+            oldParent: oldParent,
+            oldType: oldType,
+            oldZone: oldZone,
+            oldZoneIndex: oldZoneIndex
         });
         return child;
     }
@@ -760,20 +780,20 @@ ADM.transaction = function (obj) {
  */
 ADM.undo = function () {
     var obj, undo = function (obj) {
-        if (obj.type === "add") {
+        if ( ["add", "insertRelative", "move"].indexOf(obj.type) !== -1) {
             ADM.ensurePageInactive(obj.child);
-            obj.parent.removeChild(obj.child);
+            if (obj.oldParent) {
+                if (obj.oldType !== obj.child.getType())
+                    obj.child.morphTo(obj.oldType);
+                obj.child.moveNode(obj.oldParent, obj.oldZone, obj.oldZoneIndex);
+                ADM.setSelected(obj.child);
+            }
+            else
+                obj.child.getParent().removeChild(obj.child);
         }
         else if (obj.type === "remove") {
             obj.parent.insertChildInZone(obj.child, obj.zone, obj.zoneIndex);
             ADM.setSelected(obj.child);
-        }
-        else if (obj.type === "move") {
-            obj.node.moveNode(obj.oldParent, obj.oldZone, obj.oldZoneIndex);
-            ADM.setSelected(obj.node);
-        }
-        else if (obj.type === "insertRelative") {
-            obj.sibling.getParent().removeChild(obj.child);
         }
         else if (obj.type === "propertyChange") {
             // TODO: this could require deeper copy of complex properties
@@ -1641,7 +1661,7 @@ ADMNode.prototype.insertChildInZone = function (child, zoneName, index,
         }
     }
 
-    var zone = this._zones[zoneName],
+    var zone = this._zones[zoneName], oldParent,
         myType, childType, morph, morphedChildType;
     if (!zone) {
         console.error("Error: zone not found in insertChildInZone: " +
@@ -1653,6 +1673,13 @@ ADMNode.prototype.insertChildInZone = function (child, zoneName, index,
         return false;
     }
     if (child instanceof ADMNode) {
+        oldParent = child.getParent();
+        if (oldParent) {
+            if (oldParent === this && child.getZone() === zoneName
+                    && child.getZoneIndex() < index)
+                index --;
+            return child.moveNode(this, zoneName, index, dryrun);
+        }
         if (!dryrun) {
             myType = this.getType();
             childType = child.getType();
