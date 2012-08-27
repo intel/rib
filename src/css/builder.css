@@ -927,6 +927,14 @@ div.propertyItems label[for] {
 div.propertyItems label[for|=id] {
     text-transform: uppercase;
 }
+div.propertyItems .delete.button {
+    text-indent: -3000px;
+    margin-top: 4px;
+    height: 25px;
+    width: 25px;
+    background-repeat: no-repeat;
+    background-position: left top;
+}
 
 /*
   Widget View widget styles
@@ -1411,7 +1419,8 @@ div.propertyItems label[for|=id] {
     bottom: 33px;
     background-image: url("images/cloneButton_up.png");
 }
-.projectBox .button:hover, .projectBox .button:focus {
+.projectBox .button:hover, .projectBox .button:focus,
+div.propertyItems .button:hover, div.propertyItems .button:focus {
     opacity: 0.8;
 }
 

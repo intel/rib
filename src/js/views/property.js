@@ -248,9 +248,8 @@
                                     .end().end()
                                 .append('<td/>')
                                     .children().eq(3)
-                                    .append('<img/>')
+                                    .append('<div class="delete button">Delete</div>')
                                         .children(':first')
-                                        .attr('src', "src/css/images/deleteButton_up.png")
                                         // add delete option handler
                                         .click(function(e) {
                                             try {
