@@ -237,6 +237,7 @@
                 });
                 self.openHandle
                     .fadeToggle('fast');
+                self.grip.nextAll().show();
             }
 
             // Close panel
@@ -245,6 +246,7 @@
                 self.element.animate({width: '16px'}, function() {
                     self.openHandle
                         .fadeToggle('fast');
+                    self.grip.nextAll().hide();
                 });
                 self.closeToggle
                     .add(self.bg)
