@@ -411,7 +411,7 @@
                     // and open it, create a new project in no project case
                     if (!$.rib.pmUtils.getActive()) {
                         $(document.body).one("tabsselect", function (e, tab) {
-                            if (tab.index === 1) {
+                            if (tab.index !== 0) {
                                 $.rib.pmUtils.showLastOpened();
                             }
                         });
