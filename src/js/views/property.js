@@ -319,104 +319,30 @@
                             }
                         });
                         break;
-                    case "datalist":
-                        $('<div class="title"/>')
-                            .append(
-                                $('<input type="text" value=""/>')
-                                    .attr('id', valueId)
-                                    .addClass('labelInput')
-                                    .click({'p': p, 'value': value}, function(e){
-                                        var o, items = "",
-                                            value = e.data.value, p = e.data.p;
-
-                                        for (o in options[p]) {
-                                            items += '<li>' + options[p][o] + '</li>';
-                                        }
-                                        value.find('ul')
-                                            .html("")
-                                            .append($(items));
-
-                                        $(this).toggleClass('datalist-input');
-                                        value.find('.datalist').toggle();
-                                    })
-                                    .keyup({ 'p' : p, 'value' : value}, function(e){
-                                        var matchedOptions = [], o, items = "",
-                                            inputedText = this.value,
-                                            value = e.data.value;
-                                        matchedOptions = $.grep(options[e.data.p], function(item, i){
-                                            return item.indexOf(inputedText) >= 0;
-                                        });
-
-                                        for (o in matchedOptions) {
-                                            items += '<li>' + matchedOptions[o] + '</li>';
-                                        }
-                                        value.find('ul')
-                                            .html("")
-                                            .append(items);
-
-                                        $(this).addClass('datalist-input');
-                                        value.find('.datalist').show();
-                                    })
-                            )
-                            .append(
-                                $('<div style="display:none"/>')
-                                .addClass('datalist')
-                                .append('<ul/>')
-                            )
-                        .appendTo(value);
-                        value.delegate(".datalist li", "click", function(e) {
-                            $(this).parent().parent().parent().find('input')
-                                   .val($(this).text()).change().end()
-                                   .find('.datalist').hide().end();
-                        });
-                        value.find('#'+ valueId).val(valueVal);
-                        break;
                     case "targetlist":
-                        $('<div class="title"/>')
-                            .append(
-                                $('<input type="text" value=""/>')
-                                    .attr('id', valueId)
-                                    .addClass('labelInput')
-                                    .click({'p': p, 'value': value}, function(e) {
-                                        var o, items = "", pages, id,
-                                            value = e.data.value, p = e.data.p;
-                                        items += '<li>previous page</li>';
-                                        container = node.getParent();
-                                        while (container !== null &&
-                                            container.getType() !== "Page") {
-                                            container = container.getParent();
-                                        }
-                                        pages = design.getChildren();
-                                        for (o = 0; o < pages.length; o++) {
-                                            if (pages[o] === container) {
-                                                continue;
-                                            }
-                                            id = pages[o].getProperty('id');
-                                            items += '<li>#' + id + '</li>';
-                                        }
-                                        value.find('ul')
-                                            .html("")
-                                            .append($(items));
-
-                                        $(this).toggleClass('datalist-input');
-                                        value.find('.datalist').toggle();
-                                    })
-                            )
-                            .append(
-                                $('<div style="display:none"/>')
-                                .addClass('datalist')
-                                .append('<ul/>')
-                            )
-                        .appendTo(value);
-                        value.delegate(".datalist li", "click", function(e) {
-                            $(this).parent().parent().parent().find('input')
-                                   .val($(this).text()).change().end()
-                                   .find('.datalist').hide().end();
-                        });
-                        if (valueVal === "back") {
-                        } else {
-                            value.find('#' + valueId).val(valueVal);
+                        container = node.getParent();
+                        options[p] = ['previous page'];
+                        while (container !== null &&
+                                container.getType() !== "Page") {
+                            container = container.getParent();
                         }
+                        var o, pages = ADM.getDesignRoot().getChildren();
+                        for (o = 0; o < pages.length; o++) {
+                            if (pages[o] === container) {
+                                continue;
+                            }
+                            options[p].push('#' + pages[o].getProperty('id'));
+                        }
+                        // Don't break to reuse logic of datalist
+
+                    case "datalist":
+                        var datalist = createDatalist(options[p]);
+                        if (!datalist) break;
+                        datalist.addClass('title').appendTo(value);
+                        datalist.find('input[type="text"]')
+                                .attr('id', valueId)
+                                .addClass('title labelInput')
+                                .val(valueVal);
                         break;
                     default:
                         // handle property has options
@@ -458,12 +384,13 @@
                         // We have to look up the ":hover" class here to decide
                         // which item is clicked
                         selected = $(this).parent().find('.datalist ul li:hover');
+                        if (selected.length > 0) {
+                            selected.click();
+                            return;
+                        }
 
                         if (node === null || node === undefined) {
                             throw new Error("Missing node, prop change failed!");
-                        }
-                        if (selected.length > 0) {
-                            $(this).val(selected.text());
                         }
                         value = validValue(
                             node, $(this),
@@ -890,4 +817,129 @@
             };
         }
     });
+
+     /**
+     * Update options list according an array.
+     * @param {JQObject} optionsList Container options will be appended to
+     * @param {String} options Options array, item in the array can be string
+     *     or object, which contains:
+     *     {
+     *         value: must have
+     *         clickCallback: optional, the default handler is to
+     *             fill the text input with this option's value.
+     *         cssClass: special css class need to be added to list item
+     *         stable: if the item is stable and fixed in the list, it means
+     *                 the item will always show in the list
+     *     }
+     * @return {JQuery Object} return root object of datalist if success, false null.
+     *
+     */
+    function updateOptions (optionsList, optionArray) {
+        var i, value, option, handler,
+            defaultHandler, cssClass, stable;
+
+        // its value will fill the input
+        defaultHandler = function(e) {
+            var optionsWrapper = $(this).parents('.datalist:first');
+            optionsWrapper.hide();
+            optionsWrapper.prev('input')
+                .val($(this).text())
+                .change();
+        };
+        // remove items which is not stable
+        optionsList.find(':not(.stable)').remove();
+        // fill the optionsList
+        for (i in optionArray) {
+            option = optionArray[i];
+            value = handler = null;
+            cssClass = '';
+            if (option instanceof Object) {
+                value = option.value;
+                handler = option.clickCallback;
+                cssClass = option.cssClass;
+                if (option.stable) {
+                    cssClass += ' stable';
+                }
+            } else if (typeof option === 'string') {
+                value = option;
+            }
+            if (!value) continue;
+            if (typeof handler !== 'function') {
+                handler = defaultHandler;
+            }
+            $('<li>' + value + '</li>')
+                .click(handler)
+                .addClass(cssClass)
+                .appendTo(optionsList);
+        }
+        return;
+    }
+
+    /**
+     * Create a datalist from an options array.
+     * @param {String} options Options array, item in the array can be string
+     *     or object, which contains:
+     *     {
+     *         value: must have
+     *         clickCallback: optional, the default handler is to
+     *             fill the text input with this option's value.
+     *         cssClass: special css class need to be added to list item
+     *         stable: if the item is stable and fixed in the list, it means
+     *                 the item will always show in the list
+     *     }
+     * @return {JQuery Object} return root object of datalist if success, false null.
+     *
+     */
+    function createDatalist(options) {
+        var datalist, input, optionsList;
+        if (!(options instanceof Array)) {
+            console.error('Creating datalist error.');
+            return null;
+        }
+        // create base structure
+        datalist =  $('<div/>');
+        input = $('<input type="text" value=""/>').appendTo(datalist);
+        optionsList = $('<ul/>');
+        $('<div style="display:none"/>')
+            .addClass('datalist')
+            .append(optionsList)
+            .appendTo(datalist);
+
+        // close the options list when the whole datalist blur
+        input.blur(function (e){
+            var dropDown, selected;
+            dropDown = $(this).nextAll('.datalist:first');
+            selected = optionsList.find('li:hover');
+            if (!selected.length) {
+                dropDown.hide();
+                $(this).removeClass('datalist-input');
+            }
+            return;
+        });
+
+        // bind event handler, to show the options
+        input.focus(function (e){
+            var dropDown = $(this).nextAll('.datalist:first');
+            dropDown.find('*').andSelf().show();
+            $(this).addClass('datalist-input');
+        });
+        // bind keyup event handler to filter matched options
+        input.keyup(function (e){
+            var inputedText = this.value,
+                dropDown = $(this).nextAll('.datalist:first');
+            options = dropDown.find('li');
+            dropDown.find('*').andSelf().show();
+            $.each(options, function(i, item){
+                if ($(item).hasClass('stable')) return;
+                if($(item).text().indexOf(inputedText) < 0) {
+                    $(item).hide();
+                }
+                return;
+            });
+        });
+        // fill the list initially
+        updateOptions(optionsList, options);
+        return datalist;
+    }
+
 })(jQuery);
