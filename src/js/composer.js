@@ -333,7 +333,7 @@ $(function() {
             }
         };
         $(e.target).subtree().add(document)
-            .unbind('click vmousedown vmousecancel vmouseup vmouseover focus'
+            .unbind('click vmousedown vmousecancel vmouseup vmouseover focus focusin'
                   + ' vmouseout blur mousedown touchmove');
 
         $(e.target).subtree('.adm-node:not(.delegation),.orig-adm-node').each(
