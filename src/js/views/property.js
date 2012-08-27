@@ -186,27 +186,37 @@
                         }
                         break;
                     case "url-uploadable":
-                        $('<input type ="text" value="">')
+                        var array, datalist, uploadClick;
+                        uploadClick = function (e) {
+                            var optionsWrapper, textInput, saveDir;
+                            optionsWrapper = $(this).parents('.datalist:first');
+                            optionsWrapper.hide();
+                            textInput = optionsWrapper.prev('input');
+
+                            saveDir = $.rib.pmUtils.ProjectDir + "/" + $.rib.pmUtils.getActive() + "/images/";
+                            $.rib.fsUtils.upload("image", $(this).parent(), function(file) {
+                                // Write uploaded file to sandbox
+                                $.rib.fsUtils.write(saveDir + file.name, file, function (newFile) {
+                                    textInput.val("images/" + newFile.name).change();
+                                });
+                            });
+                        };
+                        // merge all image files
+                        array = [{
+                            value: "upload",
+                            clickCallback: uploadClick,
+                            cssClass: 'upload-button',
+                            stable: true
+                        }].concat(Object.keys($.rib.pmUtils.resourceRef));
+                        datalist = createDatalist(array);
+                        if (!datalist) break;
+                        datalist.addClass('title').appendTo(value);
+                        datalist.find('input[type="text"]')
                             .attr('id', valueId)
                             .addClass('title labelInput')
-                            .appendTo(value);
-                        //set default value
-                        value.find('#' + valueId).val(valueVal);
-                        $('<button> Upload </button>')
-                            .addClass('buttonStyle')
-                            .click(function (e) {
-                                var target, saveDir;
-                                target = $(this).prev("input:text");
-                                saveDir = $.rib.pmUtils.ProjectDir + "/" + $.rib.pmUtils.getActive() + "/images/";
-                                $.rib.fsUtils.upload("image", $(this).parent(), function(file) {
-                                    // Write uploaded file to sandbox
-                                    $.rib.fsUtils.write(saveDir + file.name, file, function (newFile) {
-                                        target.val("images/" + newFile.name);
-                                        target.trigger('change');
-                                    });
-                                });
-                            }).appendTo(value);
+                            .val(valueVal);
                         break;
+
                     case "record-array":
                         $('<table/>')
                             .attr('id', 'selectOption')

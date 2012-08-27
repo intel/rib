@@ -866,6 +866,17 @@ body.ui-tabs.ui-widget {
     overflow-x: hidden;
     overflow-y: auto;
 }
+.propertyView .datalist .upload-button {
+    text-align: center;
+    border: 1px solid #a1a1a1;
+    line-height: 12px;
+    background-color: #fbfbfb;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
 .propertyView .datalist li {
     clear:both;
     cursor: pointer;
