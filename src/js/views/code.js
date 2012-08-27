@@ -85,16 +85,7 @@
 
         // Private functions
         _createPrimaryTools: function() {
-            var tools =$('<div/>'), button,
-                commands = ['undo', 'redo', 'cut', 'copy', 'paste'];
-
-            tools.addClass('hbox').hide();
-            $.each(commands, function(i, t) {
-                button =$('<button/>').addClass("buttonStyle ui-state-default")
-                .attr('id', 'btn' + t)
-                .appendTo(tools);
-            });
-            return tools;
+            return $(null);
         },
 
         _createSecondaryTools: function() {
