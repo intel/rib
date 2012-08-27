@@ -1772,7 +1772,7 @@ var BWidgetRegistry = {
             }
         },
         template: function(node) {
-            var prop, iconsrc, countBubble, code = $('<li></li>');
+            var prop, countBubble, code = $('<li></li>');
             prop = node.getProperty("countbubble");
             // Add the count bubble if countbubble property is not blank
             if (prop.trim() != '') {
@@ -1892,6 +1892,7 @@ var BWidgetRegistry = {
                 defaultValue: "Icon List Item"
             },
             iconsrc: {
+                displayName: "icon source",
                 type: "url-uploadable",
                 defaultValue: "src/css/images/widgets/tizen_image.svg",
                 htmlSelector: "img",
