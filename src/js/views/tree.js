@@ -93,15 +93,20 @@
             return model;
         },
 
+        _getSelected: function () {
+            return null;
+        },
+
         refresh: function(event, widget) {
             var widget = widget || this;
             widget.element.addClass('treeView');
             if (widget.options.model) {
                 widget._createTreeView(this.element.empty(),
                                        this._toTreeModel(this.options.model));
-                widget.setSelected(widget._getSelected?widget._getSelected():null);
+                widget._scrollIntoView(widget.findDomNode(widget._getSelected()));
             }
         },
+
 
         _createTreeView: function (attachingNode, node, attachment) {
             var widget = this, container = attachingNode,
@@ -165,9 +170,19 @@
                                     .data('origin_node', v._origin_node);
                         }
                         widget._createTreeView(folderNode, value);
+                        if (v._origin_node == widget._getSelected()){
+                            widget._setSelected(folderNode);
+                        }
                     });
                 }
             });
+        },
+
+        _scrollIntoView: function (domNode) {
+            if (domNode[0]) {
+                domNode.find('> a')[0].scrollIntoViewIfNeeded();
+                domNode[0].scrollIntoViewIfNeeded();
+            }
         },
 
         _setSelected: function (domNode) {
@@ -176,14 +191,13 @@
                 .removeClass('ui-state-active');
             if (domNode[0]) {
                 domNode.find('> a').addClass('ui-state-active')
-                    .addClass('ui-selected')
-                    [0].scrollIntoViewIfNeeded();
-                domNode[0].scrollIntoViewIfNeeded();
+                    .addClass('ui-selected');
                 if (this.element.is(':focus')) {
                     this.element.find('.focused')
                         .removeClass("focused");
                     domNode.find('> a').addClass("focused")
                 }
+                this._scrollIntoView(domNode);
             }
         },
 

@@ -102,7 +102,6 @@
                 }
                 widget.removeNode(event.node);
                 widget.addNode(event.node);
-                widget.setSelected(widget._getSelected());
                 break;
             default:
                 console.warning('Unknown type of modelUpdated event:'
@@ -157,6 +156,8 @@
         },
         _getSelected: function () {
             var model = this.options.model;
+            if (!model)
+                return null;
             return model.getSelectedNode() || model.getActivePage();
         },
         _renderPageNode: function (domNode, node) {
