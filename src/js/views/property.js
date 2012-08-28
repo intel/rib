@@ -471,7 +471,7 @@
                         ret = ADM.setProperty(node, updated, value);
                         type = node.getType();
                         if (ret.result === false) {
-                            $(this).val(node.getProperty(updated));
+                            $(this).effect("highlight", {color: "red"}, 1000).val(node.getProperty(updated));
                         } else if (type === "Button" &&
                             value === "previous page") {
                             ADM.setProperty(node, "opentargetas", "default");

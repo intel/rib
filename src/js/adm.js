@@ -2249,14 +2249,15 @@ ADMNode.prototype.setProperty = function (property, value, data, raw) {
         }
     }
 
-    // TODO: In HTML5 the rules for ids are not this strict, so this should be
-    //       corrected with reference to the spec.
-    // HTML id naming rules:
-    // Must begin with a letter A-Z or a-z
+    // TODO: In HTML5 the rules for ids are not this strict, but JQM and jQuery don't work well
+    // with special chars, such as "$" "%" "/" accepted by HTML5.
+    //
+    // So we use the following id naming rules:
+    // Must begin with a letter A-Z or a-z or 0-9
     // Can be followed by: letters (A-Za-z), digits (0-9), hyphens ("-"), and underscores ("_")
     // In HTML, all values are case-insensitive
     if (property == "id") {
-        var pattern = /^[a-zA-Z]([\w-]*)$/;
+        var pattern = /^[a-zA-Z0-9]([\w-]*)$/;
         if (value && !pattern.test(value)) {
             console.error("Error: attempted to set invalid id");
             return rval;
