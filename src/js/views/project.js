@@ -112,10 +112,12 @@
                 dialog = this.options && this.options.projectDialog;
                 dialog = dialog || $(this).dialog('option', 'projectDialog');
                 isCreate = dialog.data('new-project-dialog');
-                pid = pmUtils.getActive();
-                if (pid) {
-                    name = pmUtils.getProperty(pid, "name");
-                    currentTheme = pmUtils.getProperty(pid, "theme");
+                if (!isCreate) {
+                    pid = pmUtils.getActive();
+                    if (pid) {
+                        name = pmUtils.getProperty(pid, "name");
+                        currentTheme = pmUtils.getProperty(pid, "theme");
+                    }
                 }
                 //clear all items in list of themes
                 $('#themePicker', dialog).empty();
