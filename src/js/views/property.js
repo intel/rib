@@ -83,7 +83,8 @@
         _modelUpdatedHandler: function(event, widget) {
             widget = widget || this;
             if (event && (event.type === "propertyChanged" &&
-                        event.node.getType() === 'Design')) {
+                        event.node.getType() === 'Design' &&
+                        event.property !== 'css')) {
                 return;
             } else {
                 widget.refresh(event,widget);
