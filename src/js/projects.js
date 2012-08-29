@@ -1207,7 +1207,29 @@ $(function () {
                 $.rib.confirm(msg,
                         // if user select "OK" button, replace old one with new theme
                         function () {
-                            var anotherThemeFile;
+                            var anotherThemeFile, callback;
+                            // if theme of current design changes, we should inform design to update
+                            var callback = function () {
+                                var currentDesignTheme, array, design = ADM.getDesignRoot(),
+                                    i, themePath, path;
+                                array = $.merge([], design.getProperty('css'));
+                                // find theme from design property of 'css'
+                                for (i = 0; i < array.length; i++) {
+                                    if (array[i].hasOwnProperty('theme')) {
+                                        currentDesignTheme = array[i].value;
+                                        break;
+                                    }
+                                }
+                                themePath = currentDesignTheme.replace(/^\//, "").split("/");
+                                path = themePath.splice(themePath.length - 1, 1).toString();
+                                path = path.replace(/(\.min.css|\.css)$/g, "");
+                                if (path === themeName.replace(/(\.min.css|\.css)$/g, "")) {
+                                    $.rib.setDesignTheme(design, '/themes/' + themeName, true);
+                                    handler();
+                                } else {
+                                    handler();
+                                }
+                            };
                             if (minifiedRule.test(themeName)) {
                                 anotherThemeFile = themeName.replace(/\.min\.css$/g, "\.css");
                             } else {
@@ -1221,10 +1243,10 @@ $(function () {
                                         if(idx!=-1) {
                                             allThemes.splice(idx, 1);
                                         }
-                                        writeThemeFile(themeName, content, handler);
+                                        writeThemeFile(themeName, content, callback);
                                     });
                             } else {
-                                writeThemeFile(themeName, content, handler);
+                                writeThemeFile(themeName, content, callback);
                             }
                         });
             }
