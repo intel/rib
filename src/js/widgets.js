@@ -361,7 +361,9 @@ var BWidgetRegistry = {
                       value: 'src/css/jquery.mobile.structure-1.1.0.css'
                     },
                     { designOnly: false,
-                      value: 'src/css/jquery.mobile.theme-1.1.0.css'
+                      value: 'src/css/jquery.mobile.theme-1.1.0.css',
+                      theme: true,
+                      inSandbox: false
                     },
                     { designOnly: true,
                       value: 'src/css/template.css'
