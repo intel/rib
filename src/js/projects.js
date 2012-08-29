@@ -308,7 +308,9 @@ $(function () {
      * @return {Bool} True if success, false if failed.
      */
     pmUtils.setProperties = function (pid, properties) {
-        var i, pInfo, temp, newThemeName, oldThemeName, props, p;
+        var i, pInfo, temp, newThemeName, oldThemeName, props, p,
+            defaultTheme = 'src/css/jquery.mobile.theme-1.1.0.css',
+            design = ADM.getDesignRoot();
         var getThemeFile = function (themeName) {
             var theme;
             if (jQuery.inArray(themeName + ".min.css",
@@ -332,17 +334,11 @@ $(function () {
                     newThemeName = properties[i];
                     oldThemeName = pmUtils.getProperty(pid, 'theme');
                     //update css property in header
-                    if (oldThemeName === "Default") {
-                        newThemeName = getThemeFile(newThemeName);
-                        $.rib.addSandboxHeader('css', newThemeName);
-                    } else if (newThemeName === "Default") {
-                        oldThemeName = getThemeFile(oldThemeName);
-                        $.rib.removeSandboxHeader('css', oldThemeName);
+                    if (newThemeName === "Default") {
+                        $.rib.setDesignTheme(design, defaultTheme, false);
                     } else {
-                        oldThemeName = getThemeFile(oldThemeName);
                         newThemeName = getThemeFile(newThemeName);
-                        $.rib.removeSandboxHeader('css', oldThemeName);
-                        $.rib.addSandboxHeader('css', newThemeName);
+                        $.rib.setDesignTheme(design, newThemeName, true);
                     }
                 }
                 // if the item has schema then check the type
