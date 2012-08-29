@@ -879,6 +879,83 @@ $(function () {
     }
 
     /**
+     * set theme for given design.
+     *
+     * @param {ADMNode} design The root design object.
+     * @param {String}  newTheme File path of newTheme.
+     * @param {Boolean} newInSandbox Use sandbox url or not
+     *
+     * @return {Boolean} Return true if update theme successfully, else return false.
+     */
+    function setDesignTheme(design, newTheme, newInSandbox) {
+        var property, array, i, index,
+            swatches, themePath, themeName,
+            newThemeObject = {
+                designOnly: false,
+                value: newTheme,
+                theme: true,
+                inSandbox: newInSandbox
+            };
+        // set theme of ADM node
+        var setNodeTheme = function (admNode, swatches) {
+            var i, type, children;
+            if (admNode instanceof ADMNode) {
+                type = admNode.getType();
+                // firstly we get theme property of node. If original swatch
+                // of theme can be found from current theme, we do nothing.
+                // Otherwise, we set property value as default
+                if (BWidget.propertyExists(type, 'theme') &&
+                    jQuery.inArray(admNode.getProperty('theme'), swatches) < 0) {
+                    admNode.setProperty('theme', 'default');
+                }
+                children = admNode.getChildren();
+                if (children.length > 0) {
+                    for (i = 0; i < children.length; i++) {
+                        setNodeTheme(children[i], swatches);
+                    }
+                }
+            } else {
+                console.warn("warning: children of ADMNode must be ADMNode");
+            }
+        };
+
+        array = $.merge([], design.getProperty('css'));
+        // find theme from design property of 'css'
+        for (i = 0; i < array.length; i++) {
+            if (array[i].hasOwnProperty('theme')) {
+                index = i;
+                break;
+            }
+        }
+        if (i === array.length) {
+            // theme is not found in design
+            console.error("no theme found for given design");
+            return false;
+        }
+
+        // update theme object in array
+        array.splice(index, 1, newThemeObject);
+        // update theme for all widgets in given design
+        design.suppressEvents(true);
+        themePath = newTheme.replace(/^\//, "").split("/");
+        themeName = themePath.splice(themePath.length - 1, 1).toString();
+        themeName = themeName.replace(/(\.min.css|\.css)$/g, "");
+        // check whether set "Default" theme
+        // TODO: provide a function to getDefaultTheme in case of
+        // JQuery Mobile upgrading
+        if (newTheme === 'src/css/jquery.mobile.theme-1.1.0.css') {
+            swatches = ["default", "a", "b", "c", "d", "e"];
+        } else {
+            swatches = $.rib.pmUtils.themesList[themeName];
+        }
+        setNodeTheme(design, swatches);
+        design.suppressEvents(false);
+        //set the new array back
+        design.setProperty('css', array);
+        return true;
+    }
+
+    /**
      * Add custom file to current active project.
      * It will save the content in project folder. If the parent directy of
      * filePath doesn't exist, it will be created.
@@ -962,4 +1039,5 @@ $(function () {
     $.rib.removeSandboxHeader = removeSandboxHeader;
     $.rib.addCustomFile = addCustomFile;
     $.rib.saveEventHandlers = saveEventHandlers;
+    $.rib.setDesignTheme = setDesignTheme;
 });
