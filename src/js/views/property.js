@@ -39,7 +39,7 @@
                                 * 0.4);
                 el.height(newHeight);
             });
-            this.element.delegate('*', 'focus', function(e){
+            this.element.delegate('*', 'focus click', function(e){
                 window.focusElement = this;
                 e.stopPropagation();
             });
