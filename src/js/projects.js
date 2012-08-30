@@ -1177,7 +1177,7 @@ $(function () {
                             handler();
                         }
                     } catch(e) {
-                        alert(e.stack);
+                        console.log("Error writing theme file:", e.stack);
                     }
                 });
                 //update allThemes
@@ -1196,14 +1196,14 @@ $(function () {
         if ($.rib.pmUtils.themesList.hasOwnProperty(theme) ||
                 theme === "Default") {
             if (theme === "Default") {
-                msg = "Defauls used for  JQuery Mobile  default theme" +
-                    "(jquery.mobile.theme-1.1.0.css), please rename" +
-                    " imported theme";
+                msg = "The name Default is reserved for the jQuery Mobile " +
+                    " default theme (jquery.mobile.theme-1.1.0.css). Please " +
+                    " rename imported theme.";
                 $.rib.msgbox(msg, {"OK": null});
                 return;
             } else {
-                msg = "There is " + theme + " theme existed in projects. " +
-                    "Would you like to replace it?";
+                msg = "The theme " + theme + " already exists. Would you " +
+                    "like to replace it?";
                 $.rib.confirm(msg,
                         // if user select "OK" button, replace old one with new theme
                         function () {
