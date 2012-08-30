@@ -39,6 +39,10 @@
                                 * 0.4);
                 el.height(newHeight);
             });
+            this.element.delegate('*', 'focus', function(e){
+                window.focusElement = this;
+                e.stopPropagation();
+            });
 
             return this;
         },
@@ -80,15 +84,26 @@
             widget.refresh(event,widget);
         },
 
+        _setProperty: function(property, value) {
+            var viewId = property + '-value';
+            this.element.find("#" + viewId).val(value);
+        },
+
         _modelUpdatedHandler: function(event, widget) {
             widget = widget || this;
-            if (event && (event.type === "propertyChanged" &&
-                        event.node.getType() === 'Design' &&
-                        event.property !== 'css')) {
-                return;
-            } else {
-                widget.refresh(event,widget);
+            if (event && event.type === "propertyChanged") {
+                if (event.node.getType() !== 'Design') {
+                    widget._setProperty(event.property, event.newValue);
+                    return;
+                } else if (event.property !== 'css') {
+                    return;
+                }
+                widget.refresh(event, widget);
             }
+            // TODO: do we really need to be refreshing here in the event of
+            // nodeAdded, nodeRemoved, etc.? Seems like we should test for
+            // whether the current node is affected, or rather just let that
+            // happen when selection changes
         },
 
         _showProperties: function(node) {

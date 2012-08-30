@@ -803,6 +803,12 @@ $(function() {
 
         var inputs = targets.find('input');
         $(inputs).disableSelection();
+        setTimeout(function(){
+            var focusElement = parent.window.focusElement;
+            if (focusElement) {
+                parent.window.$(focusElement).focus();
+            }
+        });
     });
 
     function messageHandler(e) {
