@@ -316,7 +316,7 @@
                 .children(':first')
                 .addClass('flex1 vbox wrap_left')
                 .append('<form><ul><legend/>' +
-                        '<li><label for="Template">page Template</label>' +
+                        '<li><label for="Template">Page Template</label>' +
                         '<select id="pagePicker" size="1"></select></li>' +
                         '<li class="dialog-rows-distance"><label for="Layout">Layout</label>' +
                         '<fieldset><ul>' +
