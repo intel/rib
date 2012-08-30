@@ -87,14 +87,34 @@
 
         _setProperty: function(property, value) {
             var viewId = property + '-value';
-            this.element.find("#" + viewId).val(value);
+            if (typeof(value) === 'boolean') {
+                this.element.find("#" + viewId).attr('checked', value);
+            } else {
+                this.element.find("#" + viewId).val(value);
+            }
         },
 
         _modelUpdatedHandler: function(event, widget) {
+            var affectedWidget, id, value;
             widget = widget || this;
             if (event && event.type === "propertyChanged") {
                 if (event.node.getType() !== 'Design') {
-                    widget._setProperty(event.property, event.newValue);
+                    id = event.property + '-value';
+                    affectedWidget = widget.element.find('#' + id);
+                    if (affectedWidget.attr('type') !== 'checkbox') {
+                        value = affectedWidget.val();
+                    } else {
+                        value = affectedWidget.attr('checked')?true:false;
+                    }
+                    if(event.newValue != value) {
+                        affectedWidget[0].scrollIntoViewIfNeeded();
+                        if(typeof(event.newValue) === 'boolean') {
+                            affectedWidget.effect('pulsate', { times:3 }, 200);
+                        } else {
+                            affectedWidget.effect('highlight', {}, 1000);
+                        }
+                        widget._setProperty(event.property, event.newValue);
+                    }
                     return;
                 } else if (event.property !== 'css') {
                     return;
