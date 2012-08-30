@@ -336,6 +336,14 @@ $(function() {
 
     window.handleSelect = handleSelect;
     window.ADM = window.parent.ADM;
+    $('div:jqmData(role="page")').live('pageshow', function(e) {
+        setTimeout(function(){
+            var focusElement = parent.focusElement;
+            if (focusElement) {
+                focusElement.focus();
+            }
+        })
+    });
     $('div:jqmData(role="page")').live('pageinit', function(e) {
         var targets,
             debug = (window.top.$.rib && window.top.$.rib.debug()),

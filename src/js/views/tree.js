@@ -27,6 +27,7 @@
             });
             $(e).focusin(function (e) {
                 $(this).find(".ui-selected").addClass("focused");
+                window.focusElement = e.target;
             });
 
         },
