@@ -238,9 +238,9 @@
                 .append('<form><legend/><ul>' +
                     '<li><label for="name">Project Name</label>' +
                     '<input type ="text" id="projectName" value=""/></li>' +
-                    '<li class="mt23"><label for="name">Theme</label>' +
+                    '<li class="dialog-rows-distance"><label for="name">Theme</label>' +
                     '<select id="themePicker" size="4"></select></li>' +
-                    '<li><u id="uploadTheme" class="fr mr40">' +
+                    '<li><u id="uploadTheme">' +
                     'Upload Theme</u></li>' +
                     '</ul></form><div class="div-bottom"></div>')
                 .end()

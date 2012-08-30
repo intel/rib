@@ -1228,36 +1228,11 @@ div.propertyItems .delete.button {
 }
 .ribDialog #uploadTheme {
     cursor: pointer;
-}
-.mt15 {
-    margin-top: 15px;
-}
-.mt30 {
-    margin-top: 30px;
-}
-.mt200 {
-    margin-top: 200px;
-}
-.mt150 {
-    margin-top: 150px;
-}
-.mt23 {
-    margin-top: 23px;
-}
-.mr40 {
     margin-right: 40px;
-}
-.mr120 {
-    margin-right: 120px;
-}
-.mr_200 {
-    margin-right: -200px;
-}
-.fl {
-    float: left;
-}
-.fr {
     float: right;
+}
+.ribDialog .dialog-rows-distance {
+    margin-top: 30px;
 }
 .ribDialog .buttonStyle {
     width: 60px;

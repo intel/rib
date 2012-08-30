@@ -318,7 +318,7 @@
                 .append('<form><ul><legend/>' +
                         '<li><label for="Template">page Template</label>' +
                         '<select id="pagePicker" size="1"></select></li>' +
-                        '<li class="m150 mt30"><label for="Layout">Layout</label>' +
+                        '<li class="dialog-rows-distance"><label for="Layout">Layout</label>' +
                         '<fieldset><ul>' +
                         '<li>' +
                         '<input class="fieldInput" type="radio" name="Layout" value="page"/>' +
