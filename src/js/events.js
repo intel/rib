@@ -178,3 +178,18 @@ RIBEventSource.prototype.suppressEvents = function (flag) {
         $.rib[i] = eventSource[i];
     }
 }());
+/*
+ * Event sent by the when the usage status of images changes.
+ *
+ * @name pmUtils#imagesUpdated
+ * @event
+ * @param {Object} event Object including standard "id" and "name"
+ *                       properties, as well as a
+ *                         "usageStatus" is an object contains
+ *                                       current usage status of
+ *                                       all existing images
+ * @param {Any} data The data you supplied to the bind() call.
+ * @see RIBEventSource.bind
+ * @see RIBEventSource.unbind
+ */
+$.rib.addEventType("imagesUpdated");

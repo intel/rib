@@ -993,6 +993,7 @@ $(function () {
         } else {
             pmUtils.resourceRef[refPath]++;
         }
+        $.rib.fireEvent('imagesUpdated', {usageStatus: pmUtils.resourceRef});
         return;
     };
 
@@ -1015,8 +1016,10 @@ $(function () {
                     $.rib.confirm('Unused resource: "' + entry.name +
                         '". \nWould you like to delete it from the project?', function () {
                             $.rib.fsUtils.rm(entry.fullPath);
+                            $.rib.fireEvent('imagesUpdated', {usageStatus: pmUtils.resourceRef});
                         }, function () {
                             pmUtils.resourceRef[refPath] = 0;
+                            $.rib.fireEvent('imagesUpdated', {usageStatus: pmUtils.resourceRef});
                         });
                 });
             }
