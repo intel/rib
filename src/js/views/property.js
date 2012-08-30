@@ -404,8 +404,14 @@
                         return false;
                     });
 
-                if (prerequisite && !prerequisite(props)) {
-                    value.find('#'+valueId).attr('disabled', 'disabled');
+                if (prerequisite && !prerequisite(node)) {
+                    // disable the input field and its label
+                    value.find('#'+valueId)
+                        .attr('disabled', 'disabled')
+                        .closest("div")
+                        .parent()
+                        .find("label")
+                        .addClass("disabled");
                 }
             }
 

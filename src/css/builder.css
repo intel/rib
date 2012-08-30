@@ -807,7 +807,10 @@ body.ui-tabs.ui-widget {
     font-size : 12px;
     font-family: OpenSans-SB;
     font-weight: 600; /* semi-bold */
-    font-color: #333333;
+    color: #333333;
+}
+.propertyView .title.disabled {
+    color: #999;
 }
 .propertyView input[type='checkbox'] {
     vertical-align: middle;

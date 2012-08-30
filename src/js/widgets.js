@@ -865,8 +865,8 @@ var BWidgetRegistry = {
                 options: ["default", "page", "dialog"],
                 defaultValue: "default",
                 htmlAttribute: "data-rel",
-                prerequisite: function (props) {
-                    return props.target !== "previous page";
+                prerequisite: function (admNode) {
+                    return admNode.getProperty("target") !== "previous page";
                 }
             },
             transition: {
@@ -1277,19 +1277,6 @@ var BWidgetRegistry = {
         },
         displayLabel: "Select Menu",
         properties: {
-            multiple: {
-                type: "boolean",
-                defaultValue: false,
-                displayName: "multiple select",
-                htmlAttribute: "multiple"
-            },
-            label: {
-                type: "string",
-                defaultValue: "Choose option",
-                prerequisite: function (props) {
-                    return props.multiple === true;
-                }
-            },
             options: {
                  type: "record-array",
                  sortable: true,
@@ -1307,6 +1294,19 @@ var BWidgetRegistry = {
                      },
                      children : []
                  }
+            },
+            multiple: {
+                type: "boolean",
+                defaultValue: false,
+                displayName: "multiple select",
+                htmlAttribute: "multiple"
+            },
+            label: {
+                type: "string",
+                defaultValue: "Choose option",
+                prerequisite: function (admNode) {
+                    return admNode.getProperty("multiple") === true;
+                }
             },
             mini: BCommonProperties.mini,
             disabled: BCommonProperties.disabled,
@@ -2477,6 +2477,20 @@ var BWidget = {
         return schema;
     },
 
+    /**
+     * Gets the function that determines whether any prerequisites have been
+     * met for this property to be available. If not, the property should be
+     * presented to the user in a disabled state.
+     *
+     * @param {String} widgetType The type of the widget.
+     * @param {String} property The name of the property.
+     * @return {Function(ADMNode)} A function that takes an ADM node and returns
+     *                             true if the property prerequisites are met,
+     *                             or false otherwise. Returns undefined if
+     *                             there is no such function for this property,
+     *                             in which case the property is always enabled.
+     * @throws {Error} If widgetType is invalid, or property not found.
+     */
     getPropertyPrerequisite: function (widgetType, property) {
         var schema = BWidget.getPropertySchema(widgetType, property);
         if (schema) {
