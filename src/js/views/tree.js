@@ -72,7 +72,6 @@
                 $(items[focusing]).addClass("focused");
                 items[focusing].scrollIntoViewIfNeeded();
             }
-            return false;
         },
 
         _setOption: function(key, value) {
