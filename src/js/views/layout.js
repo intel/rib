@@ -428,15 +428,6 @@
             // these lines.
             $(domNode).removeAttr('disabled');
             $(domNode).children().removeAttr('disabled');
-
-            // Set default src for empty image to make them show up
-            // TODO: This case may need to improve, such as we can show a box
-            // with "empty image" message to notice the user
-            if ((admNode.getType() === "Image") && (!admNode.getProperty('src'))) {
-                if ($(domNode).is('img')) {
-                    $(domNode).attr('src', "src/css/images/widgets/tizen_image.svg");
-                }
-            }
         }
     });
 })(jQuery);
