@@ -340,7 +340,7 @@ body.ui-tabs.ui-widget {
     position: relative;
     display: inline-block;
     zoom: 1;
-    width: 102px;
+    width: 115px;
     z-index: 999;
 }
 .view.live .deviceSelect > a {
@@ -417,6 +417,10 @@ body.ui-tabs.ui-widget {
 #deviceSelectMenu li:hover ul{
  left: 120px;
  top: 0px;
+}
+#deviceSelectMenu li ul li {
+    overflow: hidden;
+    text-overflow: ellipsis
 }
 .view.live .deviceSelect .arrow b {
     display: block;
