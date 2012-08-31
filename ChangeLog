@@ -1,3 +1,17 @@
+Changes in Preview-2 (2012-08-31)
+
+- New widgets: Image, Navbar, Text, Div, Custom Header
+- Support for many new properties on widgets, covering most of the documented
+	jQuery Mobile features
+- Support for themes from jQuery Mobile Themeroller
+- Many text properties editable in-place with double-click
+- Added thumbnails to projects in the project view
+- Drastic improvements to drag and drop insertion/sorting, decreased flicker
+- Upgraded to jQuery Mobile 1.1.0
+- New plugin architecture for views derived from a common base view
+- Many bug fixes and minor features
+- Dropped support for web-ui-fw widgets
+
 Changes in Preview-1 (2012-04-16)
 
 - Initial public release
