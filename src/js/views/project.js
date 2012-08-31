@@ -342,13 +342,23 @@
         },
         // create a thumbnail SVG
         _newSVG: function() {
-            var thumbnail, str, device;
+            var thumbnail, str, device, cssHeaders,
+                design, cssFiles = [], cssStr = '';
+                design = ADM.getDesignRoot();
+            cssHeaders = design.getProperty('css');
+            $.each(cssHeaders, function (index, cssHeader){
+                if (cssHeader.designOnly) return;
+                if (cssHeader && cssHeader.value) {
+                    var thumbCss = $.rib.pmUtils.toThumbCssPath(cssHeader);
+                    cssFiles.push($.rib.toSandboxUrl(thumbCss));
+                }
+            });
+            $.each(cssFiles, function (index, cssFile){
+                cssStr += '@import url("' + cssFile + '");\n';
+            });
             thumbnail = $('<svg class="thumbnail" xmlns="http://www.w3.org/2000/svg">\n' +
                        '<style type="text/css" >\n' +
-                       '<![CDATA[\n' +
-                       '@import url("src/css/thumb-jquery.mobile.structure-1.0.css");\n' +
-                       '@import url("src/css/thumb-jquery.mobile-1.0.css");\n' +
-                       ']]>\n' +
+                       '<![CDATA[\n' + cssStr + ']]>\n' +
                        '</style>\n' +
                        '<foreignObject id="svg-container" width="100%" height="100%">\n' +
                        '</foreignObject>\n' +
