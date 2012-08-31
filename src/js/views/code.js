@@ -47,6 +47,8 @@
                     selected = activePage.getUid();
                 }
             }
+            if (selected)
+                widget._selectCode(widget._htmlDoc.doc, selected);
         },
 
         refresh: function(event, widget) {
