@@ -85,35 +85,73 @@
             widget.refresh(event,widget);
         },
 
-        _setProperty: function(property, value) {
-            var viewId = property + '-value';
-            if (typeof(value) === 'boolean') {
-                this.element.find("#" + viewId).attr('checked', value);
-            } else {
-                this.element.find("#" + viewId).val(value);
+        _setProperty: function(property, propType, value) {
+            var element = this.element.find("#" + property + '-value');
+            switch (propType) {
+                case "boolean":
+                    element.attr('checked', value);
+                    break;
+                default:
+                    element.val(value);
             }
         },
 
+        _redrawProperty: function(property, newElment) {
+            var element = this.element.find("#" + property + '-value');
+            element.replaceWith(newElment);
+        },
+
         _modelUpdatedHandler: function(event, widget) {
-            var affectedWidget, id, value;
+            var affectedWidget, id, value, propType;
             widget = widget || this;
             if (event && event.type === "propertyChanged") {
                 if (event.node.getType() !== 'Design') {
                     id = event.property + '-value';
                     affectedWidget = widget.element.find('#' + id);
-                    if (affectedWidget.attr('type') !== 'checkbox') {
-                        value = affectedWidget.val();
-                    } else {
-                        value = affectedWidget.attr('checked')?true:false;
+                    propType = BWidget.getPropertyType(event.node.getType(), event.property);
+
+                    // Get value to for commparation
+                    switch (propType) {
+                        case "boolean":
+                            value = affectedWidget.attr('checked')?true:false;
+                            break;
+                        case "record-array":
+                            value = event.oldValue; // FIXME: oldValue can't passed here.
+                            break;
+                        default:
+                            value = affectedWidget.val();
+                            break;
                     }
-                    if(event.newValue != value) {
-                        affectedWidget[0].scrollIntoViewIfNeeded();
-                        if(typeof(event.newValue) === 'boolean') {
-                            affectedWidget.effect('pulsate', { times:3 }, 200);
-                        } else {
-                            affectedWidget.effect('highlight', {}, 1000);
-                        }
-                        widget._setProperty(event.property, event.newValue);
+
+                    // Compare the newValue is equal with value, then return directly.
+                    if (event.newValue == value)
+                        return;
+
+                    // Update ADM and apply effects.
+                    switch (propType) {
+                        case "boolean":
+                            if (affectedWidget) {
+                                affectedWidget[0].scrollIntoViewIfNeeded();
+                                affectedWidget.effect('pulsate', { times:3 }, 200);
+                            }
+                            widget._setProperty(event.property, propType, event.newValue);
+                            break;
+                        case "record-array":
+                            value = event.oldValue;
+                            // TODO: Do something with affectedWidget
+                            // affectedWidget = event.element;
+                            widget._redrawProperty(
+                                event.property,
+                                widget._generateRecordArrayTable(widget, event.node, event.property)
+                            );
+                            break;
+                        default:
+                            if (affectedWidget) {
+                                affectedWidget[0].scrollIntoViewIfNeeded();
+                                affectedWidget.effect('highlight', {}, 1000);
+                            }
+                            widget._setProperty(event.property, propType, event.newValue);
+                            break;
                     }
                     return;
                 } else if (event.property !== 'css') {
@@ -136,6 +174,183 @@
                 updateOptions(optionsList, Object.keys(options));
             }
             return;
+        },
+
+        _generateSelectMenuOption: function(node, property, child, index, props) {
+            var changeCallback = function(event) {
+                var newValue, self = $(this);
+                props[property].children[index][event.data.key] = self.val();
+                newValue = props[property];
+                node.fireEvent("modelUpdated", {
+                    type: "propertyChanged",
+                    node: node,
+                    property: property,
+                    element: self,
+                    newValue: newValue,
+                    index: index
+                });
+            };
+
+            if (!props)
+                props = node.getProperties();
+            return $('<tr/>').data('index', index)
+                .addClass("options")
+                .append('<td/>')
+                    .children().eq(0)
+                    .append('<img/>')
+                    .children(':first')
+                    .attr('src', "src/css/images/propertiesDragIconSmall.png")
+                    .end()
+                    .end().end()
+                .append('<td/>')
+                    .children().eq(1)
+                    .append('<input type="text"/>')
+                        .children().eq(0)
+                        .val(child.text)
+                        .addClass('title optionInput')
+                        .change({key: 'text'}, changeCallback)
+                        .end().end()
+                    .end().end()
+                .append('<td/>')
+                    .children().eq(2)
+                    .append('<input type="text"/>')
+                        .children().eq(0)
+                        .val(child.value)
+                        .addClass('title optionInput')
+                        .change({key: 'value'}, changeCallback)
+                        .end().end()
+                    .end().end()
+                .append('<td/>')
+                    .children().eq(3)
+                    .append('<div class="delete button">Delete</div>')
+                        .children(':first')
+                        // add delete option handler
+                        .click(function(e) {
+                            try {
+                                var newValue, self = $(this);
+                                // Generate ADM properties
+                                index = self.parent().parent().data('index');
+                                props[property].children.splice(index, 1);
+                                // Instead by draw, so comment following lines.
+                                /*
+                                // Remove the row element after clicked delete button
+                                self.parent().parent().remove();
+                                */
+                                newValue = props[property];
+                                // Trigger the modelUpdated event.
+                                node.fireEvent("modelUpdated", {
+                                    type: "propertyChanged",
+                                    node: node,
+                                    property: property,
+                                    element: self,
+                                    newValue: newValue,
+                                    index: index
+                                });
+                            }
+                            catch (err) {
+                                console.error(err.message);
+                            }
+                            e.stopPropagation();
+                            return false;
+                        })
+                        .end()
+                    .end().end();
+        },
+
+        _generateRecordArrayTable: function(widget, node, property, props) {
+            var child, table = $('<table/>')
+                .attr('id', property + '-value')
+                .addClass('selectTable')
+                .attr('cellspacing', '5');
+
+            if (!props)
+                props = node.getProperties();
+
+            $('<tr/>')
+                .append('<td width="5%"></td>')
+                .append('<td width="45%"> Text </td>')
+                    .children().eq(1)
+                    .addClass('title')
+                    .end().end()
+                .append('<td width="45%"> Value </td>')
+                    .children().eq(2)
+                    .addClass('title')
+                    .end().end()
+                .append('<td width="5%"></td>')
+                .appendTo(table);
+            for (var i = 0; i< props[property].children.length; i++){
+                child = props[property].children[i];
+                table.append(
+                    this._generateSelectMenuOption(node, property, child, i, props)
+                );
+            }
+
+            // add add items handler
+            $('<tr><td colspan="3">+ add item</td></tr>')
+                .children(':first')
+                .addClass('rightLabel title')
+                .attr('id', 'addOptionItem')
+                .end()
+                .click(function(e) {
+                    var newValue, self = $(this);
+                    try {
+                        var rowElement, index = props[property].children.length,
+                            optionItem = {
+                                'text': 'Option',
+                                'value': 'Value'
+                            };
+                        props[property].children.push(optionItem);
+                        // Instead by draw, so comment following lines.
+                        /*
+                        rowElement = widget._generateSelectMenuOption(
+                            node, property, optionItem, index, props
+                        );
+                        */
+                        table.append(rowElement);
+                        $(this).insertAfter(rowElement);
+                        newValue = props[property];
+                        node.fireEvent("modelUpdated", {
+                             type: "propertyChanged",
+                             node: node,
+                             property: property,
+                             element: self,
+                             newValue: newValue,
+                             index: index
+                         });
+                    } catch (err) {
+                        console.error(err.message);
+                    }
+                    e.stopPropagation();
+                    return false;
+                })
+                .appendTo(table);
+
+            // make option sortable
+            table.sortable({
+                axis: 'y',
+                items: '.options',
+                containment: table.find('tbody'),
+                start: function(event, ui) {
+                    widget.origRowIndex = ui.item.index() - 1;
+                },
+                stop: function(event, ui) {
+                    var optionItem, curIndex = ui.item.index() - 1,
+                        origIndex = widget.origRowIndex;
+                        optionItem = props[property].children.splice(origIndex,1)[0];
+
+                    props[property].children.splice(curIndex, 0, optionItem);
+                    node.fireEvent("modelUpdated", {
+                        type: "propertyChanged",
+                        node: node,
+                        property: property,
+                        element: table,
+                        newValue: props[property],
+                        index: ui.item.index()
+                    });
+                }
+            });
+
+            return table;
         },
 
         _showProperties: function(node) {
@@ -250,137 +465,7 @@
                         break;
 
                     case "record-array":
-                        $('<table/>')
-                            .attr('id', 'selectOption')
-                            .attr('cellspacing', '5')
-                            .appendTo(value);
-                        var selectOption = value.find('#selectOption');
-                        $('<tr/>')
-                            .append('<td width="5%"></td>')
-                            .append('<td width="45%"> Text </td>')
-                                .children().eq(1)
-                                .addClass('title')
-                                .end().end()
-                            .append('<td width="45%"> Value </td>')
-                                .children().eq(2)
-                                .addClass('title')
-                                .end().end()
-                            .append('<td width="5%"></td>')
-                            .appendTo(selectOption);
-                        for (i = 0; i< props[p].children.length; i ++){
-                            child = props[p].children[i];
-                            $('<tr/>').data('index', i)
-                                .addClass("options")
-                                .append('<td/>')
-                                    .children().eq(0)
-                                    .append('<img/>')
-                                    .children(':first')
-                                    .attr('src', "src/css/images/propertiesDragIconSmall.png")
-                                    .end()
-                                    .end().end()
-                                .append('<td/>')
-                                    .children().eq(1)
-                                    .append('<input type="text"/>')
-                                        .children().eq(0)
-                                        .val(child.text)
-                                        .addClass('title optionInput')
-                                        .change(node, function (event) {
-                                            index = $(this).parent().parent().data('index');
-                                            props['options'].children[index].text = $(this).val();
-                                            node.fireEvent("modelUpdated",
-                                                {type: "propertyChanged",
-                                                 node: node,
-                                                 property: 'options'});
-                                        })
-                                        .end().end()
-                                    .end().end()
-                                .append('<td/>')
-                                    .children().eq(2)
-                                    .append('<input type="text"/>')
-                                        .children().eq(0)
-                                        .val(child.value)
-                                        .addClass('title optionInput')
-                                        .change(node, function (event) {
-                                            index = $(this).parent().parent().data('index');
-                                            props['options'].children[index].value = $(this).val();
-                                            node.fireEvent("modelUpdated",
-                                                {type: "propertyChanged",
-                                                 node: node,
-                                                 property: 'options'});
-                                        })
-                                        .end().end()
-                                    .end().end()
-                                .append('<td/>')
-                                    .children().eq(3)
-                                    .append('<div class="delete button">Delete</div>')
-                                        .children(':first')
-                                        // add delete option handler
-                                        .click(function(e) {
-                                            try {
-                                                index = $(this).parent().parent().data('index');
-                                                props['options'].children.splice(index, 1);
-                                                node.fireEvent("modelUpdated",
-                                                    {type: "propertyChanged",
-                                                        node: node,
-                                                    property: 'options'});
-                                            }
-                                            catch (err) {
-                                                console.error(err.message);
-                                            }
-                                            e.stopPropagation();
-                                            return false;
-                                        })
-                                        .end()
-                                    .end().end()
-                               .appendTo(selectOption);
-                        }
-
-                        // add add items handler
-                        $('<label for=items><u>+ add item</u></label>')
-                            .children(':first')
-                            .addClass('rightLabel title')
-                            .attr('id', 'addOptionItem')
-                            .end()
-                            .appendTo(value);
-                        value.find('#addOptionItem')
-                            .click(function(e) {
-                                try {
-                                    var optionItem = {};
-                                    optionItem.text = "Option";
-                                    optionItem.value = "Value";
-                                    props['options'].children.push(optionItem);
-                                    node.fireEvent("modelUpdated",
-                                                  {type: "propertyChanged",
-                                                   node: node,
-                                                   property: 'options'});
-                                }
-                                catch (err) {
-                                    console.error(err.message);
-                                }
-                                e.stopPropagation();
-                                return false;
-                            });
-
-                        // make option sortable
-                        value.find('#selectOption tbody').sortable({
-                            axis: 'y',
-                            items: '.options',
-                            containment: value.find('#selectOption tbody'),
-                            start: function(event, ui) {
-                                widget.origRowIndex = ui.item.index() - 1;
-                            },
-                            stop: function(event, ui) {
-                                var optionItem, curIndex = ui.item.index() - 1,
-                                    origIndex = widget.origRowIndex;
-                                    optionItem = props['options'].children.splice(origIndex,1)[0];
-
-                                props['options'].children.splice(curIndex, 0, optionItem);
-                                node.fireEvent("modelUpdated",
-                                              {type: "propertyChanged",
-                                               node: node,
-                                               property: 'options'});
-                            }
-                        });
+                        value.append(this._generateRecordArrayTable(widget, node, p, props));
                         break;
                     case "targetlist":
                         container = node.getParent();
