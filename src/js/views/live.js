@@ -17,7 +17,9 @@
 
         options: {
             iframe: null,
-            contentDocument: null
+            contentDocument: null,
+            maxDeviceSize: 10000,
+            minDeviceSize: 240,
         },
 
         _create: function() {
@@ -31,7 +33,9 @@
                 rotateDeviceButton,
                 widget = this,
                 screenCoordElement = function (name, min, className) {
-                    return $('<input type="number" min="240" max="10000" required/>')
+                    return $('<input type="number" min="'
+                                + widget.options.minDeviceSize + '" max="'
+                                + widget.options.maxDeviceSize + '" required/>')
                                 .attr("name", name)
                                 .addClass(className);
                 },
@@ -274,6 +278,18 @@
                 .addClass("rotateDevice separated")
                 .appendTo(deviceToolbar)
                 .click( function () {
+                    if (widget._screenWidth.val() < widget.options.minDeviceSize ||
+                        widget._screenHeight.val() < widget.options.minDeviceSize) {
+                       alert("Device size should not be less than "
+                           + widget.options.minDeviceSize);
+                       return;
+                    }
+                    else if (widget._screenWidth.val() > widget.options.maxDeviceSize ||
+                             widget._screenHeight.val() > widget.options.maxDeviceSize) {
+                       alert("Device size should not be greater than "
+                           + widget.options.maxDeviceSize);
+                       return;
+                    }
                     widget._projectDevice.rotating = !widget._projectDevice.rotating;
                     widget._projectDevice.screenWidth = widget._screenHeight.val();
                     widget._projectDevice.screenHeight = widget._screenWidth.val();
