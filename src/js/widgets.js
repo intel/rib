@@ -591,7 +591,11 @@ var BWidgetRegistry = {
                 locator: '> div',
                 cardinality: "N"
             }
-        ]
+        ],
+        delegate: function (domNode, admNode) {
+            $('> div', domNode).addClass('customHeader');
+            return domNode;
+        },
     },
 
     /**

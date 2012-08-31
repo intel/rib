@@ -557,7 +557,7 @@ $(function() {
                     // Collapsible's items are under .ui-collapsible-content
                     '> .ui-collapsible-content > .adm-node,' +
                     '> ul > li.adm-node,' +
-                    '> div > .adm-node,' +
+                    '> div.customHeader > .adm-node,' +
                     '> *.orig-adm-node:not(.ui-header,.ui-content,.ui-footer)',
                 start: function(event, ui){
                     trackOffsets('start:   ',ui,$(this).data('sortable'));
