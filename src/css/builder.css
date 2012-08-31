@@ -929,7 +929,7 @@ div.propertyItems > div > * {
     display: table-cell;
     padding-bottom: 8px;
 }
-table#selectOption {
+table.selectTable {
     width: 100%;
 }
 div.propertyItems label[for] {
