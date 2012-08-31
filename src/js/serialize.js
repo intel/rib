@@ -984,48 +984,6 @@ $(function () {
         }, error);
     }
 
-    /**
-     * Save event handler codes to main.js
-     *
-     * @param {ADMNode} design ADM design root to be serialized.
-     *
-     * @return {None} as same as addCustomFile.
-     */
-    function saveEventHandlers(design) {
-        var results, id, matchedProps, eventCode, eventName,
-            design = design || ADM.getDesignRoot(),
-            jsFileName = 'js/main.js', jsType = 'js',
-            jsHeader = '$(document).ready(function(e) {\n',
-            jsContent = '',
-            jsFooter = '});';
-
-        // Regenerate the whole event javascript codes
-        // and save to sandbox.
-        results = design.findNodesByProperty(
-            {'type': 'event', 'value': new RegExp('.+')}
-        );
-        $.each(results, function(index, result) {
-            id = result.node.getProperty('id');
-            if (!id)
-                return
-            matchedProps = result.properties;
-            for (eventName in matchedProps) {
-                // Append the event code to the whole js code content.
-                jsContent += '$("#' + id + '").bind("' + eventName + '", function(e) {'
-                    + '\n' + matchedProps[eventName] + '\n'
-                    + '});\n\n';
-            }
-        });
-        if (!jsContent) {
-            removeSandboxHeader(jsType, jsFileName);
-            $.rib.fsUtils.rm(jsFileName);
-            return null;
-        }
-        return addCustomFile(
-            jsFileName, jsType, js_beautify(jsHeader + jsContent + jsFooter)
-        );
-    }
-
     /***************** export functions out *********************/
     // Export serialization functions into $.rib namespace
     $.rib.generateHTML = generateHTML;
@@ -1038,6 +996,5 @@ $(function () {
     $.rib.addSandboxHeader = addSandboxHeader;
     $.rib.removeSandboxHeader = removeSandboxHeader;
     $.rib.addCustomFile = addCustomFile;
-    $.rib.saveEventHandlers = saveEventHandlers;
     $.rib.setDesignTheme = setDesignTheme;
 });

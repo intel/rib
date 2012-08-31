@@ -142,10 +142,9 @@
             var labelId, labelVal, valueId, valueVal, count,
                 widget = this, type,  i, child, index, propType,
                 p, props, options, code, o, propertyItems, label, value,
-                design = ADM.getDesignRoot(),
                 title = this.element.parent().find('.property_title'),
                 content = this.element.find('.property_content'),
-                continueToDelete, buttonsContainer, container, prerequisite;
+                continueToDelete, container, prerequisite;
 
             // Clear the properties pane when nothing is selected
             if (node === null || node === undefined) {
@@ -451,10 +450,8 @@
                         if (node === null || node === undefined) {
                             throw new Error("Missing node, prop change failed!");
                         }
-                        value = validValue(
-                            node, $(this),
-                            BWidget.getPropertyType(node.getType(), updated)
-                        );
+                        value = validValue($(this),
+                            BWidget.getPropertyType(node.getType(), updated));
                         ret = ADM.setProperty(node, updated, value);
                         type = node.getType();
                         if (ret.result === false) {
@@ -478,355 +475,22 @@
                 }
             }
 
-            // add buttons container
-            buttonsContainer = $('<div>')
-                .addClass('property_footer')
-                .appendTo(content)
-                .end();
-
-            // Add event handler button
-            $('<button>Event Handlers...</button>')
-                .addClass('buttonStyle')
-                .attr('id', "eventHandlerElement")
-                .appendTo(buttonsContainer)
-                .bind('click', function(e) {
-                    var generateEventSelectElement, generateEventHandlersList,
-                        removeEventHandler, eventLinkClicked;
-                    var formContainer, leftPanel, leftPanelContainer,
-                        rightPanel, eventElement, eventSelectElement,
-                        eventEditorContainer, eventEditor, formElement,
-                        jsCode, eventHandlersList, id,
-                        uniqueIdName = 'id';
-
-                    // If node have no ID property, then return directly.
-                    if(typeof(BWidget.propertyExists(node.getType(), uniqueIdName)) == 'undefined') {
-                        alert('Event handler must be using with the element have ID property.');
-                        return false;
-                    };
-
-                    /*
-                     * Call back functions.
-                     */
-
-                    // Remove event handler
-                    removeEventHandler = function(e) {
-                        e.preventDefault();
-                        var eventName = $(this).parent().attr('rel');
-                        $.rib.confirm(
-                            'Are you sure you want to delete the '
-                                + eventName
-                                + ' event handler?',
-                            function() {
-                                node.setProperty(eventName, '');
-                                if (eventElement.val() == eventName)
-                                    eventEditor.setValue('');
-                                formElement.trigger('submit');
-                            }
-                        );
-                    }
-
-                    // Event link clicked callback
-                    eventLinkClicked = function(e) {
-                        e.preventDefault();
-                        var eventName = $(this).parent().attr('rel');
-                        eventSelectElement.val(eventName);
-                        formElement.trigger('submit');
-                    }
-
-                    /*
-                     * Elements generation functions.
-                     */
-
-                    // Generate the event property select options.
-                    generateEventSelectElement = function(selectElement, matchedProps) {
-                        var selected, newSelectElement, result, matchedProps,
-                        optionElement, eventName, optionsGroup;
-
-                        // Store the old selected event.
-                        selected = selectElement.val();
-
-                        // Clean up the origin options.
-                        selectElement.find('option').remove();
-
-                        // Search event properties
-                        if (!matchedProps)
-                            matchedProps = node.getMatchingProperties(
-                                {'type': 'event'}
-                            );
-
-                        // Added a initial blank option;
-                        $('<option value="">[Select an event handler]</option>')
-                            .addClass('cm-inactive')
-                            .appendTo(selectElement);
-
-                        // TODO: Classify the events and use optgroup to
-                        //        genereate it.
-                        /*
-                        optionsGroup = $(
-                            '<optgroup label="[Select an event handler]"></optgroup>'
-                        )
-                            .appendTo(selectElement);
-                        */
-
-                        // Generate event select options.
-                        for (eventName in matchedProps) {
-                            optionElement = $('<option>')
-                                .attr('value', eventName)
-                                .html(node.getPropertyDisplayName(eventName))
-                                .appendTo(selectElement);
-
-                            // If the event is selcted, then check it to be
-                            // selected again.
-                            if (eventName == selected)
-                                optionElement.attr('selected', 'selected');
-
-                            // If the event have codes, then highlight it.
-                            if (typeof(matchedProps[eventName]) != 'string')
-                                continue;
-                            if (matchedProps[eventName].trim() == '')
-                                continue;
-                            optionElement.addClass('cm-active');
-                            optionElement.html(optionElement.html() + ' *');
-                        }
-                    }
-
-                    // Generate the event event handler that had codes list area.
-                    generateEventHandlersList = function(selectElement, matchedProps) {
-                        var selected, ulElement, liElement, aElement,
-                            removeElement, result, matchedProps, eventName;
-
-                        // Store the old selected event.
-                        selected = selectElement.val();
-
-                        // Search event properties
-                        if (!matchedProps)
-                            matchedProps = node.getMatchingProperties(
-                                {'type': 'event'}
-                            );
-
-                        // Generate event handlers list.
-                        eventHandlersList = $('<fieldset>')
-                            .append($('<legend>Event handlers</legend>'))
-
-                        ulElement = $('<ul>').appendTo(eventHandlersList);
-                        removeElement = $('<a>')
-                            .html('Remove')
-                            .button({
-                                text: false,
-                                icons: {
-                                    primary: "ui-icon-trash"
-                                }
-                            })
-                            .click(removeEventHandler);
-
-                        for (eventName in matchedProps) {
-                            if (typeof(matchedProps[eventName]) != 'string')
-                                continue;
-                            if (matchedProps[eventName].trim() == '')
-                                continue;
-                            aElement = $('<a>')
-                                .addClass('link')
-                                .html(eventName)
-                                .click(eventLinkClicked);
-                            liElement = $('<li>')
-                                .attr('rel', eventName)
-                                // FIXME: Strange behavior here
-                                //        removeElement only appended to
-                                //        last liElement
-                                // .append(removeElement);
-                                .append(aElement)
-                                .appendTo(ulElement);
-                        }
-                        ulElement.find('li').append(removeElement);
-                        return eventHandlersList;
-                    }
-
-                    /*
-                     * Construct the page layout
-                     */
-
-                    // Page layout initial
-                    formContainer = $('<div class="hbox" />');
-                    leftPanel = $('<div class="flex1 vbox wrap_left" />')
-                        .appendTo(formContainer)
-                    rightPanel =$('<div class="flex1 wrap_right" />')
-                        .appendTo(formContainer)
-
-                    /*** Left panel contents ***/
-
-                    $('<div class="title"><label>Event</label></div>')
-                        .appendTo(leftPanel);
-
-                    leftPanelContainer = $('<div>')
-                        .addClass('container')
-                        .appendTo(leftPanel);
-
-                    // Construct event options elements
-                    eventSelectElement = $('<select>')
-                        .attr({'name': 'selectedEvent'})
-                        .addClass('center')
-                        .change(function(e) {
-                            formElement.trigger('submit');
-                        })
-                        .select()
-                        .appendTo(leftPanelContainer);
-
-                    // Add a hidden input to store current event name
-                    eventElement = $(
-                        '<input name="currentEvent" type="hidden" value="" />'
-                    ).appendTo(leftPanelContainer);
-
-                    // Initial the event handlers list
-                    eventHandlersList = $('<fieldset>')
-                        .append($('<legend>Event handlers</legend>'))
-                        .appendTo(leftPanelContainer);
-
-                    // Create the DONE button
-                    $('<button>Done</button>')
-                        .addClass('buttonStyle doneButton')
-                        .click( function (e) {
-                            formElement.dialog('close');
-                        })
-                        .button()
-                        .appendTo(leftPanelContainer);
-
-                    /*** Right panel contents ***/
-
-                    $('<div class="title"><label>Javascript Code</label></div>')
-                        .appendTo(rightPanel);
-
-                    // Construct code editor element
-                    eventEditorContainer = $('<div/>')
-                        .addClass('container')
-                        .appendTo(rightPanel);
-                    eventEditor = CodeMirror(
-                        eventEditorContainer[0],
-                        {
-                            mode: "javascript",
-                            readOnly: 'nocursor',
-                        }
-                    );
-                    eventEditorContainer.show();
-
-                    /*** Dialog contents ***/
-                    id = node.getProperty('id');
-                    formElement = $('<form>')
-                        .attr('id', 'eventHandlerDialog')
-                        .append(formContainer)
-                        .dialog({
-                            title: "Event Handlers - "
-                                + BWidget.getDisplayLabel(type)
-                                + (id ? ' (' + id + ')' : '' ),
-                            modal: true,
-                            width: 980,
-                            height: 600,
-                            resizable: false
-                         })
-                        .bind('refresh', function(e, matchedProps) {
-                            if (!matchedProps)
-                                matchedProps = node.getMatchingProperties(
-                                    {'type': 'event'}
-                                );
-
-                            // Regenerate event select options.
-                            generateEventSelectElement(
-                                eventSelectElement, matchedProps
-                            );
-
-                            // Regenerate the event handlers list.
-                            eventHandlersList.replaceWith(
-                                generateEventHandlersList(
-                                    eventSelectElement,matchedProps
-                                )
-                            );
-                        })
-                        .bind('dialogclose', function(e) {
-                            $(this).trigger('submit');
-                        })
-                        .bind('submit', function(e) {
-                            e.preventDefault();
-
-                            // Serialize the form data to JSON.
-                            var formData = $(this).serializeJSON();
-                            formData['jsCode'] = eventEditor.getValue();
-
-                            // If ID is blank, generate a unique one.
-                            if(node.getProperty(uniqueIdName) == '') {
-                                node.generateUniqueProperty(
-                                    uniqueIdName, true
-                                );
-                            }
-
-                            // Save editor content to ADM property.
-                            if (formData.currentEvent) {
-                                node.setProperty(
-                                    formData.currentEvent,
-                                    formData.jsCode
-                                );
-                                // Refresh event handlers list.
-                                $(this).trigger('refresh');
-                            }
-
-                            // Load the jsCode
-                            //
-                            // Checking the event select element changed
-                            //
-                            // If old event is not equal to current event in
-                            // select, it's meaning the select changed not
-                            // the window close, so we need to load the JS
-                            // code from new selected property and change the
-                            // editor content.
-                            if (formData.currentEvent != formData.selectedEvent) {
-                                if (formData.selectedEvent) {
-                                    // Load the event property content and set
-                                    // the editor content.
-                                    jsCode = node.getProperty(
-                                        formData.selectedEvent
-                                    );
-                                    if (typeof(jsCode) != 'string')
-                                        jsCode = '';
-                                    eventEditor.setOption('readOnly', false);
-                                    eventEditor.setValue(jsCode);
-
-                                    // Hightlight current event in event
-                                    // handlers
-                                    eventHandlersList
-                                        .find('li.ui-selected')
-                                        .removeClass('ui-selected');
-                                    eventHandlersList
-                                        .find('li[rel="' + formData.selectedEvent + '"]')
-                                        .addClass('ui-selected');
-                                } else {
-                                    // Check the selection of event, if
-                                    // selected blank will clean up the editor
-                                    // content and set editor to be read only.
-                                    eventEditor.setValue('');
-                                    eventEditor.setOption(
-                                        'readOnly', 'nocursor'
-                                    );
-                                }
-
-                                // Set currentEvent element to selctedEvent.
-                                eventElement.val(formData.selectedEvent);
-                            };
-                        });
-
-                        // Initial event handlers list.
-                        formElement.trigger('refresh');
-                });
-
             // add delete element button
-            $('<button>Delete Element</button>')
+            $('<div><button> Delete Element </button></div>')
+                .addClass('property_footer')
+                .children('button')
                 .addClass('buttonStyle')
                 .attr('id', "deleteElement")
-                .appendTo(buttonsContainer)
+                .end()
+                .appendTo(content);
+            content.find('#deleteElement')
                 .bind('click', function (e) {
                     var msg, node;
                     node = ADM.getSelectedNode();
                     if (!node) {
                         return false;
                     }
-                    if (type === "Page") {
+                    if (node.getType() === "Page") {
                         // TODO: i18n
                         msg = "Are you sure you want to delete the page '%1'?";
                         msg = msg.replace("%1", node.getProperty("id"));
@@ -840,25 +504,8 @@
                     return false;
                 });
 
-            function validValue(node, element, type) {
-                var oldValue, cfm, ret = null, value = element.val();
-                // When widget that have event handlers, after user make the ID
-                // property be blank, then popup a confirm dialog.
-                if (element.attr('id') === 'id-value' && element.val() === "" && node.hasEventHandlers()) {
-                    oldValue = node.getProperty('id');
-                    cfm = confirm(
-                        "All event handlers of this widget will stop working"
-                        + "and can't be exported if the ID property is empty."
-                        + "Are you sure you want to set the ID property to "
-                        + "empty?"
-                    );
-                    if (!cfm) {
-                        // Restore to old value.
-                        return oldValue;
-                    };
-                }
-
-                // Parsing the property value with property type
+            function validValue(element, type) {
+                var ret = null, value = element.val();
                 switch (type) {
                     case 'boolean':
                         ret = element.is(':checked');;
