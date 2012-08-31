@@ -440,7 +440,7 @@
                             textInput = optionsWrapper.prev('input');
 
                             saveDir = $.rib.pmUtils.ProjectDir + "/" + $.rib.pmUtils.getActive() + "/images/";
-                            $.rib.fsUtils.upload("image", $(this).parent(), function(file) {
+                            $.rib.fsUtils.upload("image", null, function(file) {
                                 // Write uploaded file to sandbox
                                 $.rib.fsUtils.write(saveDir + file.name, file, function (newFile) {
                                     textInput.val("images/" + newFile.name).change();
