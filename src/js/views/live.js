@@ -168,7 +168,8 @@
                 .append("<input type='submit' style='display:none' value='sumbit'/>")
                 .appendTo(devicePanel);
 
-            widget._recentDevices = $('<select/>').appendTo(deviceToolbar)
+            widget._recentDevices = $('<select class="deviceSelect"/>')
+                .appendTo(deviceToolbar)
                 .append('<option value="1">Recently Used</option>')
                 .change(function() {
                     $("option:selected", this).each(function () {
@@ -423,7 +424,7 @@
                 $('<li/>').append( key )
                     .attr('id', key)
                     .append(
-                        $('<b>></b>').addClass('fr')
+                        $('<b></b>').addClass('fr')
                     )
                     .append(
                         $('<ul/>')
