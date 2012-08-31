@@ -76,6 +76,7 @@
                                 buttonSet.append($('<input type="button" class="buttonStyle" value="Delete"></input>').click(function () {
                                     var type = widget._projectDevice.type;
                                     delete widget._userDevices[widget._projectDevice.name];
+                                    widget._findOptionByText(widget._recentDevices, widget._projectDevice.name).remove();
                                     applyDeviceChange(deviceForm, type);
                                 }));
                                 deviceForm
