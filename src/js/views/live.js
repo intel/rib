@@ -474,9 +474,11 @@
             var scaleW =  screenWidth/deviceInfo.screen.width,
             scaleH =  screenHeight/deviceInfo.screen.height;
             deviceInfo.screen.width *= scaleW;
+            deviceInfo.screen.width = Math.round(deviceInfo.screen.width);
             deviceInfo.screen.offset.left *= scaleW;
             deviceInfo.screen.offset.right *= scaleW;
             deviceInfo.screen.height *= scaleH;
+            deviceInfo.screen.height = Math.round(deviceInfo.screen.height);
             deviceInfo.screen.offset.top *= scaleH;
             deviceInfo.screen.offset.bottom *= scaleH;
 
