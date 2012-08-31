@@ -1273,30 +1273,54 @@ $(function () {
         };
         // write theme to sandbox
         var writeThemeFile = function (themeName, content, handler) {
-            $.rib.fsUtils.write('/themes/' + themeName, content, function () {
-                //read file to buffer
-                $.rib.fsUtils.read('/themes/' + themeName, function (buffer) {
-                    var theme, swatches = [];
-                    try {
-                        // split suffix of '.css' and '.min.css'
-                        theme = themeName.replace(/(\.min.css|\.css)$/g, "");
-                        swatches = parseSwatches(buffer);
-                        if (swatches.length) {
+            if (content instanceof Blob) {
+                var reader = new FileReader();
+
+                reader.onloadend = function (e) {
+                    pareseCssBuffer(e.target.result);
+                }
+                reader.onError = function () {
+                    console.error("Read imported file error.");
+                };
+                reader.readAsBinaryString(content);
+            } else {
+                pareseCssBuffer(content);
+            }
+            function pareseCssBuffer(buffer) {
+                var theme, swatches = [], thumbPath, content;
+                if (typeof buffer !== "string") {
+                    console.error('Wrong parameter type in pareseCssBuffer.');
+                    return;
+                }
+                try {
+                    // split suffix of '.css' and '.min.css'
+                    theme = themeName.replace(/(\.min.css|\.css)$/g, "");
+                    swatches = parseSwatches(buffer);
+                    if (swatches.length) {
+                        $.rib.fsUtils.write('/themes/' + themeName, buffer, function (fileEntry) {
+                            //update allThemes
+                            $.rib.pmUtils.allThemes.push(themeName);
                             pmUtils.themesList[theme] = swatches;
                             // add default swatch into theme
                             pmUtils.themesList[theme].unshift('default');
                             // update themes.json in sandbox
                             $.rib.fsUtils.write('/themes.json',
                                 JSON.stringify(pmUtils.themesList));
+
+                            // generate a related thumb css file
+                            thumbPath = $.rib.pmUtils.toThumbCssPath(fileEntry.name);
+                            content = $.rib.pmUtils.toLimitedCss(buffer);
+                            if (content) {
+                                $.rib.fsUtils.write(thumbPath, content);
+                            }
                             handler();
-                        }
-                    } catch(e) {
-                        console.log("Error writing theme file:", e.stack);
+                        });
                     }
-                });
-                //update allThemes
-                $.rib.pmUtils.allThemes.push(themeName);
-            });
+                } catch(e) {
+                    console.log("Error writing theme file:", e.stack);
+                }
+                return;
+            }
         };
 
         // firstly we check whether name of imported theme file
