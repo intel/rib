@@ -694,14 +694,7 @@
                             .append($('<legend>Event handlers</legend>'))
 
                         ulElement = $('<ul>').appendTo(eventHandlersList);
-                        removeElement = $('<a>')
-                            .html('Remove')
-                            .button({
-                                text: false,
-                                icons: {
-                                    primary: "ui-icon-trash"
-                                }
-                            })
+                        removeElement = $('<div class="delete button">Delete</div>')
                             .click(removeEventHandler);
 
                         for (eventName in matchedProps) {
@@ -743,7 +736,7 @@
                         .appendTo(leftPanel);
 
                     leftPanelContainer = $('<div>')
-                        .addClass('container')
+                        .addClass('container propertyItems')
                         .appendTo(leftPanel);
 
                     // Construct event options elements
