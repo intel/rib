@@ -328,6 +328,7 @@
             // make option sortable
             table.sortable({
                 axis: 'y',
+                handle: 'img',
                 items: '.options',
                 containment: table.find('tbody'),
                 start: function(event, ui) {
