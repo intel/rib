@@ -603,9 +603,12 @@
                                 + ' event handler?',
                             function() {
                                 node.setProperty(eventName, '');
-                                if (eventElement.val() == eventName)
+                                if (eventElement.val() == eventName) {
                                     eventEditor.setValue('');
-                                formElement.trigger('submit');
+                                    formElement.trigger('submit');
+                                } else {
+                                    formElement.trigger('refresh');
+                                }
                             }
                         );
                     }
