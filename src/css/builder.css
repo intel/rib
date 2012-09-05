@@ -40,6 +40,9 @@ body.ui-tabs.ui-widget {
     -webkit-border-bottom-right-radius: 0px;
     border: none;
 }
+.redBackground {
+    background-color: red;
+}
 
 /****************************************/
 /* Mouse coordinate debug helper styles */
