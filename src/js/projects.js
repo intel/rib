@@ -23,6 +23,8 @@ $(function () {
         pInfoDirty:false,
         allTags: [],
         ProjectDir: "/projects",
+        thumbDir: "/thumb-css/",
+        thumbPrefix: 'svg.thumbnail',
         pidPrefix: "p",
         // Filter to find sandbox resources
         relativeFilter:{
@@ -135,6 +137,8 @@ $(function () {
             }
         };
         fsUtils.ls(pmUtils.ProjectDir, successReadData, errorCreateDir);
+        // check default thumbnail css files
+        checkDefaultThumbCss();
         //fill themes info into pmUtils.themesList
         var themePath = $.rib.fsUtils.fs.root.toURL() + 'themes.json';
         $.ajax({
@@ -735,6 +739,107 @@ $(function () {
         }
     };
 
+    function checkDefaultThumbCss() {
+        var cssFiles, cssHeaders, design, i, h;
+        design = ADM.getDesignRoot();
+        cssHeaders = design.getPropertyDefault('css');
+        for (i = 0; i < cssHeaders.length; i++) {
+            h = cssHeaders[i];
+            // Skip design only header properties
+            if (h.designOnly) {
+                continue;
+            }
+            checkThumbCss(h.value);
+        }
+        return;
+    }
+
+    function checkThumbCss(fileName) {
+        var thumbPath = $.rib.pmUtils.toThumbCssPath(fileName);
+        $.rib.fsUtils.pathToEntry(thumbPath, null, function (e) {
+            if (e.code === FileError.NOT_FOUND_ERR) {
+                // generate a new thumb css
+                $.ajax({
+                    type: 'GET',
+                    url: fileName,
+                    dataType: 'text',
+                    success: function (data) {
+                        var content = $.rib.pmUtils.toLimitedCss(data);
+                        if (content) {
+                            $.rib.fsUtils.write(thumbPath, content);
+                        }
+                    },
+                    async: false
+                });
+            } else {
+                $.rib.fsUtils.onError(e);
+            }
+        });
+    }
+
+    pmUtils.toLimitedCss = function (content, preSelector) {
+        var commentsRule, blocks, result, ignoreArray;
+        preSelector = preSelector || $.rib.pmUtils.thumbPrefix;
+        if ((typeof content !== "string")
+                || (typeof preSelector !== "string")) {
+            console.warn("Wrong parameter type when getting limited css.");
+            return null;
+        }
+        result = '';
+        ignoreArray = ['from', 'to'];
+        commentsRule = /\/\*(\r|\n|.)*?\*\//g;
+        // 1. delete the comments
+        content = content.replace(commentsRule,"");
+        // 2. find blocks
+        blocks = content.split('}');
+        // 3. separate selector and rule set
+        $.each(blocks, function (i, block) {
+            var selector, index, ruleSet, ss, i, sArray;
+            index = block.indexOf('{');
+            if (index < 0) return;
+            selector = $.trim(block.substr(0, index));
+            ruleSet = $.trim(block.substr(index+1, block.length));
+            if (ruleSet.length < 1 || selector.length < 1) {
+                return;
+            }
+            sArray = [];
+            ss = selector.split(',');
+            for (i = 0; i < ss.length; i++) {
+                var s = $.trim(ss[i]);
+                // ignore empty selector
+                if (s.length < 1) continue;
+                // parse the rule block for @XX selectors
+                if (s[0] === '@') {
+                    ruleSet = $.rib.pmUtils.toLimitedCss(ruleSet, preSelector);
+                }
+                if (ignoreArray.indexOf(s) === -1) {
+                    s = preSelector + ' ' + s;
+                }
+                sArray.push(s);
+            }
+            if (sArray.length > 0) {
+                result += sArray.join(',') + "{" + ruleSet + "}";
+            }
+        });
+        return result;
+    };
+
+    pmUtils.toThumbCssPath = function (cssHeader) {
+        var filePath, index, fileName, thumbDir;
+        if (cssHeader instanceof Object) {
+            filePath = cssHeader.value;
+        } else {
+            filePath = cssHeader;
+        }
+        if (typeof filePath !== "string") {
+            console.warn("Wrong parameter type when get thumb css Path.");
+            return null;
+        }
+        index = filePath.lastIndexOf('/');
+        fileName = filePath.substr(index+1, filePath.length);
+        return pmUtils.thumbDir + fileName;
+    };
+
      /**
      * Asynchronous. import a project and open it.
      *
@@ -1168,30 +1273,54 @@ $(function () {
         };
         // write theme to sandbox
         var writeThemeFile = function (themeName, content, handler) {
-            $.rib.fsUtils.write('/themes/' + themeName, content, function () {
-                //read file to buffer
-                $.rib.fsUtils.read('/themes/' + themeName, function (buffer) {
-                    var theme, swatches = [];
-                    try {
-                        // split suffix of '.css' and '.min.css'
-                        theme = themeName.replace(/(\.min.css|\.css)$/g, "");
-                        swatches = parseSwatches(buffer);
-                        if (swatches.length) {
+            if (content instanceof Blob) {
+                var reader = new FileReader();
+
+                reader.onloadend = function (e) {
+                    pareseCssBuffer(e.target.result);
+                }
+                reader.onError = function () {
+                    console.error("Read imported file error.");
+                };
+                reader.readAsBinaryString(content);
+            } else {
+                pareseCssBuffer(content);
+            }
+            function pareseCssBuffer(buffer) {
+                var theme, swatches = [], thumbPath, content;
+                if (typeof buffer !== "string") {
+                    console.error('Wrong parameter type in pareseCssBuffer.');
+                    return;
+                }
+                try {
+                    // split suffix of '.css' and '.min.css'
+                    theme = themeName.replace(/(\.min.css|\.css)$/g, "");
+                    swatches = parseSwatches(buffer);
+                    if (swatches.length) {
+                        $.rib.fsUtils.write('/themes/' + themeName, buffer, function (fileEntry) {
+                            //update allThemes
+                            $.rib.pmUtils.allThemes.push(themeName);
                             pmUtils.themesList[theme] = swatches;
                             // add default swatch into theme
                             pmUtils.themesList[theme].unshift('default');
                             // update themes.json in sandbox
                             $.rib.fsUtils.write('/themes.json',
                                 JSON.stringify(pmUtils.themesList));
+
+                            // generate a related thumb css file
+                            thumbPath = $.rib.pmUtils.toThumbCssPath(fileEntry.name);
+                            content = $.rib.pmUtils.toLimitedCss(buffer);
+                            if (content) {
+                                $.rib.fsUtils.write(thumbPath, content);
+                            }
                             handler();
-                        }
-                    } catch(e) {
-                        console.log("Error writing theme file:", e.stack);
+                        });
                     }
-                });
-                //update allThemes
-                $.rib.pmUtils.allThemes.push(themeName);
-            });
+                } catch(e) {
+                    console.log("Error writing theme file:", e.stack);
+                }
+                return;
+            }
         };
 
         // firstly we check whether name of imported theme file
