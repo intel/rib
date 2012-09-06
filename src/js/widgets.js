@@ -236,7 +236,8 @@ var BWidgetRegistry = {
             id: {
                 type: "string",
                 defaultValue: "",
-                htmlAttribute: "id"
+                htmlAttribute: "id",
+                valueValidator: /^[a-zA-Z0-9]*([\w-]*)$/
             },
 
             /*
@@ -451,7 +452,8 @@ var BWidgetRegistry = {
             id: {
                 type: "string",
                 autoGenerate: "page",
-                htmlAttribute: "id"
+                htmlAttribute: "id",
+                valueValidator: /^[a-zA-Z]([\w-]*)$/
             },
             theme: BCommonProperties.theme,
             dialog: {
@@ -3291,6 +3293,7 @@ var BWidget = {
         })
         return ancestors;
     },
+
     // helper function
     isTypeInList: function (type, list) {
         // requires: list can be an array, a string, or invalid
@@ -3501,8 +3504,28 @@ var BWidget = {
             throw new Error("widget type invalid in getWidgetAttribute");
         }
         return widget[attribute];
-    }
+    },
 
+    /**
+     * Tests the value correction.
+     *
+     * @return {Boolean} True if this value is correct, True by default..
+     */
+    validValue: function (widgetType, property, value) {
+        var validator, schema = BWidget.getPropertySchema(widgetType, property);
+        if (!schema && !schema.valueValidator)
+            return true;
+        validator = schema.valueValidator;
+        if (typeof(value) == 'undefined')
+            value = this.getProperty(property);
+        switch (validator.constructor) {
+            case Function:
+                return validator(value);
+            case RegExp:
+                return validator.test(value);
+        }
+        return true;
+    }
 };
 
 // initialize the widget registry
