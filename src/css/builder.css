@@ -1637,11 +1637,6 @@ input.screenCoordinate::-webkit-inner-spin-button {
     height: 34px;
 }
 
-#eventHandlerDialog .wrap_left .container fieldset a.ui-button  {
-    margin-top: 0px;
-    float: right;
-}
-
 #eventHandlerDialog .wrap_left .container button.doneButton {
     position: absolute;
     top: 440px;
