@@ -146,7 +146,7 @@
                             );
                             break;
                         default:
-                            if (affectedWidget) {
+                            if (affectedWidget[0]) {
                                 affectedWidget[0].scrollIntoViewIfNeeded();
                                 affectedWidget.effect('highlight', {}, 1000);
                             }
