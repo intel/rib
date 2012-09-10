@@ -1039,4 +1039,5 @@ $(function () {
     $.rib.addCustomFile = addCustomFile;
     $.rib.saveEventHandlers = saveEventHandlers;
     $.rib.setDesignTheme = setDesignTheme;
+    $.rib.toSandboxUrl = toSandboxUrl;
 });

@@ -213,7 +213,8 @@ $(function() {
         // Filter out those that will not accept this widget
         return s.filter( function(index) {
             var uid = $(this).attr('data-uid');
-            return uid && a.canAddChild(uid, t);
+            return this !== el[0] && !el.find(this)[0]
+                   && uid && a.canAddChild(uid, t);
         });
     };
 
@@ -504,7 +505,7 @@ $(function() {
                     '> .ui-controlgroup-controls > .adm-node,' +
                     // Collapsible's items are under .ui-collapsible-content
                     '> .ui-collapsible-content > .adm-node,' +
-                    '> ul > li.adm-node,' +
+                    '> ul[class*=ui-grid-] > li.adm-node,' +
                     '> div.customHeader > .adm-node,' +
                     '> div > div > a > .adm-node,' +
                     '> *.orig-adm-node:not(.ui-header,.ui-content,.ui-footer)',
@@ -524,6 +525,11 @@ $(function() {
                     //jQuery UI should have done this after hiding current item
                     //and creating placeholder.
                     $(this).sortable('refresh');
+                    $.each($(this).data('sortable').containers, function () {
+                        this.options.connectWith = '.ui-sortable-connected';
+                        this._refreshItems();
+                    });
+                    $(this).data('sortable')._refreshItems();
 
 
 

@@ -211,7 +211,7 @@ $(function () {
                      var url = fsUtils.pathToUrl(path);
                      var onError = error || fsUtils.onError;
                      resolveLocalFileSystemURL(url, function (entry) {
-                         success(entry);
+                         success && success(entry);
                      }, onError);
                  },
 

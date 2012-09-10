@@ -48,7 +48,8 @@
 /*************************/
 /* Class specific tweaks */
 /*************************/
-.nrc-sortable-container.ui-content > * {
+.nrc-sortable-container.ui-content > *,
+.nrc-sortable-container.ui-collapsible-set > .ui-collapsible {
     margin-top: 10px;
     margin-bottom: 10px;
 }

@@ -40,6 +40,9 @@ body.ui-tabs.ui-widget {
     -webkit-border-bottom-right-radius: 0px;
     border: none;
 }
+.redBackground {
+    background-color: red;
+}
 
 /****************************************/
 /* Mouse coordinate debug helper styles */
@@ -1635,11 +1638,6 @@ input.screenCoordinate::-webkit-inner-spin-button {
     padding-top: 8px;
     width: 160px;
     height: 34px;
-}
-
-#eventHandlerDialog .wrap_left .container fieldset a.ui-button  {
-    margin-top: 0px;
-    float: right;
 }
 
 #eventHandlerDialog .wrap_left .container button.doneButton {

@@ -146,7 +146,7 @@
                             );
                             break;
                         default:
-                            if (affectedWidget) {
+                            if (affectedWidget[0]) {
                                 affectedWidget[0].scrollIntoViewIfNeeded();
                                 affectedWidget.effect('highlight', {}, 1000);
                             }
@@ -511,6 +511,20 @@
                             $('<input type ="text" value="">')
                                 .attr('id', valueId)
                                 .addClass('title labelInput')
+                                .keyup({ property: p }, function(e) {
+                                    var self = $(this);
+                                    // Strip ctrl/alt/shift/command key.
+                                    if (e.keyCode >= 16 && e.keyCode <= 18 && e.keyCode != 91)
+                                        return false;
+                                    self.toggleClass(
+                                        'redBackground',
+                                        !BWidget.validValue(
+                                            node.getType(),
+                                            e.data.property,
+                                            self.val()
+                                        )
+                                    )
+                                })
                                 .appendTo(value);
                             //set default value
                             value.find('#' + valueId).val(valueVal);
@@ -543,6 +557,7 @@
                         ret = ADM.setProperty(node, updated, value);
                         type = node.getType();
                         if (ret.result === false) {
+                            $(this).removeClass('redBackground');
                             $(this).effect("highlight", {color: "red"}, 1000).val(node.getProperty(updated));
                         } else if (type === "Button" &&
                             value === "previous page") {
@@ -603,9 +618,12 @@
                                 + ' event handler?',
                             function() {
                                 node.setProperty(eventName, '');
-                                if (eventElement.val() == eventName)
+                                if (eventElement.val() == eventName) {
                                     eventEditor.setValue('');
-                                formElement.trigger('submit');
+                                    formElement.trigger('submit');
+                                } else {
+                                    formElement.trigger('refresh');
+                                }
                             }
                         );
                     }
@@ -694,14 +712,7 @@
                             .append($('<legend>Event handlers</legend>'))
 
                         ulElement = $('<ul>').appendTo(eventHandlersList);
-                        removeElement = $('<a>')
-                            .html('Remove')
-                            .button({
-                                text: false,
-                                icons: {
-                                    primary: "ui-icon-trash"
-                                }
-                            })
+                        removeElement = $('<div class="delete button">Delete</div>')
                             .click(removeEventHandler);
 
                         for (eventName in matchedProps) {
@@ -743,7 +754,7 @@
                         .appendTo(leftPanel);
 
                     leftPanelContainer = $('<div>')
-                        .addClass('container')
+                        .addClass('container propertyItems')
                         .appendTo(leftPanel);
 
                     // Construct event options elements
