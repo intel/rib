@@ -375,7 +375,7 @@ $(function() {
                         }
                     }
                 } else if (widgetType === 'Block') {
-                    delegateNode = $('data-uid='+admNode.getParent().getUid());
+                    delegateNode = $('[data-uid='+admNode.getParent().getUid() + ']');
                 }
 
                 // Move the adm-node class to the delegateNode and assign
