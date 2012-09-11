@@ -664,7 +664,7 @@ var BWidgetRegistry = {
                 cardinality: "N",
                 // FIXME: deny Slider widgets because they render poorly; this
                 // may be a bug in jQuery Mobile 1.0
-                deny: "Slider"
+                deny: [ "Slider", "ButtonSplitList" ]
             }
         ]
     },
