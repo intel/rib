@@ -214,7 +214,11 @@ var BCommonProperties = {
  *  11)      invalidIn:  Parent widget in which this property is not valid
  *  12)        visible:  optional boolean for the property user-exposed in
  *                       property view (default true)
- *
+ *  13)        range:    optional object to define the value range of the
+ *                       property. For example { min: 2, max: 5 } means
+ *                       The minimum value is 2 and maximum value is 5. If
+ *                       min/max is not specified, it means no limit for
+ *                       minimum/maximum value respectively.
  * @class
  */
 var BWidgetRegistry = {
@@ -2094,18 +2098,12 @@ var BWidgetRegistry = {
             rows: {
                 type: "integer",
                 defaultValue: 1,
+                range: { min: 1, max:15 },
                 setPropertyHook: function (node, value, transactionData) {
                     var rows, columns, i, block, map, children, blocks, count,
                         blockIndex, root;
                     rows = node.getProperty("rows");
                     columns = node.getProperty("columns");
-
-                    // FIXME: really this should be enforced in the property
-                    //        pane, or elsewhere; this won't really work
-                    if (value < 1) {
-                        value = 1;
-                    }
-
                     root = node.getDesign();
                     root.suppressEvents(true);
 
@@ -2159,8 +2157,8 @@ var BWidgetRegistry = {
             },
             columns: {
                 type: "integer",
-                options: [ 2, 3, 4, 5 ],
                 defaultValue: 2,
+                range: { min: 2, max: 5},
                 setPropertyHook: function (node, value, transactionData) {
                     var rows, columns, i, block, map, children, blocks, count,
                         index, blockIndex, root;
@@ -2914,6 +2912,21 @@ var BWidget = {
         var schema = BWidget.getPropertySchema(widgetType, property);
         if (schema) {
             return schema.htmlValueMap;
+        }
+        return schema;
+    },
+
+    /**
+     * Gets the range for a given property.
+     *
+     * @param {String} widgetType The type of the widget.
+     * @param {String} property The name of the requested property.
+     * @return {Object} The range of the value of the given property
+     */
+    getPropertyRange: function (widgetType, property) {
+        var schema = BWidget.getPropertySchema(widgetType, property);
+        if (schema) {
+            return schema.range;
         }
         return schema;
     },
