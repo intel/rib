@@ -443,7 +443,7 @@
                                 .attr({
                                     id: valueId
                                 })
-                                .change(function(event) {
+                                .change(node, function(event) {
                                     if( typeof this.max !== "undefined" &&
                                         parseInt(this.value) > parseInt(this.max) ||
                                         typeof this.min !== "undefined" &&
@@ -451,7 +451,7 @@
                                             $(this).effect("highlight",
                                                 {color: "red"}, 1000);
                                             event.stopImmediatePropagation();
-                                            this.value = valueVal;
+                                            this.value = event.data.getProperty(this.id.slice(0, this.id.indexOf('-')));
                                     }
                                 })
                                 .appendTo(value);
