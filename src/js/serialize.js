@@ -566,8 +566,17 @@ $(function () {
     }
 
     function exportFile(fileName, content, binary) {
-        $.rib.fsUtils.write(fileName, content, function (fileEntry){
-            $.rib.fsUtils.exportToTarget(fileEntry.fullPath);
+        $.rib.fsUtils.write('exportFile', content, function (fileEntry){
+            var a = document.createElement('a');
+            if (a.download !== undefined) {
+                a.href = $.rib.fsUtils.pathToUrl(fileEntry.fullPath);
+                a.download = fileName;
+                a.click();
+            } else {
+                $.rib.fsUtils.mv(fileEntry.fullPath, fileName, function (newFile){
+                    $.rib.fsUtils.exportToTarget(newFile.fullPath);
+                });
+            }
         }, null, false, binary);
     }
 
