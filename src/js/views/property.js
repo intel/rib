@@ -433,36 +433,6 @@
                             value.find("#" + valueId).attr("checked", "checked");
                         }
                         break;
-                    case "integer":
-                        range = BWidget.getPropertyRange(type, p);
-                        if (range) {
-                            min = range.min;
-                            max = range.max;
-                            input = $('<input type="number"/>')
-                                .addClass('title labelInput')
-                                .attr({
-                                    id: valueId
-                                })
-                                .change(node, function(event) {
-                                    if( typeof this.max !== "undefined" &&
-                                        parseInt(this.value) > parseInt(this.max) ||
-                                        typeof this.min !== "undefined" &&
-                                        parseInt(this.value) < parseInt(this.min)) {
-                                            $(this).effect("highlight",
-                                                {color: "red"}, 1000);
-                                            event.stopImmediatePropagation();
-                                            this.value = event.data.getProperty(this.id.slice(0, this.id.indexOf('-')));
-                                    }
-                                })
-                                .appendTo(value);
-                            if (typeof min !== "undefined")
-                                input.attr("min", min);
-                            if (typeof max !== "undefined")
-                                input.attr("max", max);
-                            //set default value
-                            value.find('#' + valueId).val(valueVal);
-                        }
-                        break;
                     case "url-uploadable":
                         var array, datalist, uploadClick;
                         uploadClick = function (e) {
@@ -526,8 +496,35 @@
                                 .val(valueVal);
                         break;
                     default:
+                        range = BWidget.getPropertyRange(type, p);
+                        if (range) {
+                            min = range.min;
+                            max = range.max;
+                            input = $('<input type="number"/>')
+                                .addClass('title labelInput')
+                                .attr({
+                                    id: valueId
+                                })
+                                .change(node, function(event) {
+                                    if( typeof this.max !== "undefined" &&
+                                        parseInt(this.value) > parseInt(this.max) ||
+                                        typeof this.min !== "undefined" &&
+                                        parseInt(this.value) < parseInt(this.min)) {
+                                            $(this).effect("highlight",
+                                                {color: "red"}, 1000);
+                                            event.stopImmediatePropagation();
+                                            this.value = event.data.getProperty(this.id.slice(0, this.id.indexOf('-')));
+                                    }
+                                })
+                                .appendTo(value);
+                            if (typeof min !== "undefined")
+                                input.attr("min", min);
+                            if (typeof max !== "undefined")
+                                input.attr("max", max);
+                            //set default value
+                            value.find('#' + valueId).val(valueVal);
+                        } else if (options[p]) {
                         // handle property has options
-                        if (options[p]) {
                             $('<select size="1">').attr('id', valueId)
                                     .addClass('title')
                                     .appendTo(value);
