@@ -885,7 +885,12 @@ var BWidgetRegistry = {
                 defaultValue: "default",
                 htmlAttribute: "data-rel",
                 prerequisite: function (admNode) {
-                    return admNode.getProperty("target") !== "previous page";
+                    // NOTE: Prerequisites are broken, becuase they need to be
+                    //   refreshed dynamically when the controlling property
+                    //   changes, but there seems to be no such logic, so
+                    //   disabling for now. GRG 2014/09/08
+                    //return admNode.getProperty("target") !== "previous page";
+                    return true;
                 }
             },
             transition: {
@@ -1347,7 +1352,12 @@ var BWidgetRegistry = {
                 type: "string",
                 defaultValue: "Choose option",
                 prerequisite: function (admNode) {
-                    return admNode.getProperty("multiple") === true;
+                    // NOTE: Prerequisites are broken, becuase they need to be
+                    //   refreshed dynamically when the controlling property
+                    //   changes, but there seems to be no such logic, so
+                    //   disabling for now. GRG 2014/09/08
+                    //return admNode.getProperty("multiple") === true;
+                    return true;
                 }
             },
             mini: BCommonProperties.mini,
