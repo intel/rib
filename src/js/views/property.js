@@ -570,7 +570,7 @@
                         // so "click" event of datalist is not triggered.
                         // We have to look up the ":hover" class here to decide
                         // which item is clicked
-                        selected = $(this).parent().find('.datalist ul li:hover');
+                        selected = $(this).find('.datalist ul li:hover');
                         if (selected.length > 0) {
                             selected.click();
                             return;
